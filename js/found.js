@@ -621,6 +621,8 @@
       var rot = 0;
       var rot0 = 0;
       var spinLim = 0;
+      var spinHi = 0;
+      var spinLo = 0;
       if (resume && prev && isFinite(prev.vx) && isFinite(prev.vy)) {
         tvx = prev.tvx != null ? prev.tvx : prev.vx;
         tvy = prev.tvy != null ? prev.tvy : prev.vy;
@@ -633,6 +635,8 @@
         rot = isFinite(prev.rot) ? prev.rot : 0;
         rot0 = isFinite(prev.rot0) ? prev.rot0 : rot;
         spinLim = prev.spinLim || 0;
+        spinHi = prev.spinHi > 0 ? prev.spinHi : spinLim;
+        spinLo = prev.spinLo > 0 ? prev.spinLo : spinLim;
       } else {
         var vel = randSpeed();
         tvx = vel.vx;
@@ -647,8 +651,18 @@
           if (!isFinite(base)) base = 0;
           rot = base;
           rot0 = base;
-          spin = (Math.random() < 0.5 ? -1 : 1) * (1.6 + Math.random() * 2.6);
-          spinLim = 6 + Math.random() * 8;
+          var arc = 2.6 + Math.random() * 5.6;
+          var skew = 0.55 + Math.random() * 0.45;
+          if (Math.random() < 0.5) {
+            spinHi = arc;
+            spinLo = arc * skew;
+          } else {
+            spinLo = arc;
+            spinHi = arc * skew;
+          }
+          spinLim = arc;
+          var leg = 4.2 + Math.random() * 5.5;
+          spin = (Math.random() < 0.5 ? -1 : 1) * (arc / leg);
         }
       }
       var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
@@ -681,7 +695,9 @@
         spin: spin,
         rot: rot,
         rot0: rot0,
-        spinLim: spinLim
+        spinLim: spinLim,
+        spinHi: spinHi,
+        spinLo: spinLo
       });
     });
     zTop = Math.max(zTop, maxZ + 1);
@@ -779,13 +795,14 @@
         b.tile.style.setProperty("--fp-ny", b.y.toFixed(1) + "px");
         if (b.spin) {
           b.rot += b.spin * dt;
-          var lim = b.spinLim || 12;
           var origin = isFinite(b.rot0) ? b.rot0 : 0;
-          if (b.rot > origin + lim) {
-            b.rot = origin + lim;
+          var hi = b.spinHi > 0 ? b.spinHi : (b.spinLim || 8);
+          var lo = b.spinLo > 0 ? b.spinLo : hi;
+          if (b.rot > origin + hi) {
+            b.rot = origin + hi;
             b.spin = -Math.abs(b.spin);
-          } else if (b.rot < origin - lim) {
-            b.rot = origin - lim;
+          } else if (b.rot < origin - lo) {
+            b.rot = origin - lo;
             b.spin = Math.abs(b.spin);
           }
           b.tile.style.setProperty("--fp-rot", b.rot.toFixed(2) + "deg");
