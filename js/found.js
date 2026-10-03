@@ -345,7 +345,7 @@
     g.style.setProperty("--fp-table-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
-    var minY = topInset(g);
+    var minY = pageTop(g);
     var usedTilts = {};
     items.forEach(function (tile, i) {
       var key = posKey(tile);
@@ -374,6 +374,13 @@
           saved.y = ny;
           map[key] = saved;
         }
+      } else if (!force && placed) {
+        nx = oldX;
+        ny = oldY;
+        var keepSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
+        sc = keepSc > 0 ? clampSc(keepSc) : saved ? clampSc(saved.s) : 1;
+        z = parseInt(tile.style.getPropertyValue("--fp-z"), 10);
+        if (!(z > 0)) z = saved && typeof saved.z === "number" ? saved.z : 1 + (i % 20);
       } else if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
         nx = saved.x;
         ny = saved.y;
