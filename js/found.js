@@ -189,6 +189,16 @@
     return Math.max(72, Math.min(PRINT_MAX, Math.floor(colW)));
   }
 
+  function columnWidth(g) {
+    g = g || grid();
+    var n = cols();
+    var w = (g && g.clientWidth) || Math.min(document.documentElement.clientWidth || 900, 1200);
+    var gap = g ? gapPx(g) : 16;
+    var colW = n > 0 ? (w - gap * Math.max(0, n - 1)) / n : w;
+    if (!(colW > 1)) colW = w;
+    return Math.min(PRINT_MAX, colW);
+  }
+
   function tileHeight(tile, tw) {
     var ar = parseFloat(tile.style.getPropertyValue("--fp-ar"));
     if (!(ar > 0.2 && ar < 5)) ar = 0.85;
@@ -614,7 +624,7 @@
         if (a.id === "fp-flow") a.cancel();
       });
     });
-    var tw = tileWidth(g);
+    var tw = columnWidth(g);
     var gw = g.clientWidth || g.offsetWidth || 800;
     if (!(gw > 40)) gw = Math.min(document.documentElement.clientWidth || 900, 1200);
     var heldH = g.offsetHeight || 0;
@@ -878,7 +888,7 @@
     if (!g || g.getAttribute("data-fp-layout") !== "antigravity") return;
     if (!agBodies.length || !agTick) applyAntigravity(g, captureAgSeeds(g), { resume: !!agBodies.length });
     if (!agBodies.length || !agTick) return;
-    var tw = tileWidth(g);
+    var tw = columnWidth(g);
     var gw = g.clientWidth || g.offsetWidth || 800;
     if (!(gw > 40)) gw = Math.min(document.documentElement.clientWidth || 900, 1200);
     var gh = parseFloat(g.style.getPropertyValue("--fp-ag-h"));
