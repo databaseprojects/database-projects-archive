@@ -266,7 +266,7 @@
   function tableSpreadHeight(g, tw, items) {
     var base = surfaceHeight(g, tw, items);
     var vh = window.innerHeight || 700;
-    return Math.ceil(Math.max(base * 2.2, vh * 2.6));
+    return Math.ceil(Math.max(base * 1.55, vh * 1.7));
   }
 
   function freshTilt(used) {

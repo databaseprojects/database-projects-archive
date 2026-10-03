@@ -202,13 +202,26 @@
   pointer-events: none;
 }
 
+/* Below 768px the right-aligned controls cover the tag filters.
+   Same controls, still inside this bar; they drop to the next line instead of disappearing. */
 @media (max-width: 767px) {
   .vsf-zoom {
-    display: none;
+    position: static;
+    top: auto;
+    right: auto;
+    transform: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.4em;
+    white-space: normal;
+    row-gap: 0.35em;
   }
 
-  .vsf-grid:not(.vsf-empty) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .vsf-zslider {
+    max-width: 100%;
   }
 }
 
