@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script>
+  (function () {
+    try {
+      var mode = localStorage.getItem("fpLayout") || "row";
+      if (mode === "float") mode = "antigravity";
+      var cols = parseInt(localStorage.getItem("fpZoomCols"), 10);
+      var scatter = mode === "table" || mode === "antigravity";
+      var colsChanged = cols >= 6 && cols <= 20 && cols !== 6;
+      if (!scatter && !colsChanged) return;
+      document.documentElement.style.visibility = "hidden";
+    } catch (e) {}
+  })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Found Photographs — databaseprojects</title>

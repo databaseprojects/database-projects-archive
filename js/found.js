@@ -1254,14 +1254,18 @@
     return Math.abs(v - current) < HYST ? current : clampCols(v);
   }
 
-  tiles().forEach(function (tile) {
-    ensureHint(tile);
-    syncAspect(tile);
-    if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
-  });
-  setCount();
-  setCols(storedCols(), false);
-  setLayout(layoutMode(), false);
+  try {
+    tiles().forEach(function (tile) {
+      ensureHint(tile);
+      syncAspect(tile);
+      if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
+    });
+    setCount();
+    setCols(storedCols(), false);
+    setLayout(layoutMode(), false);
+  } finally {
+    document.documentElement.style.visibility = "";
+  }
 
   document.addEventListener("click", function (e) {
     if (draggingSlider || (itemDrag && itemDrag.moved)) return;
