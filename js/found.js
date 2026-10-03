@@ -1336,7 +1336,7 @@
     dot.setAttribute("aria-label", "click for Street View");
     var label = document.createElement("div");
     label.className = "vsf-lb-map-label";
-    label.textContent = "click for Street View";
+    label.textContent = "click to see present day";
     box.appendChild(tiles);
     box.appendChild(dot);
     box.appendChild(label);
