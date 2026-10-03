@@ -610,6 +610,7 @@
       var vy;
       var held0;
       var driftAt = 0;
+      var easeMs = 1;
       var spin = 0;
       var rot = 0;
       var rot0 = 0;
@@ -621,6 +622,7 @@
         vy = prev.vy;
         held0 = !!prev.held;
         driftAt = prev.driftAt != null ? prev.driftAt : 0;
+        easeMs = prev.easeMs > 0 ? prev.easeMs : 1;
         spin = prev.spin || 0;
         rot = isFinite(prev.rot) ? prev.rot : 0;
         rot0 = isFinite(prev.rot0) ? prev.rot0 : rot;
@@ -632,7 +634,8 @@
         vx = 0;
         vy = 0;
         held0 = false;
-        driftAt = performance.now() + Math.random() * 1300;
+        driftAt = performance.now() + Math.random() * 1400;
+        easeMs = 560 + Math.random() * 1640;
         if (!resume && window.fpAgPrev === "table") {
           var base = parseFloat(tile.style.getPropertyValue("--fp-rot"));
           if (!isFinite(base)) base = 0;
@@ -668,6 +671,7 @@
         sc: sc,
         held: held0,
         driftAt: driftAt,
+        easeMs: easeMs,
         spin: spin,
         rot: rot,
         rot0: rot0,
@@ -712,6 +716,8 @@
               b.held = false;
               b.vx = 0;
               b.vy = 0;
+              b.driftAt = 0;
+              b.easeMs = 1;
             }
             continue;
           }
@@ -729,9 +735,17 @@
         if (b.driftAt != null && ts < b.driftAt) continue;
         var th2 = tileHeight(b.tile, b.w);
         if (Math.abs(th2 - b.h) > 2) b.h = th2;
+        var ramp = 1;
+        if (b.easeMs > 1 && b.driftAt != null) {
+          var eu = (ts - b.driftAt) / b.easeMs;
+          if (eu < 1) {
+            if (eu < 0) eu = 0;
+            ramp = eu * eu * (3 - 2 * eu);
+          }
+        }
         if (b.tvx != null && b.tvy != null) {
-          b.vx = b.tvx;
-          b.vy = b.tvy;
+          b.vx = b.tvx * ramp;
+          b.vy = b.tvy * ramp;
         }
         b.x += b.vx * dt;
         b.y += b.vy * dt;
@@ -1559,6 +1573,8 @@
         body.vy = 0;
         body.tvx = 0;
         body.tvy = 0;
+        body.driftAt = 0;
+        body.easeMs = 1;
       }
     }
   });
