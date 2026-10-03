@@ -472,7 +472,34 @@
     return { x: cx - w / 2, y: cy - h / 2, exact: true };
   }
 
+  var AG_SHADOW_CLEAR = "0 2px 10px rgba(0,0,0,0), 0 1px 2px rgba(0,0,0,0)";
+
+  function stillShadow(cs) {
+    if (!cs || cs === "none") return AG_SHADOW_CLEAR;
+    var colors = cs.split(/,(?![^(]*\))/).map(function (part) {
+      var m = part.match(/rgba?\([^)]+\)/);
+      return m ? m[0] : "rgba(0,0,0,0)";
+    });
+    var a = colors[0] || "rgba(0,0,0,0)";
+    var b = colors[1] || "rgba(0,0,0,0)";
+    return "0 2px 10px " + a + ", 0 1px 2px " + b;
+  }
+
   function beginShadowFade(g) {
+    /* Box-shadow interpolation moves the blur and offset for about half a second.
+       Pin the final shape first so only the shadow strength fades in. */
+    var primed = tiles().map(function (tile) {
+      return { tile: tile, shadow: stillShadow(getComputedStyle(tile).boxShadow) };
+    });
+    primed.forEach(function (item) {
+      item.tile.style.setProperty("transition", "none", "important");
+      item.tile.style.setProperty("box-shadow", item.shadow);
+    });
+    void g.offsetWidth;
+    primed.forEach(function (item) {
+      item.tile.style.removeProperty("transition");
+      item.tile.style.removeProperty("box-shadow");
+    });
     g.classList.add("fp-ag-in");
     clearTimeout(g._agShade);
     g._agShade = setTimeout(function () {

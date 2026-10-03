@@ -1,18 +1,23 @@
 /* Found Photographs: row grid, table scatter, floating layout, hover, flip, lightbox. */
 
-body.fp-under-menu .bk-nav,
+/* Table and antigravity prints paint over the index nav. The control bar stays above them. */
+body.fp-under-menu .bk-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: transparent;
+}
+
 body.fp-under-menu .fp-bar {
   position: sticky;
-  z-index: 200000;
-  background: rgba(255, 255, 255, 0.88);
-}
-
-body.fp-under-menu .bk-nav {
-  top: 0;
-}
-
-body.fp-under-menu .fp-bar {
   top: var(--fp-nav-h, 48px);
+  z-index: 40;
+  background: #fff;
+}
+
+body.fp-under-menu .fp-grid[data-fp-layout="table"],
+body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
+  z-index: 5;
 }
 
 .fp-bar {
