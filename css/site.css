@@ -1,0 +1,137 @@
+/* Archive index. Courier, 12px, tracked-out uppercase, black rule.
+   .bk-group is part of the filing system (a stacked record with a return-arrow subline). */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sheet {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.bk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.4em 0;
+  margin: 0 0 1.6rem;
+  padding: 0.5em 0;
+  border-bottom: 1px solid #000;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bk-nav a {
+  color: #000;
+  text-decoration: none;
+  margin-right: 1.4em;
+}
+
+.bk-nav a:hover {
+  text-decoration: underline;
+}
+
+.bk-nav a.active {
+  text-decoration: underline;
+}
+
+.bk-group {
+  display: inline-flex;
+  flex-direction: column;
+  margin-right: 1.4em;
+}
+
+.bk-group a {
+  margin-right: 0;
+}
+
+.bk-group .bk-sub {
+  font-size: 10px;
+  opacity: 0.75;
+  padding-left: 1em;
+}
+
+.bk-group .bk-sub::before {
+  content: "\21B3  ";
+}
+
+.home-name {
+  margin: 2.4rem 0 0.7rem;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.home-intro {
+  margin: 0;
+  max-width: 38em;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+}
+
+.home-list {
+  list-style: none;
+  margin: 2.4rem 0 4rem;
+  padding: 0.8rem 0 0;
+  border-top: 1px solid #000;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-list li {
+  margin: 0.45em 0;
+}
+
+.home-list a {
+  color: #000;
+  text-decoration: none;
+}
+
+.home-list a:hover {
+  text-decoration: underline;
+}
+
+.record-name {
+  margin: 2.2rem 0 0.45rem;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.record-note {
+  margin: 0 0 4rem;
+  max-width: 36em;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+a:active {
+  opacity: 0.7;
+}

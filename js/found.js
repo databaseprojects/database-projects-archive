@@ -1,0 +1,922 @@
+/* Found Photographs: column size, row / table layouts, hover, flip, lightbox.
+   The floating antigravity mode is intentionally not included. */
+(function () {
+  var COL_KEY = "fpZoomCols";
+  var LAYOUT_KEY = "fpLayout";
+  var POS_KEY = "fpTablePosV2";
+  var MIN = 6;
+  var MAX = 20;
+  var DEF = 6;
+  var PRINT_MAX = 430;
+  var HOVER_BOOST = 1.12;
+  var HOVER_CAP = 6;
+  var HYST = 0.72;
+  var DELAY = 280;
+  var DRAG_THRESH = 5;
+  var SC_MIN = 0.94;
+  var SC_MAX = 1.06;
+  var zTop = 30;
+  var pending = null;
+  var itemDrag = null;
+  var zLock = null;
+  var draggingSlider = false;
+  var zRaf = 0;
+  var zVal = null;
+
+  function grid() {
+    return document.querySelector(".fp-grid");
+  }
+
+  function tiles() {
+    var g = grid();
+    if (!g) return [];
+    return Array.prototype.slice.call(g.querySelectorAll(".fp-tile")).sort(function (a, b) {
+      return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
+    });
+  }
+
+  function clampCols(n) {
+    n = Math.round(+n);
+    return n >= MIN && n <= MAX ? n : DEF;
+  }
+
+  function cols() {
+    var g = grid();
+    return clampCols(g ? g.getAttribute("data-columns") || DEF : DEF);
+  }
+
+  function storedCols() {
+    var n = DEF;
+    try {
+      n = parseInt(localStorage.getItem(COL_KEY), 10);
+    } catch (e) {}
+    return clampCols(n || DEF);
+  }
+
+  function saveCols(n) {
+    try {
+      localStorage.setItem(COL_KEY, String(n));
+    } catch (e) {}
+  }
+
+  function layoutMode() {
+    var v = "row";
+    try {
+      v = localStorage.getItem(LAYOUT_KEY) || "row";
+    } catch (e) {}
+    return v === "table" ? "table" : "row";
+  }
+
+  function saveLayout(v) {
+    v = v === "table" ? "table" : "row";
+    try {
+      localStorage.setItem(LAYOUT_KEY, v);
+    } catch (e) {}
+    return v;
+  }
+
+  function isTable() {
+    return layoutMode() === "table";
+  }
+
+  function imgOf(tile) {
+    return tile.querySelector("img");
+  }
+
+  function hiSrc(src, px) {
+    if (!src) return src;
+    var mm = src.match(/\/w\/(\d+)\//);
+    if (!mm) return src;
+    var need = Math.min(2000, Math.max(+mm[1], px || 1600));
+    return src.replace(/\/w\/\d+\//, "/w/" + need + "/");
+  }
+
+  function hasBack(tile) {
+    return !!(tile.getAttribute("data-back") || "").trim();
+  }
+
+  function posKey(tile) {
+    var src = tile.getAttribute("data-front") || "";
+    var base = (src.match(/FastFoto_[^/?#]+/i) || src.match(/[^/]+\.(?:jpe?g|png|webp)/i) || [src])[0];
+    return (base || src).split("?")[0];
+  }
+
+  function loadPos() {
+    try {
+      var raw = localStorage.getItem(POS_KEY);
+      var o = raw ? JSON.parse(raw) : {};
+      return o && typeof o === "object" ? o : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function savePos(map) {
+    try {
+      localStorage.setItem(POS_KEY, JSON.stringify(map || {}));
+    } catch (e) {}
+  }
+
+  function clampSc(s) {
+    s = +s;
+    if (!(s > 0)) return 1;
+    if (s < SC_MIN) return SC_MIN;
+    if (s > SC_MAX) return SC_MAX;
+    return s;
+  }
+
+  function gapPx(g) {
+    var raw = getComputedStyle(g).columnGap || getComputedStyle(g).gap || "16px";
+    var n = parseFloat(raw);
+    return n > 0 ? n : 16;
+  }
+
+  function tileWidth(g) {
+    g = g || grid();
+    var n = cols();
+    var w = (g && g.clientWidth) || Math.min(document.documentElement.clientWidth || 900, 1200);
+    var gap = g ? gapPx(g) : 16;
+    var colW = n > 0 ? (w - gap * Math.max(0, n - 1)) / n : w;
+    return Math.max(72, Math.min(PRINT_MAX, Math.floor(colW)));
+  }
+
+  function tileHeight(tile, tw) {
+    var ar = parseFloat(tile.style.getPropertyValue("--fp-ar"));
+    if (!(ar > 0.2 && ar < 5)) ar = 0.85;
+    return Math.max(80, tw / ar);
+  }
+
+  function syncAspect(tile) {
+    var img = imgOf(tile);
+    if (!img) return;
+    var go = function () {
+      if (!(img.naturalWidth > 1 && img.naturalHeight > 1)) return;
+      var ar = (img.naturalWidth / img.naturalHeight).toFixed(5);
+      tile.style.setProperty("--fp-ar", ar);
+    };
+    if (img.complete && img.naturalWidth > 1) go();
+    else img.addEventListener("load", go, { once: true });
+  }
+
+  function ensureHint(tile) {
+    if (!hasBack(tile)) return;
+    if (tile.querySelector(".fp-flip-hint")) return;
+    var tip = document.createElement("span");
+    tip.className = "fp-flip-hint";
+    tip.setAttribute("aria-hidden", "true");
+    tip.textContent = "\u21bb";
+    tile.appendChild(tip);
+  }
+
+  function setCount() {
+    var c = document.querySelector(".fp-count");
+    var n = tiles().length;
+    if (c) c.textContent = n + " of " + n;
+  }
+
+  function fillSlider(v) {
+    var s = document.querySelector(".fp-zslider");
+    if (!s) return;
+    if (draggingSlider) return;
+    s.style.setProperty("--fp-p", (((v - MIN) / (MAX - MIN)) * 100).toFixed(2) + "%");
+    if (+s.value !== v) s.value = v;
+  }
+
+  function syncLayoutButtons() {
+    var mode = layoutMode();
+    var g = grid();
+    if (g) g.setAttribute("data-fp-layout", mode);
+    document.querySelectorAll(".fp-laybtn").forEach(function (b) {
+      var on = b.getAttribute("data-fp-lay") === mode;
+      b.classList.toggle("fp-lay-on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function applyRowWidths(g) {
+    g = g || grid();
+    if (!g || isTable()) return;
+    var tw = tileWidth(g);
+    g.style.setProperty("--fp-cols", String(cols()));
+    g.style.setProperty("--fp-tile-w", tw + "px");
+    tiles().forEach(function (tile) {
+      tile.style.setProperty("--fp-tile-w", tw + "px");
+    });
+  }
+
+  function clearScatter(g) {
+    if (!g) return;
+    g.style.removeProperty("--fp-table-h");
+    tiles().forEach(function (tile) {
+      tile.style.removeProperty("--fp-nx");
+      tile.style.removeProperty("--fp-ny");
+      tile.style.removeProperty("--fp-sc");
+      tile.style.removeProperty("--fp-z");
+      tile.classList.remove("fp-dragging");
+    });
+  }
+
+  function surfaceHeight(g, tw, items) {
+    var gw = g.clientWidth || 800;
+    var area = items.length * tw * tw * 1.12 * 0.62;
+    var h = Math.ceil(area / Math.max(gw, 1));
+    return Math.max(Math.floor((window.innerHeight || 700) * 0.72), h, Math.ceil(tw * 1.12 * 2.2));
+  }
+
+  function applyScatter(g, force) {
+    if (!g) return;
+    var map = force ? {} : loadPos();
+    if (force) {
+      try {
+        localStorage.removeItem(POS_KEY);
+      } catch (e) {}
+    }
+    var items = tiles();
+    var tw = tileWidth(g);
+    var gw = g.clientWidth || 800;
+    var gh = surfaceHeight(g, tw, items);
+    g.style.setProperty("--fp-table-h", gh + "px");
+    g.style.setProperty("--fp-tile-w", tw + "px");
+    var pad = 8;
+    items.forEach(function (tile, i) {
+      var key = posKey(tile);
+      var saved = map[key];
+      var th = tileHeight(tile, tw);
+      var maxX = Math.max(pad, gw - tw - pad);
+      var maxY = Math.max(pad, gh - th - pad);
+      var nx;
+      var ny;
+      var sc;
+      var z;
+      if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
+        nx = saved.x;
+        ny = saved.y;
+        sc = clampSc(saved.s);
+        z = typeof saved.z === "number" ? saved.z : 1 + (i % 20);
+        if (nx > gw - tw * 0.3) nx = maxX;
+        if (ny > gh - th * 0.3) ny = maxY;
+        if (nx < -tw * 0.2) nx = pad;
+        if (ny < -th * 0.2) ny = pad;
+      } else {
+        nx = pad + Math.random() * Math.max(1, maxX - pad);
+        ny = pad + Math.random() * Math.max(1, maxY - pad);
+        sc = clampSc(0.97 + Math.random() * 0.06);
+        z = 1 + (i % 20);
+      }
+      if (z > zTop) zTop = z;
+      tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
+      tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
+      tile.style.setProperty("--fp-sc", sc.toFixed(3));
+      tile.style.setProperty("--fp-z", String(z));
+      tile.style.setProperty("--fp-tile-w", tw + "px");
+      tile.style.setProperty("--fp-tx", "0px");
+      tile.style.setProperty("--fp-ty", "0px");
+    });
+    zTop += 1;
+  }
+
+  function persist(tile) {
+    var map = loadPos();
+    map[posKey(tile)] = {
+      x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
+      y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+      s: clampSc(parseFloat(tile.style.getPropertyValue("--fp-sc"))),
+      z: parseInt(tile.style.getPropertyValue("--fp-z"), 10) || zTop
+    };
+    savePos(map);
+  }
+
+  function flow(mutate, opts) {
+    opts = opts || {};
+    var g = grid();
+    if (!g) {
+      mutate();
+      return;
+    }
+    var before = new Map();
+    tiles().forEach(function (tile) {
+      var r = tile.getBoundingClientRect();
+      if (r.width) before.set(tile, r);
+      (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
+        if (a.id === "fp-flow") a.cancel();
+      });
+    });
+    mutate();
+    var tries = 0;
+    function play() {
+      var items = tiles();
+      var after = items.map(function (tile) {
+        return tile.getBoundingClientRect();
+      });
+      var changed = items.some(function (tile, i) {
+        var a = before.get(tile);
+        var b = after[i];
+        return !a || Math.abs(a.left - b.left) > 0.5 || Math.abs(a.top - b.top) > 0.5 || Math.abs(a.width - b.width) > 0.5;
+      });
+      var laid = after.every(function (b) {
+        return b.width > 0;
+      });
+      if ((!changed || !laid) && ++tries < 24) {
+        requestAnimationFrame(play);
+        return;
+      }
+      var step = Math.min(opts.step || 26, (opts.total || 620) / Math.max(items.length, 1));
+      var dur = opts.dur || 520;
+      var vh = window.innerHeight;
+      var k = 0;
+      items.forEach(function (tile, i) {
+        var a = before.get(tile);
+        var b = after[i];
+        if (!b.width) return;
+        var onScreen = (b.bottom > -40 && b.top < vh + 40) || (a && a.bottom > -40 && a.top < vh + 40);
+        if (!onScreen || !a) return;
+        var dx = a.left + a.width / 2 - (b.left + b.width / 2);
+        var dy = a.top + a.height / 2 - (b.top + b.height / 2);
+        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+        var an = tile.animate(
+          [
+            { transform: "translate(" + Math.round(dx) + "px," + Math.round(dy) + "px)" },
+            { transform: "translate(" + Math.round(dx * 0.04) + "px," + Math.round(dy * 0.04 - 2) + "px)", offset: 0.82 },
+            { transform: "none" }
+          ],
+          { duration: dur, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "backwards" }
+        );
+        an.id = "fp-flow";
+      });
+    }
+    requestAnimationFrame(play);
+  }
+
+  function hoverScale() {
+    var g = grid();
+    if (!g) return 1;
+    if (isTable()) {
+      g.style.setProperty("--fp-hs", "1");
+      return 1;
+    }
+    var n = cols();
+    var w = g.clientWidth;
+    var first = g.querySelector(".fp-tile");
+    var cur = first ? first.offsetWidth : 0;
+    if (!cur) return 1;
+    var gap = n > 1 ? Math.max(0, (w - cur * n) / (n - 1)) : 0;
+    var w3 = (w - gap * 2) / 3;
+    var s = Math.max(1.06, Math.min(HOVER_CAP, (Math.min(w3, PRINT_MAX) * HOVER_BOOST) / cur));
+    g.style.setProperty("--fp-hs", s.toFixed(3));
+    return s;
+  }
+
+  function setCols(n, animate) {
+    n = clampCols(n);
+    fillSlider(n);
+    var g = grid();
+    if (!g) return;
+    var apply = function () {
+      g.setAttribute("data-columns", String(n));
+      g.style.setProperty("--fp-cols", String(n));
+      if (isTable()) applyScatter(g, false);
+      else applyRowWidths(g);
+    };
+    if (animate && g.getAttribute("data-columns") !== String(n)) flow(apply, { step: 26, total: 620, dur: 520 });
+    else apply();
+    clearTimeout(window.fpHsA);
+    window.fpHsA = setTimeout(hoverScale, 60);
+  }
+
+  function setLayout(mode, animate) {
+    mode = saveLayout(mode);
+    var g = grid();
+    if (!g) return;
+    var apply = function () {
+      g.setAttribute("data-fp-layout", mode);
+      if (mode === "table") {
+        clearScatter(g);
+        applyScatter(g, false);
+      } else {
+        clearScatter(g);
+        applyRowWidths(g);
+      }
+      syncLayoutButtons();
+    };
+    if (animate) flow(apply, { step: 20, total: 480, dur: 480 });
+    else apply();
+    setTimeout(hoverScale, 80);
+  }
+
+  function shuffle() {
+    if (draggingSlider || itemDrag) return;
+    var g = grid();
+    if (!g) return;
+    var items = tiles();
+    if (items.length < 2) return;
+    for (var i = items.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = items[i];
+      items[i] = items[j];
+      items[j] = tmp;
+    }
+    if (isTable()) {
+      var before = tiles().map(function (tile) {
+        return {
+          tile: tile,
+          x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
+          y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0
+        };
+      });
+      applyScatter(g, true);
+      before.forEach(function (item, i) {
+        var nx = parseFloat(item.tile.style.getPropertyValue("--fp-nx")) || 0;
+        var ny = parseFloat(item.tile.style.getPropertyValue("--fp-ny")) || 0;
+        var dx = item.x - nx;
+        var dy = item.y - ny;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        var an = item.tile.animate(
+          [
+            { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
+            { transform: "none" }
+          ],
+          { duration: 520, delay: Math.min(14, 360 / items.length) * i, easing: "cubic-bezier(.22,.8,.25,1)", fill: "backwards" }
+        );
+        an.id = "fp-flow";
+      });
+      return;
+    }
+    flow(function () {
+      items.forEach(function (tile) {
+        g.appendChild(tile);
+      });
+    }, { step: 18, total: 420, dur: 420 });
+  }
+
+  function onEnter(e) {
+    var tile = e.target && e.target.closest ? e.target.closest(".fp-tile") : null;
+    if (!tile || draggingSlider || itemDrag || isTable()) return;
+    if (e.relatedTarget && tile.contains(e.relatedTarget)) return;
+    var g = grid();
+    if (!g) return;
+    var s = parseFloat(g.style.getPropertyValue("--fp-hs")) || hoverScale() || 1.2;
+    var r = tile.getBoundingClientRect();
+    var cs = getComputedStyle(tile);
+    var cur = parseFloat(cs.scale);
+    if (!(cur > 0)) cur = 1;
+    var tr = cs.translate && cs.translate !== "none" ? cs.translate.split(" ").map(parseFloat) : [0, 0];
+    var cx = r.left + r.width / 2 - (tr[0] || 0);
+    var cy = r.top + r.height / 2 - (tr[1] || 0);
+    var bw = r.width / cur;
+    var bh = r.height / cur;
+    var hw = (bw * s) / 2;
+    var hh = (bh * s) / 2;
+    var pad = 8;
+    var tx = 0;
+    var ty = 0;
+    var right = document.documentElement.clientWidth - pad;
+    if (cx - hw < pad) tx = pad - (cx - hw);
+    else if (cx + hw > right) tx = right - (cx + hw);
+    if (2 * hh < window.innerHeight - 2 * pad) {
+      if (cy - hh < pad) ty = pad - (cy - hh);
+      else if (cy + hh > window.innerHeight - pad) ty = window.innerHeight - pad - (cy + hh);
+    }
+    tile.style.setProperty("--fp-tx", tx.toFixed(1) + "px");
+    tile.style.setProperty("--fp-ty", ty.toFixed(1) + "px");
+    sharpen(tile, bw * s);
+  }
+
+  function sharpen(tile, px) {
+    var img = imgOf(tile);
+    if (!img) return;
+    var src = img.getAttribute("src") || "";
+    var next = hiSrc(src, Math.max(800, px || 800));
+    if (!next || next === src) return;
+    var pre = new Image();
+    pre.onload = function () {
+      img.src = next;
+    };
+    pre.src = next;
+  }
+
+  function showFace(tile, url) {
+    var img = imgOf(tile);
+    var hi = hiSrc(url, Math.max(800, Math.ceil((tile.offsetWidth || 400) * (window.devicePixelRatio || 1)))) || url;
+    if (!img) return;
+    img.style.opacity = "0.35";
+    var pre = new Image();
+    pre.onload = function () {
+      img.src = hi;
+      img.style.opacity = "1";
+    };
+    pre.onerror = function () {
+      img.style.opacity = "1";
+    };
+    pre.src = hi;
+  }
+
+  function flipTile(tile) {
+    var back = tile.getAttribute("data-back") || "";
+    var front = tile.getAttribute("data-front") || "";
+    if (!back) return false;
+    var side = tile.getAttribute("data-fp-side") || "a";
+    var next = side === "a" ? "b" : "a";
+    tile.setAttribute("data-fp-side", next);
+    showFace(tile, next === "b" ? back : front);
+    return true;
+  }
+
+  function flashNoBack() {
+    var n = document.getElementById("fp-noback");
+    if (!n) {
+      n = document.createElement("div");
+      n.id = "fp-noback";
+      n.className = "fp-noback";
+      n.textContent = "no back";
+      document.body.appendChild(n);
+    }
+    n.classList.add("fp-noback-on");
+    clearTimeout(window._fpNoBackT);
+    window._fpNoBackT = setTimeout(function () {
+      n.classList.remove("fp-noback-on");
+    }, 900);
+  }
+
+  function showHint(lb, text) {
+    var h = lb.querySelector(".fp-hint");
+    if (!h) {
+      h = document.createElement("div");
+      h.className = "fp-hint";
+      lb.appendChild(h);
+    }
+    h.textContent = text;
+    h.classList.add("fp-hint-on");
+    clearTimeout(lb._hintT);
+    lb._hintT = setTimeout(function () {
+      h.classList.remove("fp-hint-on");
+    }, 1600);
+  }
+
+  function closeLb() {
+    var lb = document.getElementById("fp-lb");
+    if (!lb || lb._closing) return;
+    lb._closing = true;
+    var big = lb.querySelector("img");
+    var from = lb._from;
+    document.body.classList.remove("fp-lb-lock");
+    lb.classList.add("fp-lb-closing");
+    lb.classList.remove("fp-lb-on");
+    if (big && from) {
+      var r = big.getBoundingClientRect();
+      if (r.width && r.height) {
+        var s = Math.min(from.w / r.width, from.h / r.height);
+        var dx = from.x + from.w / 2 - (r.left + r.width / 2);
+        var dy = from.y + from.h / 2 - (r.top + r.height / 2);
+        big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
+      }
+    }
+    setTimeout(function () {
+      if (lb.parentNode) lb.parentNode.removeChild(lb);
+    }, 340);
+  }
+
+  function openLb(tile) {
+    if (draggingSlider) return;
+    var img = imgOf(tile);
+    if (!img) return;
+    var front = tile.getAttribute("data-front") || img.currentSrc || img.src;
+    var back = tile.getAttribute("data-back") || "";
+    var side = tile.getAttribute("data-fp-side") || "a";
+    var lo = side === "b" && back ? back : front;
+    var src = hiSrc(lo, 2000) || lo;
+    var thumb = tile.getBoundingClientRect();
+    var existing = document.getElementById("fp-lb");
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    var lb = document.createElement("div");
+    lb.id = "fp-lb";
+    lb.className = "fp-lb";
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
+    lb._tile = tile;
+    lb._front = front;
+    lb._back = back;
+    lb._side = side === "b" && back ? "b" : "a";
+    var big = document.createElement("img");
+    big.alt = img.alt || "";
+    big.draggable = false;
+    big.style.opacity = "0";
+    function place() {
+      var r = big.getBoundingClientRect();
+      if (!r.width || !r.height) return false;
+      var s = Math.min(thumb.width / r.width, thumb.height / r.height);
+      var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
+      var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
+      big.style.transition = "none";
+      big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
+      big.style.opacity = "1";
+      void big.offsetWidth;
+      big.style.transition = "";
+      requestAnimationFrame(function () {
+        lb.classList.add("fp-lb-on");
+        big.style.transform = "none";
+      });
+      return true;
+    }
+    big.addEventListener("load", function () {
+      requestAnimationFrame(function () {
+        if (!place()) lb.classList.add("fp-lb-on");
+      });
+    });
+    big.src = lo;
+    lb.appendChild(big);
+    var sv = tile.getAttribute("data-sv");
+    if (sv) {
+      var frame = document.createElement("iframe");
+      frame.className = "fp-lb-sv";
+      frame.title = "Street View";
+      frame.setAttribute("loading", "lazy");
+      frame.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+      frame.src = sv;
+      lb.appendChild(frame);
+    }
+    document.body.appendChild(lb);
+    document.body.classList.add("fp-lb-lock");
+    if (big.complete && big.naturalWidth) {
+      requestAnimationFrame(function () {
+        if (!place()) {
+          lb.classList.add("fp-lb-on");
+          big.style.opacity = "1";
+        }
+      });
+    }
+    if (src && src !== lo) {
+      var hi = new Image();
+      hi.onload = function () {
+        if (!lb._closing) big.src = src;
+      };
+      hi.src = src;
+    }
+    showHint(lb, back ? "click to flip" : "esc to close");
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb) closeLb();
+    });
+    big.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!lb._back) {
+        flashNoBack();
+        return;
+      }
+      var next = lb._side === "a" ? "b" : "a";
+      var url = next === "b" ? lb._back : lb._front;
+      lb.classList.add("fp-lb-flip");
+      big.style.opacity = "0.35";
+      var pre = new Image();
+      pre.onload = function () {
+        big.src = hiSrc(url, 2000) || url;
+        lb._side = next;
+        tile.setAttribute("data-fp-side", next);
+        showFace(tile, url);
+        big.style.opacity = "1";
+        showHint(lb, next === "b" ? "back" : "front");
+        setTimeout(function () {
+          lb.classList.remove("fp-lb-flip");
+        }, 200);
+      };
+      pre.onerror = function () {
+        big.style.opacity = "1";
+        flashNoBack();
+        lb.classList.remove("fp-lb-flip");
+      };
+      pre.src = hiSrc(url, 2000) || url;
+    });
+  }
+
+  function clearPending() {
+    if (pending) {
+      clearTimeout(pending.t);
+      pending = null;
+    }
+  }
+
+  function lockScroll() {
+    if (zLock) return;
+    var h = document.documentElement;
+    var g = grid();
+    zLock = { oy: h.style.overflowY, mh: g ? g.style.minHeight : "", y: window.scrollY };
+    h.classList.add("fp-sizing");
+    h.style.overflowY = window.innerWidth - h.clientWidth > 0 ? "scroll" : "hidden";
+    if (g) g.style.minHeight = g.offsetHeight + "px";
+  }
+
+  function unlockScroll() {
+    if (!zLock) return;
+    var h = document.documentElement;
+    var g = grid();
+    var l = zLock;
+    zLock = null;
+    h.classList.remove("fp-sizing");
+    h.style.overflowY = l.oy;
+    if (g) g.style.minHeight = l.mh;
+  }
+
+  function pick(v, current) {
+    v = +v;
+    if (!(v >= MIN)) v = MIN;
+    if (v > MAX) v = MAX;
+    return Math.abs(v - current) < HYST ? current : clampCols(v);
+  }
+
+  tiles().forEach(function (tile) {
+    ensureHint(tile);
+    syncAspect(tile);
+    if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
+  });
+  setCount();
+  setCols(storedCols(), false);
+  setLayout(layoutMode(), false);
+
+  document.addEventListener("click", function (e) {
+    if (draggingSlider || (itemDrag && itemDrag.moved)) return;
+    if (window.fpSkipClick) {
+      window.fpSkipClick = false;
+      return;
+    }
+    if (document.getElementById("fp-lb")) return;
+    var lay = e.target.closest && e.target.closest(".fp-laybtn");
+    if (lay) {
+      e.preventDefault();
+      setLayout(lay.getAttribute("data-fp-lay") || "row", true);
+      return;
+    }
+    if (e.target.closest && e.target.closest(".fp-shuffle")) {
+      e.preventDefault();
+      shuffle();
+      return;
+    }
+    var tile = e.target.closest && e.target.closest(".fp-grid .fp-tile");
+    if (!tile) return;
+    e.preventDefault();
+    if (isTable()) {
+      zTop += 1;
+      tile.style.setProperty("--fp-z", String(zTop));
+      persist(tile);
+    }
+    clearPending();
+    pending = {
+      tile: tile,
+      t: setTimeout(function () {
+        pending = null;
+        if (hasBack(tile)) flipTile(tile);
+      }, DELAY)
+    };
+  });
+
+  document.addEventListener("dblclick", function (e) {
+    if (document.getElementById("fp-lb")) return;
+    var tile = e.target.closest && e.target.closest(".fp-grid .fp-tile");
+    if (!tile) return;
+    e.preventDefault();
+    clearPending();
+    openLb(tile);
+  });
+
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && document.getElementById("fp-lb")) {
+      e.preventDefault();
+      closeLb();
+    }
+  });
+
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target.closest && (e.target.closest(".fp-tile") || e.target.closest(".fp-lb"))) e.preventDefault();
+  });
+  document.addEventListener("dragstart", function (e) {
+    if (e.target.closest && (e.target.closest(".fp-tile") || e.target.closest(".fp-lb"))) e.preventDefault();
+  });
+
+  document.addEventListener("pointerdown", function (e) {
+    if (!isTable() || draggingSlider) return;
+    if (e.button != null && e.button !== 0) return;
+    if (e.target.closest && e.target.closest(".fp-bar")) return;
+    var tile = e.target.closest && e.target.closest(".fp-grid .fp-tile");
+    if (!tile) return;
+    itemDrag = {
+      tile: tile,
+      pid: e.pointerId,
+      x0: e.clientX,
+      y0: e.clientY,
+      nx0: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
+      ny0: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+      moved: false
+    };
+    try {
+      tile.setPointerCapture(e.pointerId);
+    } catch (err) {}
+  });
+
+  document.addEventListener("pointermove", function (e) {
+    if (!itemDrag || itemDrag.pid !== e.pointerId) return;
+    var dx = e.clientX - itemDrag.x0;
+    var dy = e.clientY - itemDrag.y0;
+    if (!itemDrag.moved) {
+      if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
+      itemDrag.moved = true;
+      clearPending();
+      itemDrag.tile.classList.add("fp-dragging");
+      document.documentElement.classList.add("fp-item-dragging");
+      zTop += 1;
+      itemDrag.tile.style.setProperty("--fp-z", String(zTop));
+    }
+    e.preventDefault();
+    itemDrag.tile.style.setProperty("--fp-nx", (itemDrag.nx0 + dx).toFixed(1) + "px");
+    itemDrag.tile.style.setProperty("--fp-ny", (itemDrag.ny0 + dy).toFixed(1) + "px");
+  });
+
+  function endDrag(e) {
+    if (!itemDrag || (e.pointerId != null && itemDrag.pid !== e.pointerId)) return;
+    var d = itemDrag;
+    itemDrag = null;
+    d.tile.classList.remove("fp-dragging");
+    document.documentElement.classList.remove("fp-item-dragging");
+    if (d.moved) {
+      persist(d.tile);
+      window.fpSkipClick = true;
+      setTimeout(function () {
+        window.fpSkipClick = false;
+      }, 40);
+    }
+  }
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", endDrag);
+
+  function isSlider(t) {
+    return t && t.classList && t.classList.contains("fp-zslider");
+  }
+
+  document.addEventListener("pointerdown", function (e) {
+    if (!isSlider(e.target)) return;
+    draggingSlider = true;
+    lockScroll();
+  }, true);
+
+  function endSlider() {
+    if (!draggingSlider) return;
+    var s = document.querySelector(".fp-zslider");
+    var n = s ? pick(s.value, zVal != null ? zVal : cols()) : cols();
+    zVal = null;
+    draggingSlider = false;
+    setCols(n, false);
+    fillSlider(n);
+    saveCols(n);
+    requestAnimationFrame(unlockScroll);
+  }
+
+  document.addEventListener("pointerup", endSlider, true);
+  document.addEventListener("pointercancel", endSlider, true);
+  window.addEventListener("blur", endSlider);
+
+  document.addEventListener("input", function (e) {
+    if (!isSlider(e.target)) return;
+    var s = e.target;
+    if (draggingSlider) {
+      fillSlider(+s.value);
+      s.style.setProperty("--fp-p", (((+s.value - MIN) / (MAX - MIN)) * 100).toFixed(2) + "%");
+      var n = pick(s.value, zVal != null ? zVal : cols());
+      if (n !== (zVal != null ? zVal : cols())) {
+        zVal = n;
+        if (!zRaf) {
+          zRaf = requestAnimationFrame(function () {
+            zRaf = 0;
+            if (zVal == null) return;
+            var v = zVal;
+            zVal = null;
+            setCols(v, false);
+            zVal = v;
+          });
+        }
+      }
+      return;
+    }
+    var k = clampCols(s.value);
+    saveCols(k);
+    setCols(k, true);
+  });
+
+  document.addEventListener("mouseover", onEnter);
+  document.addEventListener("mouseout", function (e) {
+    var tile = e.target.closest && e.target.closest(".fp-tile");
+    if (!tile || isTable() || (e.relatedTarget && tile.contains(e.relatedTarget))) return;
+    tile.setAttribute("data-fp-leaving", "");
+    clearTimeout(tile._leave);
+    tile._leave = setTimeout(function () {
+      tile.removeAttribute("data-fp-leaving");
+    }, 600);
+  });
+
+  window.addEventListener("resize", function () {
+    if (draggingSlider) return;
+    clearTimeout(window.fpResize);
+    window.fpResize = setTimeout(function () {
+      hoverScale();
+      if (isTable()) applyScatter(grid(), false);
+      else applyRowWidths(grid());
+    }, 150);
+  });
+})();
