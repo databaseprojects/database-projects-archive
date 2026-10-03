@@ -266,6 +266,12 @@
     return Math.max(Math.floor((window.innerHeight || 700) * 0.72), h, Math.ceil(tw * 1.12 * 2.2));
   }
 
+  function tableSpreadHeight(g, tw, items) {
+    var base = surfaceHeight(g, tw, items);
+    var vh = window.innerHeight || 700;
+    return Math.ceil(Math.max(base * 2.2, vh * 2.6));
+  }
+
   function freshTilt(used) {
     var deg = 0;
     var guard = 0;
@@ -327,7 +333,7 @@
     var items = tiles();
     var tw = tileWidth(g);
     var gw = g.clientWidth || 800;
-    var gh = surfaceHeight(g, tw, items);
+    var gh = tableSpreadHeight(g, tw, items);
     g.style.setProperty("--fp-table-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
