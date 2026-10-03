@@ -19,7 +19,6 @@
   var itemDrag = null;
   var zLock = null;
   var draggingSlider = false;
-  var zRaf = 0;
   var zVal = null;
 
   function grid() {
@@ -878,8 +877,15 @@
     };
     if (animate && g.getAttribute("data-columns") !== String(n)) flow(apply, { step: 26, total: 620, dur: 520 });
     else apply();
+    if (draggingSlider) fitDragHeight(g);
     clearTimeout(window.fpHsA);
     window.fpHsA = setTimeout(hoverScale, 60);
+  }
+
+  function fitDragHeight(g) {
+    if (!zLock || !g) return;
+    g.style.minHeight = "0px";
+    g.style.minHeight = g.offsetHeight + "px";
   }
 
   function landAsTable(g) {
@@ -1521,18 +1527,9 @@
       fillSlider(+s.value);
       s.style.setProperty("--fp-p", (((+s.value - MIN) / (MAX - MIN)) * 100).toFixed(2) + "%");
       var n = pick(s.value, zVal != null ? zVal : cols());
-      if (n !== (zVal != null ? zVal : cols())) {
+      if (n !== cols()) {
         zVal = n;
-        if (!zRaf) {
-          zRaf = requestAnimationFrame(function () {
-            zRaf = 0;
-            if (zVal == null) return;
-            var v = zVal;
-            zVal = null;
-            setCols(v, false);
-            zVal = v;
-          });
-        }
+        setCols(n, false);
       }
       return;
     }

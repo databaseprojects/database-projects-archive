@@ -441,6 +441,10 @@ html.fp-sizing {
   overflow-anchor: none;
 }
 
+html.fp-sizing .fp-grid[data-fp-layout="row"] {
+  align-content: start;
+}
+
 html.fp-sizing .fp-grid .fp-tile {
   pointer-events: none;
 }
