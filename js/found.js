@@ -1053,16 +1053,59 @@
 
   function showFace(tile, url) {
     var img = imgOf(tile);
+    if (!img || !url) return;
     var hi = hiSrc(url, Math.max(800, Math.ceil((tile.offsetWidth || 400) * (window.devicePixelRatio || 1)))) || url;
-    if (!img) return;
-    img.style.opacity = "0.35";
+    if ((img.getAttribute("src") || "") === hi) {
+      img.style.opacity = "";
+      return;
+    }
+    tile._faceGen = (tile._faceGen || 0) + 1;
+    var gen = tile._faceGen;
+    img.style.opacity = "";
     var pre = new Image();
-    pre.onload = function () {
-      img.src = hi;
-      img.style.opacity = "1";
+    var reveal = function () {
+      if (tile._faceGen !== gen) return;
+      var current = imgOf(tile);
+      if (!current || !current.parentNode) return;
+      var next = document.createElement("img");
+      next.alt = current.alt || "";
+      next.draggable = false;
+      next.setAttribute("referrerpolicy", "no-referrer");
+      next.setAttribute("decoding", "sync");
+      next.style.position = "absolute";
+      next.style.left = "0";
+      next.style.top = "0";
+      next.style.width = "100%";
+      next.style.height = "100%";
+      next.style.margin = "0";
+      next.style.objectFit = "contain";
+      next.style.opacity = "0";
+      next.style.pointerEvents = "none";
+      next.src = hi;
+      current.parentNode.appendChild(next);
+      void next.offsetWidth;
+      next.style.opacity = "1";
+      setTimeout(function () {
+        if (!next.parentNode) return;
+        if (tile._faceGen !== gen) {
+          next.parentNode.removeChild(next);
+          return;
+        }
+        next.style.position = "";
+        next.style.left = "";
+        next.style.top = "";
+        next.style.width = "";
+        next.style.height = "";
+        next.style.margin = "";
+        next.style.objectFit = "";
+        next.style.opacity = "";
+        next.style.pointerEvents = "";
+        if (current.parentNode) current.parentNode.removeChild(current);
+      }, 240);
     };
-    pre.onerror = function () {
-      img.style.opacity = "1";
+    pre.onload = function () {
+      if (pre.decode) pre.decode().then(reveal).catch(reveal);
+      else reveal();
     };
     pre.src = hi;
   }
@@ -1234,25 +1277,47 @@
       }
       var next = lb._side === "a" ? "b" : "a";
       var url = next === "b" ? lb._back : lb._front;
-      lb.classList.add("fp-lb-flip");
-      big.style.opacity = "0.35";
       var pre = new Image();
-      pre.onload = function () {
-        lockGalleryBox(big, pre.naturalWidth, pre.naturalHeight, false);
-        big.src = hiSrc(url, 2000) || url;
+      var revealLb = function () {
+        if (lb._closing) return;
+        var src = hiSrc(url, 2000) || url;
+        var cover = document.createElement("img");
+        cover.alt = big.alt || "";
+        cover.draggable = false;
+        cover.style.position = "absolute";
+        cover.style.left = "50%";
+        cover.style.top = "50%";
+        cover.style.transform = "translate(-50%, -50%)";
+        cover.style.transition = "opacity 0.22s ease";
+        cover.style.opacity = "0";
+        cover.style.pointerEvents = "none";
+        cover.style.margin = "0";
+        lockGalleryBox(cover, pre.naturalWidth, pre.naturalHeight, false);
+        cover.src = src;
+        lb.appendChild(cover);
+        void cover.offsetWidth;
+        cover.style.opacity = "1";
         lb._side = next;
         tile.setAttribute("data-fp-side", next);
         showFace(tile, url);
-        big.style.opacity = "1";
         showHint(lb, next === "b" ? "back" : "front");
         setTimeout(function () {
-          lb.classList.remove("fp-lb-flip");
-        }, 200);
+          if (lb._closing) return;
+          lockGalleryBox(big, pre.naturalWidth, pre.naturalHeight, false);
+          big.style.opacity = "";
+          big.src = src;
+          requestAnimationFrame(function () {
+            if (cover.parentNode) cover.parentNode.removeChild(cover);
+          });
+        }, 240);
+      };
+      pre.onload = function () {
+        if (pre.decode) pre.decode().then(revealLb).catch(revealLb);
+        else revealLb();
       };
       pre.onerror = function () {
-        big.style.opacity = "1";
+        big.style.opacity = "";
         flashNoBack();
-        lb.classList.remove("fp-lb-flip");
       };
       pre.src = hiSrc(url, 2000) || url;
     });
