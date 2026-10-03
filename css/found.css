@@ -1,7 +1,6 @@
 /* Found Photographs: row grid, table scatter, floating layout, hover, flip, lightbox. */
 
-/* Table prints paint over the index nav. The layout bar stays above them.
-   Antigravity prints paint over the nav and the layout bar. */
+/* Table and antigravity prints paint over the index nav and the layout bar. */
 body.fp-under-menu .bk-nav {
   position: relative;
   z-index: 1;
@@ -16,7 +15,7 @@ body.fp-under-menu .fp-bar {
 }
 
 body.fp-under-menu .fp-grid[data-fp-layout="table"] {
-  z-index: 5;
+  z-index: 60;
 }
 
 body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
