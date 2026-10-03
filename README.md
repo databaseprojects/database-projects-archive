@@ -6,7 +6,7 @@ The index is a small Courier filing line: uppercase, tracked out, with a black r
 
 - [Home](/) — title, a short note, and the index
 - [Vacant](/vacant-storefronts/) — storefront photographs, tag filter, column slider, hover, lightbox with a location map
-- [Found Photographs](/found-photographs/) — print-like grid, row and table layouts, hover, front/back flip, lightbox
+- [Found Photographs](/found-photographs/) — print-like grid, row and table layouts, floating antigravity, hover, front/back flip, lightbox
 
 The other names in the index are placeholders.
 
