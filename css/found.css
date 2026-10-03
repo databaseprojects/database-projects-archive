@@ -509,15 +509,18 @@ body.fp-lb-lock {
   overflow: hidden;
 }
 
-.fp-lb-sv {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: min(280px, 46vw);
-  height: 168px;
-  border: 0;
-  z-index: 2;
-  background: #111;
+.fp-lb .vsf-lb-map {
+  cursor: pointer;
+}
+
+.fp-lb.fp-lb-on .vsf-lb-map {
+  opacity: 1;
+  transform: none;
+}
+
+.fp-lb .vsf-lb-map-label {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .fp-hint {

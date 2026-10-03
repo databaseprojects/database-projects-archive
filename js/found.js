@@ -1284,6 +1284,65 @@
     }, 340);
   }
 
+  var FP_STREET_VIEW = "https://www.google.com/maps/@49.1640345,-123.1508345,3a,39.4y,49.79h,87.19t/data=!3m7!1e1!3m5!1sJJILwv4Qfcgqe0m6MTGuLg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D2.8115008902333756%26panoid%3DJJILwv4Qfcgqe0m6MTGuLg%26yaw%3D49.788455987928074!7i16384!8i8192?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D";
+
+  function svLatLon(src) {
+    var m = String(src || "").match(/!1d(-?\d+(?:\.\d+)?)!2d(-?\d+(?:\.\d+)?)/);
+    if (!m) return null;
+    return { lat: +m[1], lon: +m[2] };
+  }
+
+  function fpTileXY(lat, lon, z) {
+    var n = Math.pow(2, z);
+    var x = ((lon + 180) / 360) * n;
+    var rad = (lat * Math.PI) / 180;
+    var y = (1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * n;
+    return { x: x, y: y };
+  }
+
+  function mountStreetMap(lb, lat, lon) {
+    var box = document.createElement("div");
+    box.className = "vsf-lb-map";
+    box.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(FP_STREET_VIEW, "_blank", "noopener,noreferrer");
+    });
+    var z = 15;
+    var p = fpTileXY(lat, lon, z);
+    var tx = Math.floor(p.x);
+    var ty = Math.floor(p.y);
+    var tiles = document.createElement("div");
+    tiles.className = "vsf-lb-tiles";
+    var originX = (tx - 1) * 256;
+    var originY = (ty - 1) * 256;
+    var pointX = p.x * 256;
+    var pointY = p.y * 256;
+    tiles.style.transform = "translate(" + (74 - (pointX - originX)) + "px," + (74 - (pointY - originY)) + "px)";
+    for (var dy = -1; dy <= 1; dy++) {
+      for (var dx = -1; dx <= 1; dx++) {
+        var im = document.createElement("img");
+        im.alt = "";
+        im.draggable = false;
+        im.src = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/" + z + "/" + (ty + dy) + "/" + (tx + dx);
+        im.style.left = (dx + 1) * 256 + "px";
+        im.style.top = (dy + 1) * 256 + "px";
+        tiles.appendChild(im);
+      }
+    }
+    var dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "vsf-lb-dot";
+    dot.setAttribute("aria-label", "click for Street View");
+    var label = document.createElement("div");
+    label.className = "vsf-lb-map-label";
+    label.textContent = "click for Street View";
+    box.appendChild(tiles);
+    box.appendChild(dot);
+    box.appendChild(label);
+    lb.appendChild(box);
+  }
+
   function openLb(tile) {
     if (draggingSlider) return;
     var img = imgOf(tile);
@@ -1354,15 +1413,8 @@
     big.src = lo;
     lb.appendChild(big);
     var sv = tile.getAttribute("data-sv");
-    if (sv) {
-      var frame = document.createElement("iframe");
-      frame.className = "fp-lb-sv";
-      frame.title = "Street View";
-      frame.setAttribute("loading", "lazy");
-      frame.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-      frame.src = sv;
-      lb.appendChild(frame);
-    }
+    var svPos = svLatLon(sv);
+    if (svPos) mountStreetMap(lb, svPos.lat, svPos.lon);
     document.body.appendChild(lb);
     document.body.classList.add("fp-lb-lock");
     if (big.complete && big.naturalWidth) onOpenLoad();
