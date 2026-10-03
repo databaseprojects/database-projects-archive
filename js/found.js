@@ -297,6 +297,17 @@
     return deg;
   }
 
+  function assignTableSkew() {
+    var used = {};
+    tiles().forEach(function (tile) {
+      tile.removeAttribute("data-fp-straight");
+      tile.removeAttribute("data-fp-tilt");
+      var deg = freshTilt(used);
+      tile.setAttribute("data-fp-tilt", String(deg));
+      tile.style.setProperty("--fp-rot", deg.toFixed(1) + "deg");
+    });
+  }
+
   function straighten(tile) {
     tile.setAttribute("data-fp-straight", "1");
     tile.setAttribute("data-fp-tilt", "0");
@@ -983,6 +994,9 @@
       if (!isFinite(ny)) ny = 0;
       var th = tile.offsetHeight || tileHeight(tile, tw);
       if (ny + th > bottom) bottom = ny + th;
+    });
+    assignTableSkew();
+    items.forEach(function (tile) {
       persist(tile);
     });
     var gh = Math.max(surfaceHeight(g, tw, items), Math.ceil(bottom + 8));
@@ -1003,6 +1017,7 @@
           g.setAttribute("data-fp-layout", mode);
           clearAntigravity(g);
           applyScatter(g, false);
+          if (from === "row") assignTableSkew();
         }
       } else if (mode === "antigravity") {
         g.style.removeProperty("--fp-table-h");
