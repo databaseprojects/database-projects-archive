@@ -195,7 +195,6 @@
     var tip = document.createElement("span");
     tip.className = "fp-flip-hint";
     tip.setAttribute("aria-hidden", "true");
-    tip.textContent = "\u21bb";
     tile.appendChild(tip);
   }
 

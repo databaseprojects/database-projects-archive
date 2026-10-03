@@ -321,18 +321,15 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 
 .fp-flip-hint {
   position: absolute;
-  right: 7px;
-  bottom: 6px;
+  right: 0;
+  bottom: 0;
+  width: 42%;
+  height: 42%;
   z-index: 6;
   pointer-events: none;
   opacity: 0;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 15px;
-  line-height: 1;
-  color: rgba(25, 25, 25, 0.58);
-  text-shadow: 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 0 rgba(255, 255, 255, 0.5);
-  letter-spacing: 0;
-  transition: opacity 0.18s ease;
+  background: radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.1) 38%, rgba(0, 0, 0, 0) 72%);
+  transition: opacity 0.2s ease;
   user-select: none;
 }
 
