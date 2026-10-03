@@ -257,9 +257,26 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   pointer-events: none;
 }
 
-@media (max-width: 767px) {
+/* Below 590px the right-aligned control row covers the title or runs off the bar.
+   Same controls, still inside this bar; they drop to the next line instead of disappearing. */
+@media (max-width: 590px) {
   .fp-zoom {
-    display: none;
+    position: static;
+    top: auto;
+    right: auto;
+    transform: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.4em;
+    white-space: normal;
+    row-gap: 0.35em;
+  }
+
+  .fp-zslider {
+    max-width: 100%;
   }
 }
 
