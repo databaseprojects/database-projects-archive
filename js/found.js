@@ -231,6 +231,7 @@
       tile.style.removeProperty("--fp-ny");
       tile.style.removeProperty("--fp-sc");
       tile.style.removeProperty("--fp-z");
+      tile.style.removeProperty("--fp-rot");
       tile.classList.remove("fp-dragging");
     });
   }
@@ -240,6 +241,46 @@
     var area = items.length * tw * tw * 1.12 * 0.62;
     var h = Math.ceil(area / Math.max(gw, 1));
     return Math.max(Math.floor((window.innerHeight || 700) * 0.72), h, Math.ceil(tw * 1.12 * 2.2));
+  }
+
+  function freshTilt(used) {
+    var deg = 0;
+    var guard = 0;
+    do {
+      var sign = Math.random() < 0.5 ? -1 : 1;
+      deg = Math.round(sign * (2.2 + Math.random() * 3.6) * 10) / 10;
+      guard += 1;
+    } while (used[String(deg)] && guard < 40);
+    used[String(deg)] = true;
+    return deg;
+  }
+
+  function tableTilt(tile, saved, used) {
+    if (tile.getAttribute("data-fp-straight") === "1") return 0;
+    var held = parseFloat(tile.getAttribute("data-fp-tilt"));
+    if (isFinite(held)) {
+      used[String(held)] = true;
+      return held;
+    }
+    if (saved && typeof saved.r === "number") {
+      if (saved.r === 0) {
+        tile.setAttribute("data-fp-straight", "1");
+        tile.setAttribute("data-fp-tilt", "0");
+        return 0;
+      }
+      tile.setAttribute("data-fp-tilt", String(saved.r));
+      used[String(saved.r)] = true;
+      return saved.r;
+    }
+    var deg = freshTilt(used);
+    tile.setAttribute("data-fp-tilt", String(deg));
+    return deg;
+  }
+
+  function straighten(tile) {
+    tile.setAttribute("data-fp-straight", "1");
+    tile.setAttribute("data-fp-tilt", "0");
+    tile.style.setProperty("--fp-rot", "0deg");
   }
 
   function applyScatter(g, force) {
@@ -257,6 +298,7 @@
     g.style.setProperty("--fp-table-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
+    var usedTilts = {};
     items.forEach(function (tile, i) {
       var key = posKey(tile);
       var saved = map[key];
@@ -283,10 +325,12 @@
         z = 1 + (i % 20);
       }
       if (z > zTop) zTop = z;
+      var rot = tableTilt(tile, saved, usedTilts);
       tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
       tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
       tile.style.setProperty("--fp-sc", sc.toFixed(3));
       tile.style.setProperty("--fp-z", String(z));
+      tile.style.setProperty("--fp-rot", rot.toFixed(1) + "deg");
       tile.style.setProperty("--fp-tile-w", tw + "px");
       tile.style.setProperty("--fp-tx", "0px");
       tile.style.setProperty("--fp-ty", "0px");
@@ -296,12 +340,17 @@
 
   function persist(tile) {
     var map = loadPos();
-    map[posKey(tile)] = {
+    var straight = tile.getAttribute("data-fp-straight") === "1";
+    var tilt = parseFloat(tile.getAttribute("data-fp-tilt"));
+    var rec = {
       x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
       y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
       s: clampSc(parseFloat(tile.style.getPropertyValue("--fp-sc"))),
       z: parseInt(tile.style.getPropertyValue("--fp-z"), 10) || zTop
     };
+    if (straight) rec.r = 0;
+    else if (isFinite(tilt)) rec.r = tilt;
+    map[posKey(tile)] = rec;
     savePos(map);
   }
 
@@ -337,6 +386,7 @@
       tile.style.removeProperty("--fp-ny");
       tile.style.removeProperty("--fp-sc");
       tile.style.removeProperty("--fp-z");
+      tile.style.removeProperty("--fp-rot");
       tile.style.removeProperty("--fp-tile-w");
       tile.style.removeProperty("--fp-tx");
       tile.style.removeProperty("--fp-ty");
@@ -1229,6 +1279,7 @@
       if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
       itemDrag.moved = true;
       clearPending();
+      if (isTable()) straighten(itemDrag.tile);
       itemDrag.tile.classList.add("fp-dragging");
       document.documentElement.classList.add("fp-item-dragging");
       zTop += 1;
