@@ -381,6 +381,8 @@
     g = g || grid();
     if (!g) return;
     g.style.removeProperty("--fp-ag-h");
+    g.classList.remove("fp-ag-in");
+    clearTimeout(g._agShade);
     tiles().forEach(function (tile) {
       tile.style.removeProperty("--fp-nx");
       tile.style.removeProperty("--fp-ny");
@@ -441,6 +443,31 @@
     return null;
   }
 
+  function layoutSeed(tile, g) {
+    var mode = g.getAttribute("data-fp-layout");
+    if (mode === "table" || mode === "antigravity") {
+      var nx = parseFloat(tile.style.getPropertyValue("--fp-nx"));
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      if (isFinite(nx) && isFinite(ny)) return { x: nx, y: ny, exact: true };
+    }
+    var gRect = g.getBoundingClientRect();
+    var r = tile.getBoundingClientRect();
+    if (!(r.width > 0)) return null;
+    var cx = r.left + r.width / 2 - gRect.left + (g.scrollLeft || 0);
+    var cy = r.top + r.height / 2 - gRect.top + (g.scrollTop || 0);
+    var w = tile.offsetWidth || r.width;
+    var h = tile.offsetHeight || r.height;
+    return { x: cx - w / 2, y: cy - h / 2, exact: true };
+  }
+
+  function beginShadowFade(g) {
+    g.classList.add("fp-ag-in");
+    clearTimeout(g._agShade);
+    g._agShade = setTimeout(function () {
+      g.classList.remove("fp-ag-in");
+    }, 1500);
+  }
+
   function applyAntigravity(g, seeds, opts) {
     opts = opts || {};
     var resume = !!opts.resume;
@@ -461,23 +488,26 @@
     agLastTs = 0;
     if (!resume) agRampT0 = 0;
     var items = tiles();
+    items.forEach(function (tile) {
+      (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
+        if (a.id === "fp-flow") a.cancel();
+      });
+    });
     var tw = tileWidth(g);
     var gw = g.clientWidth || g.offsetWidth || 800;
     if (!(gw > 40)) gw = Math.min(document.documentElement.clientWidth || 900, 1200);
-    var gh = agSurfaceHeight(g, tw, items);
-    g.style.setProperty("--fp-ag-h", gh + "px");
-    g.style.setProperty("--fp-tile-w", tw + "px");
-    var pad = 6;
+    var heldH = g.offsetHeight || 0;
+    var pad = 0;
     var bodies = [];
     var maxZ = zTop;
     var planned = [];
+    var fit = heldH;
     items.forEach(function (tile, i) {
       var th = tileHeight(tile, tw);
-      var maxX = Math.max(pad, gw - tw - pad);
-      var maxY = Math.max(pad, gh - th - pad);
-      var seed = seeds && seeds[posKey(tile)];
+      var laid = layoutSeed(tile, g);
+      var seed = laid || (seeds && seeds[posKey(tile)]);
       var prev = prevByEl[posKey(tile)];
-      var seedPad = seed && seed.fromRect ? 0 : pad;
+      var exact = !!(laid && laid.exact);
       var nx;
       var ny;
       if (seed && typeof seed.x === "number" && typeof seed.y === "number") {
@@ -489,18 +519,26 @@
       } else if (prev && isFinite(prev.x) && isFinite(prev.y)) {
         nx = prev.x;
         ny = prev.y;
-        seedPad = pad;
+        exact = true;
       } else {
-        nx = pad + Math.random() * Math.max(1, maxX - pad);
-        ny = pad + Math.random() * Math.max(1, maxY - pad);
-        seedPad = pad;
+        nx = 6 + Math.random() * Math.max(1, gw - tw - 12);
+        ny = 6 + Math.random() * Math.max(1, 200);
+        exact = false;
       }
-      if (nx < seedPad) nx = seedPad;
-      else if (nx > maxX) nx = maxX;
-      if (ny < seedPad) ny = seedPad;
-      else if (ny > maxY) ny = maxY;
+      if (!exact) {
+        var maxX0 = Math.max(0, gw - tw);
+        if (nx < 0) nx = 0;
+        else if (nx > maxX0) nx = maxX0;
+        if (ny < 0) ny = 0;
+      }
+      var bottom = ny + th;
+      if (bottom > fit) fit = bottom;
       planned.push({ tile: tile, i: i, th: th, nx: nx, ny: ny, prev: prev });
     });
+    var gh = Math.max(agSurfaceHeight(g, tw, items), Math.ceil(fit));
+    g.style.setProperty("--fp-ag-h", gh + "px");
+    g.style.setProperty("--fp-tile-w", tw + "px");
+    if (!resume) beginShadowFade(g);
     g.setAttribute("data-fp-layout", "antigravity");
     planned.forEach(function (p) {
       var tile = p.tile;

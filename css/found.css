@@ -386,6 +386,7 @@
   cursor: grab;
   translate: 0 0;
   scale: var(--fp-sc, 1);
+  rotate: var(--fp-rot, 0deg);
   transform-origin: center center;
   z-index: var(--fp-z, 1);
   opacity: 1;
@@ -395,8 +396,14 @@
   transition: box-shadow 0.25s ease;
 }
 
+.fp-grid[data-fp-layout="antigravity"].fp-ag-in .fp-tile {
+  transition: box-shadow 1.4s ease;
+}
+
 .fp-grid[data-fp-layout="antigravity"] .fp-tile:hover {
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  rotate: var(--fp-rot, 0deg);
+  transition: box-shadow 0.25s ease;
 }
 
 .fp-grid[data-fp-layout="antigravity"] .fp-tile.fp-dragging {
