@@ -609,12 +609,22 @@
       var vx;
       var vy;
       var held0;
+      var driftAt = 0;
+      var spin = 0;
+      var rot = 0;
+      var rot0 = 0;
+      var spinLim = 0;
       if (resume && prev && isFinite(prev.vx) && isFinite(prev.vy)) {
         tvx = prev.tvx != null ? prev.tvx : prev.vx;
         tvy = prev.tvy != null ? prev.tvy : prev.vy;
         vx = prev.vx;
         vy = prev.vy;
         held0 = !!prev.held;
+        driftAt = prev.driftAt != null ? prev.driftAt : 0;
+        spin = prev.spin || 0;
+        rot = isFinite(prev.rot) ? prev.rot : 0;
+        rot0 = isFinite(prev.rot0) ? prev.rot0 : rot;
+        spinLim = prev.spinLim || 0;
       } else {
         var vel = randSpeed();
         tvx = vel.vx;
@@ -622,6 +632,15 @@
         vx = 0;
         vy = 0;
         held0 = false;
+        driftAt = performance.now() + Math.random() * 1300;
+        if (!resume && window.fpAgPrev === "table") {
+          var base = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+          if (!isFinite(base)) base = 0;
+          rot = base;
+          rot0 = base;
+          spin = (Math.random() < 0.5 ? -1 : 1) * (1.6 + Math.random() * 2.6);
+          spinLim = 6 + Math.random() * 8;
+        }
       }
       var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
       if (!(prevSc > 0) && prev && prev.sc > 0) prevSc = prev.sc;
@@ -647,7 +666,12 @@
         w: tw,
         h: p.th,
         sc: sc,
-        held: held0
+        held: held0,
+        driftAt: driftAt,
+        spin: spin,
+        rot: rot,
+        rot0: rot0,
+        spinLim: spinLim
       });
     });
     zTop = Math.max(zTop, maxZ + 1);
@@ -662,11 +686,8 @@
     agTick = function (ts) {
       if (!agRunning) return;
       if (!agLastTs) agLastTs = ts;
-      if (!agRampT0) agRampT0 = ts;
       var dt = Math.min(0.05, (ts - agLastTs) / 1000);
       agLastTs = ts;
-      var ramp = Math.min(1, (ts - agRampT0) / AG_RAMP_MS);
-      ramp = ramp * ramp * (3 - 2 * ramp);
       var gg = grid();
       if (!gg || gg.getAttribute("data-fp-layout") !== "antigravity") {
         stopAntigravity();
@@ -705,11 +726,12 @@
           continue;
         }
         if (b.held) continue;
+        if (b.driftAt != null && ts < b.driftAt) continue;
         var th2 = tileHeight(b.tile, b.w);
         if (Math.abs(th2 - b.h) > 2) b.h = th2;
         if (b.tvx != null && b.tvy != null) {
-          b.vx = b.tvx * ramp;
-          b.vy = b.tvy * ramp;
+          b.vx = b.tvx;
+          b.vy = b.tvy;
         }
         b.x += b.vx * dt;
         b.y += b.vy * dt;
@@ -735,6 +757,19 @@
         }
         b.tile.style.setProperty("--fp-nx", b.x.toFixed(1) + "px");
         b.tile.style.setProperty("--fp-ny", b.y.toFixed(1) + "px");
+        if (b.spin) {
+          b.rot += b.spin * dt;
+          var lim = b.spinLim || 12;
+          var origin = isFinite(b.rot0) ? b.rot0 : 0;
+          if (b.rot > origin + lim) {
+            b.rot = origin + lim;
+            b.spin = -Math.abs(b.spin);
+          } else if (b.rot < origin - lim) {
+            b.rot = origin - lim;
+            b.spin = Math.abs(b.spin);
+          }
+          b.tile.style.setProperty("--fp-rot", b.rot.toFixed(2) + "deg");
+        }
       }
       agRaf = requestAnimationFrame(agTick);
     };
@@ -1494,7 +1529,11 @@
       if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
       itemDrag.moved = true;
       clearPending();
-      if (isTable() || isAg()) straighten(itemDrag.tile);
+      if (isTable() || isAg()) {
+        straighten(itemDrag.tile);
+        var spun = agBodyFor(itemDrag.tile);
+        if (spun) spun.spin = 0;
+      }
       itemDrag.tile.classList.add("fp-dragging");
       document.documentElement.classList.add("fp-item-dragging");
       zTop += 1;
