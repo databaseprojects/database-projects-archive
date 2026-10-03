@@ -895,15 +895,16 @@
     };
     if (animate && g.getAttribute("data-columns") !== String(n)) flow(apply, { step: 26, total: 620, dur: 520 });
     else apply();
-    if (draggingSlider) fitDragHeight(g);
+    if (draggingSlider) packDragRows(g);
     clearTimeout(window.fpHsA);
     window.fpHsA = setTimeout(hoverScale, 60);
   }
 
-  function fitDragHeight(g) {
-    if (!zLock || !g) return;
-    g.style.minHeight = "0px";
-    g.style.minHeight = g.offsetHeight + "px";
+  function packDragRows(g) {
+    if (!g) return;
+    g.style.minHeight = "";
+    g.style.alignContent = "start";
+    g.style.gridAutoRows = "max-content";
   }
 
   function landAsTable(g) {
@@ -1337,7 +1338,7 @@
     zLock = { oy: h.style.overflowY, mh: g ? g.style.minHeight : "", y: window.scrollY };
     h.classList.add("fp-sizing");
     h.style.overflowY = window.innerWidth - h.clientWidth > 0 ? "scroll" : "hidden";
-    if (g) g.style.minHeight = g.offsetHeight + "px";
+    if (g) packDragRows(g);
   }
 
   function unlockScroll() {
@@ -1348,7 +1349,11 @@
     zLock = null;
     h.classList.remove("fp-sizing");
     h.style.overflowY = l.oy;
-    if (g) g.style.minHeight = l.mh;
+    if (g) {
+      g.style.minHeight = l.mh;
+      g.style.alignContent = "";
+      g.style.gridAutoRows = "";
+    }
   }
 
   function pick(v, current) {
@@ -1591,10 +1596,39 @@
     return t && t.classList && t.classList.contains("fp-zslider");
   }
 
+  function colsFromClientX(s, clientX) {
+    var rect = s.getBoundingClientRect();
+    var span = rect.width || 1;
+    var thumb = 14;
+    var usable = Math.max(1, span - thumb);
+    var t = (clientX - rect.left - thumb / 2) / usable;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return pick(MIN + t * (MAX - MIN), zVal != null ? zVal : cols());
+  }
+
+  function reflowSlider(s, clientX) {
+    if (!s) return;
+    var n = clientX == null ? pick(s.value, zVal != null ? zVal : cols()) : colsFromClientX(s, clientX);
+    if (n !== cols()) {
+      zVal = n;
+      setCols(n, false);
+    } else {
+      packDragRows(grid());
+    }
+  }
+
   document.addEventListener("pointerdown", function (e) {
     if (!isSlider(e.target)) return;
     draggingSlider = true;
     lockScroll();
+    reflowSlider(e.target, e.clientX);
+  }, true);
+
+  document.addEventListener("pointermove", function (e) {
+    if (!draggingSlider) return;
+    var s = isSlider(e.target) ? e.target : document.querySelector(".fp-zslider");
+    reflowSlider(s, e.clientX);
   }, true);
 
   function endSlider() {
