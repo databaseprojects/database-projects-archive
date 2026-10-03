@@ -442,6 +442,15 @@
     lb.appendChild(box);
   }
 
+  function galleryBox(nw, nh, allowUpscale) {
+    if (!(nw > 1) || !(nh > 1)) return null;
+    var maxW = Math.min(window.innerWidth * 0.96, 1600);
+    var maxH = window.innerHeight * 0.92;
+    var fit = Math.min(maxW / nw, maxH / nh);
+    if (!allowUpscale && fit > 1) fit = 1;
+    return { w: nw * fit, h: nh * fit };
+  }
+
   function openLb(tile) {
     if (dragging) return;
     var img = imgOf(tile);
@@ -461,6 +470,21 @@
     big.alt = img.alt || "";
     big.draggable = false;
     big.style.opacity = "0";
+    var nw = img.naturalWidth;
+    var nh = img.naturalHeight;
+    var allowUpscale = !!(src && src !== lo);
+    if (!(nw > 1) || !(nh > 1)) {
+      nw = thumb.width;
+      nh = thumb.height;
+      allowUpscale = true;
+    }
+    var box = galleryBox(nw, nh, allowUpscale);
+    if (box) {
+      big.style.width = box.w.toFixed(2) + "px";
+      big.style.height = box.h.toFixed(2) + "px";
+      big.style.maxWidth = "none";
+      big.style.maxHeight = "none";
+    }
     function measureAndZoom() {
       var r = big.getBoundingClientRect();
       if (!r.width || !r.height) return false;
@@ -494,10 +518,10 @@
     }
     big.addEventListener("load", onOpenLoad);
     big.src = lo;
-    if (big.complete && big.naturalWidth) onOpenLoad();
     lb.appendChild(big);
     document.body.appendChild(lb);
     document.body.classList.add("vsf-lb-lock");
+    if (big.complete && big.naturalWidth) onOpenLoad();
     if (gpsOn) {
       var lat = parseFloat(tile.getAttribute("data-lat"));
       var lon = parseFloat(tile.getAttribute("data-lon"));
