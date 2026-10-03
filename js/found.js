@@ -370,7 +370,7 @@
       } catch (e) {}
     }
     var items = tiles();
-    var tw = tileWidth(g);
+    var tw = columnWidth(g);
     var gw = g.clientWidth || 800;
     var gh = tableSpreadHeight(g, tw, items);
     g.style.setProperty("--fp-table-h", gh + "px");

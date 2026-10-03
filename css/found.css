@@ -405,13 +405,13 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 .fp-grid[data-fp-layout="antigravity"] .fp-tile:hover,
 .fp-grid[data-fp-layout="antigravity"] .fp-tile[data-fp-leaving] {
   position: absolute;
-  left: var(--fp-nx, 0px);
-  top: var(--fp-ny, 0px);
+  left: 0;
+  top: 0;
   width: var(--fp-tile-w, 430px);
   max-width: min(100%, 430px);
   margin: 0;
   cursor: grab;
-  translate: 0 0;
+  translate: var(--fp-nx, 0px) var(--fp-ny, 0px);
   scale: var(--fp-sc, 1);
   rotate: var(--fp-rot, 0deg);
   transform-origin: center center;
@@ -422,6 +422,7 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   touch-action: none;
   overflow: hidden;
   transition: box-shadow 0.25s ease;
+  will-change: translate;
 }
 
 .fp-grid[data-fp-layout="antigravity"].fp-ag-in .fp-tile {
