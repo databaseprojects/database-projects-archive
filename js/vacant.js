@@ -461,7 +461,7 @@
     big.alt = img.alt || "";
     big.draggable = false;
     big.style.opacity = "0";
-    function place() {
+    function measureAndZoom() {
       var r = big.getBoundingClientRect();
       if (!r.width || !r.height) return false;
       var s = Math.min(thumb.width / r.width, thumb.height / r.height);
@@ -473,20 +473,28 @@
       void big.offsetWidth;
       big.style.transition = "";
       requestAnimationFrame(function () {
+        if (lb._closing) return;
         lb.classList.add("vsf-lb-on");
         big.style.transform = "none";
       });
       return true;
     }
-    big.addEventListener("load", function () {
-      requestAnimationFrame(function () {
-        if (!place()) {
-          lb.classList.add("vsf-lb-on");
-          big.style.opacity = "1";
-        }
-      });
-    });
+    function settleOpen() {
+      if (lb._opened || lb._closing) return;
+      lb._opened = true;
+      big.removeEventListener("load", onOpenLoad);
+      if (!measureAndZoom()) {
+        lb.classList.add("vsf-lb-on");
+        big.style.opacity = "1";
+      }
+    }
+    function onOpenLoad() {
+      if (lb._opened || lb._closing) return;
+      requestAnimationFrame(settleOpen);
+    }
+    big.addEventListener("load", onOpenLoad);
     big.src = lo;
+    if (big.complete && big.naturalWidth) onOpenLoad();
     lb.appendChild(big);
     document.body.appendChild(lb);
     document.body.classList.add("vsf-lb-lock");

@@ -977,7 +977,7 @@
     big.alt = img.alt || "";
     big.draggable = false;
     big.style.opacity = "0";
-    function place() {
+    function measureAndZoom() {
       var r = big.getBoundingClientRect();
       if (!r.width || !r.height) return false;
       var s = Math.min(thumb.width / r.width, thumb.height / r.height);
@@ -989,16 +989,26 @@
       void big.offsetWidth;
       big.style.transition = "";
       requestAnimationFrame(function () {
+        if (lb._closing) return;
         lb.classList.add("fp-lb-on");
         big.style.transform = "none";
       });
       return true;
     }
-    big.addEventListener("load", function () {
-      requestAnimationFrame(function () {
-        if (!place()) lb.classList.add("fp-lb-on");
-      });
-    });
+    function settleOpen() {
+      if (lb._opened || lb._closing) return;
+      lb._opened = true;
+      big.removeEventListener("load", onOpenLoad);
+      if (!measureAndZoom()) {
+        lb.classList.add("fp-lb-on");
+        big.style.opacity = "1";
+      }
+    }
+    function onOpenLoad() {
+      if (lb._opened || lb._closing) return;
+      requestAnimationFrame(settleOpen);
+    }
+    big.addEventListener("load", onOpenLoad);
     big.src = lo;
     lb.appendChild(big);
     var sv = tile.getAttribute("data-sv");
@@ -1013,14 +1023,7 @@
     }
     document.body.appendChild(lb);
     document.body.classList.add("fp-lb-lock");
-    if (big.complete && big.naturalWidth) {
-      requestAnimationFrame(function () {
-        if (!place()) {
-          lb.classList.add("fp-lb-on");
-          big.style.opacity = "1";
-        }
-      });
-    }
+    if (big.complete && big.naturalWidth) onOpenLoad();
     if (src && src !== lo) {
       var hi = new Image();
       hi.onload = function () {
