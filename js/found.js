@@ -639,8 +639,8 @@
         spinLo = prev.spinLo > 0 ? prev.spinLo : spinLim;
       } else {
         var vel = randSpeed();
-        tvx = vel.vx;
-        tvy = vel.vy;
+        tvx = vel.vx * 0.85;
+        tvy = vel.vy * 0.85;
         vx = 0;
         vy = 0;
         held0 = false;
