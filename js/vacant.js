@@ -597,10 +597,34 @@
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  function wakeImages() {
+    var g = grid();
+    if (!g) return;
+    // A tap that opens this page can leave async image frames unpainted until the
+    // next gesture. Ask for the decode now, and if a restored page lost its bitmap,
+    // start the request again.
+    Array.prototype.forEach.call(g.querySelectorAll("img"), function (img) {
+      var src = img.getAttribute("src");
+      if (!src) return;
+      img.decoding = "sync";
+      img.loading = "eager";
+      var redo = function () {
+        if (img.naturalWidth > 0) return;
+        img.src = src;
+      };
+      if (img.decode) img.decode().then(function () {}).catch(redo);
+      else if (img.complete) redo();
+    });
+    void g.offsetHeight;
+  }
+
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
+  wakeImages();
   setTimeout(hoverScale, 80);
+  window.addEventListener("load", wakeImages);
+  window.addEventListener("pageshow", wakeImages);
 
   document.addEventListener("click", function (e) {
     var tag = e.target.closest && e.target.closest(".vsf-tag");
