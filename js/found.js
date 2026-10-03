@@ -177,6 +177,12 @@
     return Math.max(80, tw / ar);
   }
 
+  function aspectHeight(tile, tw) {
+    var ar = parseFloat(tile.style.getPropertyValue("--fp-ar"));
+    if (!(ar > 0.2 && ar < 5)) ar = 0.85;
+    return tw / ar;
+  }
+
   function syncAspect(tile) {
     var img = imgOf(tile);
     if (!img) return;
@@ -351,7 +357,24 @@
       var ny;
       var sc;
       var z;
-      if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
+      var oldW = parseFloat(tile.style.getPropertyValue("--fp-tile-w"));
+      var oldX = parseFloat(tile.style.getPropertyValue("--fp-nx"));
+      var oldY = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      var placed = isFinite(oldX) && isFinite(oldY) && isFinite(oldW) && oldW > 0;
+      if (!force && placed && Math.abs(oldW - tw) > 0.5) {
+        var oldH = aspectHeight(tile, oldW);
+        nx = oldX + (oldW - tw) / 2;
+        ny = oldY + (oldH - aspectHeight(tile, tw)) / 2;
+        var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
+        sc = prevSc > 0 ? clampSc(prevSc) : saved ? clampSc(saved.s) : 1;
+        z = parseInt(tile.style.getPropertyValue("--fp-z"), 10);
+        if (!(z > 0)) z = saved && typeof saved.z === "number" ? saved.z : 1 + (i % 20);
+        if (saved) {
+          saved.x = nx;
+          saved.y = ny;
+          map[key] = saved;
+        }
+      } else if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
         nx = saved.x;
         ny = saved.y;
         sc = clampSc(saved.s);
@@ -378,6 +401,7 @@
       tile.style.setProperty("--fp-ty", "0px");
     });
     zTop += 1;
+    if (!force && map) savePos(map);
   }
 
   function persist(tile) {
@@ -599,6 +623,12 @@
         if (nx < 0) nx = 0;
         else if (nx > maxX0) nx = maxX0;
         if (ny < 0) ny = 0;
+      }
+      var oldW = parseFloat(tile.style.getPropertyValue("--fp-tile-w"));
+      if (exact && isFinite(oldW) && oldW > 0 && Math.abs(oldW - tw) > 0.5) {
+        var oldTh = aspectHeight(tile, oldW);
+        nx += (oldW - tw) / 2;
+        ny += (oldTh - aspectHeight(tile, tw)) / 2;
       }
       var bottom = ny + th;
       if (bottom > fit) fit = bottom;
