@@ -210,6 +210,12 @@
       ag.classList.toggle("fp-ag-on", agOn);
       ag.setAttribute("aria-pressed", agOn ? "true" : "false");
     }
+    var scatter = mode === "table" || mode === "antigravity";
+    document.body.classList.toggle("fp-under-menu", scatter);
+    if (scatter) {
+      var nav = document.querySelector(".bk-nav");
+      if (nav) document.documentElement.style.setProperty("--fp-nav-h", nav.offsetHeight + "px");
+    }
   }
 
   function applyRowWidths(g) {
@@ -283,6 +289,11 @@
     tile.style.setProperty("--fp-rot", "0deg");
   }
 
+  function topInset(g) {
+    var top = g.getBoundingClientRect().top;
+    return isFinite(top) ? -top : 0;
+  }
+
   function applyScatter(g, force) {
     if (!g) return;
     var map = force ? {} : loadPos();
@@ -298,13 +309,14 @@
     g.style.setProperty("--fp-table-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
+    var minY = topInset(g);
     var usedTilts = {};
     items.forEach(function (tile, i) {
       var key = posKey(tile);
       var saved = map[key];
       var th = tileHeight(tile, tw);
       var maxX = Math.max(pad, gw - tw - pad);
-      var maxY = Math.max(pad, gh - th - pad);
+      var maxY = Math.max(minY, gh - th - pad);
       var nx;
       var ny;
       var sc;
@@ -317,10 +329,10 @@
         if (nx > gw - tw * 0.3) nx = maxX;
         if (ny > gh - th * 0.3) ny = maxY;
         if (nx < -tw * 0.2) nx = pad;
-        if (ny < -th * 0.2) ny = pad;
+        if (ny < minY) ny = minY;
       } else {
         nx = pad + Math.random() * Math.max(1, maxX - pad);
-        ny = pad + Math.random() * Math.max(1, maxY - pad);
+        ny = minY + Math.random() * Math.max(1, maxY - minY);
         sc = clampSc(0.97 + Math.random() * 0.06);
         z = 1 + (i % 20);
       }
@@ -613,6 +625,7 @@
       }
       var W = gg.clientWidth || gw;
       var H = parseFloat(gg.style.getPropertyValue("--fp-ag-h")) || gh;
+      var minY = topInset(gg);
       for (var i = 0; i < agBodies.length; i++) {
         var b = agBodies[i];
         if (!b || !b.tile) continue;
@@ -652,7 +665,7 @@
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         var maxXb = Math.max(pad, W - b.w - pad);
-        var maxYb = Math.max(pad, H - b.h - pad);
+        var maxYb = Math.max(minY, H - b.h - pad);
         if (b.x < pad) {
           b.x = pad;
           b.vx = Math.abs(b.vx);
@@ -662,8 +675,8 @@
           b.vx = -Math.abs(b.vx);
           if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
         }
-        if (b.y < pad) {
-          b.y = pad;
+        if (b.y < minY) {
+          b.y = minY;
           b.vy = Math.abs(b.vy);
           if (b.tvy != null) b.tvy = Math.abs(b.tvy);
         } else if (b.y > maxYb) {
@@ -690,6 +703,7 @@
     var gh = parseFloat(g.style.getPropertyValue("--fp-ag-h"));
     if (!(gh > 40)) gh = agSurfaceHeight(g, tw, tiles());
     var pad = 6;
+    var minY = topInset(g);
     var now = performance.now();
     var step = Math.min(14, 360 / Math.max(agBodies.length, 1));
     agBodies.forEach(function (b, i) {
@@ -709,12 +723,12 @@
       if (th > 0) b.h = th;
       var bw = b.w || tw;
       var maxX = Math.max(pad, gw - bw - pad);
-      var maxY = Math.max(pad, gh - b.h - pad);
+      var maxY = Math.max(minY, gh - b.h - pad);
       var tx = pad + Math.random() * Math.max(1, maxX - pad);
-      var ty = pad + Math.random() * Math.max(1, maxY - pad);
+      var ty = minY + Math.random() * Math.max(1, maxY - minY);
       if (Math.abs(tx - b.x) < 12 && Math.abs(ty - b.y) < 12) {
         tx = pad + Math.random() * Math.max(1, maxX - pad);
-        ty = pad + Math.random() * Math.max(1, maxY - pad);
+        ty = minY + Math.random() * Math.max(1, maxY - minY);
       }
       b.shufX0 = b.x;
       b.shufY0 = b.y;
@@ -836,7 +850,27 @@
     window.fpHsA = setTimeout(hoverScale, 60);
   }
 
+  function landAsTable(g) {
+    g.setAttribute("data-fp-layout", "table");
+    g.style.removeProperty("--fp-ag-h");
+    g.classList.remove("fp-ag-in");
+    clearTimeout(g._agShade);
+    var items = tiles();
+    var tw = tileWidth(g);
+    var bottom = 0;
+    items.forEach(function (tile) {
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      if (!isFinite(ny)) ny = 0;
+      var th = tile.offsetHeight || tileHeight(tile, tw);
+      if (ny + th > bottom) bottom = ny + th;
+      persist(tile);
+    });
+    var gh = Math.max(surfaceHeight(g, tw, items), Math.ceil(bottom + 8));
+    g.style.setProperty("--fp-table-h", gh + "px");
+  }
+
   function setLayout(mode, animate) {
+    var from = layoutMode();
     mode = saveLayout(mode);
     var g = grid();
     if (!g) return;
@@ -844,9 +878,12 @@
     var agSeeds = mode === "antigravity" ? captureAgSeeds(g) : null;
     var apply = function () {
       if (mode === "table") {
-        g.setAttribute("data-fp-layout", mode);
-        clearAntigravity(g);
-        applyScatter(g, false);
+        if (from === "antigravity") landAsTable(g);
+        else {
+          g.setAttribute("data-fp-layout", mode);
+          clearAntigravity(g);
+          applyScatter(g, false);
+        }
       } else if (mode === "antigravity") {
         g.style.removeProperty("--fp-table-h");
         applyAntigravity(g, agSeeds);
@@ -858,7 +895,7 @@
       }
       syncLayoutButtons();
     };
-    if (animate && mode !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
+    if (animate && mode !== "antigravity" && !(from === "antigravity" && mode === "table")) flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
     setTimeout(hoverScale, 80);
   }
@@ -1317,7 +1354,7 @@
       if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
       itemDrag.moved = true;
       clearPending();
-      if (isTable()) straighten(itemDrag.tile);
+      if (isTable() || isAg()) straighten(itemDrag.tile);
       itemDrag.tile.classList.add("fp-dragging");
       document.documentElement.classList.add("fp-item-dragging");
       zTop += 1;

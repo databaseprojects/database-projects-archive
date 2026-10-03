@@ -1,5 +1,20 @@
 /* Found Photographs: row grid, table scatter, floating layout, hover, flip, lightbox. */
 
+body.fp-under-menu .bk-nav,
+body.fp-under-menu .fp-bar {
+  position: sticky;
+  z-index: 200000;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+body.fp-under-menu .bk-nav {
+  top: 0;
+}
+
+body.fp-under-menu .fp-bar {
+  top: var(--fp-nav-h, 48px);
+}
+
 .fp-bar {
   display: block;
   position: relative;
@@ -369,7 +384,7 @@
   width: 100%;
   min-height: var(--fp-ag-h, 78vh);
   height: auto;
-  overflow: hidden;
+  overflow: visible;
   padding: 0;
   box-sizing: border-box;
 }
@@ -409,8 +424,9 @@
 .fp-grid[data-fp-layout="antigravity"] .fp-tile.fp-dragging {
   cursor: grabbing;
   z-index: 100000;
+  rotate: 0deg;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
-  transition: none;
+  transition: rotate 0.18s ease;
 }
 
 html.fp-sizing {
@@ -435,7 +451,7 @@ html.fp-item-dragging * {
 .fp-lb {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: 300000;
   display: flex;
   align-items: center;
   justify-content: center;
