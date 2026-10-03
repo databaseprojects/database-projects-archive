@@ -574,10 +574,21 @@
     if (zLock) return;
     var h = document.documentElement;
     var g = grid();
-    zLock = { oy: h.style.overflowY, mh: g ? g.style.minHeight : "" };
+    zLock = {
+      oy: h.style.overflowY,
+      mh: g ? g.style.minHeight : "",
+      ac: g ? g.style.alignContent : "",
+      rows: g ? g.style.gridAutoRows : ""
+    };
     h.classList.add("vsf-sizing");
     h.style.overflowY = window.innerWidth - h.clientWidth > 0 ? "scroll" : "hidden";
-    if (g) g.style.minHeight = g.offsetHeight + "px";
+    if (g) {
+      g.style.minHeight = g.offsetHeight + "px";
+      /* The locked height would otherwise stretch the row tracks, so the photos
+         shrink while each row stays where it was. Pack the rows to the new size. */
+      g.style.alignContent = "start";
+      g.style.gridAutoRows = "max-content";
+    }
   }
 
   function unlockScroll() {
@@ -585,7 +596,11 @@
     document.documentElement.classList.remove("vsf-sizing");
     document.documentElement.style.overflowY = zLock.oy;
     var g = grid();
-    if (g) g.style.minHeight = zLock.mh;
+    if (g) {
+      g.style.minHeight = zLock.mh;
+      g.style.alignContent = zLock.ac;
+      g.style.gridAutoRows = zLock.rows;
+    }
     zLock = null;
   }
 
