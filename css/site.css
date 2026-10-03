@@ -135,3 +135,80 @@ body {
 a:active {
   opacity: 0.7;
 }
+
+/* Site-wide lightbox map. Later pages reuse these classes for the same frame. */
+.vsf-lb-map {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  width: 148px;
+  height: 148px;
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease 0.12s, transform 0.35s ease 0.12s;
+  background: #0e0e0e;
+  cursor: default;
+}
+
+.vsf-lb.vsf-lb-on .vsf-lb-map {
+  opacity: 1;
+  transform: none;
+}
+
+.vsf-lb-tiles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 768px;
+  height: 768px;
+}
+
+.vsf-lb-tiles img {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  display: block;
+  pointer-events: none;
+}
+
+.vsf-lb-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  padding: 0;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
+  appearance: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.vsf-lb-dot:hover {
+  transform: scale(1.35);
+}
+
+.vsf-lb-map-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #f3efe4;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: none;
+}
