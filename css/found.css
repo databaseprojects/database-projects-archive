@@ -320,24 +320,6 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   z-index: 5;
 }
 
-.fp-flip-hint {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 42%;
-  height: 42%;
-  z-index: 6;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.1) 38%, rgba(0, 0, 0, 0) 72%);
-  transition: opacity 0.2s ease;
-  user-select: none;
-}
-
-.fp-tile:hover .fp-flip-hint {
-  opacity: 1;
-}
-
 .fp-grid[data-fp-layout="table"] {
   position: relative;
   display: block;
@@ -435,6 +417,21 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   rotate: 0deg;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
   transition: rotate 0.18s ease;
+}
+
+.fp-tile[data-back]:not([data-back=""]):hover {
+  overflow: visible;
+}
+
+.fp-tile[data-back]:not([data-back=""]):hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 1px;
+  background: #000;
+  pointer-events: none;
 }
 
 html.fp-sizing {

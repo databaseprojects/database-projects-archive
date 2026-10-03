@@ -189,15 +189,6 @@
     else img.addEventListener("load", go, { once: true });
   }
 
-  function ensureHint(tile) {
-    if (!hasBack(tile)) return;
-    if (tile.querySelector(".fp-flip-hint")) return;
-    var tip = document.createElement("span");
-    tip.className = "fp-flip-hint";
-    tip.setAttribute("aria-hidden", "true");
-    tile.appendChild(tip);
-  }
-
   function setCount() {
     var c = document.querySelector(".fp-count");
     var n = tiles().length;
@@ -1437,7 +1428,6 @@
 
   try {
     tiles().forEach(function (tile) {
-      ensureHint(tile);
       syncAspect(tile);
       if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
     });
