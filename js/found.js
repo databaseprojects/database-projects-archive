@@ -294,6 +294,11 @@
     return isFinite(top) ? -top : 0;
   }
 
+  function pageTop(g) {
+    var top = g.getBoundingClientRect().top + (window.pageYOffset || 0);
+    return isFinite(top) ? -top : 0;
+  }
+
   function applyScatter(g, force) {
     if (!g) return;
     var map = force ? {} : loadPos();
@@ -652,7 +657,7 @@
       }
       var W = gg.clientWidth || gw;
       var H = parseFloat(gg.style.getPropertyValue("--fp-ag-h")) || gh;
-      var minY = topInset(gg);
+      var minY = pageTop(gg);
       for (var i = 0; i < agBodies.length; i++) {
         var b = agBodies[i];
         if (!b || !b.tile) continue;

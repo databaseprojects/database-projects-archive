@@ -3,8 +3,7 @@
 /* Table prints paint over the index nav. The layout bar stays above them.
    Antigravity prints paint over the nav and the layout bar. */
 body.fp-under-menu .bk-nav {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1;
   background: transparent;
 }
