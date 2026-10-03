@@ -47,9 +47,27 @@
     return n >= MIN && n <= MAX ? n : DEF;
   }
 
+  function phoneSlider() {
+    return window.matchMedia("(max-width: 767px)").matches;
+  }
+
+  function sliderEnds() {
+    return phoneSlider() ? { min: 4, max: 7 } : { min: MIN, max: MAX };
+  }
+
+  function clampSlider(n) {
+    var ends = sliderEnds();
+    n = Math.round(+n);
+    if (n < ends.min) return ends.min;
+    if (n > ends.max) return ends.max;
+    return n;
+  }
+
   function cols() {
     var g = grid();
-    return clampCols(g ? g.getAttribute("data-columns") || DEF : DEF);
+    var raw = g ? g.getAttribute("data-columns") || DEF : DEF;
+    if (phoneSlider()) return clampSlider(raw);
+    return clampCols(raw);
   }
 
   function storedCols() {
@@ -87,8 +105,11 @@
   function fillSlider(v) {
     var s = document.querySelector(".vsf-zslider");
     if (!s) return;
+    var ends = sliderEnds();
     var shown = dragging ? +s.value : v;
-    s.style.setProperty("--vsf-p", (((shown - MIN) / (MAX - MIN)) * 100).toFixed(2) + "%");
+    s.min = String(ends.min);
+    s.max = String(ends.max);
+    s.style.setProperty("--vsf-p", (((shown - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
     if (!dragging && +s.value !== v) s.value = v;
   }
 
@@ -307,7 +328,7 @@
   }
 
   function setCols(n, animate) {
-    n = clampCols(n);
+    n = clampSlider(n);
     fillSlider(n);
     var g = grid();
     if (!g) return;
@@ -569,14 +590,15 @@
   }
 
   function pick(v, current) {
+    var ends = sliderEnds();
     v = +v;
-    if (!(v >= MIN)) v = MIN;
-    if (v > MAX) v = MAX;
-    return Math.abs(v - current) < HYST ? current : clampCols(v);
+    if (!(v >= ends.min)) v = ends.min;
+    if (v > ends.max) v = ends.max;
+    return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
   setCount(allTiles().length, allTiles().length);
-  setCols(storedCols(), false);
+  setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
   setTimeout(hoverScale, 80);
 
@@ -650,7 +672,7 @@
     zVal = null;
     dragging = false;
     setCols(n, false);
-    saveCols(n);
+    if (!phoneSlider()) saveCols(n);
     requestAnimationFrame(function () {
       unlockScroll();
       hoverScale();
@@ -665,7 +687,8 @@
     if (!isSlider(e.target)) return;
     var s = e.target;
     if (dragging) {
-      s.style.setProperty("--vsf-p", (((+s.value - MIN) / (MAX - MIN)) * 100).toFixed(2) + "%");
+      var ends = sliderEnds();
+      s.style.setProperty("--vsf-p", (((+s.value - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
       var n = pick(s.value, zVal != null ? zVal : cols());
       if (n !== (zVal != null ? zVal : cols())) {
         zVal = n;
@@ -681,14 +704,22 @@
       }
       return;
     }
-    var k = clampCols(s.value);
-    saveCols(k);
+    var k = clampSlider(s.value);
+    if (!phoneSlider()) saveCols(k);
     setCols(k, true);
   });
 
+  var phoneCols = phoneSlider();
   window.addEventListener("resize", function () {
     if (dragging) return;
     clearTimeout(window.vsfResize);
-    window.vsfResize = setTimeout(hoverScale, 150);
+    window.vsfResize = setTimeout(function () {
+      var nowPhone = phoneSlider();
+      if (nowPhone !== phoneCols) {
+        phoneCols = nowPhone;
+        setCols(nowPhone ? 4 : storedCols(), false);
+      }
+      hoverScale();
+    }, 150);
   });
 })();

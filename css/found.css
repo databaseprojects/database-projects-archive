@@ -293,6 +293,12 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   justify-items: center;
 }
 
+@media (max-width: 767px) {
+  .fp-grid[data-fp-layout="row"] {
+    grid-template-columns: repeat(var(--fp-cols, 4), minmax(0, 1fr));
+  }
+}
+
 .fp-tile {
   position: relative;
   z-index: 1;

@@ -223,6 +223,10 @@
   .vsf-zslider {
     max-width: 100%;
   }
+
+  .vsf-grid:not(.vsf-empty) {
+    grid-template-columns: repeat(var(--vsf-cols, 4), minmax(0, 1fr));
+  }
 }
 
 .vsf-grid {
