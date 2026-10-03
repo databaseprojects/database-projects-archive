@@ -109,7 +109,7 @@
     var maxH = window.innerHeight * 0.92;
     var fit = Math.min(maxW / nw, maxH / nh);
     if (!allowUpscale && fit > 1) fit = 1;
-    fit *= 0.9;
+    fit *= 0.81;
     return { w: nw * fit, h: nh * fit };
   }
 
