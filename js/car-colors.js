@@ -1,7 +1,18 @@
 /* Sample cars only. Each dot is a photographed car; there are no image files.
-   metallic is kept on the record even though the dot shows color alone. */
+   metallic is kept on the record even though the dot shows color alone.
+   The size slider and antigravity follow Found Photographs. */
 (function () {
-  var DOT = 16;
+  var COL_KEY = "ccZoomCols";
+  var MIN = 6;
+  var MAX = 20;
+  var DEF = 6;
+  var BIG = 36;
+  var SMALL = 14;
+  var PHONE_SMALL = 22;
+  var HYST = 0.72;
+  var DRAG_THRESH = 5;
+  var AG_SPEED_MIN = 12;
+  var AG_SPEED_MAX = 58;
   var FAMILIES = ["red", "orange", "yellow", "green", "blue", "purple", "brown", "gray", "white", "black"];
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
 
@@ -111,6 +122,7 @@
 
   var CARS = PAINTS.map(function (row, i) {
     return {
+      i: i,
       family: row[0],
       hex: row[1],
       hue: row[2],
@@ -122,6 +134,67 @@
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll(".cc-mode");
   var mode = "family";
+  var agOn = false;
+  var agPrev = "family";
+  var sizeN = DEF;
+  var phone = false;
+  var draggingSlider = false;
+  var zVal = null;
+  var agRaf = 0;
+  var agBodies = [];
+  var agRunning = false;
+  var agLastTs = 0;
+  var itemDrag = null;
+  var zTop = 30;
+
+  function phoneSlider() {
+    return window.matchMedia("(max-width: 767px)").matches;
+  }
+
+  function sliderEnds() {
+    return phoneSlider() ? { min: 4, max: 7 } : { min: MIN, max: MAX };
+  }
+
+  function clampSlider(n) {
+    var ends = sliderEnds();
+    n = Math.round(+n);
+    if (n < ends.min) return ends.min;
+    if (n > ends.max) return ends.max;
+    return n;
+  }
+
+  function storedCols() {
+    var n = DEF;
+    try {
+      n = parseInt(localStorage.getItem(COL_KEY), 10);
+    } catch (e) {}
+    n = Math.round(+n);
+    return n >= MIN && n <= MAX ? n : DEF;
+  }
+
+  function saveCols(n) {
+    try {
+      localStorage.setItem(COL_KEY, String(n));
+    } catch (e) {}
+  }
+
+  function dotPx() {
+    var ends = sliderEnds();
+    var t = (sizeN - ends.min) / (ends.max - ends.min);
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var small = phoneSlider() ? PHONE_SMALL : SMALL;
+    return Math.round(BIG + (small - BIG) * t);
+  }
+
+  function gapPx() {
+    return Math.max(8, Math.round(dotPx() * 0.4));
+  }
+
+  function applyMetrics() {
+    stage.style.setProperty("--cc-dot", dotPx() + "px");
+    stage.style.setProperty("--cc-gap", gapPx() + "px");
+  }
 
   function lightness(hex) {
     var n = parseInt(hex.slice(1), 16);
@@ -151,6 +224,7 @@
     el.dataset.metallic = car.metallic ? "metallic" : "flat";
     el.dataset.region = car.region;
     el.dataset.hex = car.hex;
+    el.dataset.i = String(car.i);
     if (car.hue == null) el.dataset.hue = "";
     else el.dataset.hue = String(car.hue);
     return el;
@@ -205,12 +279,13 @@
     var width = Math.max(160, stage.clientWidth);
     var rng = mulberry32(0xC0105);
     var order = shuffle(CARS, rng);
-    var minD = DOT + 6;
+    var size = dotPx();
+    var minD = size + Math.max(8, Math.round(size * 0.28));
     var placed = [];
     var height = Math.max(360, Math.ceil((order.length * minD * minD * 1.35) / width));
 
     function fits(x, y, limit) {
-      if (x < 0 || y < 0 || x > width - DOT || y > limit - DOT) return false;
+      if (x < 0 || y < 0 || x > width - size || y > limit - size) return false;
       for (var i = 0; i < placed.length; i++) {
         var dx = placed[i].x - x;
         var dy = placed[i].y - y;
@@ -223,8 +298,8 @@
       var found = null;
       var n;
       for (n = 0; n < 240; n++) {
-        var x = rng() * (width - DOT);
-        var y = rng() * (height - DOT);
+        var x = rng() * (width - size);
+        var y = rng() * (height - size);
         if (fits(x, y, height)) {
           found = { x: x, y: y };
           break;
@@ -236,11 +311,11 @@
         scan: for (grow = 0; grow < 40 && !found; grow++) {
           if (grow > 0) height += step;
           var yScan;
-          for (yScan = 0; yScan <= height - DOT; yScan += step) {
+          for (yScan = 0; yScan <= height - size; yScan += step) {
             var xScan;
-            for (xScan = 0; xScan <= width - DOT; xScan += step) {
-              var jx = Math.min(width - DOT, Math.max(0, xScan + (rng() - 0.5) * 6));
-              var jy = Math.min(height - DOT, Math.max(0, yScan + (rng() - 0.5) * 6));
+            for (xScan = 0; xScan <= width - size; xScan += step) {
+              var jx = Math.min(width - size, Math.max(0, xScan + (rng() - 0.5) * 6));
+              var jy = Math.min(height - size, Math.max(0, yScan + (rng() - 0.5) * 6));
               if (fits(jx, jy, height)) {
                 found = { x: jx, y: jy };
                 break scan;
@@ -272,7 +347,7 @@
 
   function clump(count, maxW) {
     var golden = Math.PI * (3 - Math.sqrt(5));
-    var spacing = 22;
+    var spacing = dotPx() + 10;
     function measure(space) {
       var minX = Infinity;
       var minY = Infinity;
@@ -295,12 +370,12 @@
         pts: pts,
         minX: minX,
         minY: minY,
-        w: maxX - minX + DOT + 4,
-        h: maxY - minY + DOT + 4
+        w: maxX - minX + dotPx() + 4,
+        h: maxY - minY + dotPx() + 4
       };
     }
     var pack = measure(spacing);
-    while (spacing > 16 && pack.w > maxW) {
+    while (spacing > dotPx() + 4 && pack.w > maxW) {
       spacing -= 0.5;
       pack = measure(spacing);
     }
@@ -322,7 +397,7 @@
     wrap.className = "cc-regions";
     REGIONS.forEach(function (name) {
       var group = CARS.filter(function (car) { return car.region === name; });
-      var pack = clump(group.length, Math.max(DOT + 4, colW - 4));
+      var pack = clump(group.length, Math.max(dotPx() + 4, colW - 4));
       var block = document.createElement("section");
       block.className = "cc-cluster";
       var field = document.createElement("div");
@@ -361,12 +436,13 @@
   function renderHue() {
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
-    var gap = 8;
-    var cols = Math.max(1, Math.floor((width + gap) / (DOT + gap)));
+    var gap = gapPx();
+    var size = dotPx();
+    var cols = Math.max(1, Math.floor((width + gap) / (size + gap)));
     var sorted = CARS.slice().sort(hueOrder);
     var wrap = document.createElement("div");
     wrap.className = "cc-hue";
-    wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + DOT + "px)";
+    wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
     sorted.forEach(function (car, i) {
       var row = Math.floor(i / cols);
       var col = i % cols;
@@ -380,30 +456,499 @@
   }
 
   function render() {
+    applyMetrics();
     if (mode === "scatter") renderScatter();
     else if (mode === "region") renderRegion();
     else if (mode === "hue") renderHue();
     else renderFamily();
   }
 
+  function sliderEl() {
+    return document.querySelector(".cc-zslider");
+  }
+
+  function fillSlider(v) {
+    var s = sliderEl();
+    if (!s) return;
+    var ends = sliderEnds();
+    s.min = String(ends.min);
+    s.max = String(ends.max);
+    s.title = "Size (" + ends.min + " – " + ends.max + ") — left is larger";
+    if (draggingSlider) return;
+    s.style.setProperty("--cc-p", (((v - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
+    if (+s.value !== v) s.value = String(v);
+  }
+
+  function syncButtons() {
+    buttons.forEach(function (button) {
+      var on = !agOn && button.getAttribute("data-cc-mode") === mode;
+      button.classList.toggle("cc-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    var ag = document.querySelector(".cc-ag");
+    if (ag) {
+      ag.classList.toggle("cc-ag-on", agOn);
+      ag.setAttribute("aria-pressed", agOn ? "true" : "false");
+    }
+  }
+
+  function pick(v, current) {
+    var ends = sliderEnds();
+    v = +v;
+    if (!(v >= ends.min)) v = ends.min;
+    if (v > ends.max) v = ends.max;
+    return Math.abs(v - current) < HYST ? current : clampSlider(v);
+  }
+
+  function valueFromClientX(s, clientX) {
+    var rect = s.getBoundingClientRect();
+    var span = rect.width || 1;
+    var thumb = 14;
+    var usable = Math.max(1, span - thumb);
+    var t = (clientX - rect.left - thumb / 2) / usable;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var ends = sliderEnds();
+    s.style.setProperty("--cc-p", (t * 100).toFixed(2) + "%");
+    return pick(ends.min + t * (ends.max - ends.min), zVal != null ? zVal : sizeN);
+  }
+
+  function stopAg() {
+    agRunning = false;
+    if (agRaf) cancelAnimationFrame(agRaf);
+    agRaf = 0;
+    agBodies = [];
+    agLastTs = 0;
+  }
+
+  function agSurface(px, count, gw) {
+    var area = count * px * px * 1.8;
+    var h = Math.ceil(area / Math.max(gw, 1));
+    var vh = window.innerHeight || 700;
+    return Math.max(Math.floor(vh * 0.78), h, Math.ceil(px * 3));
+  }
+
+  function paintBody(b) {
+    b.el.style.setProperty("--cc-x", b.x.toFixed(1) + "px");
+    b.el.style.setProperty("--cc-y", b.y.toFixed(1) + "px");
+  }
+
+  function randSpeed() {
+    var s = AG_SPEED_MIN + Math.random() * (AG_SPEED_MAX - AG_SPEED_MIN);
+    var a = Math.random() * Math.PI * 2;
+    return { vx: Math.cos(a) * s, vy: Math.sin(a) * s };
+  }
+
+  function bodyFor(el) {
+    for (var i = 0; i < agBodies.length; i++) {
+      if (agBodies[i].el === el) return agBodies[i];
+    }
+    return null;
+  }
+
+  function resizeAg(px) {
+    agBodies.forEach(function (b) {
+      if (Math.abs(b.w - px) < 0.5) return;
+      b.x += (b.w - px) / 2;
+      b.y += (b.h - px) / 2;
+      b.w = px;
+      b.h = px;
+      paintBody(b);
+    });
+  }
+
+  function clampBodies() {
+    var field = stage.querySelector(".cc-ag-field");
+    if (!field) return;
+    var W = field.clientWidth || stage.clientWidth || 800;
+    var H = field.clientHeight || parseFloat(field.style.height) || 0;
+    var pad = 4;
+    agBodies.forEach(function (b) {
+      var maxX = Math.max(pad, W - b.w - pad);
+      var maxY = Math.max(pad, H - b.h - pad);
+      if (b.x < pad) b.x = pad;
+      else if (b.x > maxX) b.x = maxX;
+      if (b.y < pad) b.y = pad;
+      else if (b.y > maxY) b.y = maxY;
+      paintBody(b);
+    });
+  }
+
+  function tickAg(ts) {
+    if (!agRunning) return;
+    if (!agLastTs) agLastTs = ts;
+    var dt = Math.min(0.05, (ts - agLastTs) / 1000);
+    agLastTs = ts;
+    var field = stage.querySelector(".cc-ag-field");
+    if (!agOn || !field) {
+      stopAg();
+      return;
+    }
+    var W = field.clientWidth || stage.clientWidth || 800;
+    var H = field.clientHeight || parseFloat(field.style.height) || 0;
+    var pad = 4;
+    for (var i = 0; i < agBodies.length; i++) {
+      var b = agBodies[i];
+      if (!b || !b.el || b.held) continue;
+      if (b.driftAt != null && ts < b.driftAt) continue;
+      var ramp = 1;
+      if (b.easeMs > 1 && b.driftAt != null) {
+        var eu = (ts - b.driftAt) / b.easeMs;
+        if (eu < 1) {
+          if (eu < 0) eu = 0;
+          ramp = eu * eu * (3 - 2 * eu);
+        }
+      }
+      if (b.tvx != null && b.tvy != null) {
+        b.vx = b.tvx * ramp;
+        b.vy = b.tvy * ramp;
+      }
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      var maxX = Math.max(pad, W - b.w - pad);
+      var maxY = Math.max(pad, H - b.h - pad);
+      if (b.x < pad) {
+        b.x = pad;
+        b.vx = Math.abs(b.vx);
+        if (b.tvx != null) b.tvx = Math.abs(b.tvx);
+      } else if (b.x > maxX) {
+        b.x = maxX;
+        b.vx = -Math.abs(b.vx);
+        if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
+      }
+      if (b.y < pad) {
+        b.y = pad;
+        b.vy = Math.abs(b.vy);
+        if (b.tvy != null) b.tvy = Math.abs(b.tvy);
+      } else if (b.y > maxY) {
+        b.y = maxY;
+        b.vy = -Math.abs(b.vy);
+        if (b.tvy != null) b.tvy = -Math.abs(b.tvy);
+      }
+      paintBody(b);
+    }
+    agRaf = requestAnimationFrame(tickAg);
+  }
+
+  function enterAg() {
+    if (agOn) return;
+    agPrev = mode;
+    var stageRect = stage.getBoundingClientRect();
+    var nodes = Array.prototype.slice.call(stage.querySelectorAll(".cc-dot"));
+    var px = dotPx();
+    var prevH = stage.offsetHeight;
+    var gw = stage.clientWidth || 800;
+    var gh = Math.max(prevH, agSurface(px, nodes.length, gw));
+    var field = document.createElement("div");
+    field.className = "cc-ag-field";
+    field.style.setProperty("--cc-ag-h", Math.ceil(gh) + "px");
+    field.style.height = Math.ceil(gh) + "px";
+    var now = performance.now();
+    var bodies = [];
+    var seeds = nodes.map(function (el) {
+      var r = el.getBoundingClientRect();
+      return { el: el, x: r.left - stageRect.left, y: r.top - stageRect.top };
+    });
+    seeds.forEach(function (s, i) {
+      var el = s.el;
+      (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
+        if (an.id === "cc-flow") an.cancel();
+      });
+      el.style.removeProperty("left");
+      el.style.removeProperty("top");
+      el.style.removeProperty("grid-row");
+      el.style.removeProperty("grid-column");
+      el.style.setProperty("--cc-x", s.x.toFixed(1) + "px");
+      el.style.setProperty("--cc-y", s.y.toFixed(1) + "px");
+      el.style.setProperty("--cc-z", String(1 + (i % 24)));
+      field.appendChild(el);
+      var vel = randSpeed();
+      bodies.push({
+        el: el,
+        x: s.x,
+        y: s.y,
+        w: px,
+        h: px,
+        vx: 0,
+        vy: 0,
+        tvx: vel.vx * 0.85,
+        tvy: vel.vy * 0.85,
+        held: false,
+        driftAt: now + Math.random() * 1400,
+        easeMs: 560 + Math.random() * 1640
+      });
+    });
+    clear(stage);
+    stage.appendChild(field);
+    void field.offsetWidth;
+    agBodies = bodies;
+    agOn = true;
+    agRunning = true;
+    agLastTs = 0;
+    syncButtons();
+    agRaf = requestAnimationFrame(tickAg);
+  }
+
+  function snapshotDots() {
+    var map = new Map();
+    Array.prototype.forEach.call(stage.querySelectorAll(".cc-dot"), function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.width) map.set(el.dataset.i, { left: r.left, top: r.top, width: r.width, height: r.height });
+    });
+    return map;
+  }
+
+  function slideInto(before) {
+    if (!before) return;
+    void stage.offsetWidth;
+    var items = Array.prototype.slice.call(stage.querySelectorAll(".cc-dot"));
+    var step = Math.min(20, 480 / Math.max(items.length, 1));
+    var k = 0;
+    items.forEach(function (el) {
+      var a = before.get(el.dataset.i);
+      if (!a) return;
+      (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
+        if (an.id === "cc-flow") an.cancel();
+      });
+      var b = el.getBoundingClientRect();
+      if (!b.width) return;
+      var dx = a.left + a.width / 2 - (b.left + b.width / 2);
+      var dy = a.top + a.height / 2 - (b.top + b.height / 2);
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      var anim = el.animate(
+        [
+          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
+          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px)", offset: 0.82 },
+          { transform: "none" }
+        ],
+        { duration: 480, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
+      );
+      anim.id = "cc-flow";
+    });
+  }
+
+  function leaveAg(next) {
+    var before = snapshotDots();
+    stopAg();
+    agOn = false;
+    itemDrag = null;
+    mode = next || agPrev || "family";
+    syncButtons();
+    render();
+    slideInto(before);
+  }
+
+  function applySize(n) {
+    n = clampSlider(n);
+    var prevPx = dotPx();
+    sizeN = n;
+    var px = dotPx();
+    applyMetrics();
+    fillSlider(n);
+    if (agOn) {
+      if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
+      return;
+    }
+    if (Math.abs(prevPx - px) > 0.5 || !stage.querySelector(".cc-dot")) render();
+  }
+
   buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-      mode = button.getAttribute("data-cc-mode");
-      buttons.forEach(function (other) {
-        var on = other === button;
-        other.classList.toggle("cc-on", on);
-        other.setAttribute("aria-pressed", on ? "true" : "false");
-      });
+      if (draggingSlider) return;
+      var next = button.getAttribute("data-cc-mode");
+      if (agOn) {
+        leaveAg(next);
+        return;
+      }
+      if (next === mode) return;
+      mode = next;
+      syncButtons();
       render();
     });
   });
 
-  var resizeTimer = 0;
-  window.addEventListener("resize", function () {
-    if (mode === "family") return;
-    window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(render, 80);
+  document.addEventListener("click", function (e) {
+    if (draggingSlider || (itemDrag && itemDrag.moved)) return;
+    var ag = e.target.closest && e.target.closest(".cc-ag");
+    if (!ag) return;
+    e.preventDefault();
+    if (agOn) leaveAg(agPrev);
+    else enterAg();
   });
 
-  render();
+  document.addEventListener("pointerdown", function (e) {
+    if (!agOn || draggingSlider) return;
+    if (e.button != null && e.button !== 0) return;
+    if (e.target.closest && e.target.closest(".cc-controls")) return;
+    var el = e.target.closest && e.target.closest(".cc-dot");
+    if (!el) return;
+    var body = bodyFor(el);
+    if (!body) return;
+    zTop += 1;
+    el.style.setProperty("--cc-z", String(zTop));
+    body.held = true;
+    body.vx = 0;
+    body.vy = 0;
+    body.tvx = 0;
+    body.tvy = 0;
+    itemDrag = {
+      el: el,
+      pid: e.pointerId,
+      x0: e.clientX,
+      y0: e.clientY,
+      nx0: body.x,
+      ny0: body.y,
+      moved: false,
+      samples: [{ x: e.clientX, y: e.clientY, t: performance.now() }]
+    };
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  document.addEventListener("pointermove", function (e) {
+    if (!itemDrag || itemDrag.pid !== e.pointerId) return;
+    var dx = e.clientX - itemDrag.x0;
+    var dy = e.clientY - itemDrag.y0;
+    if (!itemDrag.moved) {
+      if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
+      itemDrag.moved = true;
+      itemDrag.el.classList.add("cc-dragging");
+    }
+    e.preventDefault();
+    var body = bodyFor(itemDrag.el);
+    if (!body) return;
+    body.x = itemDrag.nx0 + dx;
+    body.y = itemDrag.ny0 + dy;
+    body.held = true;
+    body.driftAt = 0;
+    body.easeMs = 1;
+    paintBody(body);
+    var now = performance.now();
+    itemDrag.samples.push({ x: e.clientX, y: e.clientY, t: now });
+    while (itemDrag.samples.length > 12 || (itemDrag.samples.length > 2 && now - itemDrag.samples[0].t > 120)) {
+      itemDrag.samples.shift();
+    }
+  });
+
+  function endDrag(e) {
+    if (!itemDrag || (e.pointerId != null && itemDrag.pid !== e.pointerId)) return;
+    var d = itemDrag;
+    itemDrag = null;
+    d.el.classList.remove("cc-dragging");
+    var body = bodyFor(d.el);
+    if (!body) return;
+    body.held = false;
+    body.x = parseFloat(d.el.style.getPropertyValue("--cc-x")) || body.x;
+    body.y = parseFloat(d.el.style.getPropertyValue("--cc-y")) || body.y;
+    if (!d.moved) {
+      body.vx = 0;
+      body.vy = 0;
+      body.tvx = 0;
+      body.tvy = 0;
+      return;
+    }
+    var samples = d.samples || [];
+    var tvx = 0;
+    var tvy = 0;
+    var nowU = performance.now();
+    var lastS = samples.length ? samples[samples.length - 1] : null;
+    if (lastS && nowU - lastS.t < 120 && samples.length >= 2) {
+      var a = samples[0];
+      var b = samples[samples.length - 1];
+      var dt = (b.t - a.t) / 1000;
+      if (dt > 0.008) {
+        tvx = (b.x - a.x) / dt;
+        tvy = (b.y - a.y) / dt;
+      }
+    }
+    var tmag = Math.sqrt(tvx * tvx + tvy * tvy);
+    var THROW_MAX = 160;
+    if (tmag > THROW_MAX) {
+      tvx = (tvx / tmag) * THROW_MAX;
+      tvy = (tvy / tmag) * THROW_MAX;
+    }
+    body.driftAt = 0;
+    body.easeMs = 1;
+    if (tmag < 1) {
+      body.vx = 0;
+      body.vy = 0;
+      body.tvx = 0;
+      body.tvy = 0;
+    } else {
+      body.vx = tvx;
+      body.vy = tvy;
+      body.tvx = tvx;
+      body.tvy = tvy;
+    }
+  }
+
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", endDrag);
+
+  function isSlider(t) {
+    return t && t.classList && t.classList.contains("cc-zslider");
+  }
+
+  document.addEventListener("pointerdown", function (e) {
+    if (!isSlider(e.target)) return;
+    draggingSlider = true;
+    document.documentElement.classList.add("cc-sizing");
+    var n = valueFromClientX(e.target, e.clientX);
+    if (n !== sizeN) {
+      zVal = n;
+      applySize(n);
+    }
+  }, true);
+
+  document.addEventListener("pointermove", function (e) {
+    if (!draggingSlider) return;
+    var s = isSlider(e.target) ? e.target : sliderEl();
+    if (!s) return;
+    var n = valueFromClientX(s, e.clientX);
+    if (n !== sizeN) {
+      zVal = n;
+      applySize(n);
+    }
+  }, true);
+
+  function endSlider() {
+    if (!draggingSlider) return;
+    var n = zVal != null ? zVal : sizeN;
+    zVal = null;
+    draggingSlider = false;
+    document.documentElement.classList.remove("cc-sizing");
+    applySize(n);
+    if (!phoneSlider()) saveCols(n);
+  }
+
+  document.addEventListener("pointerup", endSlider, true);
+  document.addEventListener("pointercancel", endSlider, true);
+  window.addEventListener("blur", endSlider);
+
+  document.addEventListener("input", function (e) {
+    if (!isSlider(e.target)) return;
+    if (draggingSlider) return;
+    var k = clampSlider(e.target.value);
+    if (!phoneSlider()) saveCols(k);
+    applySize(k);
+  });
+
+  phone = phoneSlider();
+  applySize(phone ? 4 : storedCols());
+  syncButtons();
+
+  var resizeTimer = 0;
+  window.addEventListener("resize", function () {
+    if (draggingSlider) return;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(function () {
+      var nowPhone = phoneSlider();
+      if (nowPhone !== phone) {
+        phone = nowPhone;
+        applySize(nowPhone ? 4 : storedCols());
+        return;
+      }
+      if (agOn) clampBodies();
+      else if (mode !== "family") render();
+    }, 80);
+  });
 })();

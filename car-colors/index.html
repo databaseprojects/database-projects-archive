@@ -4,21 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <title>Car Colors — databaseprojects</title>
+  <title>Car Colours — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css">
   <link rel="stylesheet" href="../css/car-colors.css">
 </head>
 <body>
   <div class="sheet">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/">Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/">Restricted Area</a><a href="../dogs-waiting-out-front/">Dogs Waiting Out Front</a><a href="../front-entrance-statues/">Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colors</a><a href="../info/">INFO</a></nav>
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/">Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/">Restricted Area</a><a href="../dogs-waiting-out-front/">Dogs Waiting Out Front</a><a href="../front-entrance-statues/">Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../info/">INFO</a></nav>
 
 <main>
-  <h1 class="record-name">Car Colors</h1>
-  <div class="cc-modes" role="group" aria-label="View">
-    <button type="button" class="cc-mode cc-on" data-cc-mode="family" aria-pressed="true">Color family</button>
-    <button type="button" class="cc-mode" data-cc-mode="scatter" aria-pressed="false">Scattered</button>
-    <button type="button" class="cc-mode" data-cc-mode="region" aria-pressed="false">Region</button>
-    <button type="button" class="cc-mode" data-cc-mode="hue" aria-pressed="false">Hue</button>
+  <h1 class="record-name">Car Colours</h1>
+  <div class="cc-controls">
+    <div class="cc-modes" role="group" aria-label="View">
+      <button type="button" class="cc-mode cc-on" data-cc-mode="family" aria-pressed="true">Color family</button>
+      <button type="button" class="cc-mode" data-cc-mode="scatter" aria-pressed="false">Scattered</button>
+      <button type="button" class="cc-mode" data-cc-mode="region" aria-pressed="false">Region</button>
+      <button type="button" class="cc-mode" data-cc-mode="hue" aria-pressed="false">Hue</button>
+    </div>
+    <span class="cc-zoom">
+      <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
+      <button type="button" class="cc-ag" aria-label="Antigravity" title="Antigravity" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="19" rx="7" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="9.5" r="5.2" fill="currentColor"/></svg></button>
+    </span>
   </div>
   <div class="cc-stage" id="cc-stage"></div>
 </main>
