@@ -145,7 +145,14 @@
   var agRunning = false;
   var agLastTs = 0;
   var itemDrag = null;
+  var skipDotClick = false;
   var zTop = 30;
+
+  function pageBackground(hex) {
+    var bg = hex || "";
+    document.documentElement.style.background = bg;
+    document.body.style.background = bg;
+  }
 
   function phoneSlider() {
     return window.matchMedia("(max-width: 767px)").matches;
@@ -754,6 +761,7 @@
 
   buttons.forEach(function (button) {
     button.addEventListener("click", function () {
+      pageBackground("");
       if (draggingSlider) return;
       var next = button.getAttribute("data-cc-mode");
       if (agOn) {
@@ -768,7 +776,19 @@
   });
 
   document.addEventListener("click", function (e) {
-    if (draggingSlider || (itemDrag && itemDrag.moved)) return;
+    if (draggingSlider) return;
+    if (skipDotClick) {
+      skipDotClick = false;
+      return;
+    }
+    var dotEl = e.target.closest && e.target.closest(".cc-dot");
+    if (dotEl && dotEl.dataset.hex) {
+      pageBackground(dotEl.dataset.hex);
+      return;
+    }
+    if (e.target.closest && (e.target.closest(".cc-mode") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
+      pageBackground("");
+    }
     var ag = e.target.closest && e.target.closest(".cc-ag");
     if (!ag) return;
     e.preventDefault();
@@ -833,6 +853,7 @@
     if (!itemDrag || (e.pointerId != null && itemDrag.pid !== e.pointerId)) return;
     var d = itemDrag;
     itemDrag = null;
+    if (d.moved) skipDotClick = true;
     d.el.classList.remove("cc-dragging");
     var body = bodyFor(d.el);
     if (!body) return;
@@ -890,6 +911,7 @@
 
   document.addEventListener("pointerdown", function (e) {
     if (!isSlider(e.target)) return;
+    pageBackground("");
     draggingSlider = true;
     document.documentElement.classList.add("cc-sizing");
     var n = valueFromClientX(e.target, e.clientX);
