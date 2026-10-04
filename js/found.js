@@ -1213,6 +1213,15 @@
     if (!g) return;
     stopAntigravity();
     var agSeeds = mode === "antigravity" ? captureAgSeeds(g) : null;
+    var agToRow = animate && from === "antigravity" && mode === "row";
+    var agFrom = null;
+    if (agToRow) {
+      agFrom = new Map();
+      tiles().forEach(function (tile) {
+        var r = tile.getBoundingClientRect();
+        if (r.width) agFrom.set(tile, { left: r.left, top: r.top, width: r.width, height: r.height });
+      });
+    }
     var apply = function () {
       if (mode === "table") {
         if (from === "antigravity") landAsTable(g);
@@ -1248,7 +1257,38 @@
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
+    if (agToRow && agFrom) slideIntoRow(agFrom);
     setTimeout(hoverScale, 80);
+  }
+
+  function slideIntoRow(before) {
+    var g = grid();
+    if (!g) return;
+    void g.offsetWidth;
+    var items = tiles();
+    var step = Math.min(20, 480 / Math.max(items.length, 1));
+    var k = 0;
+    items.forEach(function (tile) {
+      var a = before.get(tile);
+      if (!a) return;
+      (tile.getAnimations ? tile.getAnimations() : []).forEach(function (an) {
+        if (an.id === "fp-flow") an.cancel();
+      });
+      var b = tile.getBoundingClientRect();
+      if (!b.width) return;
+      var dx = a.left + a.width / 2 - (b.left + b.width / 2);
+      var dy = a.top + a.height / 2 - (b.top + b.height / 2);
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      var anim = tile.animate(
+        [
+          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
+          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px)", offset: 0.82 },
+          { transform: "none" }
+        ],
+        { duration: 480, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
+      );
+      anim.id = "fp-flow";
+    });
   }
 
   function shuffle() {
