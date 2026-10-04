@@ -237,6 +237,14 @@
   overflow-anchor: none;
 }
 
+/* Held out of the page until every photo is ready, so the grid does not grow in batches. */
+.vsf-grid.vsf-pending {
+  position: absolute;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .vsf-grid.vsf-empty {
   display: none;
 }

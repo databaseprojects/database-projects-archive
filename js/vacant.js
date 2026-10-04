@@ -623,6 +623,8 @@
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  var arrivalDone = false;
+
   function revealFrame(img) {
     if (!(img.naturalWidth > 0)) return;
     // A decoded photo can stay blank on its layer until the next mouse move.
@@ -633,6 +635,41 @@
       void img.offsetWidth;
       img.style.filter = "";
     });
+  }
+
+  function finishArrival() {
+    if (arrivalDone) return;
+    arrivalDone = true;
+    var g = grid();
+    if (!g) return;
+    Array.prototype.forEach.call(g.querySelectorAll("img"), revealFrame);
+    g.classList.remove("vsf-pending");
+    hoverScale();
+  }
+
+  function watchArrival() {
+    var g = grid();
+    if (!g) return;
+    var imgs = Array.prototype.slice.call(g.querySelectorAll("img"));
+    var left = imgs.length;
+    if (!left) {
+      finishArrival();
+      return;
+    }
+    function note(img) {
+      if (img._vsfNoted) return;
+      img._vsfNoted = true;
+      left--;
+      if (left <= 0) finishArrival();
+    }
+    imgs.forEach(function (img) {
+      if (img.complete) note(img);
+      else {
+        img.addEventListener("load", function () { note(img); });
+        img.addEventListener("error", function () { note(img); });
+      }
+    });
+    setTimeout(finishArrival, 5000);
   }
 
   function wakeImages() {
@@ -647,7 +684,7 @@
       var retried = false;
       var kick = function () {
         if (img.naturalWidth > 0) {
-          revealFrame(img);
+          if (arrivalDone) revealFrame(img);
           return;
         }
         if (retried) return;
@@ -664,6 +701,7 @@
   }
 
   wakeImages();
+  watchArrival();
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
