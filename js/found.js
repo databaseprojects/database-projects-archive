@@ -1457,6 +1457,64 @@
     return edge;
   }
 
+  function shuffleTableCircle() {
+    var g = grid();
+    var list = tiles();
+    if (!g || list.length < 2) return;
+    var gw = g.clientWidth || window.innerWidth || 360;
+    var vh = window.innerHeight || 700;
+    var tw0 = columnWidth(g);
+    var fitR = Math.max(36, gw / 2 - tw0 / 2 - 8);
+    var R = Math.min(fitR, Math.min(gw, vh) * 0.36);
+    var cx = gw / 2;
+    var maxH = tw0;
+    var i;
+    for (i = 0; i < list.length; i++) {
+      var hw = parseFloat(list[i].style.getPropertyValue("--fp-tile-w"));
+      if (!(hw > 0)) hw = tw0;
+      var hh = list[i].offsetHeight || tileHeight(list[i], hw);
+      if (hh > maxH) maxH = hh;
+    }
+    var cy = 12 + maxH / 2 + R;
+    var step = Math.min(14, 360 / list.length);
+    var bottom = cy + R;
+    for (i = 0; i < list.length; i++) {
+      var tile = list[i];
+      var w = parseFloat(tile.style.getPropertyValue("--fp-tile-w"));
+      if (!(w > 0)) w = tile.offsetWidth || tw0;
+      var h = tile.offsetHeight || tileHeight(tile, w);
+      var ang = Math.random() * Math.PI * 2;
+      var rad = Math.sqrt(Math.random()) * R;
+      var px = Math.cos(ang) * rad;
+      var py = Math.sin(ang) * rad;
+      var room = gw / 2 - w / 2 - 4;
+      if (room > 8 && Math.abs(px) > room) {
+        var pull = room / Math.abs(px);
+        px *= pull;
+        py *= pull;
+      }
+      var x = cx + px - w / 2;
+      var y = cy + py - h / 2;
+      var ox = parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0;
+      var oy = parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0;
+      tile.style.setProperty("--fp-nx", x.toFixed(1) + "px");
+      tile.style.setProperty("--fp-ny", y.toFixed(1) + "px");
+      if (y + h > bottom) bottom = y + h;
+      var dx = ox - x;
+      var dy = oy - y;
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+      var an = tile.animate(
+        [
+          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
+          { transform: "none" }
+        ],
+        { duration: 520, delay: i * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "backwards" }
+      );
+      an.id = "fp-flow";
+    }
+    g.style.setProperty("--fp-table-h", Math.ceil(bottom + 28) + "px");
+  }
+
   function shuffleTableInterior() {
     var list = tiles();
     var slots = list.map(function (tile) {
@@ -1512,7 +1570,8 @@
       return;
     }
     if (isTable()) {
-      shuffleTableInterior();
+      if (phoneSlider()) shuffleTableCircle();
+      else shuffleTableInterior();
       return;
     }
     for (var i = items.length - 1; i > 0; i--) {
