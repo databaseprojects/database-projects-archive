@@ -1,12 +1,11 @@
-/* Info page only. Slow grey dots, faint links, and a rare pulse between them.
+/* Info page only. More black and grey dots, each pulsing on its own,
+   drifting in a soft wave. No lines between them.
    Stop lets the dots fall to the bottom of the page. */
 (function () {
   var canvas = document.querySelector(".info-net");
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext("2d");
   var dots = [];
-  var pulses = [];
-  var nextPulse = 0;
   var mode = "float";
   var last = 0;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -14,32 +13,31 @@
   function count() {
     var w = window.innerWidth || 800;
     var h = window.innerHeight || 600;
-    return Math.round(Math.min(26, Math.max(14, (w * h) / 62000)));
+    return Math.round(Math.min(96, Math.max(42, (w * h) / 16000)));
   }
 
   function seed() {
     var w = window.innerWidth || 800;
     var h = window.innerHeight || 600;
     var n = count();
-    var insetX = Math.max(24, w * 0.06);
-    var insetY = Math.max(24, h * 0.08);
     dots = [];
     var i;
     for (i = 0; i < n; i++) {
+      var dark = Math.random() < 0.5;
       dots.push({
-        x: insetX + Math.random() * Math.max(1, w - insetX * 2),
-        y: insetY + Math.random() * Math.max(1, h - insetY * 2),
+        x: Math.random() * w,
+        y: Math.random() * h,
         p: Math.random() * Math.PI * 2,
         q: Math.random() * Math.PI * 2,
-        ax: 14 + Math.random() * 22,
-        ay: 10 + Math.random() * 18,
-        sp: 0.11 + Math.random() * 0.16,
-        r: 1.15 + Math.random() * 1.35,
-        tone: 28 + Math.random() * 70
+        ax: 7 + Math.random() * 9,
+        ay: 18 + Math.random() * 20,
+        r: 1.15 + Math.random() * 1.85,
+        tone: dark ? 12 + Math.random() * 52 : 78 + Math.random() * 112,
+        pp: Math.random() * Math.PI * 2,
+        ps: 0.65 + Math.random() * 1.7,
+        pa: 0.34 + Math.random() * 0.4
       });
     }
-    pulses = [];
-    nextPulse = 0;
     mode = "float";
   }
 
@@ -59,10 +57,15 @@
   }
 
   function at(d, t) {
+    var wave = Math.sin(d.x * 0.011 + t * 0.42);
     return {
-      x: d.x + Math.sin(t * d.sp + d.p) * d.ax + Math.sin(t * d.sp * 0.37 + d.q) * (d.ax * 0.35),
-      y: d.y + Math.cos(t * d.sp * 0.82 + d.q) * d.ay
+      x: d.x + Math.sin(t * 0.17 + d.p) * d.ax + Math.cos(t * 0.23 + d.q) * 5,
+      y: d.y + wave * d.ay + Math.sin(t * 0.19 + d.q) * 7
     };
+  }
+
+  function radius(d, t) {
+    return d.r * (1 + Math.sin(t * d.ps + d.pp) * d.pa);
   }
 
   function grey(tone, alpha) {
@@ -79,8 +82,8 @@
       d.tx = Math.max(12, Math.min(w - 12, p.x));
       d.fy = p.y;
       d.vy = 30 + Math.random() * 50;
+      d.fr = radius(d, t);
     });
-    pulses = [];
     mode = "fall";
     if (reduce) {
       var floor = floorY();
@@ -113,6 +116,23 @@
     return pts;
   }
 
+  function paintDot(p, tone, rad) {
+    var halo = Math.max(7, rad * 5.2);
+    var edge = Math.min(200, tone + 64);
+    var spot = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, halo);
+    spot.addColorStop(0, grey(tone, 0.5));
+    spot.addColorStop(0.42, grey(edge, 0.16));
+    spot.addColorStop(1, grey(edge, 0));
+    ctx.fillStyle = spot;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, halo, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = grey(tone, 0.78);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, Math.max(0.6, rad), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   function frame(now) {
     var w = window.innerWidth || 800;
     var h = window.innerHeight || 600;
@@ -120,65 +140,12 @@
     last = now;
     ctx.clearRect(0, 0, w, h);
     var pts = places(now, dt);
-    var reach = Math.min(w, h) * 0.34;
-    var links = [];
+    var t = now / 1000;
     var i;
-    var j;
-    for (i = 0; i < pts.length; i++) {
-      for (j = i + 1; j < pts.length; j++) {
-        var dx = pts[j].x - pts[i].x;
-        var dy = pts[j].y - pts[i].y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > reach || dist < 1) continue;
-        var fade = 1 - dist / reach;
-        ctx.strokeStyle = grey(70, fade * 0.11);
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(pts[i].x, pts[i].y);
-        ctx.lineTo(pts[j].x, pts[j].y);
-        ctx.stroke();
-        if (mode === "float" && fade > 0.35) links.push({ i: i, j: j });
-      }
-    }
-    if (mode === "float" && !reduce && links.length && now >= nextPulse && pulses.length < 2) {
-      var link = links[Math.floor(Math.random() * links.length)];
-      pulses.push({ i: link.i, j: link.j, t0: now, life: 1500 });
-      nextPulse = now + 1400 + Math.random() * 2200;
-    }
-    if (mode === "float") {
-      var kept = [];
-      for (i = 0; i < pulses.length; i++) {
-        var pulse = pulses[i];
-        var u = (now - pulse.t0) / pulse.life;
-        if (u >= 1) continue;
-        kept.push(pulse);
-        var a = pts[pulse.i];
-        var b = pts[pulse.j];
-        if (!a || !b) continue;
-        var x = a.x + (b.x - a.x) * u;
-        var y = a.y + (b.y - a.y) * u;
-        var alpha = Math.sin(u * Math.PI) * 0.28;
-        var glow = ctx.createRadialGradient(x, y, 0, x, y, 10);
-        glow.addColorStop(0, grey(30, alpha));
-        glow.addColorStop(1, grey(30, 0));
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(x, y, 10, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      pulses = kept;
-    }
     for (i = 0; i < dots.length; i++) {
       var d = dots[i];
-      var p = pts[i];
-      var spot = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, d.r * 4);
-      spot.addColorStop(0, grey(d.tone, 0.42));
-      spot.addColorStop(0.4, grey(Math.min(150, d.tone + 50), 0.16));
-      spot.addColorStop(1, grey(170, 0));
-      ctx.fillStyle = spot;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, d.r * 4, 0, Math.PI * 2);
-      ctx.fill();
+      var rad = mode === "float" ? radius(d, t) : (d.fr || d.r);
+      paintDot(pts[i], d.tone, rad);
     }
     if (reduce && mode !== "fall") return;
     if (mode === "rest") return;
