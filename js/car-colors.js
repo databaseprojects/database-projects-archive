@@ -146,12 +146,62 @@
   var agLastTs = 0;
   var itemDrag = null;
   var skipDotClick = false;
+  var spillGen = 0;
   var zTop = 30;
 
   function pageBackground(hex) {
     var bg = hex || "";
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
+  }
+
+  function removeSpills() {
+    var nodes = document.querySelectorAll(".cc-spill");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      if (nodes[i].parentNode) nodes[i].parentNode.removeChild(nodes[i]);
+    }
+  }
+
+  function clearPageColour() {
+    spillGen += 1;
+    removeSpills();
+    pageBackground("");
+  }
+
+  function spillFrom(dotEl) {
+    var hex = dotEl.dataset.hex;
+    if (!hex) return;
+    var rect = dotEl.getBoundingClientRect();
+    if (!(rect.width > 0)) return;
+    spillGen += 1;
+    var gen = spillGen;
+    removeSpills();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var far = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy));
+    var scale = (far * 2) / rect.width + 0.08;
+    var spill = document.createElement("div");
+    spill.className = "cc-spill";
+    spill.style.left = rect.left + "px";
+    spill.style.top = rect.top + "px";
+    spill.style.width = rect.width + "px";
+    spill.style.height = rect.height + "px";
+    spill.style.background = hex;
+    spill.style.boxShadow = "none";
+    document.body.appendChild(spill);
+    var anim = spill.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(" + scale.toFixed(3) + ")" }
+      ],
+      { duration: 780, easing: "cubic-bezier(.16,.84,.28,1)", fill: "forwards" }
+    );
+    anim.onfinish = function () {
+      if (gen !== spillGen) return;
+      pageBackground(hex);
+      if (spill.parentNode) spill.parentNode.removeChild(spill);
+    };
   }
 
   function phoneSlider() {
@@ -761,7 +811,7 @@
 
   buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-      pageBackground("");
+      clearPageColour();
       if (draggingSlider) return;
       var next = button.getAttribute("data-cc-mode");
       if (agOn) {
@@ -783,11 +833,11 @@
     }
     var dotEl = e.target.closest && e.target.closest(".cc-dot");
     if (dotEl && dotEl.dataset.hex) {
-      pageBackground(dotEl.dataset.hex);
+      spillFrom(dotEl);
       return;
     }
     if (e.target.closest && (e.target.closest(".cc-mode") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
-      pageBackground("");
+      clearPageColour();
     }
     var ag = e.target.closest && e.target.closest(".cc-ag");
     if (!ag) return;
@@ -911,7 +961,7 @@
 
   document.addEventListener("pointerdown", function (e) {
     if (!isSlider(e.target)) return;
-    pageBackground("");
+    clearPageColour();
     draggingSlider = true;
     document.documentElement.classList.add("cc-sizing");
     var n = valueFromClientX(e.target, e.clientX);

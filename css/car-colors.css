@@ -61,6 +61,22 @@
   min-height: 8rem;
 }
 
+.sheet {
+  position: relative;
+  z-index: 1;
+}
+
+.cc-spill {
+  position: fixed;
+  z-index: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  pointer-events: none;
+  transform-origin: center center;
+}
+
 .cc-dot {
   display: block;
   width: var(--cc-dot, 36px);
