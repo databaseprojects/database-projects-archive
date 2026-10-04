@@ -557,11 +557,9 @@
     var gRect = g.getBoundingClientRect();
     var r = tile.getBoundingClientRect();
     if (!(r.width > 0)) return null;
-    var cx = r.left + r.width / 2 - gRect.left + (g.scrollLeft || 0);
-    var cy = r.top + r.height / 2 - gRect.top + (g.scrollTop || 0);
-    var w = tile.offsetWidth || r.width;
-    var h = tile.offsetHeight || r.height;
-    return { x: cx - w / 2, y: cy - h / 2, exact: true };
+    var x = r.left - gRect.left + (g.scrollLeft || 0);
+    var y = r.top - gRect.top + (g.scrollTop || 0);
+    return { x: x, y: y, exact: true, vw: r.width, vh: r.height };
   }
 
   var AG_SHADOW_CLEAR = "0 2px 10px rgba(0,0,0,0), 0 1px 2px rgba(0,0,0,0)";
@@ -663,10 +661,12 @@
         if (ny < 0) ny = 0;
       }
       var oldW = parseFloat(tile.style.getPropertyValue("--fp-tile-w"));
-      if (exact && isFinite(oldW) && oldW > 0 && Math.abs(oldW - tw) > 0.5) {
-        var oldTh = aspectHeight(tile, oldW);
-        nx += (oldW - tw) / 2;
-        ny += (oldTh - aspectHeight(tile, tw)) / 2;
+      var basisW = laid && laid.vw > 0 ? laid.vw : oldW;
+      var basisH = laid && laid.vh > 0 ? laid.vh : 0;
+      if (exact && basisW > 0 && Math.abs(basisW - tw) > 0.5) {
+        nx += (basisW - tw) / 2;
+        var prevH = basisH > 0 ? basisH : aspectHeight(tile, basisW);
+        ny += (prevH - aspectHeight(tile, tw)) / 2;
       }
       var bottom = ny + th;
       if (bottom > fit) fit = bottom;
@@ -1091,14 +1091,27 @@
         g.style.removeProperty("--fp-table-h");
         applyAntigravity(g, agSeeds);
       } else {
+        if (from === "antigravity") {
+          tiles().forEach(function (tile) {
+            tile.style.setProperty("transition", "none", "important");
+          });
+          void g.offsetWidth;
+        }
         g.setAttribute("data-fp-layout", mode);
         clearScatter(g);
         clearAntigravity(g);
         applyRowWidths(g);
+        if (from === "antigravity") {
+          requestAnimationFrame(function () {
+            tiles().forEach(function (tile) {
+              tile.style.removeProperty("transition");
+            });
+          });
+        }
       }
       syncLayoutButtons();
     };
-    if (animate && mode !== "antigravity" && !(from === "antigravity" && mode === "table")) flow(apply, { step: 20, total: 480, dur: 480 });
+    if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
     setTimeout(hoverScale, 80);
   }
