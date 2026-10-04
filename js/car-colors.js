@@ -14,6 +14,9 @@
   var AG_SPEED_MIN = 12;
   var AG_SPEED_MAX = 58;
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
+  /* More city names can be added here. They stay hidden until Region is open. */
+  var CITIES = ["Vancouver"];
+  var city = "Vancouver";
 
   /* family, hex, hue (null = neutral), metallic */
   var PAINTS = [
@@ -126,7 +129,8 @@
       hex: row[1],
       hue: row[2],
       metallic: row[3],
-      region: REGIONS[i % REGIONS.length]
+      region: REGIONS[i % REGIONS.length],
+      city: "Vancouver"
     };
   });
 
@@ -467,16 +471,43 @@
     return pack;
   }
 
+  function renderCityOptions(parent) {
+    var bar = document.createElement("div");
+    bar.className = "cc-cities";
+    bar.setAttribute("role", "group");
+    bar.setAttribute("aria-label", "City");
+    CITIES.forEach(function (name) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "cc-city" + (name === city ? " cc-on" : "");
+      button.setAttribute("data-cc-city", name);
+      button.setAttribute("aria-pressed", name === city ? "true" : "false");
+      button.textContent = name;
+      button.addEventListener("click", function () {
+        clearPageColour();
+        if (name === city || agOn) return;
+        city = name;
+        if (mode === "region") renderRegion();
+      });
+      bar.appendChild(button);
+    });
+    parent.appendChild(bar);
+  }
+
   function renderRegion() {
     clear(stage);
+    var view = document.createElement("div");
+    view.className = "cc-region-view";
+    renderCityOptions(view);
     var width = Math.max(160, stage.clientWidth);
     var cols = regionColumns(width);
     var gap = 38;
     var colW = (width - gap * (cols - 1)) / cols;
+    var here = CARS.filter(function (car) { return car.city === city; });
     var wrap = document.createElement("div");
     wrap.className = "cc-regions";
     REGIONS.forEach(function (name) {
-      var group = CARS.filter(function (car) { return car.region === name; });
+      var group = here.filter(function (car) { return car.region === name; });
       var pack = clump(group.length, Math.max(dotPx() + 4, colW - 4));
       var block = document.createElement("section");
       block.className = "cc-cluster";
@@ -498,7 +529,8 @@
       block.appendChild(heading);
       wrap.appendChild(block);
     });
-    stage.appendChild(wrap);
+    view.appendChild(wrap);
+    stage.appendChild(view);
   }
 
   /* x runs west to east, y runs north to south, on an imagined Vancouver.
@@ -1024,7 +1056,7 @@
       spillFrom(dotEl);
       return;
     }
-    if (e.target.closest && (e.target.closest(".cc-mode") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
+    if (e.target.closest && (e.target.closest(".cc-mode") || e.target.closest(".cc-city") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
       clearPageColour();
     }
     var ag = e.target.closest && e.target.closest(".cc-ag");
