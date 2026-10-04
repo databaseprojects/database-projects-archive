@@ -21,19 +21,26 @@ body.info-page .sheet {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 26px;
+  width: 56px;
+  height: 56px;
   margin: 0;
-  padding: 0 8px;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  background: #fff;
-  color: #111;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #2a2a2a;
+  color: #e4e4e4;
   font-family: "Courier New", Courier, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: lowercase;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
   cursor: pointer;
+  clip-path: polygon(29.3% 0, 70.7% 0, 100% 29.3%, 100% 70.7%, 70.7% 100%, 29.3% 100%, 0 70.7%, 0 29.3%);
 }
 
-.info-stop:hover {
-  background: rgba(0, 0, 0, 0.04);
+.info-stop:hover,
+.info-stop[aria-pressed="true"] {
+  background: #111;
+  color: #f0f0f0;
 }
