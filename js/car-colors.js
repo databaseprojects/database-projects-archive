@@ -496,6 +496,18 @@
     stage.appendChild(field);
   }
 
+  function fitScatter() {
+    var field = stage.querySelector(".cc-scatter");
+    if (!field) return;
+    var size = dotPx();
+    var bottom = 0;
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      var edge = (parseFloat(el.style.top) || 0) + size;
+      if (edge > bottom) bottom = edge;
+    });
+    field.style.height = Math.ceil(bottom + 8) + "px";
+  }
+
   function regionColumns(width) {
     if (width >= 900) return 3;
     if (width >= 560) return 2;
@@ -1096,6 +1108,10 @@
     fillSlider(n);
     if (agOn) {
       if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
+      return;
+    }
+    if (mode === "scatter" && stage.querySelector(".cc-scatter .cc-dot")) {
+      if (Math.abs(prevPx - px) > 0.5) fitScatter();
       return;
     }
     if (Math.abs(prevPx - px) > 0.5 || !stage.querySelector(".cc-dot")) render();
