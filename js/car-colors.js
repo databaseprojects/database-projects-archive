@@ -13,7 +13,6 @@
   var DRAG_THRESH = 5;
   var AG_SPEED_MIN = 12;
   var AG_SPEED_MAX = 58;
-  var FAMILIES = ["red", "orange", "yellow", "green", "blue", "purple", "brown", "gray", "white", "black"];
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
 
   /* family, hex, hue (null = neutral), metallic */
@@ -133,9 +132,9 @@
 
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll(".cc-mode");
-  var mode = "family";
+  var mode = "scatter";
   var agOn = false;
-  var agPrev = "family";
+  var agPrev = "scatter";
   var sizeN = DEF;
   var phone = false;
   var draggingSlider = false;
@@ -307,10 +306,6 @@
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   }
 
-  function byLight(a, b) {
-    return lightness(a.hex) - lightness(b.hex);
-  }
-
   function labelFor(car) {
     var finish = car.metallic ? "metallic" : "flat";
     return car.family + ", " + finish + ", " + car.region;
@@ -335,24 +330,6 @@
 
   function clear(node) {
     while (node.firstChild) node.removeChild(node.firstChild);
-  }
-
-  function renderFamily() {
-    clear(stage);
-    FAMILIES.forEach(function (name) {
-      var group = CARS.filter(function (car) { return car.family === name; }).sort(byLight);
-      var block = document.createElement("section");
-      block.className = "cc-family";
-      var heading = document.createElement("h2");
-      heading.className = "cc-label";
-      heading.textContent = name;
-      var row = document.createElement("div");
-      row.className = "cc-row";
-      group.forEach(function (car) { row.appendChild(dot(car)); });
-      block.appendChild(heading);
-      block.appendChild(row);
-      stage.appendChild(block);
-    });
   }
 
   function mulberry32(seed) {
@@ -524,6 +501,60 @@
     stage.appendChild(wrap);
   }
 
+  var MAP_SPOT = {
+    Dunbar: [0.14, 0.58],
+    Kitsilano: [0.3, 0.74],
+    "Mount Pleasant": [0.5, 0.64],
+    Gastown: [0.46, 0.18],
+    Strathcona: [0.66, 0.36],
+    "Commercial Drive": [0.82, 0.5]
+  };
+
+  function renderMap() {
+    clear(stage);
+    var width = Math.max(280, stage.clientWidth);
+    var height = Math.max(560, Math.round(Math.min(width, 1100) * 0.82));
+    var spotW = Math.max(dotPx() + 8, width * 0.24);
+    var field = document.createElement("div");
+    field.className = "cc-map";
+    field.style.height = height + "px";
+    REGIONS.forEach(function (name) {
+      var group = CARS.filter(function (car) { return car.region === name; });
+      var pack = clump(group.length, spotW);
+      var anchor = MAP_SPOT[name] || [0.5, 0.5];
+      var block = document.createElement("section");
+      block.className = "cc-map-spot";
+      var box = document.createElement("div");
+      box.className = "cc-cluster-field";
+      box.style.width = Math.ceil(pack.w) + "px";
+      box.style.height = Math.ceil(pack.h) + "px";
+      group.forEach(function (car, i) {
+        var el = dot(car);
+        el.style.left = pack.pts[i].x + "px";
+        el.style.top = pack.pts[i].y + "px";
+        box.appendChild(el);
+      });
+      var heading = document.createElement("h2");
+      heading.className = "cc-label";
+      heading.textContent = name;
+      heading.style.marginTop = "0.55rem";
+      block.appendChild(box);
+      block.appendChild(heading);
+      var left = anchor[0] * width - pack.w / 2;
+      var top = anchor[1] * height - pack.h / 2;
+      var maxL = Math.max(0, width - pack.w - 4);
+      var maxT = Math.max(0, height - pack.h - 36);
+      if (left < 0) left = 0;
+      if (top < 0) top = 0;
+      if (left > maxL) left = maxL;
+      if (top > maxT) top = maxT;
+      block.style.left = Math.round(left) + "px";
+      block.style.top = Math.round(top) + "px";
+      field.appendChild(block);
+    });
+    stage.appendChild(field);
+  }
+
   function hueOrder(a, b) {
     var aNeutral = a.hue == null;
     var bNeutral = b.hue == null;
@@ -560,10 +591,10 @@
 
   function render() {
     applyMetrics();
-    if (mode === "scatter") renderScatter();
-    else if (mode === "region") renderRegion();
+    if (mode === "region") renderRegion();
+    else if (mode === "map") renderMap();
     else if (mode === "hue") renderHue();
-    else renderFamily();
+    else renderScatter();
   }
 
   function sliderEl() {
@@ -847,7 +878,7 @@
     stopAg();
     agOn = false;
     itemDrag = null;
-    mode = next || agPrev || "family";
+    mode = next || agPrev || "scatter";
     syncButtons();
     render();
     slideInto(before);
@@ -877,9 +908,11 @@
         return;
       }
       if (next === mode) return;
+      var before = snapshotDots();
       mode = next;
       syncButtons();
       render();
+      slideInto(before);
     });
   });
 
