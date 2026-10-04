@@ -374,10 +374,64 @@
     return isFinite(top) ? -top : 0;
   }
 
-  function applyScatter(g, force) {
+  function spreadPoints(items, gw, gh, tw, pad, minY) {
+    var n = items.length;
+    var boxW = Math.max(tw, gw - pad * 2);
+    var boxH = Math.max(1, gh - pad - minY);
+    var ideal = Math.max(1, Math.min(n, Math.round(Math.sqrt(n * boxW / boxH))));
+    var best = ideal;
+    var bestScore = Infinity;
+    var colsTry;
+    for (colsTry = 1; colsTry <= n; colsTry++) {
+      var rowsTry = Math.ceil(n / colsTry);
+      var cellW = boxW / colsTry;
+      var cellH = boxH / rowsTry;
+      if (cellW + 0.5 < tw) continue;
+      var fits = true;
+      var r;
+      for (r = 0; r < rowsTry && fits; r++) {
+        var maxH = 0;
+        var c;
+        for (c = 0; c < colsTry; c++) {
+          var idx = r * colsTry + c;
+          if (idx >= n) break;
+          maxH = Math.max(maxH, tileHeight(items[idx], tw));
+        }
+        if (maxH > cellH + 0.5) fits = false;
+      }
+      if (!fits) continue;
+      var score = Math.abs(colsTry - ideal);
+      if (score < bestScore) {
+        bestScore = score;
+        best = colsTry;
+      }
+    }
+    var cols = best;
+    var rows = Math.ceil(n / cols);
+    var cellW = boxW / cols;
+    var cellH = boxH / rows;
+    var points = new Array(n);
+    var row;
+    for (row = 0; row < rows; row++) {
+      var count = Math.min(cols, n - row * cols);
+      var col;
+      for (col = 0; col < count; col++) {
+        var i = row * cols + col;
+        var th = tileHeight(items[i], tw);
+        var rowShift = ((cols - count) * cellW) / 2;
+        points[i] = {
+          x: pad + rowShift + col * cellW + Math.max(0, (cellW - tw) / 2),
+          y: minY + row * cellH + Math.max(0, (cellH - th) / 2)
+        };
+      }
+    }
+    return points;
+  }
+
+  function applyScatter(g, force, resetSpread) {
     if (!g) return;
-    var map = force ? {} : loadPos();
-    if (force) {
+    var map = force || resetSpread ? {} : loadPos();
+    if (force || resetSpread) {
       try {
         localStorage.removeItem(POS_KEY);
       } catch (e) {}
@@ -390,6 +444,7 @@
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
     var minY = pageTop(g);
+    var points = resetSpread ? spreadPoints(items, gw, gh, tw, pad, minY) : null;
     var usedTilts = {};
     items.forEach(function (tile, i) {
       var key = posKey(tile);
@@ -405,7 +460,13 @@
       var oldX = parseFloat(tile.style.getPropertyValue("--fp-nx"));
       var oldY = parseFloat(tile.style.getPropertyValue("--fp-ny"));
       var placed = isFinite(oldX) && isFinite(oldY) && isFinite(oldW) && oldW > 0;
-      if (!force && placed && Math.abs(oldW - tw) > 0.5) {
+      if (points) {
+        nx = points[i].x;
+        ny = points[i].y;
+        sc = 1;
+        z = 1 + (i % 20);
+        map[key] = { x: nx, y: ny, s: sc, z: z };
+      } else if (!force && placed && Math.abs(oldW - tw) > 0.5) {
         var oldH = aspectHeight(tile, oldW);
         nx = oldX + (oldW - tw) / 2;
         ny = oldY + (oldH - aspectHeight(tile, tw)) / 2;
@@ -1158,7 +1219,7 @@
         else {
           g.setAttribute("data-fp-layout", mode);
           clearAntigravity(g);
-          applyScatter(g, false);
+          applyScatter(g, false, true);
           if (from === "row") assignTableSkew();
         }
       } else if (mode === "antigravity") {
