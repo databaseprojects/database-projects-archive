@@ -16,3 +16,24 @@ body.info-page .sheet {
   position: relative;
   z-index: 1;
 }
+
+.info-stop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  background: #fff;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.info-stop:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
