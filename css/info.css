@@ -17,30 +17,35 @@ body.info-page .sheet {
   z-index: 1;
 }
 
-.info-stop {
-  display: inline-flex;
+.info-title {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
+  gap: 0.55rem;
+  margin: 2.2rem 0 0.45rem;
+}
+
+.info-title .record-name {
+  margin: 0;
+}
+
+.info-stop {
+  display: block;
+  width: 18px;
+  height: 18px;
   margin: 0;
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: #2a2a2a;
-  color: #e4e4e4;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  line-height: 1;
-  text-transform: uppercase;
+  background: #3a3a3a;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
   cursor: pointer;
+  flex: 0 0 18px;
   clip-path: polygon(29.3% 0, 70.7% 0, 100% 29.3%, 100% 70.7%, 70.7% 100%, 29.3% 100%, 0 70.7%, 0 29.3%);
 }
 
 .info-stop:hover,
 .info-stop[aria-pressed="true"] {
   background: #111;
-  color: #f0f0f0;
 }
