@@ -501,27 +501,65 @@
     stage.appendChild(wrap);
   }
 
+  /* x runs west to east, y runs north to south, on an imagined Vancouver.
+     These are neighbourhood areas, not photographed spots. */
   var MAP_SPOT = {
-    Dunbar: [0.14, 0.58],
-    Kitsilano: [0.3, 0.74],
-    "Mount Pleasant": [0.5, 0.64],
-    Gastown: [0.46, 0.18],
-    Strathcona: [0.66, 0.36],
-    "Commercial Drive": [0.82, 0.5]
+    Dunbar: [0.13, 0.78],
+    Kitsilano: [0.36, 0.6],
+    "Mount Pleasant": [0.58, 0.68],
+    Gastown: [0.4, 0.16],
+    Strathcona: [0.66, 0.28],
+    "Commercial Drive": [0.86, 0.48]
   };
+
+  function mapClump(count) {
+    var step = dotPx() + 4;
+    var pts = [{ x: 0, y: 0 }];
+    var ring = 1;
+    while (pts.length < count) {
+      var n = ring * 6;
+      var k;
+      for (k = 0; k < n && pts.length < count; k++) {
+        var ang = (k / n) * Math.PI * 2 - Math.PI / 2;
+        pts.push({
+          x: Math.cos(ang) * step * ring,
+          y: Math.sin(ang) * step * ring
+        });
+      }
+      ring += 1;
+    }
+    var minX = Infinity;
+    var minY = Infinity;
+    var maxX = -Infinity;
+    var maxY = -Infinity;
+    var i;
+    for (i = 0; i < pts.length; i++) {
+      if (pts[i].x < minX) minX = pts[i].x;
+      if (pts[i].y < minY) minY = pts[i].y;
+      if (pts[i].x > maxX) maxX = pts[i].x;
+      if (pts[i].y > maxY) maxY = pts[i].y;
+    }
+    for (i = 0; i < pts.length; i++) {
+      pts[i].x -= minX;
+      pts[i].y -= minY;
+    }
+    return {
+      pts: pts,
+      w: maxX - minX + dotPx(),
+      h: maxY - minY + dotPx()
+    };
+  }
 
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
-    var height = Math.max(560, Math.round(Math.min(width, 1100) * 0.82));
-    var spotW = Math.max(dotPx() + 8, width * 0.24);
+    var gap = 22;
     var field = document.createElement("div");
     field.className = "cc-map";
-    field.style.height = height + "px";
+    var items = [];
     REGIONS.forEach(function (name) {
       var group = CARS.filter(function (car) { return car.region === name; });
-      var pack = clump(group.length, spotW);
-      var anchor = MAP_SPOT[name] || [0.5, 0.5];
+      var pack = mapClump(group.length);
       var block = document.createElement("section");
       block.className = "cc-map-spot";
       var box = document.createElement("div");
@@ -537,22 +575,81 @@
       var heading = document.createElement("h2");
       heading.className = "cc-label";
       heading.textContent = name;
-      heading.style.marginTop = "0.55rem";
       block.appendChild(box);
       block.appendChild(heading);
-      var left = anchor[0] * width - pack.w / 2;
-      var top = anchor[1] * height - pack.h / 2;
-      var maxL = Math.max(0, width - pack.w - 4);
-      var maxT = Math.max(0, height - pack.h - 36);
-      if (left < 0) left = 0;
-      if (top < 0) top = 0;
-      if (left > maxL) left = maxL;
-      if (top > maxT) top = maxT;
-      block.style.left = Math.round(left) + "px";
-      block.style.top = Math.round(top) + "px";
+      items.push({
+        el: block,
+        anchor: MAP_SPOT[name] || [0.5, 0.5]
+      });
       field.appendChild(block);
     });
     stage.appendChild(field);
+
+    function boxes() {
+      return items.map(function (item) {
+        return {
+          x: item.el.offsetLeft,
+          y: item.el.offsetTop,
+          w: item.el.offsetWidth,
+          h: item.el.offsetHeight
+        };
+      });
+    }
+
+    function crowded() {
+      var list = boxes();
+      var i, j;
+      for (i = 0; i < list.length; i++) {
+        for (j = i + 1; j < list.length; j++) {
+          var a = list[i];
+          var b = list[j];
+          if (a.x < b.x + b.w + gap && a.x + a.w + gap > b.x && a.y < b.y + b.h + gap && a.y + a.h + gap > b.y) return true;
+        }
+      }
+      return false;
+    }
+
+    function place(w, h) {
+      items.forEach(function (item) {
+        var bw = item.el.offsetWidth;
+        var bh = item.el.offsetHeight;
+        var left = item.anchor[0] * w - bw / 2;
+        var top = item.anchor[1] * h - bh / 2;
+        if (left < 4) left = 4;
+        if (top < 4) top = 4;
+        if (left > w - bw - 4) left = Math.max(4, w - bw - 4);
+        if (top > h - bh - 4) top = Math.max(4, h - bh - 4);
+        item.el.style.left = Math.round(left) + "px";
+        item.el.style.top = Math.round(top) + "px";
+      });
+    }
+
+    var height = Math.max(640, Math.round(width * 0.78));
+    var guard = 0;
+    field.style.height = height + "px";
+    place(width, height);
+    while (crowded() && guard < 16) {
+      height += 70;
+      field.style.height = height + "px";
+      place(width, height);
+      guard += 1;
+    }
+    if (!crowded()) return;
+
+    var ordered = items.slice().sort(function (a, b) {
+      return a.anchor[1] - b.anchor[1] || a.anchor[0] - b.anchor[0];
+    });
+    var y = 8;
+    ordered.forEach(function (item) {
+      var bw = item.el.offsetWidth;
+      var left = item.anchor[0] * width - bw / 2;
+      if (left < 4) left = 4;
+      if (left > width - bw - 4) left = Math.max(4, width - bw - 4);
+      item.el.style.left = Math.round(left) + "px";
+      item.el.style.top = Math.round(y) + "px";
+      y += item.el.offsetHeight + gap;
+    });
+    field.style.height = Math.round(y + 8) + "px";
   }
 
   function hueOrder(a, b) {

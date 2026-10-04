@@ -173,6 +173,14 @@ body.cc-under-menu .cc-ag-field {
 
 .cc-map-spot {
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cc-map-spot .cc-label {
+  white-space: nowrap;
+  margin: 0.45rem 0 0;
 }
 
 .cc-hue {
