@@ -587,7 +587,6 @@
     });
     void g.offsetWidth;
     primed.forEach(function (item) {
-      item.tile.style.removeProperty("transition");
       item.tile.style.removeProperty("box-shadow");
     });
     g.classList.add("fp-ag-in");
@@ -595,6 +594,49 @@
     g._agShade = setTimeout(function () {
       g.classList.remove("fp-ag-in");
     }, 1500);
+  }
+
+  function releaseAgMotion() {
+    tiles().forEach(function (tile) {
+      tile.style.removeProperty("transition");
+    });
+  }
+
+  function snapshotTiles(g) {
+    var gr = g.getBoundingClientRect();
+    return {
+      gridTop: gr.top,
+      tiles: tiles().map(function (tile) {
+        var r = tile.getBoundingClientRect();
+        return { tile: tile, left: r.left, top: r.top };
+      })
+    };
+  }
+
+  function restoreSnapshot(g, snap, bodies) {
+    if (!snap) return;
+    var gr = g.getBoundingClientRect();
+    var moved = gr.top - snap.gridTop;
+    if (Math.abs(moved) > 0.5) window.scrollBy(0, moved);
+    snap.tiles.forEach(function (item) {
+      var r = item.tile.getBoundingClientRect();
+      var dx = item.left - r.left;
+      var dy = item.top - r.top;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      var nx = (parseFloat(item.tile.style.getPropertyValue("--fp-nx")) || 0) + dx;
+      var ny = (parseFloat(item.tile.style.getPropertyValue("--fp-ny")) || 0) + dy;
+      item.tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
+      item.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
+      item.tile.style.left = nx.toFixed(1) + "px";
+      item.tile.style.top = ny.toFixed(1) + "px";
+      for (var i = 0; i < bodies.length; i++) {
+        if (bodies[i].tile === item.tile) {
+          bodies[i].x = nx;
+          bodies[i].y = ny;
+          break;
+        }
+      }
+    });
   }
 
   function applyAntigravity(g, seeds, opts) {
@@ -675,8 +717,8 @@
     var gh = Math.max(agSurfaceHeight(g, tw, items), Math.ceil(fit));
     g.style.setProperty("--fp-ag-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
+    var held = !resume ? snapshotTiles(g) : null;
     if (!resume) beginShadowFade(g);
-    g.setAttribute("data-fp-layout", "antigravity");
     planned.forEach(function (p) {
       var tile = p.tile;
       var prev = p.prev;
@@ -770,6 +812,25 @@
         spinLo: spinLo
       });
     });
+    g.setAttribute("data-fp-layout", "antigravity");
+    if (!resume) {
+      bodies.forEach(function (b) {
+        b.tile.style.left = b.x.toFixed(1) + "px";
+        b.tile.style.top = b.y.toFixed(1) + "px";
+        b.tile.style.translate = "0px 0px";
+      });
+      void g.offsetWidth;
+      restoreSnapshot(g, held, bodies);
+      requestAnimationFrame(function () {
+        bodies.forEach(function (b) {
+          if (!b || !b.tile) return;
+          b.tile.style.removeProperty("left");
+          b.tile.style.removeProperty("top");
+          b.tile.style.removeProperty("translate");
+        });
+        requestAnimationFrame(releaseAgMotion);
+      });
+    }
     zTop = Math.max(zTop, maxZ + 1);
     agBodies = bodies;
     agRunning = true;
