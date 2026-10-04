@@ -341,7 +341,7 @@ html.vsf-sizing * {
 }
 
 body.vsf-lb-lock {
-  overflow: hidden;
+  overflow-y: scroll;
 }
 
 .vsf-tag:focus-visible,
