@@ -106,7 +106,8 @@
     if (!(ask > 0)) ask = have;
     var need = Math.min(2000, Math.max(have, ask));
     if (need === have) return src;
-    return src.replace("/image/upload/" + trans + "/", "/image/upload/" + trans.replace(/w_\d+/, "w_" + need) + "/");
+    var next = trans.replace(/w_\d+/, "w_" + need).replace(/h_\d+/, "h_" + need);
+    return src.replace("/image/upload/" + trans + "/", "/image/upload/" + next + "/");
   }
 
   function setCount(shown, total) {
