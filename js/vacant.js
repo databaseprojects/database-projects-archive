@@ -92,9 +92,21 @@
   function hiSrc(src, px) {
     if (!src) return src;
     var mm = src.match(/\/w\/(\d+)\//);
-    if (!mm) return src;
-    var need = Math.min(2000, Math.max(+mm[1], px || 1600));
-    return src.replace(/\/w\/\d+\//, "/w/" + need + "/");
+    if (mm) {
+      var freight = Math.min(2000, Math.max(+mm[1], px || 1600));
+      return src.replace(/\/w\/\d+\//, "/w/" + freight + "/");
+    }
+    var tm = src.match(/\/image\/upload\/([^/]+)\//);
+    if (!tm) return src;
+    var trans = tm[1];
+    var wm = trans.match(/w_(\d+)/);
+    if (!wm || trans.indexOf("f_auto") === -1 || trans.indexOf("q_auto") === -1) return src;
+    var have = +wm[1];
+    var ask = Math.round(+px || have);
+    if (!(ask > 0)) ask = have;
+    var need = Math.min(2000, Math.max(have, ask));
+    if (need === have) return src;
+    return src.replace("/image/upload/" + trans + "/", "/image/upload/" + trans.replace(/w_\d+/, "w_" + need) + "/");
   }
 
   function setCount(shown, total) {
