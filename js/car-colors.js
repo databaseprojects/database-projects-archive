@@ -508,6 +508,19 @@
     field.style.height = Math.ceil(bottom + 8) + "px";
   }
 
+  function growFromCenter(prevPx, px) {
+    var shift = (prevPx - px) / 2;
+    if (!(Math.abs(shift) > 0.01)) return;
+    Array.prototype.forEach.call(stage.querySelectorAll(".cc-dot"), function (el) {
+      if (!el.style.left && !el.style.top) return;
+      var x = (parseFloat(el.style.left) || 0) + shift;
+      var y = (parseFloat(el.style.top) || 0) + shift;
+      el.style.left = x.toFixed(3) + "px";
+      el.style.top = y.toFixed(3) + "px";
+    });
+    if (stage.querySelector(".cc-scatter")) fitScatter();
+  }
+
   function regionColumns(width) {
     if (width >= 900) return 3;
     if (width >= 560) return 2;
@@ -792,6 +805,8 @@
     var wrap = document.createElement("div");
     wrap.className = "cc-hue";
     wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
+    wrap.style.gridAutoRows = size + "px";
+    wrap.style.gap = gap + "px";
     sorted.forEach(function (car, i) {
       var row = Math.floor(i / cols);
       var col = i % cols;
@@ -1110,11 +1125,11 @@
       if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
       return;
     }
-    if (mode === "scatter" && stage.querySelector(".cc-scatter .cc-dot")) {
-      if (Math.abs(prevPx - px) > 0.5) fitScatter();
+    if (stage.querySelector(".cc-dot")) {
+      if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
       return;
     }
-    if (Math.abs(prevPx - px) > 0.5 || !stage.querySelector(".cc-dot")) render();
+    render();
   }
 
   buttons.forEach(function (button) {

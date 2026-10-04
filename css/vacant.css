@@ -233,7 +233,7 @@
   display: grid;
   grid-template-columns: repeat(var(--vsf-cols, 6), minmax(0, 1fr));
   gap: 1rem;
-  align-items: start;
+  align-items: center;
   overflow-anchor: none;
 }
 

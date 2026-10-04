@@ -124,6 +124,7 @@ body.cc-under-menu .cc-ag-field {
   display: block;
   width: var(--cc-dot, 40px);
   height: var(--cc-dot, 40px);
+  transform-origin: center center;
   box-sizing: border-box;
   border-radius: 50%;
   border: 0;
@@ -196,6 +197,13 @@ body.cc-under-menu .cc-ag-field {
   display: grid;
   gap: var(--cc-gap, 14px);
   justify-content: start;
+}
+
+.cc-hue .cc-dot {
+  justify-self: center;
+  align-self: center;
+  min-width: 0;
+  min-height: 0;
 }
 
 .cc-zslider {
