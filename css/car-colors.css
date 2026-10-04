@@ -122,13 +122,13 @@ body.cc-under-menu .cc-ag-field {
 
 .cc-dot {
   display: block;
-  width: var(--cc-dot, 36px);
-  height: var(--cc-dot, 36px);
+  width: var(--cc-dot, 40px);
+  height: var(--cc-dot, 40px);
   box-sizing: border-box;
   border-radius: 50%;
   border: 0;
   box-shadow: none;
-  flex: 0 0 var(--cc-dot, 36px);
+  flex: 0 0 var(--cc-dot, 40px);
 }
 
 .cc-label {

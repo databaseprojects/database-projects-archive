@@ -6,7 +6,7 @@
   var MIN = 6;
   var MAX = 20;
   var DEF = 6;
-  var BIG = 36;
+  var BIG = 40;
   var SMALL = 14;
   var PHONE_SMALL = 22;
   var HYST = 0.72;
