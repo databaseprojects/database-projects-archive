@@ -14,8 +14,14 @@
   var AG_SPEED_MIN = 12;
   var AG_SPEED_MAX = 58;
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
-  /* More city names can be added here. They stay hidden until Region is open. */
-  var CITIES = ["Vancouver"];
+  /* City choices stay hidden until Region is open. Vancouver keeps the neighbourhoods above. */
+  var CITIES = ["Vancouver", "Toronto", "Seattle", "Los Angeles"];
+  var CITY_REGIONS = {
+    Vancouver: REGIONS,
+    Toronto: ["Kensington", "Leslieville", "The Annex", "Parkdale"],
+    Seattle: ["Capitol Hill", "Ballard", "Fremont", "Queen Anne"],
+    "Los Angeles": ["Silver Lake", "Venice", "Echo Park", "Los Feliz"]
+  };
   var city = "Vancouver";
 
   /* family, hex, hue (null = neutral), metallic */
@@ -133,6 +139,73 @@
       city: "Vancouver"
     };
   });
+
+  /* Sample colours for the other cities. They show up only when that city is selected. */
+  var OTHER_CITIES = [
+    ["Toronto", "Kensington", "red", "#6E1E2F", 348, false],
+    ["Toronto", "Kensington", "orange", "#C45C26", 18, true],
+    ["Toronto", "Kensington", "blue", "#1F3A5F", 214, false],
+    ["Toronto", "Kensington", "yellow", "#E6D2A8", 40, true],
+    ["Toronto", "Leslieville", "red", "#5C2A2A", 0, true],
+    ["Toronto", "Leslieville", "orange", "#D4785A", 14, false],
+    ["Toronto", "Leslieville", "blue", "#243E4A", 196, true],
+    ["Toronto", "Leslieville", "white", "#F0E6D4", null, false],
+    ["Toronto", "The Annex", "brown", "#7A3E2E", 16, false],
+    ["Toronto", "The Annex", "blue", "#3D4C6A", 222, true],
+    ["Toronto", "The Annex", "yellow", "#C4A46A", 42, false],
+    ["Toronto", "The Annex", "white", "#EFE7DC", null, true],
+    ["Toronto", "Parkdale", "red", "#A33B32", 4, true],
+    ["Toronto", "Parkdale", "blue", "#2C3E50", 208, false],
+    ["Toronto", "Parkdale", "orange", "#B87333", 28, true],
+    ["Toronto", "Parkdale", "white", "#F4EDE3", null, false],
+    ["Seattle", "Capitol Hill", "green", "#1F4D3A", 152, false],
+    ["Seattle", "Capitol Hill", "green", "#4F6F5A", 140, true],
+    ["Seattle", "Capitol Hill", "gray", "#7A8C7B", null, false],
+    ["Seattle", "Capitol Hill", "white", "#D5DDD6", null, true],
+    ["Seattle", "Ballard", "blue", "#1E3A4C", 202, true],
+    ["Seattle", "Ballard", "blue", "#3E6B7A", 192, false],
+    ["Seattle", "Ballard", "gray", "#8AA0A8", null, true],
+    ["Seattle", "Ballard", "white", "#E4E8E6", null, false],
+    ["Seattle", "Fremont", "green", "#2F5D50", 160, true],
+    ["Seattle", "Fremont", "green", "#6E8B74", 120, false],
+    ["Seattle", "Fremont", "gray", "#A8B5A0", null, true],
+    ["Seattle", "Fremont", "white", "#F2F0E8", null, false],
+    ["Seattle", "Queen Anne", "gray", "#243038", null, false],
+    ["Seattle", "Queen Anne", "gray", "#5C6B73", null, true],
+    ["Seattle", "Queen Anne", "green", "#9AA7A1", 150, false],
+    ["Seattle", "Queen Anne", "white", "#E7E4DC", null, true],
+    ["Los Angeles", "Silver Lake", "orange", "#E07A5F", 14, false],
+    ["Los Angeles", "Silver Lake", "yellow", "#F2CC8F", 40, true],
+    ["Los Angeles", "Silver Lake", "blue", "#3D5A80", 214, false],
+    ["Los Angeles", "Silver Lake", "white", "#F4F1DE", null, true],
+    ["Los Angeles", "Venice", "orange", "#E8A87C", 24, true],
+    ["Los Angeles", "Venice", "green", "#41B3A3", 172, false],
+    ["Los Angeles", "Venice", "red", "#E27D60", 12, true],
+    ["Los Angeles", "Venice", "white", "#F7F3E9", null, false],
+    ["Los Angeles", "Echo Park", "red", "#C44536", 6, false],
+    ["Los Angeles", "Echo Park", "orange", "#F2A365", 28, true],
+    ["Los Angeles", "Echo Park", "blue", "#2E5266", 200, false],
+    ["Los Angeles", "Echo Park", "white", "#F6E7D8", null, true],
+    ["Los Angeles", "Los Feliz", "brown", "#D4A373", 32, true],
+    ["Los Angeles", "Los Feliz", "red", "#E5989B", 356, false],
+    ["Los Angeles", "Los Feliz", "purple", "#6D597A", 270, true],
+    ["Los Angeles", "Los Feliz", "yellow", "#FEFAE0", 54, false]
+  ];
+  OTHER_CITIES.forEach(function (row, n) {
+    CARS.push({
+      i: PAINTS.length + n,
+      family: row[2],
+      hex: row[3],
+      hue: row[4],
+      metallic: row[5],
+      region: row[1],
+      city: row[0]
+    });
+  });
+
+  function carsIn(name) {
+    return CARS.filter(function (car) { return car.city === name; });
+  }
 
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll(".cc-mode");
@@ -362,7 +435,7 @@
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
     var rng = mulberry32(0xC0105);
-    var order = shuffle(CARS, rng);
+    var order = shuffle(carsIn("Vancouver"), rng);
     var size = dotPx();
     var minD = size + Math.max(8, Math.round(size * 0.28));
     var placed = [];
@@ -503,11 +576,12 @@
     var cols = regionColumns(width);
     var gap = 38;
     var colW = (width - gap * (cols - 1)) / cols;
-    var here = CARS.filter(function (car) { return car.city === city; });
+    var here = carsIn(city);
     var wrap = document.createElement("div");
     wrap.className = "cc-regions";
-    REGIONS.forEach(function (name) {
+    (CITY_REGIONS[city] || REGIONS).forEach(function (name) {
       var group = here.filter(function (car) { return car.region === name; });
+      if (!group.length) return;
       var pack = clump(group.length, Math.max(dotPx() + 4, colW - 4));
       var block = document.createElement("section");
       block.className = "cc-cluster";
@@ -590,7 +664,7 @@
     field.className = "cc-map";
     var items = [];
     REGIONS.forEach(function (name) {
-      var group = CARS.filter(function (car) { return car.region === name; });
+      var group = carsIn("Vancouver").filter(function (car) { return car.region === name; });
       var pack = mapClump(group.length);
       var block = document.createElement("section");
       block.className = "cc-map-spot";
@@ -702,7 +776,7 @@
     var gap = gapPx();
     var size = dotPx();
     var cols = Math.max(1, Math.floor((width + gap) / (size + gap)));
-    var sorted = CARS.slice().sort(hueOrder);
+    var sorted = carsIn("Vancouver").slice().sort(hueOrder);
     var wrap = document.createElement("div");
     wrap.className = "cc-hue";
     wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
