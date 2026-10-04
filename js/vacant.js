@@ -625,31 +625,50 @@
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  function revealFrame(img) {
+    if (!(img.naturalWidth > 0)) return;
+    // A decoded photo can stay blank on its layer until the next mouse move.
+    // contrast(1) is the same picture; the style change makes the browser paint it.
+    requestAnimationFrame(function () {
+      if (!img.parentNode) return;
+      img.style.filter = "contrast(1)";
+      void img.offsetWidth;
+      img.style.filter = "";
+    });
+  }
+
   function wakeImages() {
     var g = grid();
     if (!g) return;
-    // A tap that opens this page can leave async image frames unpainted until the
-    // next gesture. Ask for the decode now, and if a restored page lost its bitmap,
-    // start the request again.
     Array.prototype.forEach.call(g.querySelectorAll("img"), function (img) {
       var src = img.getAttribute("src");
       if (!src) return;
       img.decoding = "sync";
       img.loading = "eager";
-      var redo = function () {
-        if (img.naturalWidth > 0) return;
+      try { img.fetchPriority = "high"; } catch (err) {}
+      var retried = false;
+      var kick = function () {
+        if (img.naturalWidth > 0) {
+          revealFrame(img);
+          return;
+        }
+        if (retried) return;
+        retried = true;
         img.src = src;
       };
-      if (img.decode) img.decode().then(function () {}).catch(redo);
-      else if (img.complete) redo();
+      if (!img._vsfWake) {
+        img._vsfWake = true;
+        img.addEventListener("load", kick);
+      }
+      if (img.decode) img.decode().then(kick).catch(kick);
+      else if (img.complete) kick();
     });
-    void g.offsetHeight;
   }
 
+  wakeImages();
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
-  wakeImages();
   setTimeout(hoverScale, 80);
   window.addEventListener("load", wakeImages);
   window.addEventListener("pageshow", wakeImages);
