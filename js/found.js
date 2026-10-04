@@ -310,7 +310,7 @@
   function tableSpreadHeight(g, tw, items) {
     var base = surfaceHeight(g, tw, items);
     var vh = window.innerHeight || 700;
-    return Math.ceil(Math.max(base * 1.55, vh * 1.7));
+    return Math.ceil(Math.max(base * 2.6, vh * 2.5));
   }
 
   function freshTilt(used) {
@@ -374,55 +374,109 @@
     return isFinite(top) ? -top : 0;
   }
 
+  function spreadRng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (Math.imul(a, 1664525) + 1013904223) >>> 0;
+      return a / 4294967296;
+    };
+  }
+
+  function spreadClear(x, y, w, h, placed, gap) {
+    var i;
+    for (i = 0; i < placed.length; i++) {
+      var p = placed[i];
+      if (x < p.x + p.w + gap && x + w + gap > p.x && y < p.y + p.h + gap && y + h + gap > p.y) return false;
+    }
+    return true;
+  }
+
   function spreadPoints(items, gw, gh, tw, pad, minY) {
     var n = items.length;
-    var boxW = Math.max(tw, gw - pad * 2);
-    var boxH = Math.max(1, gh - pad - minY);
-    var ideal = Math.max(1, Math.min(n, Math.round(Math.sqrt(n * boxW / boxH))));
-    var best = ideal;
-    var bestScore = Infinity;
-    var colsTry;
-    for (colsTry = 1; colsTry <= n; colsTry++) {
-      var rowsTry = Math.ceil(n / colsTry);
-      var cellW = boxW / colsTry;
-      var cellH = boxH / rowsTry;
-      if (cellW + 0.5 < tw) continue;
-      var fits = true;
-      var r;
-      for (r = 0; r < rowsTry && fits; r++) {
-        var maxH = 0;
-        var c;
-        for (c = 0; c < colsTry; c++) {
-          var idx = r * colsTry + c;
-          if (idx >= n) break;
-          maxH = Math.max(maxH, tileHeight(items[idx], tw));
-        }
-        if (maxH > cellH + 0.5) fits = false;
-      }
-      if (!fits) continue;
-      var score = Math.abs(colsTry - ideal);
-      if (score < bestScore) {
-        bestScore = score;
-        best = colsTry;
-      }
-    }
-    var cols = best;
-    var rows = Math.ceil(n / cols);
-    var cellW = boxW / cols;
-    var cellH = boxH / rows;
+    var rng = spreadRng(0x51A7B);
+    var heights = new Array(n);
     var points = new Array(n);
-    var row;
-    for (row = 0; row < rows; row++) {
-      var count = Math.min(cols, n - row * cols);
-      var col;
-      for (col = 0; col < count; col++) {
-        var i = row * cols + col;
-        var th = tileHeight(items[i], tw);
-        var rowShift = ((cols - count) * cellW) / 2;
-        points[i] = {
-          x: pad + rowShift + col * cellW + Math.max(0, (cellW - tw) / 2),
-          y: minY + row * cellH + Math.max(0, (cellH - th) / 2)
-        };
+    var placed = [];
+    var i;
+    for (i = 0; i < n; i++) heights[i] = tileHeight(items[i], tw);
+    for (i = 0; i < n; i++) {
+      var h = heights[i];
+      var maxX = Math.max(pad, gw - tw - pad);
+      var maxY = Math.max(minY, gh - h - pad);
+      var spanX = Math.max(1, maxX - pad);
+      var spanY = Math.max(1, maxY - minY);
+      var gap = 22 + Math.floor(rng() * 18);
+      var found = null;
+      var tries;
+      for (tries = 0; tries < 160 && !found; tries++) {
+        var x = pad + rng() * spanX;
+        var y = minY + rng() * spanY;
+        if (spreadClear(x, y, tw, h, placed, gap)) found = { x: x, y: y };
+      }
+      if (!found) {
+        for (tries = 0; tries < 80 && !found; tries++) {
+          var x2 = pad + rng() * spanX;
+          var y2 = minY + rng() * spanY;
+          if (spreadClear(x2, y2, tw, h, placed, 8)) found = { x: x2, y: y2 };
+        }
+      }
+      if (!found) {
+        var best = null;
+        var bestD = -Infinity;
+        var s;
+        for (s = 0; s < 24; s++) {
+          var x3 = pad + rng() * spanX;
+          var y3 = minY + rng() * spanY;
+          var nearest = Infinity;
+          var j;
+          for (j = 0; j < placed.length; j++) {
+            var p = placed[j];
+            var dx = Math.abs((x3 + tw / 2) - (p.x + p.w / 2)) - (tw + p.w) / 2;
+            var dy = Math.abs((y3 + h / 2) - (p.y + p.h / 2)) - (h + p.h) / 2;
+            var sep = Math.min(dx, dy);
+            if (sep < nearest) nearest = sep;
+          }
+          if (nearest > bestD) {
+            bestD = nearest;
+            best = { x: x3, y: y3 };
+          }
+        }
+        found = best;
+      }
+      placed.push({ x: found.x, y: found.y, w: tw, h: h });
+      points[i] = found;
+    }
+    var iter;
+    var j;
+    for (iter = 0; iter < 10; iter++) {
+      for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+          var a = points[i];
+          var b = points[j];
+          var ha = heights[i];
+          var hb = heights[j];
+          var dx = (b.x + tw / 2) - (a.x + tw / 2);
+          var dy = (b.y + hb / 2) - (a.y + ha / 2);
+          var penX = tw + 10 - Math.abs(dx);
+          var penY = (ha + hb) / 2 + 10 - Math.abs(dy);
+          if (penX <= 0 || penY <= 0) continue;
+          var len = Math.hypot(dx, dy);
+          var ux = len > 0.5 ? dx / len : 1;
+          var uy = len > 0.5 ? dy / len : 0;
+          var push = Math.min(penX, penY) * 0.45;
+          a.x -= ux * push;
+          a.y -= uy * push;
+          b.x += ux * push;
+          b.y += uy * push;
+        }
+      }
+      for (i = 0; i < n; i++) {
+        var limX = Math.max(pad, gw - tw - pad);
+        var limY = Math.max(minY, gh - heights[i] - pad);
+        if (points[i].x < pad) points[i].x = pad;
+        else if (points[i].x > limX) points[i].x = limX;
+        if (points[i].y < minY) points[i].y = minY;
+        else if (points[i].y > limY) points[i].y = limY;
       }
     }
     return points;
