@@ -237,7 +237,7 @@
   overflow-anchor: none;
 }
 
-.vsf-grid.vsf-stagger .vsf-tile:not([data-vsf-in]) {
+.vsf-grid.vsf-stagger .vsf-tile {
   opacity: 0;
   transition: none;
 }

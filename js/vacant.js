@@ -203,7 +203,6 @@
 
   function land(tile) {
     tile.style.transition = "none";
-    tile.setAttribute("data-vsf-in", "");
     tile.removeAttribute("data-vsf-wait");
     if (!tile.animate) {
       tile.style.transition = "";
@@ -279,8 +278,6 @@
     var g = grid();
     var h = hold();
     if (!g || !h) return;
-    vsfArrive += 1;
-    g.classList.remove("vsf-stagger");
     var filter = btn.getAttribute("data-filter") || "all";
     if (filter === "all") {
       document.querySelectorAll(".vsf-tag").forEach(function (b) {
@@ -626,8 +623,6 @@
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
-  var vsfArrive = 0;
-
   function revealFrame(img) {
     if (!(img.naturalWidth > 0)) return;
     // A decoded photo can stay blank on its layer until the next mouse move.
@@ -640,47 +635,11 @@
     });
   }
 
-  function staggerArrival() {
+  function openArrival() {
     var g = grid();
-    if (!g || !g.classList.contains("vsf-stagger")) return;
-    var items = visible();
-    var run = (vsfArrive += 1);
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || items.length < 2) {
-      items.forEach(function (tile) { tile.setAttribute("data-vsf-in", ""); });
-      g.classList.remove("vsf-stagger");
-      return;
-    }
-    var step = Math.max(42, Math.min(70, Math.round(1200 / items.length)));
-    var i = 0;
-    function next() {
-      if (run !== vsfArrive || !g.classList.contains("vsf-stagger")) return;
-      if (i >= items.length) {
-        g.classList.remove("vsf-stagger");
-        hoverScale();
-        return;
-      }
-      var tile = items[i];
-      i += 1;
-      var img = imgOf(tile);
-      var go = function () {
-        if (run !== vsfArrive) return;
-        if (img) revealFrame(img);
-        land(tile);
-        setTimeout(next, step);
-      };
-      if (!img || img.naturalWidth > 0) go();
-      else {
-        var done = function () {
-          img.removeEventListener("load", done);
-          img.removeEventListener("error", done);
-          go();
-        };
-        img.addEventListener("load", done);
-        img.addEventListener("error", done);
-      }
-    }
-    next();
+    if (!g) return;
+    g.classList.remove("vsf-stagger");
+    cascade(g);
   }
 
   function wakeImages() {
@@ -712,7 +671,7 @@
   }
 
   wakeImages();
-  staggerArrival();
+  openArrival();
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
