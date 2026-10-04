@@ -593,6 +593,16 @@
       ag.classList.toggle("cc-ag-on", agOn);
       ag.setAttribute("aria-pressed", agOn ? "true" : "false");
     }
+    document.body.classList.toggle("cc-under-menu", agOn);
+    if (agOn) {
+      var nav = document.querySelector(".bk-nav");
+      if (nav) document.documentElement.style.setProperty("--cc-nav-h", nav.offsetHeight + "px");
+    }
+  }
+
+  function agTop(field) {
+    var top = field.getBoundingClientRect().top + (window.pageYOffset || 0);
+    return isFinite(top) ? -top : 0;
   }
 
   function pick(v, current) {
@@ -666,12 +676,13 @@
     var W = field.clientWidth || stage.clientWidth || 800;
     var H = field.clientHeight || parseFloat(field.style.height) || 0;
     var pad = 4;
+    var minY = agTop(field);
     agBodies.forEach(function (b) {
       var maxX = Math.max(pad, W - b.w - pad);
-      var maxY = Math.max(pad, H - b.h - pad);
+      var maxY = Math.max(minY, H - b.h - pad);
       if (b.x < pad) b.x = pad;
       else if (b.x > maxX) b.x = maxX;
-      if (b.y < pad) b.y = pad;
+      if (b.y < minY) b.y = minY;
       else if (b.y > maxY) b.y = maxY;
       paintBody(b);
     });
@@ -690,6 +701,7 @@
     var W = field.clientWidth || stage.clientWidth || 800;
     var H = field.clientHeight || parseFloat(field.style.height) || 0;
     var pad = 4;
+    var minY = agTop(field);
     for (var i = 0; i < agBodies.length; i++) {
       var b = agBodies[i];
       if (!b || !b.el || b.held) continue;
@@ -709,7 +721,7 @@
       b.x += b.vx * dt;
       b.y += b.vy * dt;
       var maxX = Math.max(pad, W - b.w - pad);
-      var maxY = Math.max(pad, H - b.h - pad);
+      var maxY = Math.max(minY, H - b.h - pad);
       if (b.x < pad) {
         b.x = pad;
         b.vx = Math.abs(b.vx);
@@ -719,8 +731,8 @@
         b.vx = -Math.abs(b.vx);
         if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
       }
-      if (b.y < pad) {
-        b.y = pad;
+      if (b.y < minY) {
+        b.y = minY;
         b.vy = Math.abs(b.vy);
         if (b.tvy != null) b.tvy = Math.abs(b.tvy);
       } else if (b.y > maxY) {
@@ -1063,9 +1075,13 @@
       if (nowPhone !== phone) {
         phone = nowPhone;
         applySize(nowPhone ? 4 : storedCols());
+        if (agOn) syncButtons();
         return;
       }
-      if (agOn) clampBodies();
+      if (agOn) {
+        syncButtons();
+        clampBodies();
+      }
       else if (mode !== "family") render();
     }, 80);
   });

@@ -61,6 +61,25 @@
   min-height: 8rem;
 }
 
+/* Antigravity dots paint over the index nav and the controls bar. */
+body.cc-under-menu .bk-nav {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+body.cc-under-menu .cc-controls {
+  position: sticky;
+  top: var(--cc-nav-h, 48px);
+  z-index: 40;
+  background: #fff;
+}
+
+body.cc-under-menu .cc-ag-field {
+  z-index: 60;
+  pointer-events: none;
+}
+
 .sheet {
   position: relative;
   z-index: 1;
@@ -290,6 +309,7 @@
   translate: var(--cc-x, 0px) var(--cc-y, 0px);
   z-index: var(--cc-z, 1);
   box-shadow: none;
+  pointer-events: auto;
   will-change: translate;
 }
 
