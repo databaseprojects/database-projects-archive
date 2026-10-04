@@ -236,6 +236,66 @@
     else img.addEventListener("load", go, { once: true });
   }
 
+  var fpArrive = 0;
+
+  function arriveTile(tile) {
+    tile.classList.add("fp-in");
+    if (!tile.animate) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    tile.style.transition = "none";
+    var an = tile.animate(
+      [
+        { opacity: 0, transform: "translateY(12px)" },
+        { opacity: 1, transform: "none" }
+      ],
+      { duration: 280, easing: "cubic-bezier(.22,.8,.25,1)", fill: "backwards" }
+    );
+    an.onfinish = function () {
+      tile.style.transition = "";
+    };
+  }
+
+  function staggerArrival() {
+    var g = grid();
+    if (!g || !g.classList.contains("fp-stagger")) return;
+    var list = tiles();
+    var run = (fpArrive += 1);
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || list.length < 2) {
+      list.forEach(function (tile) { tile.classList.add("fp-in"); });
+      g.classList.remove("fp-stagger");
+      return;
+    }
+    var step = Math.max(28, Math.min(48, Math.round(1600 / list.length)));
+    var i = 0;
+    function next() {
+      if (run !== fpArrive || !g.classList.contains("fp-stagger")) return;
+      if (i >= list.length) {
+        g.classList.remove("fp-stagger");
+        return;
+      }
+      var tile = list[i];
+      i += 1;
+      var img = imgOf(tile);
+      var go = function () {
+        if (run !== fpArrive) return;
+        arriveTile(tile);
+        setTimeout(next, step);
+      };
+      if (!img || img.naturalWidth > 0) go();
+      else {
+        var done = function () {
+          img.removeEventListener("load", done);
+          img.removeEventListener("error", done);
+          go();
+        };
+        img.addEventListener("load", done);
+        img.addEventListener("error", done);
+      }
+    }
+    next();
+  }
+
   function wakeImages() {
     var g = grid();
     if (!g) return;
@@ -1337,6 +1397,10 @@
     mode = saveLayout(mode);
     var g = grid();
     if (!g) return;
+    if (animate) {
+      fpArrive += 1;
+      g.classList.remove("fp-stagger");
+    }
     stopAntigravity();
     var agSeeds = mode === "antigravity" ? captureAgSeeds(g) : null;
     var agToRow = animate && from === "antigravity" && mode === "row";
@@ -2009,6 +2073,7 @@
     setCount();
     setCols(phoneSlider() ? 4 : storedCols(), false);
     setLayout(layoutMode(), false);
+    staggerArrival();
   } finally {
     document.documentElement.style.visibility = "";
   }

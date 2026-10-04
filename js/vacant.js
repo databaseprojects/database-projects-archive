@@ -203,6 +203,7 @@
 
   function land(tile) {
     tile.style.transition = "none";
+    tile.setAttribute("data-vsf-in", "");
     tile.removeAttribute("data-vsf-wait");
     if (!tile.animate) {
       tile.style.transition = "";
@@ -278,6 +279,8 @@
     var g = grid();
     var h = hold();
     if (!g || !h) return;
+    vsfArrive += 1;
+    g.classList.remove("vsf-stagger");
     var filter = btn.getAttribute("data-filter") || "all";
     if (filter === "all") {
       document.querySelectorAll(".vsf-tag").forEach(function (b) {
@@ -623,7 +626,7 @@
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
-  var arrivalDone = false;
+  var vsfArrive = 0;
 
   function revealFrame(img) {
     if (!(img.naturalWidth > 0)) return;
@@ -637,39 +640,47 @@
     });
   }
 
-  function finishArrival() {
-    if (arrivalDone) return;
-    arrivalDone = true;
+  function staggerArrival() {
     var g = grid();
-    if (!g) return;
-    Array.prototype.forEach.call(g.querySelectorAll("img"), revealFrame);
-    g.classList.remove("vsf-pending");
-    hoverScale();
-  }
-
-  function watchArrival() {
-    var g = grid();
-    if (!g) return;
-    var imgs = Array.prototype.slice.call(g.querySelectorAll("img"));
-    var left = imgs.length;
-    if (!left) {
-      finishArrival();
+    if (!g || !g.classList.contains("vsf-stagger")) return;
+    var items = visible();
+    var run = (vsfArrive += 1);
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || items.length < 2) {
+      items.forEach(function (tile) { tile.setAttribute("data-vsf-in", ""); });
+      g.classList.remove("vsf-stagger");
       return;
     }
-    function note(img) {
-      if (img._vsfNoted) return;
-      img._vsfNoted = true;
-      left--;
-      if (left <= 0) finishArrival();
-    }
-    imgs.forEach(function (img) {
-      if (img.complete) note(img);
-      else {
-        img.addEventListener("load", function () { note(img); });
-        img.addEventListener("error", function () { note(img); });
+    var step = Math.max(42, Math.min(70, Math.round(1200 / items.length)));
+    var i = 0;
+    function next() {
+      if (run !== vsfArrive || !g.classList.contains("vsf-stagger")) return;
+      if (i >= items.length) {
+        g.classList.remove("vsf-stagger");
+        hoverScale();
+        return;
       }
-    });
-    setTimeout(finishArrival, 5000);
+      var tile = items[i];
+      i += 1;
+      var img = imgOf(tile);
+      var go = function () {
+        if (run !== vsfArrive) return;
+        if (img) revealFrame(img);
+        land(tile);
+        setTimeout(next, step);
+      };
+      if (!img || img.naturalWidth > 0) go();
+      else {
+        var done = function () {
+          img.removeEventListener("load", done);
+          img.removeEventListener("error", done);
+          go();
+        };
+        img.addEventListener("load", done);
+        img.addEventListener("error", done);
+      }
+    }
+    next();
   }
 
   function wakeImages() {
@@ -684,7 +695,7 @@
       var retried = false;
       var kick = function () {
         if (img.naturalWidth > 0) {
-          if (arrivalDone) revealFrame(img);
+          revealFrame(img);
           return;
         }
         if (retried) return;
@@ -701,7 +712,7 @@
   }
 
   wakeImages();
-  watchArrival();
+  staggerArrival();
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();

@@ -299,6 +299,10 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   }
 }
 
+.fp-grid.fp-stagger .fp-tile:not(.fp-in) {
+  opacity: 0;
+}
+
 .fp-tile {
   position: relative;
   z-index: 1;
