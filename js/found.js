@@ -311,8 +311,7 @@
         img._fpSettled = true;
         img.removeEventListener("load", onDone);
         img.removeEventListener("error", onDone);
-        if (img.naturalWidth > 0 && img.decode) img.decode().then(function () { note(late); }).catch(function () { note(late); });
-        else note(late);
+        note(late);
       };
       img.addEventListener("load", onDone);
       img.addEventListener("error", onDone);
