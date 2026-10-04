@@ -551,7 +551,12 @@
       requestAnimationFrame(settleOpen);
     }
     big.addEventListener("load", onOpenLoad);
-    big.src = lo;
+    big.decoding = "sync";
+    big.addEventListener("error", function () {
+      if (lb._closing || !lo || big.getAttribute("src") === lo) return;
+      big.src = lo;
+    });
+    big.src = src || lo;
     lb.appendChild(big);
     document.body.appendChild(lb);
     document.body.classList.add("vsf-lb-lock");
@@ -560,13 +565,6 @@
       var lat = parseFloat(tile.getAttribute("data-lat"));
       var lon = parseFloat(tile.getAttribute("data-lon"));
       if (isFinite(lat) && isFinite(lon)) mountMap(lb, lat, lon);
-    }
-    if (src && src !== lo) {
-      var hi = new Image();
-      hi.onload = function () {
-        if (!lb._closing) big.src = src;
-      };
-      hi.src = src;
     }
     lb.addEventListener("click", function (e) {
       if (e.target === lb) closeLb();
