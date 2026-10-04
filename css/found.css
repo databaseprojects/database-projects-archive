@@ -299,8 +299,13 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   }
 }
 
-.fp-grid.fp-stagger .fp-tile:not(.fp-in) {
+.fp-grid.fp-hold {
   opacity: 0;
+  pointer-events: none;
+}
+
+.fp-grid.fp-reveal {
+  transition: opacity 0.48s ease;
 }
 
 .fp-tile {

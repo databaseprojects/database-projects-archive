@@ -236,64 +236,89 @@
     else img.addEventListener("load", go, { once: true });
   }
 
-  var fpArrive = 0;
-
-  function arriveTile(tile) {
-    tile.classList.add("fp-in");
-    if (!tile.animate) return;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    tile.style.transition = "none";
-    var an = tile.animate(
-      [
-        { opacity: 0, transform: "translateY(12px)" },
-        { opacity: 1, transform: "none" }
-      ],
-      { duration: 280, easing: "cubic-bezier(.22,.8,.25,1)", fill: "backwards" }
-    );
-    an.onfinish = function () {
-      tile.style.transition = "";
-    };
-  }
-
-  function staggerArrival() {
-    var g = grid();
-    if (!g || !g.classList.contains("fp-stagger")) return;
-    var list = tiles();
-    var run = (fpArrive += 1);
+  function releaseHold(g, fade) {
+    if (!g || !g.classList.contains("fp-hold")) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || list.length < 2) {
-      list.forEach(function (tile) { tile.classList.add("fp-in"); });
-      g.classList.remove("fp-stagger");
+    if (!fade || reduce) {
+      g.classList.remove("fp-hold");
+      g.classList.remove("fp-reveal");
       return;
     }
-    var step = Math.max(28, Math.min(48, Math.round(1600 / list.length)));
-    var i = 0;
-    function next() {
-      if (run !== fpArrive || !g.classList.contains("fp-stagger")) return;
-      if (i >= list.length) {
-        g.classList.remove("fp-stagger");
-        return;
-      }
-      var tile = list[i];
-      i += 1;
-      var img = imgOf(tile);
-      var go = function () {
-        if (run !== fpArrive) return;
-        arriveTile(tile);
-        setTimeout(next, step);
-      };
-      if (!img || img.naturalWidth > 0) go();
-      else {
-        var done = function () {
-          img.removeEventListener("load", done);
-          img.removeEventListener("error", done);
-          go();
-        };
-        img.addEventListener("load", done);
-        img.addEventListener("error", done);
-      }
+    g.classList.add("fp-reveal");
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (!g.classList.contains("fp-hold")) return;
+        g.classList.remove("fp-hold");
+      });
+    });
+    var clear = function (ev) {
+      if (ev && ev.target !== g) return;
+      g.removeEventListener("transitionend", clear);
+      g.classList.remove("fp-reveal");
+    };
+    g.addEventListener("transitionend", clear);
+    setTimeout(function () { g.classList.remove("fp-reveal"); }, 700);
+  }
+
+  function settleArrival() {
+    var g = grid();
+    if (!g || !g.classList.contains("fp-hold")) return;
+    var imgs = Array.prototype.slice.call(g.querySelectorAll(".fp-tile > img"));
+    var left = imgs.length;
+    var waited = false;
+    var opened = false;
+    function finish() {
+      if (opened) return;
+      opened = true;
+      if (!g.classList.contains("fp-hold")) return;
+      imgs.forEach(function (img) {
+        if (!(img.naturalWidth > 0)) {
+          if (!img.complete) {
+            img.style.opacity = "0";
+            var show = function () {
+              img.removeEventListener("load", show);
+              img.removeEventListener("error", show);
+              img.style.opacity = "";
+            };
+            img.addEventListener("load", show);
+            img.addEventListener("error", show);
+          }
+          return;
+        }
+        img.style.filter = "contrast(1)";
+      });
+      void g.offsetWidth;
+      imgs.forEach(function (img) {
+        img.style.filter = "";
+      });
+      releaseHold(g, waited);
     }
-    next();
+    function note(late) {
+      if (opened) return;
+      if (late) waited = true;
+      left -= 1;
+      if (left <= 0) finish();
+    }
+    if (!imgs.length) {
+      finish();
+      return;
+    }
+    imgs.forEach(function (img) {
+      var late = !(img.naturalWidth > 0);
+      var onDone = function () {
+        if (img._fpSettled) return;
+        if (!(img.naturalWidth > 0) && !img.complete) return;
+        img._fpSettled = true;
+        img.removeEventListener("load", onDone);
+        img.removeEventListener("error", onDone);
+        if (img.naturalWidth > 0 && img.decode) img.decode().then(function () { note(late); }).catch(function () { note(late); });
+        else note(late);
+      };
+      img.addEventListener("load", onDone);
+      img.addEventListener("error", onDone);
+      onDone();
+    });
+    setTimeout(finish, 20000);
   }
 
   function wakeImages() {
@@ -1397,9 +1422,9 @@
     mode = saveLayout(mode);
     var g = grid();
     if (!g) return;
-    if (animate) {
-      fpArrive += 1;
-      g.classList.remove("fp-stagger");
+    if (animate && g.classList.contains("fp-hold")) {
+      g.classList.remove("fp-hold");
+      g.classList.remove("fp-reveal");
     }
     stopAntigravity();
     var agSeeds = mode === "antigravity" ? captureAgSeeds(g) : null;
@@ -2073,7 +2098,7 @@
     setCount();
     setCols(phoneSlider() ? 4 : storedCols(), false);
     setLayout(layoutMode(), false);
-    staggerArrival();
+    settleArrival();
   } finally {
     document.documentElement.style.visibility = "";
   }
