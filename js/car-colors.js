@@ -169,15 +169,7 @@
     pageBackground("");
   }
 
-  function spillEdge(cx, cy, theta, vw, vh) {
-    var dx = Math.cos(theta);
-    var dy = Math.sin(theta);
-    var tx = dx > 0.0001 ? (vw - cx) / dx : dx < -0.0001 ? -cx / dx : 1e9;
-    var ty = dy > 0.0001 ? (vh - cy) / dy : dy < -0.0001 ? -cy / dy : 1e9;
-    if (tx < 1) tx = 1;
-    if (ty < 1) ty = 1;
-    return Math.min(tx, ty);
-  }
+  var SPILL_SOLID = 0.62;
 
   function spillEase(p) {
     if (p <= 0) return 0;
@@ -185,84 +177,19 @@
     return p * p * (3 - 2 * p);
   }
 
-  function makeSpillShape() {
-    var shape = {
-      p1: Math.random() * Math.PI * 2,
-      p2: Math.random() * Math.PI * 2,
-      p3: Math.random() * Math.PI * 2,
-      a2: 0.26 + Math.random() * 0.08,
-      a3: 0.18 + Math.random() * 0.08,
-      a5: 0.12 + Math.random() * 0.06
+  function spillRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16)
     };
-    var min = 1e9;
-    var max = -1e9;
-    var i;
-    for (i = 0; i < 72; i++) {
-      var n = spillRaw(i / 72 * Math.PI * 2, shape);
-      if (n < min) min = n;
-      if (n > max) max = n;
-    }
-    shape.min = min;
-    shape.max = max;
-    return shape;
   }
 
-  function spillRaw(theta, shape) {
-    var n = 0.55;
-    n += shape.a2 * Math.cos(theta * 2 + shape.p1);
-    n += shape.a3 * Math.cos(theta * 3 + shape.p2);
-    n += shape.a5 * Math.sin(theta * 4 + shape.p3);
-    return n;
-  }
-
-  function spillNorm(theta, shape) {
-    var n = spillRaw(theta, shape);
-    var span = shape.max - shape.min;
-    var u = span > 0.001 ? (n - shape.min) / span : 0.5;
-    if (u < 0) u = 0;
-    if (u > 1) u = 1;
-    return 0.36 + u * 0.64;
-  }
-
-  function spillReach(cx, cy, vw, vh, shape) {
-    var need = 0;
-    var i;
-    for (i = 0; i < 48; i++) {
-      var theta = (i / 48) * Math.PI * 2;
-      var g = spillEdge(cx, cy, theta, vw, vh) / spillNorm(theta, shape);
-      if (g > need) need = g;
-    }
-    return need * 1.16;
-  }
-
-  function spillRadii(cx, cy, dotR, shape, reach, p) {
-    var n = 72;
-    var pts = [];
-    var i;
-    for (i = 0; i < n; i++) {
-      var theta = (i / n) * Math.PI * 2;
-      var rad = dotR + (reach * spillNorm(theta, shape) - dotR) * p;
-      pts.push([cx + Math.cos(theta) * rad, cy + Math.sin(theta) * rad]);
-    }
-    return pts;
-  }
-
-  function spillPath(pts) {
-    var n = pts.length;
-    var d = "";
-    var i;
-    for (i = 0; i < n; i++) {
-      var p0 = pts[(i - 1 + n) % n];
-      var p1 = pts[i];
-      var p2 = pts[(i + 1) % n];
-      var p3 = pts[(i + 2) % n];
-      if (i === 0) d += "M" + p1[0].toFixed(1) + " " + p1[1].toFixed(1);
-      d += "C" +
-        (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + " " + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + " " +
-        (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + " " + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + " " +
-        p2[0].toFixed(1) + " " + p2[1].toFixed(1);
-    }
-    return d + "Z";
+  function spillFar(cx, cy, vw, vh) {
+    var dx = Math.max(cx, vw - cx);
+    var dy = Math.max(cy, vh - cy);
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
   function spillFrom(dotEl) {
@@ -278,27 +205,33 @@
     var dotR = rect.width / 2;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var shape = makeSpillShape();
-    var reach = spillReach(cx, cy, vw, vh, shape);
+    var endR = spillFar(cx, cy, vw, vh) / SPILL_SOLID;
+    if (!(endR > dotR)) endR = dotR;
+    var rgb = spillRgb(hex);
+    var ink = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
+    var fade = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0)";
     var spill = document.createElement("div");
     spill.className = "cc-spill";
     spill.style.boxShadow = "none";
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("width", String(vw));
-    svg.setAttribute("height", String(vh));
-    svg.setAttribute("viewBox", "0 0 " + vw + " " + vh);
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("fill", hex);
-    path.setAttribute("stroke", "none");
-    svg.appendChild(path);
-    spill.appendChild(svg);
+    var disk = document.createElement("div");
+    disk.className = "cc-spill-disk";
+    disk.style.left = cx.toFixed(1) + "px";
+    disk.style.top = cy.toFixed(1) + "px";
+    disk.style.width = (endR * 2).toFixed(1) + "px";
+    disk.style.height = (endR * 2).toFixed(1) + "px";
+    disk.style.marginLeft = (-endR).toFixed(1) + "px";
+    disk.style.marginTop = (-endR).toFixed(1) + "px";
+    disk.style.background = "radial-gradient(circle closest-side, " + ink + " 0%, " + ink + " 62%, " + fade + " 100%)";
+    disk.style.boxShadow = "none";
+    spill.appendChild(disk);
     document.body.appendChild(spill);
     var t0 = performance.now();
     var life = 1280;
+    var start = dotR / endR;
     function draw(t) {
       var p = t <= 0 ? 0 : t >= life ? 1 : spillEase(t / life);
-      path.setAttribute("d", spillPath(spillRadii(cx, cy, dotR, shape, reach, p)));
+      var s = start + (1 - start) * p;
+      disk.style.transform = "scale(" + s.toFixed(4) + ")";
     }
     function frame(now) {
       if (gen !== spillGen) return;
