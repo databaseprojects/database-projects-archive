@@ -236,6 +236,23 @@
     else img.addEventListener("load", go, { once: true });
   }
 
+  function wakeImages() {
+    var g = grid();
+    if (!g) return;
+    Array.prototype.forEach.call(g.querySelectorAll("img"), function (img) {
+      var src = img.getAttribute("src");
+      if (!src) return;
+      img.decoding = "sync";
+      img.loading = "eager";
+      var redo = function () {
+        if (img.naturalWidth > 0) return;
+        img.src = src;
+      };
+      if (img.decode) img.decode().then(function () {}).catch(redo);
+      else if (img.complete) redo();
+    });
+  }
+
   function setCount() {
     var c = document.querySelector(".fp-count");
     var n = tiles().length;
@@ -310,7 +327,7 @@
   function tableSpreadHeight(g, tw, items) {
     var base = surfaceHeight(g, tw, items);
     var vh = window.innerHeight || 700;
-    return Math.ceil(Math.max(base * 2.6, vh * 2.5));
+    return Math.ceil(Math.max(base * 1.55, vh * 1.4));
   }
 
   function freshTilt(used) {
@@ -405,7 +422,7 @@
       var maxY = Math.max(minY, gh - h - pad);
       var spanX = Math.max(1, maxX - pad);
       var spanY = Math.max(1, maxY - minY);
-      var gap = 22 + Math.floor(rng() * 18);
+      var gap = 6 + Math.floor(rng() * 8);
       var found = null;
       var tries;
       for (tries = 0; tries < 160 && !found; tries++) {
@@ -417,7 +434,7 @@
         for (tries = 0; tries < 80 && !found; tries++) {
           var x2 = pad + rng() * spanX;
           var y2 = minY + rng() * spanY;
-          if (spreadClear(x2, y2, tw, h, placed, 8)) found = { x: x2, y: y2 };
+          if (spreadClear(x2, y2, tw, h, placed, 3)) found = { x: x2, y: y2 };
         }
       }
       if (!found) {
@@ -457,8 +474,8 @@
           var hb = heights[j];
           var dx = (b.x + tw / 2) - (a.x + tw / 2);
           var dy = (b.y + hb / 2) - (a.y + ha / 2);
-          var penX = tw + 10 - Math.abs(dx);
-          var penY = (ha + hb) / 2 + 10 - Math.abs(dy);
+          var penX = tw + 4 - Math.abs(dx);
+          var penY = (ha + hb) / 2 + 4 - Math.abs(dy);
           if (penX <= 0 || penY <= 0) continue;
           var len = Math.hypot(dx, dy);
           var ux = len > 0.5 ? dx / len : 1;
@@ -479,6 +496,53 @@
         else if (points[i].y > limY) points[i].y = limY;
       }
     }
+    var mx = 0;
+    var my = 0;
+    for (i = 0; i < n; i++) {
+      mx += points[i].x + tw / 2;
+      my += points[i].y + heights[i] / 2;
+    }
+    mx /= n;
+    my /= n;
+    var pull = 0.58;
+    for (i = 0; i < n; i++) {
+      var cx = points[i].x + tw / 2;
+      var cy = points[i].y + heights[i] / 2;
+      points[i].x = mx + (cx - mx) * pull - tw / 2;
+      points[i].y = my + (cy - my) * pull - heights[i] / 2;
+    }
+    for (iter = 0; iter < 8; iter++) {
+      for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+          var a2 = points[i];
+          var b2 = points[j];
+          var ha2 = heights[i];
+          var hb2 = heights[j];
+          var dx2 = (b2.x + tw / 2) - (a2.x + tw / 2);
+          var dy2 = (b2.y + hb2 / 2) - (a2.y + ha2 / 2);
+          var penX2 = tw + 6 - Math.abs(dx2);
+          var penY2 = (ha2 + hb2) / 2 + 6 - Math.abs(dy2);
+          if (penX2 <= 0 || penY2 <= 0) continue;
+          var len2 = Math.hypot(dx2, dy2);
+          var ux2 = len2 > 0.5 ? dx2 / len2 : 1;
+          var uy2 = len2 > 0.5 ? dy2 / len2 : 0;
+          var push2 = Math.min(penX2, penY2) * 0.5;
+          a2.x -= ux2 * push2;
+          a2.y -= uy2 * push2;
+          b2.x += ux2 * push2;
+          b2.y += uy2 * push2;
+        }
+      }
+    }
+    var top = Infinity;
+    for (i = 0; i < n; i++) if (points[i].y < top) top = points[i].y;
+    var shiftY = top - minY;
+    for (i = 0; i < n; i++) {
+      points[i].y -= shiftY;
+      var limX2 = Math.max(pad, gw - tw - pad);
+      if (points[i].x < pad) points[i].x = pad;
+      else if (points[i].x > limX2) points[i].x = limX2;
+    }
     return points;
   }
 
@@ -494,11 +558,19 @@
     var tw = columnWidth(g);
     var gw = g.clientWidth || 800;
     var gh = tableSpreadHeight(g, tw, items);
-    g.style.setProperty("--fp-table-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
     var minY = pageTop(g);
     var points = resetSpread ? spreadPoints(items, gw, gh, tw, pad, minY) : null;
+    if (points) {
+      var bottom = minY;
+      items.forEach(function (tile, i) {
+        var end = points[i].y + tileHeight(tile, tw);
+        if (end > bottom) bottom = end;
+      });
+      gh = Math.ceil(bottom + pad);
+    }
+    g.style.setProperty("--fp-table-h", gh + "px");
     var usedTilts = {};
     items.forEach(function (tile, i) {
       var key = posKey(tile);
@@ -1803,6 +1875,10 @@
     if (v > ends.max) v = ends.max;
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
+
+  wakeImages();
+  window.addEventListener("load", wakeImages);
+  window.addEventListener("pageshow", wakeImages);
 
   try {
     tiles().forEach(function (tile) {
