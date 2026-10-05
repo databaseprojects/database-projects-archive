@@ -278,6 +278,7 @@ html.vsf-sizing * {
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.82);
   opacity: 0;
+  overflow: hidden;
   transition: opacity 0.32s ease;
   cursor: zoom-out;
 }
@@ -309,10 +310,6 @@ html.vsf-sizing * {
 
 .vsf-lb.vsf-lb-closing > img {
   transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
-}
-
-body.vsf-lb-lock {
-  overflow-y: scroll;
 }
 
 .vsf-tag:focus-visible,
