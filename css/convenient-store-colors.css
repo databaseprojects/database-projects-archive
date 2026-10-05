@@ -22,6 +22,10 @@
   flex-wrap: wrap;
 }
 
+.csc-cats[hidden] {
+  display: none !important;
+}
+
 .csc-opt {
   display: inline-flex;
   align-items: center;

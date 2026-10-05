@@ -2,6 +2,7 @@
 (function () {
   var store = "all";
   var cat = "";
+  var storePicked = false;
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
   var thumb = document.querySelector(".csc-thumb");
@@ -23,6 +24,7 @@
       });
       block.hidden = shown === 0;
     });
+    if (cats) cats.hidden = !storePicked;
   }
 
   function setPressed(selector, attr, value) {
@@ -36,8 +38,8 @@
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
     button.addEventListener("click", function () {
       store = button.getAttribute("data-csc-store");
+      storePicked = true;
       setPressed("[data-csc-store]", "data-csc-store", store);
-      if (cats) cats.hidden = false;
       apply();
     });
   });
