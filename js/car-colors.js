@@ -640,37 +640,49 @@
     stage.appendChild(view);
   }
 
+  /* Simple street segments in the map viewBox (0 0 100 78). No names. */
+  var MAP_STREETS = [
+    [24, 6, 58, 6],
+    [24, 13, 58, 13],
+    [24, 20, 56, 20],
+    [30, 4, 30, 22],
+    [40, 4, 40, 40],
+    [50, 4, 50, 22],
+    [8, 40, 62, 40],
+    [8, 48, 94, 48],
+    [8, 56, 94, 56],
+    [8, 64, 94, 64],
+    [8, 72, 94, 72],
+    [14, 42, 14, 74],
+    [28, 42, 28, 74],
+    [42, 42, 42, 74],
+    [56, 42, 56, 74],
+    [70, 42, 70, 74],
+    [84, 42, 84, 74]
+  ];
+
   function vancouverMapLines() {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("class", "cc-map-lines");
     svg.setAttribute("viewBox", "0 0 100 78");
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
-    var paths = [
-      "M 24 6 L 58 6",
-      "M 24 13 L 58 13",
-      "M 24 20 L 56 20",
-      "M 30 4 L 30 22",
-      "M 40 4 L 40 40",
-      "M 50 4 L 50 22",
-      "M 8 40 L 62 40",
-      "M 8 48 L 94 48",
-      "M 8 56 L 94 56",
-      "M 8 64 L 94 64",
-      "M 8 72 L 94 72",
-      "M 14 42 L 14 74",
-      "M 28 42 L 28 74",
-      "M 42 42 L 42 74",
-      "M 56 42 L 56 74",
-      "M 70 42 L 70 74",
-      "M 84 42 L 84 74"
-    ];
-    paths.forEach(function (d) {
+    MAP_STREETS.forEach(function (s) {
       var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", d);
+      path.setAttribute("d", "M " + s[0] + " " + s[1] + " L " + s[2] + " " + s[3]);
       svg.appendChild(path);
     });
     return svg;
+  }
+
+  function mapStreetSegments(width, height) {
+    return MAP_STREETS.map(function (s) {
+      var x1 = (s[0] / 100) * width;
+      var y1 = (s[1] / 78) * height;
+      var x2 = (s[2] / 100) * width;
+      var y2 = (s[3] / 78) * height;
+      return { x1: x1, y1: y1, x2: x2, y2: y2, len: Math.hypot(x2 - x1, y2 - y1) };
+    });
   }
 
   function renderMap() {
@@ -683,51 +695,85 @@
     field.appendChild(vancouverMapLines());
     var size = dotPx();
     var rng = mulberry32(0x5A11);
-    var order = shuffle(carsIn("Vancouver"), rng);
-    var minD = size + Math.max(10, Math.round(size * 0.35));
-    var placed = [];
-
-    function fits(x, y) {
-      if (x < 0 || y < 0 || x > width - size || y > height - size) return false;
-      var i;
-      for (i = 0; i < placed.length; i++) {
-        var dx = placed[i].x - x;
-        var dy = placed[i].y - y;
-        if (dx * dx + dy * dy < minD * minD) return false;
-      }
-      return true;
+    var cars = shuffle(carsIn("Vancouver"), rng);
+    var segs = mapStreetSegments(width, height);
+    var total = 0;
+    var si;
+    for (si = 0; si < segs.length; si++) total += segs[si].len;
+    var shares = segs.map(function (seg) { return (seg.len / total) * cars.length; });
+    var counts = shares.map(function (share) { return Math.floor(share); });
+    var used = 0;
+    for (si = 0; si < counts.length; si++) used += counts[si];
+    var remainders = shares.map(function (share, i) {
+      return { i: i, frac: share - counts[i] };
+    });
+    remainders.sort(function (a, b) { return b.frac - a.frac; });
+    var extra = 0;
+    while (used < cars.length) {
+      counts[remainders[extra % remainders.length].i] += 1;
+      used += 1;
+      extra += 1;
     }
 
-    order.forEach(function (car) {
-      var found = null;
-      var n;
-      for (n = 0; n < 400; n++) {
-        var x = rng() * (width - size);
-        var y = rng() * (height - size);
-        if (fits(x, y)) {
-          found = { x: x, y: y };
-          break;
-        }
+    function clampU(u) {
+      if (u < 0.06) return 0.06;
+      if (u > 0.94) return 0.94;
+      return u;
+    }
+
+    function placeAt(item) {
+      var seg = segs[item.seg];
+      item.u = clampU(item.u);
+      item.cx = seg.x1 + (seg.x2 - seg.x1) * item.u;
+      item.cy = seg.y1 + (seg.y2 - seg.y1) * item.u;
+    }
+
+    var items = [];
+    var cursor = 0;
+    segs.forEach(function (seg, segIndex) {
+      var n = counts[segIndex];
+      var i;
+      for (i = 0; i < n; i++) {
+        var u = (i + 0.5) / n + (rng() - 0.5) * (0.42 / n);
+        var item = { car: cars[cursor], seg: segIndex, u: u };
+        placeAt(item);
+        items.push(item);
+        cursor += 1;
       }
-      if (!found) {
-        var step = minD;
-        var yScan;
-        scan: for (yScan = 0; yScan <= height - size; yScan += step) {
-          var xScan;
-          for (xScan = 0; xScan <= width - size; xScan += step) {
-            if (fits(xScan, yScan)) {
-              found = { x: xScan, y: yScan };
-              break scan;
-            }
-          }
-        }
-      }
-      placed.push({ car: car, x: found.x, y: found.y });
     });
-    placed.forEach(function (item) {
+
+    var minD = Math.max(18, size * 0.72);
+    function nudge(item, other, push) {
+      var seg = segs[item.seg];
+      var vx = seg.x2 - seg.x1;
+      var vy = seg.y2 - seg.y1;
+      var len = Math.hypot(vx, vy) || 1;
+      var away = (item.cx - other.cx) * vx + (item.cy - other.cy) * vy;
+      var sign = away === 0 ? (item.seg === other.seg && item.u < other.u ? -1 : 1) : (away > 0 ? 1 : -1);
+      item.u += sign * (push / len);
+      placeAt(item);
+    }
+    var pass;
+    var a;
+    var b;
+    for (pass = 0; pass < 10; pass++) {
+      for (a = 0; a < items.length; a++) {
+        for (b = a + 1; b < items.length; b++) {
+          var dx = items[b].cx - items[a].cx;
+          var dy = items[b].cy - items[a].cy;
+          var dist = Math.hypot(dx, dy);
+          if (dist >= minD) continue;
+          var push = (minD - dist) / 2;
+          nudge(items[a], items[b], push);
+          nudge(items[b], items[a], push);
+        }
+      }
+    }
+
+    items.forEach(function (item) {
       var el = dot(item.car);
-      el.style.left = item.x.toFixed(1) + "px";
-      el.style.top = item.y.toFixed(1) + "px";
+      el.style.left = (item.cx - size / 2).toFixed(1) + "px";
+      el.style.top = (item.cy - size / 2).toFixed(1) + "px";
       field.appendChild(el);
     });
     stage.appendChild(field);
