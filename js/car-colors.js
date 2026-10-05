@@ -730,24 +730,10 @@
     var total = 0;
     var si;
     for (si = 0; si < segs.length; si++) total += segs[si].len;
-    var shares = segs.map(function (seg) { return (seg.len / total) * cars.length; });
-    var counts = shares.map(function (share) { return Math.floor(share); });
-    var used = 0;
-    for (si = 0; si < counts.length; si++) used += counts[si];
-    var remainders = shares.map(function (share, i) {
-      return { i: i, frac: share - counts[i] };
-    });
-    remainders.sort(function (a, b) { return b.frac - a.frac; });
-    var extra = 0;
-    while (used < cars.length) {
-      counts[remainders[extra % remainders.length].i] += 1;
-      used += 1;
-      extra += 1;
-    }
 
     function clampU(u) {
-      if (u < 0.06) return 0.06;
-      if (u > 0.94) return 0.94;
+      if (u < 0.03) return 0.03;
+      if (u > 0.97) return 0.97;
       return u;
     }
 
@@ -758,47 +744,33 @@
       item.cy = seg.y1 + (seg.y2 - seg.y1) * item.u;
     }
 
-    var items = [];
-    var cursor = 0;
-    segs.forEach(function (seg, segIndex) {
-      var n = counts[segIndex];
+    function pickSeg(t) {
+      var walk = t * total;
       var i;
-      for (i = 0; i < n; i++) {
-        var u = (i + 0.5) / n + (rng() - 0.5) * (0.42 / n);
-        var item = { car: cars[cursor], seg: segIndex, u: u };
-        placeAt(item);
-        items.push(item);
-        cursor += 1;
+      for (i = 0; i < segs.length; i++) {
+        walk -= segs[i].len;
+        if (walk <= 0) return i;
       }
-    });
+      return segs.length - 1;
+    }
 
-    var minD = Math.max(18, size * 0.72);
-    function nudge(item, other, push) {
-      var seg = segs[item.seg];
-      var vx = seg.x2 - seg.x1;
-      var vy = seg.y2 - seg.y1;
-      var len = Math.hypot(vx, vy) || 1;
-      var away = (item.cx - other.cx) * vx + (item.cy - other.cy) * vy;
-      var sign = away === 0 ? (item.seg === other.seg && item.u < other.u ? -1 : 1) : (away > 0 ? 1 : -1);
-      item.u += sign * (push / len);
-      placeAt(item);
-    }
-    var pass;
-    var a;
-    var b;
-    for (pass = 0; pass < 10; pass++) {
-      for (a = 0; a < items.length; a++) {
-        for (b = a + 1; b < items.length; b++) {
-          var dx = items[b].cx - items[a].cx;
-          var dy = items[b].cy - items[a].cy;
-          var dist = Math.hypot(dx, dy);
-          if (dist >= minD) continue;
-          var push = (minD - dist) / 2;
-          nudge(items[a], items[b], push);
-          nudge(items[b], items[a], push);
-        }
+    var items = [];
+    cars.forEach(function (car) {
+      var segIndex;
+      var u;
+      if (items.length && rng() < 0.46) {
+        var host = items[Math.floor(rng() * items.length)];
+        segIndex = host.seg;
+        var along = (rng() - 0.5) * Math.min(0.62, 140 / (segs[segIndex].len || 1));
+        u = host.u + along;
+      } else {
+        segIndex = pickSeg(rng());
+        u = rng();
       }
-    }
+      var item = { car: car, seg: segIndex, u: u };
+      placeAt(item);
+      items.push(item);
+    });
 
     items.forEach(function (item) {
       var el = dot(item.car);
