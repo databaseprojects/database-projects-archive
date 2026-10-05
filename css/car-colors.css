@@ -197,6 +197,13 @@ body.cc-screen .cc-about.cc-open + .cc-controls {
   background: #fff;
 }
 
+/* A picked page colour fills the city labels and the slider strip. */
+html.cc-paged .cc-controls,
+html.cc-paged body.cc-under-menu .cc-controls,
+html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls {
+  background: var(--cc-page);
+}
+
 body.cc-under-menu .cc-about.cc-open {
   position: relative;
   z-index: 70;
@@ -335,6 +342,14 @@ body.cc-under-menu .cc-about.cc-open {
   border-radius: 50%;
   background: #111;
   box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+html.cc-paged .cc-zslider::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+html.cc-paged .cc-zslider::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .cc-zslider:hover::-webkit-slider-thumb,

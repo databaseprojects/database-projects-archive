@@ -130,6 +130,13 @@
     var bg = hex || "";
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
+    if (hex) {
+      document.documentElement.style.setProperty("--cc-page", hex);
+      document.documentElement.classList.add("cc-paged");
+    } else {
+      document.documentElement.style.removeProperty("--cc-page");
+      document.documentElement.classList.remove("cc-paged");
+    }
   }
 
   function removeSpills() {
