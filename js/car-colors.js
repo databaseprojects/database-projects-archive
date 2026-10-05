@@ -433,80 +433,21 @@
     return copy;
   }
 
-  function scatterRoom() {
-    var view = window.innerHeight || document.documentElement.clientHeight || 800;
-    var top = stage.getBoundingClientRect().top;
-    if (top < 0) top = 0;
-    return Math.max(360, Math.floor(view - top - 12));
-  }
-
   function renderScatter() {
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
     var rng = mulberry32(0xC0105);
     var order = shuffle(carsIn("Vancouver"), rng);
     var size = dotPx();
-    var minD = size + Math.max(8, Math.round(size * 0.28));
-    var placed = [];
-    var packed = Math.ceil((order.length * minD * minD * 1.35) / width);
-    var height = Math.max(packed, scatterRoom());
-
-    function fits(x, y, limit) {
-      if (x < 0 || y < 0 || x > width - size || y > limit - size) return false;
-      for (var i = 0; i < placed.length; i++) {
-        var dx = placed[i].x - x;
-        var dy = placed[i].y - y;
-        if (dx * dx + dy * dy < minD * minD) return false;
-      }
-      return true;
-    }
-
-    order.forEach(function (car) {
-      var found = null;
-      var n;
-      for (n = 0; n < 240; n++) {
-        var x = rng() * (width - size);
-        var y = rng() * (height - size);
-        if (fits(x, y, height)) {
-          found = { x: x, y: y };
-          break;
-        }
-      }
-      if (!found) {
-        var step = minD;
-        var grow;
-        scan: for (grow = 0; grow < 40 && !found; grow++) {
-          if (grow > 0) height += step;
-          var yScan;
-          for (yScan = 0; yScan <= height - size; yScan += step) {
-            var xScan;
-            for (xScan = 0; xScan <= width - size; xScan += step) {
-              var jx = Math.min(width - size, Math.max(0, xScan + (rng() - 0.5) * 6));
-              var jy = Math.min(height - size, Math.max(0, yScan + (rng() - 0.5) * 6));
-              if (fits(jx, jy, height)) {
-                found = { x: jx, y: jy };
-                break scan;
-              }
-            }
-          }
-        }
-      }
-      placed.push({ car: car, x: found.x, y: found.y });
-    });
-
-    var bottom = 0;
-    placed.forEach(function (item) {
-      var edge = item.y + size;
-      if (edge > bottom) bottom = edge;
-    });
-
+    var span = Math.max(0, width - size);
+    var step = order.length > 1 ? span / (order.length - 1) : 0;
     var field = document.createElement("div");
     field.className = "cc-scatter";
-    field.style.height = Math.ceil(bottom + 8) + "px";
-    placed.forEach(function (item) {
-      var el = dot(item.car);
-      el.style.left = item.x + "px";
-      el.style.top = item.y + "px";
+    field.style.height = Math.ceil(size + 8) + "px";
+    order.forEach(function (car, i) {
+      var el = dot(car);
+      el.style.left = (i * step) + "px";
+      el.style.top = "0px";
       field.appendChild(el);
     });
     stage.appendChild(field);
