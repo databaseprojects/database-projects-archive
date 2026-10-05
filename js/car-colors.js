@@ -245,7 +245,7 @@
     pageBackground("");
   }
 
-  var SPILL_SOLID = 0.62;
+  var SPILL_SOLID = 0.15;
 
   function spillEase(p) {
     if (p <= 0) return 0;
@@ -297,7 +297,8 @@
     disk.style.height = (endR * 2).toFixed(1) + "px";
     disk.style.marginLeft = (-endR).toFixed(1) + "px";
     disk.style.marginTop = (-endR).toFixed(1) + "px";
-    disk.style.background = "radial-gradient(circle closest-side, " + ink + " 0%, " + ink + " 62%, " + fade + " 100%)";
+    var solidStop = Math.round(SPILL_SOLID * 100) + "%";
+    disk.style.background = "radial-gradient(circle closest-side, " + ink + " 0%, " + ink + " " + solidStop + ", " + fade + " 100%)";
     disk.style.boxShadow = "none";
     spill.appendChild(disk);
     document.body.appendChild(spill);
