@@ -194,8 +194,8 @@ body.cc-under-menu .cc-ag-field {
 
 .cc-map-lines path {
   fill: none;
-  stroke: rgba(0, 0, 0, 0.46);
-  stroke-width: 1.35;
+  stroke: rgba(0, 0, 0, 0.38);
+  stroke-width: 1.15;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;

@@ -129,111 +129,6 @@
     ["blue", "#6A8CA4", 206, true]
   ];
 
-  /* Street spots for map mode. Fractions of the line map, west to east and north to south.
-     A following spot a short step away is another car photographed close by. */
-  var STREET_SPOTS = [
-    [0.2933, 0.1199],
-    [0.3093, 0.1333],
-    [0.3400, 0.1237],
-    [0.3560, 0.1372],
-    [0.3867, 0.1276],
-    [0.4027, 0.1410],
-    [0.4333, 0.1314],
-    [0.4493, 0.1449],
-    [0.4800, 0.1353],
-    [0.4960, 0.1487],
-    [0.5267, 0.1391],
-    [0.5427, 0.1526],
-    [0.3130, 0.2013],
-    [0.3290, 0.2147],
-    [0.3590, 0.2064],
-    [0.3750, 0.2199],
-    [0.4050, 0.2115],
-    [0.4210, 0.2250],
-    [0.4510, 0.2167],
-    [0.4670, 0.2301],
-    [0.4970, 0.2218],
-    [0.5130, 0.2353],
-    [0.1719, 0.5683],
-    [0.1879, 0.5818],
-    [0.2156, 0.5715],
-    [0.2316, 0.5850],
-    [0.2594, 0.5747],
-    [0.2754, 0.5882],
-    [0.3031, 0.5779],
-    [0.3191, 0.5914],
-    [0.3469, 0.5812],
-    [0.3629, 0.5946],
-    [0.3906, 0.5844],
-    [0.4066, 0.5978],
-    [0.4344, 0.5876],
-    [0.4504, 0.6010],
-    [0.4781, 0.5908],
-    [0.4941, 0.6042],
-    [0.2080, 0.6615],
-    [0.2240, 0.6750],
-    [0.2640, 0.6641],
-    [0.2784, 0.6861],
-    [0.3200, 0.6667],
-    [0.3360, 0.6801],
-    [0.3760, 0.6692],
-    [0.3920, 0.6827],
-    [0.4320, 0.6718],
-    [0.4480, 0.6853],
-    [0.4880, 0.6744],
-    [0.5040, 0.6878],
-    [0.5440, 0.6769],
-    [0.5569, 0.7004],
-    [0.6000, 0.6795],
-    [0.6160, 0.6929],
-    [0.6560, 0.6821],
-    [0.6720, 0.6955],
-    [0.7120, 0.6846],
-    [0.1428, 0.6464],
-    [0.1445, 0.6827],
-    [0.1462, 0.7190],
-    [0.1478, 0.7554],
-    [0.1495, 0.7917],
-    [0.1512, 0.8279],
-    [0.2770, 0.6301],
-    [0.2826, 0.6639],
-    [0.2850, 0.7147],
-    [0.2890, 0.7571],
-    [0.2930, 0.7994],
-    [0.5521, 0.5994],
-    [0.5563, 0.6442],
-    [0.5635, 0.6791],
-    [0.5646, 0.7340],
-    [0.5688, 0.7788],
-    [0.5729, 0.8237],
-    [0.6744, 0.3318],
-    [0.6931, 0.3542],
-    [0.7119, 0.3767],
-    [0.7306, 0.3991],
-    [0.8358, 0.3831],
-    [0.8374, 0.4312],
-    [0.8421, 0.4779],
-    [0.8407, 0.5273],
-    [0.8423, 0.5754],
-    [0.8439, 0.6235],
-    [0.8456, 0.6715],
-    [0.8472, 0.7196],
-    [0.7183, 0.4647],
-    [0.7550, 0.4712],
-    [0.7917, 0.4776],
-    [0.8253, 0.4853],
-    [0.8650, 0.4904],
-    [0.9017, 0.4968],
-    [0.2563, 0.8158],
-    [0.3288, 0.8190],
-    [0.4013, 0.8222],
-    [0.4738, 0.8254],
-    [0.5463, 0.8286],
-    [0.6188, 0.8318],
-    [0.6913, 0.8350],
-    [0.7638, 0.8382]
-  ];
-
   var CARS = PAINTS.map(function (row, i) {
     return {
       i: i,
@@ -242,8 +137,7 @@
       hue: row[2],
       metallic: row[3],
       region: REGIONS[i % REGIONS.length],
-      city: "Vancouver",
-      spot: STREET_SPOTS[i]
+      city: "Vancouver"
     };
   });
 
@@ -539,66 +433,6 @@
     return copy;
   }
 
-  function tightenScatter(placed, size) {
-    if (placed.length < 2) return;
-    var gap = Math.max(4, Math.round(size * 0.12));
-    var minD = size + gap;
-    var min2 = minD * minD;
-    var factor = 0.66;
-    var cx = 0;
-    var cy = 0;
-    var i;
-    var j;
-    for (i = 0; i < placed.length; i++) {
-      cx += placed[i].x;
-      cy += placed[i].y;
-    }
-    cx /= placed.length;
-    cy /= placed.length;
-    for (i = 0; i < placed.length; i++) {
-      placed[i].x = cx + (placed[i].x - cx) * factor;
-      placed[i].y = cy + (placed[i].y - cy) * factor;
-    }
-    var pass;
-    for (pass = 0; pass < 24; pass++) {
-      var moved = false;
-      for (i = 0; i < placed.length; i++) {
-        for (j = i + 1; j < placed.length; j++) {
-          var dx = placed[j].x - placed[i].x;
-          var dy = placed[j].y - placed[i].y;
-          var d2 = dx * dx + dy * dy;
-          if (d2 >= min2) continue;
-          var dist = Math.sqrt(d2) || 0.01;
-          if (minD - dist < 0.05) continue;
-          var push = (minD - dist) / 2;
-          var ux = dx / dist;
-          var uy = dy / dist;
-          placed[i].x -= ux * push;
-          placed[i].y -= uy * push;
-          placed[j].x += ux * push;
-          placed[j].y += uy * push;
-          moved = true;
-        }
-      }
-      if (!moved) break;
-    }
-    var minX = Infinity;
-    var minY = Infinity;
-    for (i = 0; i < placed.length; i++) {
-      if (placed[i].x < minX) minX = placed[i].x;
-      if (placed[i].y < minY) minY = placed[i].y;
-    }
-    var pad = 2;
-    if (minX < pad || minY < pad) {
-      var sx = minX < pad ? pad - minX : 0;
-      var sy = minY < pad ? pad - minY : 0;
-      for (i = 0; i < placed.length; i++) {
-        placed[i].x += sx;
-        placed[i].y += sy;
-      }
-    }
-  }
-
   function renderScatter() {
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
@@ -652,7 +486,6 @@
       placed.push({ car: car, x: found.x, y: found.y });
     });
 
-    tightenScatter(placed, size);
     var bottom = 0;
     placed.forEach(function (item) {
       var edge = item.y + size;
@@ -814,8 +647,23 @@
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
     var paths = [
-      "M 22 18 C 18 12 22 5 32 5 C 40 4 50 6 58 11 C 64 15 62 22 54 25 C 44 28 32 26 26 22 C 22 20 23 19 22 18 Z",
-      "M 5 48 C 4 42 8 38 16 39 C 28 37 40 40 52 40 C 58 40 62 30 64 22 C 68 14 80 13 94 18 L 96 66 C 88 71 70 75 48 75 C 28 76 12 72 6 64 C 4 56 4 52 5 48 Z"
+      "M 24 6 L 58 6",
+      "M 24 13 L 58 13",
+      "M 24 20 L 56 20",
+      "M 30 4 L 30 22",
+      "M 40 4 L 40 40",
+      "M 50 4 L 50 22",
+      "M 8 40 L 62 40",
+      "M 8 48 L 94 48",
+      "M 8 56 L 94 56",
+      "M 8 64 L 94 64",
+      "M 8 72 L 94 72",
+      "M 14 42 L 14 74",
+      "M 28 42 L 28 74",
+      "M 42 42 L 42 74",
+      "M 56 42 L 56 74",
+      "M 70 42 L 70 74",
+      "M 84 42 L 84 74"
     ];
     paths.forEach(function (d) {
       var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -834,12 +682,52 @@
     field.style.height = height + "px";
     field.appendChild(vancouverMapLines());
     var size = dotPx();
-    carsIn("Vancouver").forEach(function (car) {
-      var el = dot(car);
-      var left = car.spot[0] * width - size / 2;
-      var top = car.spot[1] * height - size / 2;
-      el.style.left = left.toFixed(1) + "px";
-      el.style.top = top.toFixed(1) + "px";
+    var rng = mulberry32(0x5A11);
+    var order = shuffle(carsIn("Vancouver"), rng);
+    var minD = size + Math.max(10, Math.round(size * 0.35));
+    var placed = [];
+
+    function fits(x, y) {
+      if (x < 0 || y < 0 || x > width - size || y > height - size) return false;
+      var i;
+      for (i = 0; i < placed.length; i++) {
+        var dx = placed[i].x - x;
+        var dy = placed[i].y - y;
+        if (dx * dx + dy * dy < minD * minD) return false;
+      }
+      return true;
+    }
+
+    order.forEach(function (car) {
+      var found = null;
+      var n;
+      for (n = 0; n < 400; n++) {
+        var x = rng() * (width - size);
+        var y = rng() * (height - size);
+        if (fits(x, y)) {
+          found = { x: x, y: y };
+          break;
+        }
+      }
+      if (!found) {
+        var step = minD;
+        var yScan;
+        scan: for (yScan = 0; yScan <= height - size; yScan += step) {
+          var xScan;
+          for (xScan = 0; xScan <= width - size; xScan += step) {
+            if (fits(xScan, yScan)) {
+              found = { x: xScan, y: yScan };
+              break scan;
+            }
+          }
+        }
+      }
+      placed.push({ car: car, x: found.x, y: found.y });
+    });
+    placed.forEach(function (item) {
+      var el = dot(item.car);
+      el.style.left = item.x.toFixed(1) + "px";
+      el.style.top = item.y.toFixed(1) + "px";
       field.appendChild(el);
     });
     stage.appendChild(field);
