@@ -696,11 +696,10 @@
 
   function render() {
     applyMetrics();
-    document.body.classList.toggle("cc-screen", mode === "scatter" || mode === "matte");
+    document.body.classList.toggle("cc-screen", mode === "scatter");
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
     else if (mode === "hue") renderHue();
-    else if (mode === "matte") renderScatter(carsIn(city).filter(function (car) { return !car.metallic; }), 0xA77E);
     else renderScatter();
   }
 
