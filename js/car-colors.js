@@ -749,12 +749,32 @@
     };
   }
 
+  function vancouverMapLines() {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "cc-map-lines");
+    svg.setAttribute("viewBox", "0 0 100 78");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    var paths = [
+      "M 22 18 C 18 12 22 5 32 5 C 40 4 50 6 58 11 C 64 15 62 22 54 25 C 44 28 32 26 26 22 C 22 20 23 19 22 18 Z",
+      "M 5 48 C 4 42 8 38 16 39 C 28 37 40 40 52 40 C 58 40 62 30 64 22 C 68 14 80 13 94 18 L 96 66 C 88 71 70 75 48 75 C 28 76 12 72 6 64 C 4 56 4 52 5 48 Z"
+    ];
+    paths.forEach(function (d) {
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", d);
+      svg.appendChild(path);
+    });
+    return svg;
+  }
+
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
     var gap = 22;
     var field = document.createElement("div");
     field.className = "cc-map";
+    var lines = vancouverMapLines();
+    field.appendChild(lines);
     var items = [];
     REGIONS.forEach(function (name) {
       var group = carsIn("Vancouver").filter(function (car) { return car.region === name; });
@@ -835,6 +855,7 @@
     }
     if (!crowded()) return;
 
+    if (lines.parentNode) lines.parentNode.removeChild(lines);
     var ordered = items.slice().sort(function (a, b) {
       return a.anchor[1] - b.anchor[1] || a.anchor[0] - b.anchor[0];
     });
