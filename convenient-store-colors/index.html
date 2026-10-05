@@ -16,8 +16,14 @@
   <h1 class="record-name">Convenient Store Colours</h1>
   <div class="csc-controls">
     <div class="csc-rows">
-      <div class="csc-group" role="group" aria-label="Store">
-        <button type="button" class="csc-opt" data-csc-store="circle-k" aria-pressed="false">Circle K</button>
+      <div class="csc-top">
+        <div class="csc-group" role="group" aria-label="Store">
+          <button type="button" class="csc-opt" data-csc-store="circle-k" aria-pressed="false">Circle K</button>
+        </div>
+        <span class="csc-tools">
+          <button type="button" class="csc-ag" aria-label="Antigravity" title="Antigravity" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="19" rx="7" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="9.5" r="5.2" fill="currentColor"/></svg></button>
+          <button type="button" class="csc-shuffle" aria-label="Shuffle colour order" title="Shuffle order"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></button>
+        </span>
       </div>
       <div class="csc-group csc-cats" role="group" aria-label="Category" hidden>
         <button type="button" class="csc-opt" data-csc-cat="candy" aria-pressed="false">Candy</button>
