@@ -15,14 +15,16 @@
 <main>
   <h1 class="record-name">Convenient Store Colors</h1>
   <div class="csc-controls">
-    <div class="csc-group" role="group" aria-label="Store">
-      <button type="button" class="csc-opt csc-on" data-csc-store="all" aria-pressed="true">All</button>
-      <button type="button" class="csc-opt" data-csc-store="circle-k" aria-pressed="false">Circle K</button>
-    </div>
-    <div class="csc-group" role="group" aria-label="Category">
-      <button type="button" class="csc-opt" data-csc-cat="candy" aria-pressed="false">Candy</button>
-      <button type="button" class="csc-opt" data-csc-cat="chips" aria-pressed="false">Chips</button>
-      <button type="button" class="csc-opt" data-csc-cat="drinks" aria-pressed="false">Drinks</button>
+    <div class="csc-rows">
+      <div class="csc-group" role="group" aria-label="Store">
+        <button type="button" class="csc-opt" data-csc-store="circle-k" aria-pressed="false">Circle K</button>
+        <button type="button" class="csc-opt csc-on" data-csc-store="all" aria-pressed="true">All</button>
+      </div>
+      <div class="csc-group csc-cats" role="group" aria-label="Category" hidden>
+        <button type="button" class="csc-opt" data-csc-cat="candy" aria-pressed="false">Candy</button>
+        <button type="button" class="csc-opt" data-csc-cat="chips" aria-pressed="false">Chips</button>
+        <button type="button" class="csc-opt" data-csc-cat="drinks" aria-pressed="false">Drinks</button>
+      </div>
     </div>
     <button type="button" class="csc-thumb" aria-label="Open the Circle K aisle photo">
       <img src="https://res.cloudinary.com/vtyvhdpv/image/upload/f_auto,q_auto,c_limit,w_400/v1791223296/convenient-store-colours/convenient-store-colours/aisle.jpg" alt="" width="400" height="300">

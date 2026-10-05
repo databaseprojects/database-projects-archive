@@ -2,6 +2,7 @@
 (function () {
   var store = "all";
   var cat = "";
+  var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
   var thumb = document.querySelector(".csc-thumb");
   var pop = document.querySelector(".csc-pop");
@@ -36,6 +37,7 @@
     button.addEventListener("click", function () {
       store = button.getAttribute("data-csc-store");
       setPressed("[data-csc-store]", "data-csc-store", store);
+      if (cats) cats.hidden = false;
       apply();
     });
   });

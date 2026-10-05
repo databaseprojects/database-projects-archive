@@ -3,9 +3,16 @@
 .csc-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem 1rem;
   margin: 0.85rem 0 1.7rem;
+}
+
+.csc-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
 }
 
 .csc-group {
