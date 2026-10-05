@@ -1,4 +1,4 @@
-/* Convenient Store Colours. Colour circles are the page. The aisle photo is a small thumbnail. */
+/* Convenient Store Colours. Colour circles are the page. */
 
 .csc-controls {
   display: flex;
@@ -55,25 +55,6 @@
   background: #111;
   border-color: #111;
   color: #fff;
-}
-
-.csc-thumb {
-  width: 112px;
-  height: 84px;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: #fff;
-  cursor: pointer;
-  flex: 0 0 auto;
-  overflow: hidden;
-}
-
-.csc-thumb img {
-  display: block;
-  width: 112px;
-  height: 84px;
-  object-fit: cover;
-  object-position: center;
 }
 
 .csc-board {
@@ -164,43 +145,4 @@
 
 .csc-dot.csc-pale {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-}
-
-.csc-pop {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.csc-pop.csc-on {
-  display: flex;
-}
-
-.csc-pop-backdrop {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: rgba(255, 255, 255, 0.78);
-  cursor: pointer;
-}
-
-.csc-pop-frame {
-  position: relative;
-  z-index: 1;
-  width: min(420px, calc(100vw - 3rem));
-  margin: 0;
-  background: #fff;
-  transform-origin: center center;
-}
-
-.csc-pop-frame img {
-  display: block;
-  width: 100%;
-  height: auto;
 }

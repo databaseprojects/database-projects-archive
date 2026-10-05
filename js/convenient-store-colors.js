@@ -1,18 +1,14 @@
-/* Store and category filters, and the small aisle-photo pop-up. */
+/* Store and category filters. */
 (function () {
   var store = "circle-k";
   var storePicked = false;
   var picked = { candy: false, chips: false, drinks: false };
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
-  var thumb = document.querySelector(".csc-thumb");
-  var pop = document.querySelector(".csc-pop");
-  var frame = document.querySelector(".csc-pop-frame");
-  var backdrop = document.querySelector(".csc-pop-backdrop");
   var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   var ease = "cubic-bezier(.22,.8,.25,1)";
   var moveMs = 380;
-  if (!board || !thumb || !pop || !frame) return;
+  if (!board) return;
 
   var storeNames = { "circle-k": "Circle K" };
   var svgNs = "http://www.w3.org/2000/svg";
@@ -209,36 +205,6 @@
       syncCats();
       apply(true);
     });
-  });
-
-  function openPop() {
-    frame.getAnimations().forEach(function (anim) { anim.cancel(); });
-    pop.classList.add("csc-on");
-    pop.setAttribute("aria-hidden", "false");
-    frame.animate(
-      [{ transform: "scale(0.86)" }, { transform: "scale(1)" }],
-      { duration: 220, easing: "cubic-bezier(.22,.8,.25,1)" }
-    );
-  }
-
-  function closePop() {
-    if (!pop.classList.contains("csc-on")) return;
-    frame.getAnimations().forEach(function (anim) { anim.cancel(); });
-    var anim = frame.animate(
-      [{ transform: "scale(1)" }, { transform: "scale(0.86)" }],
-      { duration: 160, easing: "cubic-bezier(.22,.8,.25,1)" }
-    );
-    anim.onfinish = function () {
-      pop.classList.remove("csc-on");
-      pop.setAttribute("aria-hidden", "true");
-      thumb.focus();
-    };
-  }
-
-  thumb.addEventListener("click", openPop);
-  if (backdrop) backdrop.addEventListener("click", closePop);
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") closePop();
   });
 
   apply();
