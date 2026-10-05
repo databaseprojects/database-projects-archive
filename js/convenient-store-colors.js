@@ -357,6 +357,55 @@
     });
   }
 
+  var AG_FADE_MS = 3200;
+
+  function quietDrop(cs) {
+    if (!cs || cs === "none") return "0 1.5px 7px rgba(0,0,0,0), 0 1px 1.5px rgba(0,0,0,0)";
+    return cs.split(/,(?![^(]*\))/).map(function (part) {
+      if (/inset/.test(part)) return part.trim();
+      return part.replace(/rgba?\(([^)]+)\)/, function (_, inner) {
+        var bits = inner.split(",").map(function (s) { return s.trim(); });
+        if (bits.length >= 3) return "rgba(" + bits[0] + ", " + bits[1] + ", " + bits[2] + ", 0)";
+        return "rgba(0, 0, 0, 0)";
+      }).trim();
+    }).join(", ");
+  }
+
+  function fadeAgShadow(field) {
+    var dots = field.querySelectorAll(".csc-dot");
+    Array.prototype.forEach.call(dots, function (dot) {
+      dot.style.setProperty("transition", "none", "important");
+    });
+    void field.offsetWidth;
+    Array.prototype.forEach.call(dots, function (dot) {
+      dot.style.setProperty("box-shadow", quietDrop(getComputedStyle(dot).boxShadow));
+    });
+    if (motion.matches) {
+      Array.prototype.forEach.call(dots, function (dot) {
+        dot.style.removeProperty("box-shadow");
+        dot.style.removeProperty("transition");
+      });
+      return;
+    }
+    field.classList.add("csc-ag-in");
+    requestAnimationFrame(function () {
+      Array.prototype.forEach.call(dots, function (dot) {
+        dot.style.setProperty("transition", "box-shadow " + (AG_FADE_MS / 1000) + "s cubic-bezier(0.45, 0.05, 0.55, 0.95)");
+      });
+      void field.offsetWidth;
+      Array.prototype.forEach.call(dots, function (dot) {
+        dot.style.removeProperty("box-shadow");
+      });
+    });
+    clearTimeout(field._shade);
+    field._shade = setTimeout(function () {
+      field.classList.remove("csc-ag-in");
+      Array.prototype.forEach.call(field.querySelectorAll(".csc-dot"), function (dot) {
+        dot.style.removeProperty("transition");
+      });
+    }, AG_FADE_MS + 800);
+  }
+
   function enterAg() {
     if (agOn) return;
     var list = listEl();
@@ -406,6 +455,7 @@
     var block = blockEl();
     if (block) block.hidden = true;
     board.appendChild(field);
+    fadeAgShadow(field);
     agBodies = bodies;
     agOn = true;
     agRunning = true;
@@ -427,6 +477,11 @@
     agOn = false;
     agBodies.forEach(function (b) {
       clearMove(b.el);
+      var dot = b.el.querySelector(".csc-dot");
+      if (dot) {
+        dot.style.removeProperty("box-shadow");
+        dot.style.removeProperty("transition");
+      }
       b.el.style.removeProperty("--csc-x");
       b.el.style.removeProperty("--csc-y");
       b.el.style.removeProperty("--csc-z");

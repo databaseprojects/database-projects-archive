@@ -203,3 +203,15 @@
   z-index: var(--csc-z, 1);
   transform-origin: center center;
 }
+
+.csc-ag-field .csc-dot {
+  box-shadow: var(--ag-shadow);
+}
+
+.csc-ag-field .csc-dot.csc-pale {
+  box-shadow: var(--ag-shadow), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.csc-ag-field.csc-ag-in .csc-dot {
+  transition: var(--ag-shadow-in);
+}
