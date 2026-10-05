@@ -641,55 +641,84 @@
     stage.appendChild(view);
   }
 
-  /* Simple street segments in the map viewBox (0 0 100 78). No names. */
-  var MAP_STREETS = [
-    [24, 6, 58, 6],
-    [24, 13, 58, 13],
-    [24, 20, 56, 20],
-    [30, 4, 30, 22],
-    [40, 4, 40, 40],
-    [50, 4, 50, 22],
-    [8, 40, 62, 40],
-    [8, 48, 94, 48],
-    [8, 56, 94, 56],
-    [8, 64, 94, 64],
-    [8, 72, 94, 72],
-    [14, 42, 14, 74],
-    [28, 42, 28, 74],
-    [42, 42, 42, 74],
-    [56, 42, 56, 74],
-    [70, 42, 70, 74],
-    [84, 42, 84, 74]
+  /* Schematic Vancouver, viewBox 0 0 120 100, north up. No names.
+     Shore lines draw the waterfront only. Dots sit on the street paths. */
+  var MAP_VB_W = 120;
+  var MAP_VB_H = 100;
+  var MAP_PATHS = [
+    { shore: true, pts: [[8, 5], [28, 7], [52, 3], [78, 6], [104, 8], [118, 6]] },
+    { shore: true, pts: [[30, 9], [20, 13], [15, 22], [17, 32], [26, 38], [36, 36], [41, 26], [39, 16], [30, 9]] },
+    { shore: true, pts: [[41, 16], [54, 12], [72, 14], [92, 18], [112, 24]] },
+    { shore: true, pts: [[17, 34], [10, 42], [8, 54], [10, 70], [14, 86], [22, 98]] },
+    { shore: true, pts: [[18, 50], [28, 44], [40, 46], [52, 41], [64, 39], [73, 46], [74, 54], [66, 58], [52, 56], [36, 58], [24, 55], [18, 50]] },
+    { shore: true, pts: [[22, 98], [46, 95], [74, 99], [100, 96], [118, 98]] },
+    { pts: [[31, 18], [40, 32]] },
+    { pts: [[42, 18], [66, 36]] },
+    { pts: [[44, 26], [58, 38]] },
+    { pts: [[42, 34], [50, 40]] },
+    { pts: [[46, 15], [70, 32]] },
+    { pts: [[60, 13], [46, 42], [40, 56]] },
+    { pts: [[54, 16], [44, 36]] },
+    { pts: [[66, 17], [54, 40], [50, 56], [46, 96]] },
+    { pts: [[72, 22], [66, 38], [64, 56], [64, 96]] },
+    { pts: [[68, 32], [110, 30]] },
+    { pts: [[12, 60], [38, 60]] },
+    { pts: [[12, 68], [112, 68]] },
+    { pts: [[14, 78], [110, 78]] },
+    { pts: [[16, 88], [112, 88]] },
+    { pts: [[24, 96], [108, 96]] },
+    { pts: [[20, 58], [20, 96]] },
+    { pts: [[32, 60], [32, 96]] },
+    { pts: [[56, 58], [56, 96]] },
+    { pts: [[80, 34], [80, 98]] },
+    { pts: [[94, 28], [94, 78]] },
+    { pts: [[106, 26], [106, 96]] },
+    { pts: [[76, 50], [112, 48]] }
   ];
+
+  function mapPathD(pts) {
+    return pts.map(function (p, i) {
+      return (i ? "L " : "M ") + p[0] + " " + p[1];
+    }).join(" ");
+  }
 
   function vancouverMapLines() {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("class", "cc-map-lines");
-    svg.setAttribute("viewBox", "0 0 100 78");
+    svg.setAttribute("viewBox", "0 0 " + MAP_VB_W + " " + MAP_VB_H);
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
-    MAP_STREETS.forEach(function (s) {
-      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", "M " + s[0] + " " + s[1] + " L " + s[2] + " " + s[3]);
-      svg.appendChild(path);
+    MAP_PATHS.forEach(function (path) {
+      var el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      el.setAttribute("d", mapPathD(path.pts));
+      svg.appendChild(el);
     });
     return svg;
   }
 
   function mapStreetSegments(width, height) {
-    return MAP_STREETS.map(function (s) {
-      var x1 = (s[0] / 100) * width;
-      var y1 = (s[1] / 78) * height;
-      var x2 = (s[2] / 100) * width;
-      var y2 = (s[3] / 78) * height;
-      return { x1: x1, y1: y1, x2: x2, y2: y2, len: Math.hypot(x2 - x1, y2 - y1) };
+    var segs = [];
+    MAP_PATHS.forEach(function (path) {
+      if (path.shore) return;
+      var pts = path.pts;
+      var i;
+      for (i = 1; i < pts.length; i++) {
+        var x1 = (pts[i - 1][0] / MAP_VB_W) * width;
+        var y1 = (pts[i - 1][1] / MAP_VB_H) * height;
+        var x2 = (pts[i][0] / MAP_VB_W) * width;
+        var y2 = (pts[i][1] / MAP_VB_H) * height;
+        var len = Math.hypot(x2 - x1, y2 - y1);
+        if (len < 1) continue;
+        segs.push({ x1: x1, y1: y1, x2: x2, y2: y2, len: len });
+      }
     });
+    return segs;
   }
 
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
-    var height = Math.max(640, Math.round(width * 0.78));
+    var height = Math.max(640, Math.round(width * MAP_VB_H / MAP_VB_W));
     var field = document.createElement("div");
     field.className = "cc-map";
     field.style.height = height + "px";
