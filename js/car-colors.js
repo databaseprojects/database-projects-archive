@@ -24,108 +24,214 @@
   };
   var city = "Vancouver";
 
-  /* family, hex, hue (null = neutral), metallic */
+  /* family, hex, hue (null = neutral), metallic.
+     Vancouver street colours: mostly blue, gray, black, and white, with a little red and teal. */
   var PAINTS = [
-    ["red", "#4B1B21", 352, true],
-    ["red", "#792026", 356, false],
-    ["red", "#9D2529", 358, true],
-    ["red", "#C32828", 0, false],
-    ["red", "#C56663", 2, true],
-    ["red", "#D2AAA7", 4, false],
-    ["red", "#5E2630", 350, false],
-    ["red", "#DEC7C4", 6, true],
-    ["red", "#863427", 8, false],
-    ["red", "#B3614D", 12, true],
-    ["orange", "#69301C", 16, false],
-    ["orange", "#8C4121", 18, true],
-    ["orange", "#B05427", 20, false],
-    ["orange", "#C96C36", 22, true],
-    ["orange", "#CD9570", 24, false],
-    ["orange", "#D3BAA6", 26, true],
-    ["orange", "#7C4F27", 28, false],
-    ["orange", "#D8C7B6", 30, false],
-    ["orange", "#AF7631", 33, true],
-    ["orange", "#BE9860", 36, false],
-    ["yellow", "#745C25", 42, true],
-    ["yellow", "#997F29", 46, false],
-    ["yellow", "#BEA12D", 48, true],
-    ["yellow", "#CAB549", 50, false],
-    ["yellow", "#CDC384", 52, true],
-    ["yellow", "#DAD7BE", 54, false],
-    ["yellow", "#9F9838", 56, true],
-    ["yellow", "#E4E3D3", 58, false],
-    ["yellow", "#BABA45", 60, false],
-    ["yellow", "#B7BD6B", 64, true],
-    ["green", "#4B582D", 78, false],
-    ["green", "#527133", 90, true],
-    ["green", "#51883A", 102, false],
-    ["green", "#4B9F41", 114, true],
-    ["green", "#59B161", 126, false],
-    ["green", "#90C19F", 138, true],
-    ["green", "#347954", 148, false],
-    ["green", "#AECBC0", 156, true],
-    ["green", "#2E6153", 164, false],
-    ["green", "#52988F", 172, true],
-    ["blue", "#2E5C61", 186, true],
-    ["blue", "#326A7B", 194, false],
-    ["blue", "#377395", 202, true],
-    ["blue", "#407AB5", 210, false],
-    ["blue", "#7291C0", 216, true],
-    ["blue", "#B3BCD0", 222, false],
-    ["blue", "#264F73", 208, true],
-    ["blue", "#C8CCDA", 228, false],
-    ["blue", "#404996", 234, false],
-    ["blue", "#2C2A5A", 242, true],
-    ["purple", "#3A315E", 252, false],
-    ["purple", "#50397F", 260, true],
-    ["purple", "#6D439D", 268, false],
-    ["purple", "#8F51B8", 276, true],
-    ["purple", "#AF86C1", 282, false],
-    ["purple", "#CEBBD3", 288, true],
-    ["purple", "#572C77", 274, false],
-    ["purple", "#C29FC6", 294, true],
-    ["purple", "#8B418B", 300, false],
-    ["purple", "#4E2C4A", 308, true],
-    ["brown", "#37241A", 20, true],
-    ["brown", "#51392A", 24, false],
-    ["brown", "#674932", 26, true],
-    ["brown", "#7E5F44", 28, false],
-    ["brown", "#9A7A5B", 30, true],
-    ["brown", "#B19F8B", 32, false],
-    ["brown", "#462E20", 22, true],
-    ["brown", "#C3B9AC", 34, false],
-    ["brown", "#6F5C3E", 36, true],
-    ["brown", "#8F7C5B", 38, false],
-    ["gray", "#1C1C1C", null, true],
-    ["gray", "#4A4A4A", null, false],
-    ["gray", "#6E6E6E", null, true],
-    ["gray", "#9A9A9A", null, false],
-    ["gray", "#C8C8C8", null, true],
-    ["gray", "#E4E4E4", null, false],
-    ["gray", "#2E2E2E", null, false],
-    ["gray", "#808080", null, true],
-    ["gray", "#B0B0B0", null, false],
-    ["gray", "#555555", null, true],
-    ["white", "#FFFFFF", null, false],
-    ["white", "#F7F7F5", null, false],
-    ["white", "#F4F1EA", null, true],
-    ["white", "#EFEFEF", null, false],
-    ["white", "#FAF8F4", null, true],
-    ["white", "#E8E6E1", null, false],
-    ["white", "#FDFDFD", null, false],
-    ["white", "#F2F0EB", null, true],
-    ["white", "#EAEAEA", null, false],
-    ["white", "#F8F6F2", null, true],
-    ["black", "#000000", null, false],
-    ["black", "#0A0A0A", null, true],
-    ["black", "#111111", null, false],
-    ["black", "#161616", null, true],
-    ["black", "#050505", null, false],
-    ["black", "#1A1A1A", null, true],
-    ["black", "#080808", null, false],
-    ["black", "#121212", null, true],
-    ["black", "#0E0E0E", null, false],
-    ["black", "#181818", null, true]
+    ["blue", "#1A3346", 208, true],
+    ["gray", "#C5C9CE", null, false],
+    ["blue", "#163044", 210, false],
+    ["white", "#F4F5F6", null, true],
+    ["blue", "#0F2A3C", 212, true],
+    ["gray", "#8E949A", null, false],
+    ["blue", "#1C3E58", 211, false],
+    ["white", "#E7E9EB", null, true],
+    ["blue", "#21445C", 209, true],
+    ["gray", "#D4D7DA", null, false],
+    ["blue", "#1B3144", 214, false],
+    ["blue", "#9BB4C6", 205, true],
+    ["blue", "#1F4560", 209, true],
+    ["gray", "#6E747A", null, false],
+    ["blue", "#184058", 212, false],
+    ["white", "#F7F7F5", null, true],
+    ["blue", "#123248", 215, true],
+    ["blue", "#5E84A0", 204, false],
+    ["blue", "#0E2940", 213, false],
+    ["gray", "#B7BCC1", null, true],
+    ["blue", "#2A4E6C", 206, true],
+    ["white", "#EEF0F2", null, false],
+    ["blue", "#2E5674", 208, false],
+    ["gray", "#A3A8AE", null, true],
+    ["teal", "#1E4A48", 176, true],
+    ["white", "#F2F1EE", null, false],
+    ["teal", "#173E3C", 174, false],
+    ["blue", "#7A9AB0", 206, true],
+    ["teal", "#1A403E", 175, true],
+    ["gray", "#8A9094", null, false],
+    ["teal", "#245854", 177, false],
+    ["white", "#FAFBFC", null, true],
+    ["red", "#7A3032", 4, true],
+    ["gray", "#C8CCD0", null, false],
+    ["red", "#642428", 358, false],
+    ["blue", "#B4C6D4", 207, true],
+    ["red", "#5C2226", 0, true],
+    ["red", "#8C3A36", 6, false],
+    ["red", "#542024", 356, false],
+    ["white", "#E4E6E8", null, true],
+    ["black", "#101214", null, true],
+    ["gray", "#9AA0A6", null, false],
+    ["black", "#1A1C1F", null, false],
+    ["blue", "#4E7490", 203, true],
+    ["black", "#0C0E10", null, true],
+    ["white", "#FDFDFC", null, false],
+    ["black", "#16181B", null, false],
+    ["gray", "#D8DBDE", null, true],
+    ["black", "#08090B", null, true],
+    ["blue", "#6E90A8", 208, false],
+    ["black", "#141618", null, false],
+    ["white", "#F0F1F3", null, true],
+    ["black", "#1E2124", null, true],
+    ["gray", "#7E868C", null, false],
+    ["black", "#050607", null, false],
+    ["gray", "#747A80", null, true],
+    ["black", "#121416", null, true],
+    ["gray", "#90969C", null, false],
+    ["black", "#0A0C0E", null, false],
+    ["gray", "#B0B5BA", null, true],
+    ["black", "#0E1013", null, true],
+    ["gray", "#5C6368", null, false],
+    ["gray", "#2A2E32", null, false],
+    ["gray", "#686E74", null, true],
+    ["gray", "#3E4348", null, true],
+    ["gray", "#A8ADB2", null, false],
+    ["gray", "#2C3136", null, false],
+    ["gray", "#E0E2E4", null, true],
+    ["gray", "#3A4046", null, true],
+    ["blue", "#3A6280", 207, false],
+    ["gray", "#1C1E22", null, false],
+    ["blue", "#3E6C88", 206, true],
+    ["gray", "#26282C", null, true],
+    ["blue", "#4A7390", 204, false],
+    ["blue", "#264A68", 210, false],
+    ["blue", "#567E98", 205, true],
+    ["teal", "#2A5E5C", 179, true],
+    ["white", "#F6F6F4", null, false],
+    ["red", "#722C2E", 2, false],
+    ["white", "#E8EAEB", null, true],
+    ["gray", "#4A5056", null, true],
+    ["white", "#FBFBFA", null, false],
+    ["gray", "#555B61", null, false],
+    ["white", "#E2E4E6", null, true],
+    ["black", "#17191C", null, true],
+    ["white", "#F3F4F5", null, false],
+    ["black", "#1C1E22", null, false],
+    ["white", "#ECEEEF", null, true],
+    ["blue", "#2C4A62", 207, true],
+    ["white", "#F8F8F6", null, false],
+    ["teal", "#1A4546", 173, false],
+    ["white", "#E6E8EA", null, true],
+    ["gray", "#32363A", null, true],
+    ["teal", "#4E8882", 182, false],
+    ["black", "#222428", null, false],
+    ["teal", "#3E7A74", 180, true],
+    ["red", "#6E3834", 8, true],
+    ["red", "#8A3432", 6, false],
+    ["blue", "#1A3C52", 208, false],
+    ["blue", "#6A8CA4", 206, true]
+  ];
+
+  /* Street spots for map mode. Fractions of the line map, west to east and north to south.
+     A following spot a short step away is another car photographed close by. */
+  var STREET_SPOTS = [
+    [0.2933, 0.1199],
+    [0.3093, 0.1333],
+    [0.3400, 0.1237],
+    [0.3560, 0.1372],
+    [0.3867, 0.1276],
+    [0.4027, 0.1410],
+    [0.4333, 0.1314],
+    [0.4493, 0.1449],
+    [0.4800, 0.1353],
+    [0.4960, 0.1487],
+    [0.5267, 0.1391],
+    [0.5427, 0.1526],
+    [0.3130, 0.2013],
+    [0.3290, 0.2147],
+    [0.3590, 0.2064],
+    [0.3750, 0.2199],
+    [0.4050, 0.2115],
+    [0.4210, 0.2250],
+    [0.4510, 0.2167],
+    [0.4670, 0.2301],
+    [0.4970, 0.2218],
+    [0.5130, 0.2353],
+    [0.1719, 0.5683],
+    [0.1879, 0.5818],
+    [0.2156, 0.5715],
+    [0.2316, 0.5850],
+    [0.2594, 0.5747],
+    [0.2754, 0.5882],
+    [0.3031, 0.5779],
+    [0.3191, 0.5914],
+    [0.3469, 0.5812],
+    [0.3629, 0.5946],
+    [0.3906, 0.5844],
+    [0.4066, 0.5978],
+    [0.4344, 0.5876],
+    [0.4504, 0.6010],
+    [0.4781, 0.5908],
+    [0.4941, 0.6042],
+    [0.2080, 0.6615],
+    [0.2240, 0.6750],
+    [0.2640, 0.6641],
+    [0.2784, 0.6861],
+    [0.3200, 0.6667],
+    [0.3360, 0.6801],
+    [0.3760, 0.6692],
+    [0.3920, 0.6827],
+    [0.4320, 0.6718],
+    [0.4480, 0.6853],
+    [0.4880, 0.6744],
+    [0.5040, 0.6878],
+    [0.5440, 0.6769],
+    [0.5569, 0.7004],
+    [0.6000, 0.6795],
+    [0.6160, 0.6929],
+    [0.6560, 0.6821],
+    [0.6720, 0.6955],
+    [0.7120, 0.6846],
+    [0.1428, 0.6464],
+    [0.1445, 0.6827],
+    [0.1462, 0.7190],
+    [0.1478, 0.7554],
+    [0.1495, 0.7917],
+    [0.1512, 0.8279],
+    [0.2770, 0.6301],
+    [0.2826, 0.6639],
+    [0.2850, 0.7147],
+    [0.2890, 0.7571],
+    [0.2930, 0.7994],
+    [0.5521, 0.5994],
+    [0.5563, 0.6442],
+    [0.5635, 0.6791],
+    [0.5646, 0.7340],
+    [0.5688, 0.7788],
+    [0.5729, 0.8237],
+    [0.6744, 0.3318],
+    [0.6931, 0.3542],
+    [0.7119, 0.3767],
+    [0.7306, 0.3991],
+    [0.8358, 0.3831],
+    [0.8374, 0.4312],
+    [0.8421, 0.4779],
+    [0.8407, 0.5273],
+    [0.8423, 0.5754],
+    [0.8439, 0.6235],
+    [0.8456, 0.6715],
+    [0.8472, 0.7196],
+    [0.7183, 0.4647],
+    [0.7550, 0.4712],
+    [0.7917, 0.4776],
+    [0.8253, 0.4853],
+    [0.8650, 0.4904],
+    [0.9017, 0.4968],
+    [0.2563, 0.8158],
+    [0.3288, 0.8190],
+    [0.4013, 0.8222],
+    [0.4738, 0.8254],
+    [0.5463, 0.8286],
+    [0.6188, 0.8318],
+    [0.6913, 0.8350],
+    [0.7638, 0.8382]
   ];
 
   var CARS = PAINTS.map(function (row, i) {
@@ -136,7 +242,8 @@
       hue: row[2],
       metallic: row[3],
       region: REGIONS[i % REGIONS.length],
-      city: "Vancouver"
+      city: "Vancouver",
+      spot: STREET_SPOTS[i]
     };
   });
 
@@ -700,55 +807,6 @@
     stage.appendChild(view);
   }
 
-  /* x runs west to east, y runs north to south, on an imagined Vancouver.
-     These are neighbourhood areas, not photographed spots. */
-  var MAP_SPOT = {
-    Dunbar: [0.13, 0.78],
-    Kitsilano: [0.36, 0.6],
-    "Mount Pleasant": [0.58, 0.68],
-    Gastown: [0.4, 0.16],
-    Strathcona: [0.66, 0.28],
-    "Commercial Drive": [0.86, 0.48]
-  };
-
-  function mapClump(count) {
-    var step = dotPx() + 4;
-    var pts = [{ x: 0, y: 0 }];
-    var ring = 1;
-    while (pts.length < count) {
-      var n = ring * 6;
-      var k;
-      for (k = 0; k < n && pts.length < count; k++) {
-        var ang = (k / n) * Math.PI * 2 - Math.PI / 2;
-        pts.push({
-          x: Math.cos(ang) * step * ring,
-          y: Math.sin(ang) * step * ring
-        });
-      }
-      ring += 1;
-    }
-    var minX = Infinity;
-    var minY = Infinity;
-    var maxX = -Infinity;
-    var maxY = -Infinity;
-    var i;
-    for (i = 0; i < pts.length; i++) {
-      if (pts[i].x < minX) minX = pts[i].x;
-      if (pts[i].y < minY) minY = pts[i].y;
-      if (pts[i].x > maxX) maxX = pts[i].x;
-      if (pts[i].y > maxY) maxY = pts[i].y;
-    }
-    for (i = 0; i < pts.length; i++) {
-      pts[i].x -= minX;
-      pts[i].y -= minY;
-    }
-    return {
-      pts: pts,
-      w: maxX - minX + dotPx(),
-      h: maxY - minY + dotPx()
-    };
-  }
-
   function vancouverMapLines() {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("class", "cc-map-lines");
@@ -770,107 +828,23 @@
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
-    var gap = 22;
+    var height = Math.max(640, Math.round(width * 0.78));
     var field = document.createElement("div");
     field.className = "cc-map";
-    var lines = vancouverMapLines();
-    field.appendChild(lines);
-    var items = [];
-    REGIONS.forEach(function (name) {
-      var group = carsIn("Vancouver").filter(function (car) { return car.region === name; });
-      var pack = mapClump(group.length);
-      var block = document.createElement("section");
-      block.className = "cc-map-spot";
-      var box = document.createElement("div");
-      box.className = "cc-cluster-field";
-      box.style.width = Math.ceil(pack.w) + "px";
-      box.style.height = Math.ceil(pack.h) + "px";
-      group.forEach(function (car, i) {
-        var el = dot(car);
-        el.style.left = pack.pts[i].x + "px";
-        el.style.top = pack.pts[i].y + "px";
-        box.appendChild(el);
-      });
-      var heading = document.createElement("h2");
-      heading.className = "cc-label";
-      heading.textContent = name;
-      block.appendChild(box);
-      block.appendChild(heading);
-      items.push({
-        el: block,
-        anchor: MAP_SPOT[name] || [0.5, 0.5]
-      });
-      field.appendChild(block);
+    field.style.height = height + "px";
+    field.appendChild(vancouverMapLines());
+    var size = dotPx();
+    carsIn("Vancouver").forEach(function (car) {
+      var el = dot(car);
+      var left = car.spot[0] * width - size / 2;
+      var top = car.spot[1] * height - size / 2;
+      el.style.left = left.toFixed(1) + "px";
+      el.style.top = top.toFixed(1) + "px";
+      field.appendChild(el);
     });
     stage.appendChild(field);
-
-    function boxes() {
-      return items.map(function (item) {
-        return {
-          x: item.el.offsetLeft,
-          y: item.el.offsetTop,
-          w: item.el.offsetWidth,
-          h: item.el.offsetHeight
-        };
-      });
-    }
-
-    function crowded() {
-      var list = boxes();
-      var i, j;
-      for (i = 0; i < list.length; i++) {
-        for (j = i + 1; j < list.length; j++) {
-          var a = list[i];
-          var b = list[j];
-          if (a.x < b.x + b.w + gap && a.x + a.w + gap > b.x && a.y < b.y + b.h + gap && a.y + a.h + gap > b.y) return true;
-        }
-      }
-      return false;
-    }
-
-    function place(w, h) {
-      items.forEach(function (item) {
-        var bw = item.el.offsetWidth;
-        var bh = item.el.offsetHeight;
-        var left = item.anchor[0] * w - bw / 2;
-        var top = item.anchor[1] * h - bh / 2;
-        if (left < 4) left = 4;
-        if (top < 4) top = 4;
-        if (left > w - bw - 4) left = Math.max(4, w - bw - 4);
-        if (top > h - bh - 4) top = Math.max(4, h - bh - 4);
-        item.el.style.left = Math.round(left) + "px";
-        item.el.style.top = Math.round(top) + "px";
-      });
-    }
-
-    var height = Math.max(640, Math.round(width * 0.78));
-    var guard = 0;
-    field.style.height = height + "px";
-    place(width, height);
-    while (crowded() && guard < 16) {
-      height += 70;
-      field.style.height = height + "px";
-      place(width, height);
-      guard += 1;
-    }
-    if (!crowded()) return;
-
-    if (lines.parentNode) lines.parentNode.removeChild(lines);
-    var ordered = items.slice().sort(function (a, b) {
-      return a.anchor[1] - b.anchor[1] || a.anchor[0] - b.anchor[0];
-    });
-    var y = 8;
-    ordered.forEach(function (item) {
-      var bw = item.el.offsetWidth;
-      var left = item.anchor[0] * width - bw / 2;
-      if (left < 4) left = 4;
-      if (left > width - bw - 4) left = Math.max(4, width - bw - 4);
-      item.el.style.left = Math.round(left) + "px";
-      item.el.style.top = Math.round(y) + "px";
-      y += item.el.offsetHeight + gap;
-    });
-    field.style.height = Math.round(y + 8) + "px";
   }
+
 
   function hueOrder(a, b) {
     var aNeutral = a.hue == null;
