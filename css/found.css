@@ -390,9 +390,7 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   transform-origin: center center;
   z-index: var(--fp-z, 1);
   opacity: 1;
-  box-shadow:
-    0 calc(1.15px + 0.85px * var(--fp-tile-w, 430px) / 430px) calc(6px + 4px * var(--fp-tile-w, 430px) / 430px) rgba(0, 0, 0, 0.16),
-    0 calc(0.55px + 0.45px * var(--fp-tile-w, 430px) / 430px) calc(1.15px + 0.85px * var(--fp-tile-w, 430px) / 430px) rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1.5px 7px rgba(0, 0, 0, 0.16), 0 1px 1.5px rgba(0, 0, 0, 0.08);
   pointer-events: auto;
   touch-action: none;
   overflow: hidden;
