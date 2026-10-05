@@ -2029,6 +2029,14 @@
       return;
     }
     if (document.getElementById("fp-lb")) return;
+    var tag = e.target.closest && e.target.closest(".fp-tag");
+    if (tag) {
+      e.preventDefault();
+      var tagOn = !tag.classList.contains("active");
+      tag.classList.toggle("active", tagOn);
+      tag.setAttribute("aria-pressed", tagOn ? "true" : "false");
+      return;
+    }
     var lay = e.target.closest && e.target.closest(".fp-laybtn");
     if (lay) {
       e.preventDefault();
