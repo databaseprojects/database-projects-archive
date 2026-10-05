@@ -433,6 +433,13 @@
     return copy;
   }
 
+  function scatterRoom() {
+    var view = window.innerHeight || document.documentElement.clientHeight || 800;
+    var top = stage.getBoundingClientRect().top;
+    if (top < 0) top = 0;
+    return Math.max(360, Math.floor(view - top - 12));
+  }
+
   function renderScatter() {
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
@@ -441,7 +448,8 @@
     var size = dotPx();
     var minD = size + Math.max(8, Math.round(size * 0.28));
     var placed = [];
-    var height = Math.max(360, Math.ceil((order.length * minD * minD * 1.35) / width));
+    var packed = Math.ceil((order.length * minD * minD * 1.35) / width);
+    var height = Math.max(packed, scatterRoom());
 
     function fits(x, y, limit) {
       if (x < 0 || y < 0 || x > width - size || y > limit - size) return false;
