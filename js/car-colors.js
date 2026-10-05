@@ -433,23 +433,25 @@
     return copy;
   }
 
-  function scatterRoom() {
-    var view = window.innerHeight || document.documentElement.clientHeight || 800;
-    var top = stage.getBoundingClientRect().top;
-    if (top < 0) top = 0;
-    return Math.max(360, Math.floor(view - top - 12));
+  function screenBox() {
+    var doc = document.documentElement;
+    return {
+      width: Math.max(160, doc.clientWidth || window.innerWidth || 800),
+      height: Math.max(360, doc.clientHeight || window.innerHeight || 800)
+    };
   }
 
   function renderScatter() {
     clear(stage);
-    var width = Math.max(160, stage.clientWidth);
+    document.body.classList.add("cc-screen");
+    var box = screenBox();
+    var width = box.width;
+    var height = box.height;
     var rng = mulberry32(0xC0105);
     var order = shuffle(carsIn("Vancouver"), rng);
     var size = dotPx();
     var minD = size + Math.max(8, Math.round(size * 0.28));
     var placed = [];
-    var packed = Math.ceil((order.length * minD * minD * 1.35) / width);
-    var height = Math.max(packed, scatterRoom());
 
     function fits(x, y, limit) {
       if (x < 0 || y < 0 || x > width - size || y > limit - size) return false;
@@ -494,15 +496,10 @@
       placed.push({ car: car, x: found.x, y: found.y });
     });
 
-    var bottom = 0;
-    placed.forEach(function (item) {
-      var edge = item.y + size;
-      if (edge > bottom) bottom = edge;
-    });
-
     var field = document.createElement("div");
     field.className = "cc-scatter";
-    field.style.height = Math.ceil(bottom + 8) + "px";
+    field.style.width = width + "px";
+    field.style.height = height + "px";
     placed.forEach(function (item) {
       var el = dot(item.car);
       el.style.left = item.x + "px";
@@ -515,13 +512,9 @@
   function fitScatter() {
     var field = stage.querySelector(".cc-scatter");
     if (!field) return;
-    var size = dotPx();
-    var bottom = 0;
-    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
-      var edge = (parseFloat(el.style.top) || 0) + size;
-      if (edge > bottom) bottom = edge;
-    });
-    field.style.height = Math.ceil(bottom + 8) + "px";
+    var box = screenBox();
+    field.style.width = box.width + "px";
+    field.style.height = box.height + "px";
   }
 
   function growFromCenter(prevPx, px) {
@@ -826,6 +819,7 @@
 
   function render() {
     applyMetrics();
+    document.body.classList.toggle("cc-screen", mode === "scatter");
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
     else if (mode === "hue") renderHue();
@@ -1013,6 +1007,7 @@
 
   function enterAg() {
     if (agOn) return;
+    document.body.classList.remove("cc-screen");
     agPrev = mode;
     var stageRect = stage.getBoundingClientRect();
     var nodes = Array.prototype.slice.call(stage.querySelectorAll(".cc-dot"));
