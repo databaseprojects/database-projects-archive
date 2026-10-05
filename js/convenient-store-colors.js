@@ -15,16 +15,39 @@
   if (!board || !thumb || !pop || !frame) return;
 
   var storeNames = { "circle-k": "Circle K" };
+  var svgNs = "http://www.w3.org/2000/svg";
+  var ringN = 0;
   Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
     var storeName = storeNames[item.getAttribute("data-store")] || "";
     var catName = item.getAttribute("data-cat") || "";
     var text = storeName && catName ? storeName + " / " + catName : (storeName || catName);
-    item.setAttribute("data-label", text);
     var dot = item.querySelector(".csc-dot");
-    if (!dot) return;
-    var hex = dot.getAttribute("title") || dot.getAttribute("aria-label") || "";
-    dot.removeAttribute("title");
-    dot.setAttribute("aria-label", hex ? text + ", " + hex : text);
+    if (dot) {
+      var hex = dot.getAttribute("title") || dot.getAttribute("aria-label") || "";
+      dot.removeAttribute("title");
+      dot.setAttribute("aria-label", hex ? text + ", " + hex : text);
+    }
+    var id = "csc-ring-" + (ringN++);
+    var svg = document.createElementNS(svgNs, "svg");
+    svg.setAttribute("class", "csc-arc");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("aria-hidden", "true");
+    var defs = document.createElementNS(svgNs, "defs");
+    var path = document.createElementNS(svgNs, "path");
+    path.setAttribute("id", id);
+    path.setAttribute("d", "M 20,50 A 30,30 0 0,0 80,50");
+    path.setAttribute("fill", "none");
+    defs.appendChild(path);
+    var textEl = document.createElementNS(svgNs, "text");
+    textEl.setAttribute("text-anchor", "middle");
+    var textPath = document.createElementNS(svgNs, "textPath");
+    textPath.setAttribute("href", "#" + id);
+    textPath.setAttribute("startOffset", "50%");
+    textPath.textContent = text;
+    textEl.appendChild(textPath);
+    svg.appendChild(defs);
+    svg.appendChild(textEl);
+    item.appendChild(svg);
   });
 
   function anyCat() {
