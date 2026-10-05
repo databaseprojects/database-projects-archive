@@ -65,45 +65,9 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   align-items: center;
   gap: 0;
   margin: 0 2px 0 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.fp-laybtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 26px;
-  padding: 0 8px;
-  margin: 0;
   border: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.2);
-  background: transparent;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  user-select: none;
-  opacity: 0.75;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-
-.fp-laybtn:last-child {
-  border-right: 0;
-}
-
-.fp-laybtn:hover {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.fp-laybtn.fp-lay-on {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 .fp-zslider {
@@ -599,7 +563,6 @@ body.fp-lb-lock {
   opacity: 1;
 }
 
-.fp-laybtn:focus-visible,
 .fp-shuffle:focus-visible,
 .fp-ag:focus-visible {
   outline: 1px solid #000;

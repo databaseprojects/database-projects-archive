@@ -11,10 +11,11 @@
 .cc-modes,
 .cc-cities {
   display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
   max-width: 100%;
   margin: 0;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  flex-wrap: wrap;
+  border: 0;
 }
 
 .cc-cities {
@@ -25,44 +26,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55em;
-}
-
-.cc-mode,
-.cc-city {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 26px;
-  padding: 0 8px;
-  margin: 0;
-  border: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.2);
-  background: transparent;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  user-select: none;
-  opacity: 0.75;
-}
-
-.cc-mode:last-child,
-.cc-city:last-child {
-  border-right: 0;
-}
-
-.cc-mode:hover,
-.cc-city:hover {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.cc-mode.cc-on,
-.cc-city.cc-on {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.1);
 }
 
 .cc-stage {
