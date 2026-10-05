@@ -10,7 +10,7 @@
 </head>
 <body>
   <div class="sheet">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/">Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/">Restricted Area</a><a href="../dogs-waiting-out-front/">Dogs Waiting Out Front</a><a href="../front-entrance-statues/">Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenient Store Colours</a><a href="../info/">INFO</a></nav>
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/">Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/">Restricted Area</a><a href="../dogs-waiting-out-front/">Dogs Waiting Out Front</a><a href="../front-entrance-statues/">Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenient Store Colours</a><a href="../status/">Status</a><a href="../info/">INFO</a></nav>
 
 <main>
   <div class="cc-about">
@@ -32,24 +32,28 @@
             <h2>Tools</h2>
             <p>Not listed yet.</p>
           </section>
-          <section class="cc-about-block">
-            <h2>Video</h2>
-            <p class="cc-about-video">No video yet.</p>
-          </section>
+          <div class="cc-about-video"></div>
         </div>
       </div>
     </div>
   </div>
   <div class="cc-controls">
-    <div class="cc-modes" role="group" aria-label="View">
-      <button type="button" class="cc-mode cc-on" data-cc-mode="scatter" aria-pressed="true">Scattered</button>
-      <button type="button" class="cc-mode" data-cc-mode="region" aria-pressed="false">Region</button>
-      <button type="button" class="cc-mode" data-cc-mode="map" aria-pressed="false">Map</button>
-      <button type="button" class="cc-mode" data-cc-mode="hue" aria-pressed="false">Hue</button>
+    <div class="cc-cities" role="group" aria-label="City">
+      <button type="button" class="cc-city cc-on" data-cc-city="Vancouver" aria-pressed="true">Vancouver</button>
+      <button type="button" class="cc-city" data-cc-city="Toronto" aria-pressed="false">Toronto</button>
+      <button type="button" class="cc-city" data-cc-city="Seattle" aria-pressed="false">Seattle</button>
+      <button type="button" class="cc-city" data-cc-city="Los Angeles" aria-pressed="false">Los Angeles</button>
     </div>
     <span class="cc-zoom">
       <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
       <button type="button" class="cc-ag" aria-label="Antigravity" title="Antigravity" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="19" rx="7" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="9.5" r="5.2" fill="currentColor"/></svg></button>
+      <span class="cc-icons" role="group" aria-label="View">
+        <button type="button" class="cc-icon cc-icon-on" data-cc-mode="scatter" aria-pressed="true" aria-label="Scattered" title="Scattered"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="17" cy="14" r="1.2"/><circle cx="9" cy="16" r="1.2"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="matte" aria-pressed="false" aria-label="Matte" title="Matte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="hue" aria-pressed="false" aria-label="Hue" title="Hue"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c1.5-6 4-8 8-8s6.5 2 8 8"/><path d="M7 19h10"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="map" aria-pressed="false" aria-label="Map" title="Map"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="region" aria-pressed="false" aria-label="Region" title="Region"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5"/><rect x="13.5" y="4" width="6.5" height="6.5"/><rect x="4" y="13.5" width="6.5" height="6.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5"/></svg></button>
+      </span>
     </span>
   </div>
   <div class="cc-stage" id="cc-stage"></div>

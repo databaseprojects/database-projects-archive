@@ -209,7 +209,7 @@
   }
 
   var stage = document.getElementById("cc-stage");
-  var buttons = document.querySelectorAll(".cc-mode");
+  var buttons = document.querySelectorAll("[data-cc-mode]");
   var mode = "scatter";
   var agOn = false;
   var agPrev = "scatter";
@@ -441,14 +441,14 @@
     };
   }
 
-  function renderScatter() {
+  function renderScatter(list, seed) {
     clear(stage);
     document.body.classList.add("cc-screen");
     var box = screenBox();
     var width = box.width;
     var height = box.height;
-    var rng = mulberry32(0xC0105);
-    var order = shuffle(carsIn("Vancouver"), rng);
+    var rng = mulberry32(seed == null ? 0xC0105 : seed);
+    var order = shuffle(list || carsIn(city), rng);
     var size = dotPx();
     var minD = size + Math.max(8, Math.round(size * 0.28));
     var placed = [];
@@ -578,34 +578,10 @@
     return pack;
   }
 
-  function renderCityOptions(parent) {
-    var bar = document.createElement("div");
-    bar.className = "cc-cities";
-    bar.setAttribute("role", "group");
-    bar.setAttribute("aria-label", "City");
-    CITIES.forEach(function (name) {
-      var button = document.createElement("button");
-      button.type = "button";
-      button.className = "cc-city" + (name === city ? " cc-on" : "");
-      button.setAttribute("data-cc-city", name);
-      button.setAttribute("aria-pressed", name === city ? "true" : "false");
-      button.textContent = name;
-      button.addEventListener("click", function () {
-        clearPageColour();
-        if (name === city || agOn) return;
-        city = name;
-        if (mode === "region") renderRegion();
-      });
-      bar.appendChild(button);
-    });
-    parent.appendChild(bar);
-  }
-
   function renderRegion() {
     clear(stage);
     var view = document.createElement("div");
     view.className = "cc-region-view";
-    renderCityOptions(view);
     var width = Math.max(160, stage.clientWidth);
     var cols = regionColumns(width);
     var gap = 22;
@@ -800,7 +776,7 @@
     var gap = gapPx();
     var size = dotPx();
     var cols = Math.max(1, Math.floor((width + gap) / (size + gap)));
-    var sorted = carsIn("Vancouver").slice().sort(hueOrder);
+    var sorted = carsIn(city).slice().sort(hueOrder);
     var wrap = document.createElement("div");
     wrap.className = "cc-hue";
     wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
@@ -820,10 +796,11 @@
 
   function render() {
     applyMetrics();
-    document.body.classList.toggle("cc-screen", mode === "scatter");
+    document.body.classList.toggle("cc-screen", mode === "scatter" || mode === "matte");
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
     else if (mode === "hue") renderHue();
+    else if (mode === "matte") renderScatter(carsIn(city).filter(function (car) { return !car.metallic; }), 0xA77E);
     else renderScatter();
   }
 
@@ -846,6 +823,11 @@
   function syncButtons() {
     buttons.forEach(function (button) {
       var on = !agOn && button.getAttribute("data-cc-mode") === mode;
+      button.classList.toggle("cc-icon-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    document.querySelectorAll(".cc-city").forEach(function (button) {
+      var on = button.getAttribute("data-cc-city") === city;
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
@@ -1138,6 +1120,7 @@
       clearPageColour();
       if (draggingSlider) return;
       var next = button.getAttribute("data-cc-mode");
+      if (next === "map") city = "Vancouver";
       if (agOn) {
         leaveAg(next);
         return;
@@ -1145,6 +1128,26 @@
       if (next === mode) return;
       var before = snapshotDots();
       mode = next;
+      syncButtons();
+      render();
+      slideInto(before);
+    });
+  });
+
+  document.querySelectorAll(".cc-city").forEach(function (button) {
+    button.addEventListener("click", function () {
+      clearPageColour();
+      if (draggingSlider) return;
+      var name = button.getAttribute("data-cc-city");
+      if (agOn) {
+        city = name;
+        leaveAg("scatter");
+        return;
+      }
+      if (name === city && mode === "scatter") return;
+      var before = snapshotDots();
+      city = name;
+      mode = "scatter";
       syncButtons();
       render();
       slideInto(before);
@@ -1162,7 +1165,7 @@
       spillFrom(dotEl);
       return;
     }
-    if (e.target.closest && (e.target.closest(".cc-mode") || e.target.closest(".cc-city") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
+    if (e.target.closest && (e.target.closest("[data-cc-mode]") || e.target.closest(".cc-city") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
       clearPageColour();
     }
     var ag = e.target.closest && e.target.closest(".cc-ag");
