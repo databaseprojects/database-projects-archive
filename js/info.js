@@ -1,5 +1,5 @@
-/* Info page only. More black and grey dots, each pulsing on its own,
-   drifting in a soft wave. No lines between them.
+/* Info page only. Plain black and grey dots, each pulsing on its own,
+   drifting in a soft wave. No glow and no lines between them.
    Stop lets the dots fall to the bottom of the page. */
 (function () {
   var canvas = document.querySelector(".info-net");
@@ -13,7 +13,7 @@
   function count() {
     var w = window.innerWidth || 800;
     var h = window.innerHeight || 600;
-    return Math.round(Math.min(96, Math.max(42, (w * h) / 16000)));
+    return Math.round(Math.min(420, Math.max(140, (w * h) / 3200)));
   }
 
   function seed() {
@@ -117,16 +117,6 @@
   }
 
   function paintDot(p, tone, rad) {
-    var halo = Math.max(7, rad * 5.2);
-    var edge = Math.min(200, tone + 64);
-    var spot = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, halo);
-    spot.addColorStop(0, grey(tone, 0.5));
-    spot.addColorStop(0.42, grey(edge, 0.16));
-    spot.addColorStop(1, grey(edge, 0));
-    ctx.fillStyle = spot;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, halo, 0, Math.PI * 2);
-    ctx.fill();
     ctx.fillStyle = grey(tone, 0.78);
     ctx.beginPath();
     ctx.arc(p.x, p.y, Math.max(0.6, rad), 0, Math.PI * 2);
