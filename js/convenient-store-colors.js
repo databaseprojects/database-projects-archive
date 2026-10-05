@@ -14,6 +14,19 @@
   var moveMs = 380;
   if (!board || !thumb || !pop || !frame) return;
 
+  var storeNames = { "circle-k": "Circle K" };
+  Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
+    var storeName = storeNames[item.getAttribute("data-store")] || "";
+    var catName = item.getAttribute("data-cat") || "";
+    var text = storeName && catName ? storeName + " / " + catName : (storeName || catName);
+    item.setAttribute("data-label", text);
+    var dot = item.querySelector(".csc-dot");
+    if (!dot) return;
+    var hex = dot.getAttribute("title") || dot.getAttribute("aria-label") || "";
+    dot.removeAttribute("title");
+    dot.setAttribute("aria-label", hex ? text + ", " + hex : text);
+  });
+
   function anyCat() {
     return picked.candy || picked.chips || picked.drinks;
   }
