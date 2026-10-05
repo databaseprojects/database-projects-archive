@@ -325,9 +325,15 @@
 
   function syncAgButton() {
     var ag = document.querySelector(".csc-ag");
-    if (!ag) return;
-    ag.classList.toggle("csc-ag-on", agOn);
-    ag.setAttribute("aria-pressed", agOn ? "true" : "false");
+    if (ag) {
+      ag.classList.toggle("csc-ag-on", agOn);
+      ag.setAttribute("aria-pressed", agOn ? "true" : "false");
+    }
+    var row = document.querySelector(".csc-row");
+    if (row) {
+      row.classList.toggle("csc-row-on", !agOn);
+      row.setAttribute("aria-pressed", agOn ? "false" : "true");
+    }
   }
 
   function slideFrom(before) {
@@ -601,6 +607,13 @@
       apply(true);
     });
   });
+
+  var rowButton = document.querySelector(".csc-row");
+  if (rowButton) {
+    rowButton.addEventListener("click", function () {
+      if (agOn) leaveAg();
+    });
+  }
 
   var agButton = document.querySelector(".csc-ag");
   if (agButton) {
