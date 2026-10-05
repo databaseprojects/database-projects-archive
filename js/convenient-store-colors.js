@@ -1,6 +1,6 @@
 /* Store and category filters, and the small aisle-photo pop-up. */
 (function () {
-  var store = "all";
+  var store = "circle-k";
   var storePicked = false;
   var picked = { candy: false, chips: false, drinks: false };
   var cats = document.querySelector(".csc-cats");
@@ -55,7 +55,7 @@
   }
 
   function wants(item) {
-    var storeOk = store === "all" || item.getAttribute("data-store") === store;
+    var storeOk = item.getAttribute("data-store") === store;
     var name = item.getAttribute("data-cat");
     return storeOk && (!anyCat() || !!picked[name]);
   }
@@ -197,12 +197,6 @@
     button.addEventListener("click", function () {
       store = button.getAttribute("data-csc-store");
       storePicked = true;
-      if (store === "all") {
-        picked.candy = false;
-        picked.chips = false;
-        picked.drinks = false;
-        syncCats();
-      }
       setPressed("[data-csc-store]", "data-csc-store", store);
       apply(true);
     });
