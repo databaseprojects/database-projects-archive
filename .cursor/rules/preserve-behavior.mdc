@@ -1,0 +1,12 @@
+---
+description: Leave correct site behavior unchanged unless Billy asked for that specific change
+alwaysApply: true
+---
+
+Standing rule from Billy for this site:
+
+Once a behavior is correct, later edits must not change it unless he asked for that specific change. Photo hosting, image addresses, and optimization must not alter layout, animation, or view modes. If a requested change would disturb something he did not mention, leave that behavior as it is.
+
+This is a fresh website on GitHub. The public preview is GitHub Pages. Do not merge. Fixes already in place stay as specified.
+
+When Billy asks for buttons, he means tag buttons. They use one style on every page: a separate border, Courier, uppercase, and a black selected state with a white label. Found Photographs, Vacant, Car Colours, Convenient Store Colours, and any new page use that same tag. Do not invent a different button look for a page.

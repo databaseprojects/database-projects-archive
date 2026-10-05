@@ -1,0 +1,575 @@
+/* Car Colours. Four quiet views of sample dots, plus the Found Photographs size slider and antigravity. */
+
+.cc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin: 0.2rem 0 1.5rem;
+}
+
+.cc-modes,
+.cc-cities {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: 100%;
+  margin: 0;
+  border: 0;
+}
+
+.cc-cities {
+  margin: 0;
+}
+
+.cc-icons {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cc-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 2px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.9;
+  transform-origin: center center;
+  transition: opacity 0.15s ease, transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.cc-icon:hover {
+  opacity: 1;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.cc-icon:active {
+  transform: scale(0.92);
+}
+
+.cc-icon.cc-icon-on {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  opacity: 1;
+}
+
+.cc-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.cc-icon:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
+.cc-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  margin-left: auto;
+}
+
+.cc-stage {
+  width: 100%;
+  min-height: 8rem;
+}
+
+/* Antigravity dots paint over the index nav and the controls bar. */
+body.cc-under-menu .bk-nav {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+body.cc-under-menu .cc-controls {
+  position: sticky;
+  top: var(--cc-nav-h, 48px);
+  z-index: 40;
+  background: #fff;
+}
+
+body.cc-under-menu .cc-ag-field {
+  z-index: 60;
+  pointer-events: none;
+}
+
+.sheet {
+  position: relative;
+  z-index: 1;
+}
+
+.cc-spill {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+
+.cc-spill-disk {
+  position: absolute;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  pointer-events: none;
+  transform-origin: center center;
+}
+
+.cc-dot {
+  display: block;
+  width: var(--cc-dot, 40px);
+  height: var(--cc-dot, 40px);
+  transform-origin: center center;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 0;
+  box-shadow: none;
+  flex: 0 0 var(--cc-dot, 40px);
+}
+
+.cc-label {
+  margin: 0 0 0.45rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cc-family {
+  margin: 0 0 1.2rem;
+}
+
+.cc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cc-gap, 14px);
+}
+
+.cc-scatter {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cc-scatter .cc-dot {
+  position: absolute;
+  pointer-events: auto;
+}
+
+body.cc-screen .bk-nav,
+body.cc-screen .cc-about,
+body.cc-screen .record-name,
+body.cc-screen .cc-controls {
+  position: relative;
+  z-index: 2;
+}
+
+body.cc-screen .cc-about.cc-open + .cc-controls {
+  background: #fff;
+}
+
+/* A picked page colour fills the city labels and the slider strip. */
+html.cc-paged .cc-controls,
+html.cc-paged body.cc-under-menu .cc-controls,
+html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls {
+  background: var(--cc-page);
+}
+
+body.cc-under-menu .cc-about.cc-open {
+  position: relative;
+  z-index: 70;
+}
+
+.cc-regions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem 1.4rem;
+  align-items: start;
+}
+
+.cc-cluster-field {
+  position: relative;
+}
+
+.cc-cluster-field .cc-dot {
+  position: absolute;
+}
+
+.cc-map {
+  position: relative;
+  width: 100%;
+  background: none;
+}
+
+.cc-map-lines {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.cc-map-lines path {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.38);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.cc-map .cc-dot {
+  position: absolute;
+  z-index: 1;
+}
+
+.cc-map-spot {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cc-map-spot .cc-label {
+  white-space: nowrap;
+  margin: 0.45rem 0 0;
+}
+
+.cc-hue {
+  display: grid;
+  gap: var(--cc-gap, 14px);
+  justify-content: start;
+}
+
+.cc-hue .cc-dot {
+  justify-self: center;
+  align-self: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cc-zslider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 150px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.cc-zslider:active {
+  cursor: grabbing;
+}
+
+.cc-zslider:focus {
+  outline: none;
+}
+
+.cc-zslider::-webkit-slider-runnable-track {
+  height: 3px;
+  border: 0;
+  border-radius: 3px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.75) var(--cc-p, 0%), rgba(0, 0, 0, 0.14) var(--cc-p, 0%));
+}
+
+.cc-zslider::-moz-range-track {
+  height: 3px;
+  border: 0;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.cc-zslider::-moz-range-progress {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.cc-zslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5.5px;
+  border: 0;
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s cubic-bezier(0.3, 0.7, 0.3, 1), box-shadow 0.18s ease;
+}
+
+.cc-zslider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+html.cc-paged .cc-zslider::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+html.cc-paged .cc-zslider::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.cc-zslider:hover::-webkit-slider-thumb,
+.cc-zslider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+.cc-zslider:active::-webkit-slider-thumb {
+  transform: scale(1.22);
+}
+
+.cc-ag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.9;
+  transition: opacity 0.15s ease, transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.cc-ag:hover {
+  opacity: 1;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.cc-ag:active {
+  transform: scale(0.92);
+}
+
+.cc-ag.cc-ag-on {
+  opacity: 1;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.cc-ag svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.cc-ag:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
+.cc-ag-field {
+  position: relative;
+  width: 100%;
+  height: var(--cc-ag-h, 78vh);
+  min-height: var(--cc-ag-h, 78vh);
+  overflow: visible;
+}
+
+.cc-ag-field .cc-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  cursor: grab;
+  touch-action: none;
+  translate: var(--cc-x, 0px) var(--cc-y, 0px);
+  z-index: var(--cc-z, 1);
+  box-shadow: none;
+  pointer-events: auto;
+  will-change: translate;
+}
+
+.cc-ag-field .cc-dot.cc-dragging {
+  cursor: grabbing;
+  z-index: 100000;
+  box-shadow: none;
+}
+
+html.cc-sizing {
+  overflow-anchor: none;
+  cursor: grabbing;
+}
+
+html.cc-sizing .cc-dot {
+  pointer-events: none;
+}
+
+@media (max-width: 590px) {
+  .cc-zoom {
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+
+  .cc-zslider {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 560px) {
+  .cc-regions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .cc-regions {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Title disclosure. Opens under the page heading; later notes can be another section here. */
+.cc-about-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.cc-about-toggle:hover,
+.cc-about-toggle:focus-visible {
+  text-decoration: underline;
+}
+
+.cc-about-toggle:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+.cc-about.cc-open {
+  background: #fff;
+}
+
+.cc-about-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: #fff;
+  transition: grid-template-rows 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.cc-about-panel[hidden] {
+  display: none;
+}
+
+.cc-about.cc-open .cc-about-panel {
+  grid-template-rows: 1fr;
+}
+
+.cc-about-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cc-about-body {
+  max-width: 36em;
+  padding: 0.85rem 0 0.15rem;
+  transform-origin: center center;
+  transform: scale(0.94);
+  opacity: 0;
+  transition: transform 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95), opacity 0.32s ease;
+}
+
+.cc-about.cc-open .cc-about-body {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.cc-about-block {
+  margin: 0 0 0.85rem;
+}
+
+.cc-about-block h2 {
+  margin: 0 0 0.2rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cc-about-block p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.cc-about-video:empty {
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-about-panel,
+  .cc-about-body {
+    transition: none;
+  }
+
+  .cc-about-body {
+    transform: none;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,323 @@
+/* Vacant storefronts: tag filter, column slider, hover, lightbox map. */
+
+.vsf-title {
+  margin: 0.4rem 0 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.vsf-bar {
+  display: block;
+  position: relative;
+  z-index: 20;
+  margin: 1.2em 0 1.2em;
+  padding: 0.5em 0;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-height: 28px;
+}
+
+.vsf-count {
+  display: inline-block;
+  margin-left: 0.6em;
+  opacity: 0.6;
+}
+
+.vsf-hold {
+  display: none;
+}
+
+.vsf-zoom {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  white-space: nowrap;
+}
+
+.vsf-zslider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 170px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.vsf-zslider:active {
+  cursor: grabbing;
+}
+
+.vsf-zslider:focus {
+  outline: none;
+}
+
+.vsf-zslider::-webkit-slider-runnable-track {
+  height: 3px;
+  border: 0;
+  border-radius: 3px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.75) var(--vsf-p, 0%), rgba(0, 0, 0, 0.14) var(--vsf-p, 0%));
+}
+
+.vsf-zslider::-moz-range-track {
+  height: 3px;
+  border: 0;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.vsf-zslider::-moz-range-progress {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.vsf-zslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5.5px;
+  border: 0;
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s cubic-bezier(0.3, 0.7, 0.3, 1), box-shadow 0.18s ease;
+}
+
+.vsf-zslider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.vsf-zslider:hover::-webkit-slider-thumb,
+.vsf-zslider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+.vsf-zslider:active::-webkit-slider-thumb {
+  transform: scale(1.22);
+}
+
+.vsf-shuffle,
+.vsf-gps-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.9;
+  transition: opacity 0.15s ease, transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.vsf-gps-btn {
+  margin: 0 2px 0 0;
+}
+
+.vsf-shuffle {
+  margin: 0 0 0 2px;
+}
+
+.vsf-shuffle:hover,
+.vsf-gps-btn:hover {
+  opacity: 1;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.vsf-shuffle:active,
+.vsf-gps-btn:active {
+  transform: scale(0.92);
+}
+
+.vsf-gps-btn.active {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  opacity: 1;
+}
+
+.vsf-shuffle svg,
+.vsf-gps-btn svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+/* Below 768px the right-aligned controls cover the tag filters.
+   Same controls, still inside this bar; they drop to the next line instead of disappearing. */
+@media (max-width: 767px) {
+  .vsf-zoom {
+    position: static;
+    top: auto;
+    right: auto;
+    transform: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.4em;
+    white-space: normal;
+    row-gap: 0.35em;
+  }
+
+  .vsf-zslider {
+    max-width: 100%;
+  }
+
+  .vsf-grid:not(.vsf-empty) {
+    grid-template-columns: repeat(var(--vsf-cols, 4), minmax(0, 1fr));
+  }
+}
+
+.vsf-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--vsf-cols, 6), minmax(0, 1fr));
+  gap: 1rem;
+  align-items: center;
+  overflow-anchor: none;
+}
+
+.vsf-grid.vsf-stagger .vsf-tile {
+  opacity: 0;
+  transition: none;
+}
+
+.vsf-grid.vsf-empty {
+  display: none;
+}
+
+.vsf-tile {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  scale: 1;
+  translate: 0 0;
+  transform-origin: center center;
+  cursor: zoom-in;
+  transition: opacity 0.35s ease, scale 0.55s cubic-bezier(0.3, 0.7, 0.3, 1), translate 0.55s cubic-bezier(0.3, 0.7, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.vsf-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.vsf-tile:hover {
+  scale: var(--vsf-hs, 1.15);
+  translate: var(--vsf-tx, 0px) var(--vsf-ty, 0px);
+  z-index: 20;
+  box-shadow: 0 calc(8px / var(--vsf-hs, 1.15)) calc(24px / var(--vsf-hs, 1.15)) rgba(0, 0, 0, 0.3);
+  transition: opacity 0.35s ease, scale 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), translate 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.vsf-tile[data-vsf-wait] {
+  opacity: 0;
+  transition: none;
+}
+
+.vsf-tile[data-vsf-leaving]:not(:hover) {
+  z-index: 5;
+}
+
+html.vsf-sizing {
+  overflow-anchor: none;
+}
+
+html.vsf-sizing .vsf-grid .vsf-tile {
+  pointer-events: none;
+}
+
+html.vsf-sizing,
+html.vsf-sizing * {
+  cursor: grabbing;
+}
+
+.vsf-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.82);
+  opacity: 0;
+  transition: opacity 0.32s ease;
+  cursor: zoom-out;
+}
+
+.vsf-lb.vsf-lb-on {
+  opacity: 1;
+}
+
+.vsf-lb > img {
+  max-width: min(96vw, 1600px);
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+  -webkit-user-drag: none;
+  user-select: none;
+  cursor: default;
+  pointer-events: auto;
+}
+
+.vsf-lb.vsf-lb-closing {
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.vsf-lb.vsf-lb-closing > img {
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
+}
+
+body.vsf-lb-lock {
+  overflow-y: scroll;
+}
+
+.vsf-tag:focus-visible,
+.vsf-shuffle:focus-visible,
+.vsf-gps-btn:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}

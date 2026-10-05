@@ -1,0 +1,278 @@
+/* Archive index. Courier, 12px, tracked-out uppercase, black rule.
+   .bk-group is part of the filing system (a stacked record with a return-arrow subline). */
+
+html {
+  font-size: 16px;
+  --ag-shadow: 0 1.5px 7px rgba(0, 0, 0, 0.16), 0 1px 1.5px rgba(0, 0, 0, 0.08);
+  --ag-shadow-in: box-shadow 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tag buttons. The same look and selected state on every page. */
+.vsf-tag,
+.csc-opt,
+.csc-row,
+.fp-laybtn,
+.cc-mode,
+.cc-city {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0 0.5em 0 0;
+  padding: 0.25em 0.75em;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  opacity: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.vsf-tag:hover,
+.csc-opt:hover,
+.csc-row:hover,
+.fp-laybtn:hover,
+.cc-mode:hover,
+.cc-city:hover {
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+  color: #111;
+  opacity: 1;
+}
+
+.vsf-tag.active,
+.csc-opt.csc-on,
+.csc-row.csc-row-on,
+.fp-laybtn.fp-lay-on,
+.cc-mode.cc-on,
+.cc-city.cc-on {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  opacity: 1;
+}
+
+.vsf-tag:focus-visible,
+.csc-opt:focus-visible,
+.csc-row:focus-visible,
+.fp-laybtn:focus-visible,
+.cc-mode:focus-visible,
+.cc-city:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
+.sheet {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.bk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.4em 0;
+  margin: 0 0 1.6rem;
+  padding: 0.5em 0;
+  border-bottom: 1px solid #000;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bk-nav a {
+  color: #000;
+  text-decoration: none;
+  margin-right: 1.4em;
+}
+
+.bk-nav a:hover {
+  text-decoration: underline;
+}
+
+.bk-nav a.active {
+  text-decoration: underline;
+}
+
+.bk-group {
+  display: inline-flex;
+  flex-direction: column;
+  margin-right: 1.4em;
+}
+
+.bk-group a {
+  margin-right: 0;
+}
+
+.bk-group .bk-sub {
+  font-size: 10px;
+  opacity: 0.75;
+  padding-left: 1em;
+}
+
+.bk-group .bk-sub::before {
+  content: "\21B3  ";
+}
+
+.home-name {
+  margin: 2.4rem 0 0.7rem;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.home-intro {
+  margin: 0;
+  max-width: 38em;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+}
+
+.home-list {
+  list-style: none;
+  margin: 2.4rem 0 4rem;
+  padding: 0.8rem 0 0;
+  border-top: 1px solid #000;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-list li {
+  margin: 0.45em 0;
+}
+
+.home-list a {
+  color: #000;
+  text-decoration: none;
+}
+
+.home-list a:hover {
+  text-decoration: underline;
+}
+
+.record-name {
+  margin: 2.2rem 0 0.45rem;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.record-note {
+  margin: 0 0 4rem;
+  max-width: 36em;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+a:active {
+  opacity: 0.7;
+}
+
+/* Site-wide lightbox map. Later pages reuse these classes for the same frame. */
+.vsf-lb-map {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  width: 148px;
+  height: 148px;
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease 0.12s, transform 0.35s ease 0.12s;
+  background: #0e0e0e;
+  cursor: default;
+}
+
+.vsf-lb.vsf-lb-on .vsf-lb-map {
+  opacity: 1;
+  transform: none;
+}
+
+.vsf-lb-tiles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 768px;
+  height: 768px;
+}
+
+.vsf-lb-tiles img {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  display: block;
+  pointer-events: none;
+}
+
+.vsf-lb-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  padding: 0;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
+  appearance: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.vsf-lb-dot:hover {
+  transform: scale(1.35);
+}
+
+.vsf-lb-map-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #f3efe4;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: none;
+}

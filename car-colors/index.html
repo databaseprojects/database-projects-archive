@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <title>Car Colours — databaseprojects</title>
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/car-colors.css">
+</head>
+<body>
+  <div class="sheet">
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenient Store Colours</a><a href="../info/">INFO</a></nav>
+
+<main>
+  <div class="cc-about">
+    <h1 class="record-name">
+      <button type="button" class="cc-about-toggle" id="cc-about-toggle" aria-expanded="false" aria-controls="cc-about-panel">Car Colours</button>
+    </h1>
+    <div class="cc-about-panel" id="cc-about-panel" hidden aria-hidden="true">
+      <div class="cc-about-clip">
+        <div class="cc-about-body">
+          <section class="cc-about-block">
+            <h2>Project</h2>
+            <p>Each circle is a stand-in car colour for this mockup. There are no photographs on this page. The record keeps the colour, and whether the paint is metallic or flat.</p>
+          </section>
+          <section class="cc-about-block">
+            <h2>Collection</h2>
+            <p>These are placeholder colours in a Vancouver car palette. A written collection method is not on this page yet.</p>
+          </section>
+          <section class="cc-about-block">
+            <h2>Tools</h2>
+            <p>Not listed yet.</p>
+          </section>
+          <div class="cc-about-video"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cc-controls">
+    <div class="cc-cities" role="group" aria-label="City">
+      <button type="button" class="cc-city cc-on" data-cc-city="Vancouver" aria-pressed="true">Vancouver</button>
+      <button type="button" class="cc-city" data-cc-city="Toronto" aria-pressed="false">Toronto</button>
+      <button type="button" class="cc-city" data-cc-city="Seattle" aria-pressed="false">Seattle</button>
+      <button type="button" class="cc-city" data-cc-city="Los Angeles" aria-pressed="false">Los Angeles</button>
+    </div>
+    <span class="cc-zoom">
+      <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
+      <button type="button" class="cc-ag" aria-label="Antigravity" title="Antigravity" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="19" rx="7" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="9.5" r="5.2" fill="currentColor"/></svg></button>
+      <span class="cc-icons" role="group" aria-label="View">
+        <button type="button" class="cc-icon cc-icon-on" data-cc-mode="scatter" aria-pressed="true" aria-label="Scattered" title="Scattered"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="1.5"/><circle cx="15" cy="7" r="1.5"/><circle cx="16.5" cy="14" r="1.5"/><circle cx="9" cy="16" r="1.5"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="hue" aria-pressed="false" aria-label="Hue" title="Hue"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16c1.2-5 3.4-7 7-7s5.8 2 7 7"/><path d="M8 19h8"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="map" aria-pressed="false" aria-label="Map" title="Map"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+      </span>
+    </span>
+  </div>
+  <div class="cc-stage" id="cc-stage"></div>
+</main>
+
+  </div>
+  <script src="../js/car-colors.js"></script>
+</body>
+</html>
