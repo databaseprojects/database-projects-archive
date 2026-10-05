@@ -302,7 +302,7 @@
     spill.appendChild(disk);
     document.body.appendChild(spill);
     var t0 = performance.now();
-    var life = 1280;
+    var life = 640;
     var start = dotR / endR;
     function draw(t) {
       var p = t <= 0 ? 0 : t >= life ? 1 : spillEase(t / life);
