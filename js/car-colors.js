@@ -1,4 +1,4 @@
-/* Sample cars only. Each dot is a photographed car; there are no image files.
+/* Mock car colours for this preview. Each dot is a placeholder swatch; there are no image files.
    metallic is kept on the record even though the dot shows colour alone.
    The size slider and antigravity follow Found Photographs. */
 (function () {
@@ -24,12 +24,58 @@
   };
   var city = "Vancouver";
 
-  /* Four colours for this layout pass, from the existing Vancouver samples. */
+  /* About fifty mock car colours. Placeholder swatches only, not photographed cars. */
   var PAINTS = [
-    ["blue", "#1A3346", 208, true],
-    ["grey", "#C5C9CE", null, false],
-    ["white", "#EEF0F2", null, false],
-    ["black", "#1A1C1F", null, false]
+    ["black", "#0C0C0E", null, false],
+    ["black", "#141416", null, true],
+    ["black", "#1A1C1F", null, false],
+    ["black", "#222426", null, true],
+    ["black", "#2A2C30", null, false],
+    ["black", "#101214", null, true],
+    ["black", "#181A1C", null, false],
+    ["black", "#303236", null, true],
+    ["black", "#0E1012", null, false],
+    ["black", "#26282C", null, true],
+    ["black", "#16181A", null, false],
+    ["black", "#3A3C40", null, true],
+    ["grey", "#3E4248", null, false],
+    ["grey", "#4A4E54", null, true],
+    ["grey", "#555A60", null, false],
+    ["grey", "#5C6168", null, true],
+    ["grey", "#6E747C", null, false],
+    ["grey", "#7A8088", null, true],
+    ["grey", "#848A92", null, false],
+    ["grey", "#8E949A", null, true],
+    ["grey", "#9AA0A6", null, false],
+    ["grey", "#A8AEB4", null, true],
+    ["grey", "#B0B6BC", null, false],
+    ["grey", "#C5C9CE", null, true],
+    ["grey", "#C8CCD0", null, false],
+    ["grey", "#D4D8DC", null, true],
+    ["grey", "#DCDFE2", null, false],
+    ["grey", "#E2E4E6", null, true],
+    ["grey", "#EEF0F2", null, false],
+    ["grey", "#F4F5F6", null, true],
+    ["blue", "#5E84A0", 206, false],
+    ["blue", "#6E90A8", 207, true],
+    ["blue", "#7A9BB5", 205, false],
+    ["blue", "#8EADC4", 206, true],
+    ["blue", "#9BB4C6", 204, false],
+    ["blue", "#A3BDD0", 205, true],
+    ["blue", "#A8C0D4", 203, false],
+    ["blue", "#B7C9D6", 204, true],
+    ["blue", "#C5D4E0", 202, false],
+    ["blue", "#D0DCE6", 203, true],
+    ["red", "#6A2828", 2, false],
+    ["red", "#7A3032", 4, true],
+    ["red", "#8C3A36", 6, false],
+    ["red", "#A34A42", 8, true],
+    ["green", "#2F4A3C", 152, false],
+    ["green", "#3E5C48", 148, true],
+    ["green", "#5A7A62", 140, false],
+    ["teal", "#2A5552", 176, true],
+    ["teal", "#3E6E6A", 174, false],
+    ["teal", "#5A8A84", 172, true]
   ];
 
   var CARS = PAINTS.map(function (row, i) {
