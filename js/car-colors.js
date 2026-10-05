@@ -1354,3 +1354,48 @@
     }, 80);
   });
 })();
+
+(function () {
+  var about = document.querySelector(".cc-about");
+  var toggle = document.getElementById("cc-about-toggle");
+  var panel = document.getElementById("cc-about-panel");
+  if (!about || !toggle || !panel) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hideTimer = 0;
+
+  function finishClose() {
+    if (!about.classList.contains("cc-open")) panel.hidden = true;
+  }
+
+  toggle.addEventListener("click", function () {
+    var open = !about.classList.contains("cc-open");
+    window.clearTimeout(hideTimer);
+    if (open) {
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+      if (reduce) {
+        about.classList.add("cc-open");
+        return;
+      }
+      panel.getBoundingClientRect();
+      about.classList.add("cc-open");
+      return;
+    }
+    about.classList.remove("cc-open");
+    toggle.setAttribute("aria-expanded", "false");
+    panel.setAttribute("aria-hidden", "true");
+    if (reduce) {
+      panel.hidden = true;
+      return;
+    }
+    hideTimer = window.setTimeout(finishClose, 480);
+  });
+
+  panel.addEventListener("transitionend", function (e) {
+    if (e.target !== panel || e.propertyName !== "grid-template-rows") return;
+    window.clearTimeout(hideTimer);
+    finishClose();
+  });
+})();

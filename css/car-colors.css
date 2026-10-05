@@ -130,10 +130,16 @@ body.cc-under-menu .cc-ag-field {
 }
 
 body.cc-screen .bk-nav,
+body.cc-screen .cc-about,
 body.cc-screen .record-name,
 body.cc-screen .cc-controls {
   position: relative;
   z-index: 2;
+}
+
+body.cc-under-menu .cc-about.cc-open {
+  position: relative;
+  z-index: 70;
 }
 
 .cc-regions {
@@ -385,5 +391,104 @@ html.cc-sizing .cc-dot {
 @media (min-width: 900px) {
   .cc-regions {
     grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Title disclosure. Opens under the page heading; later notes can be another section here. */
+.cc-about-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.cc-about-toggle:hover,
+.cc-about-toggle:focus-visible {
+  text-decoration: underline;
+}
+
+.cc-about-toggle:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+.cc-about.cc-open {
+  background: #fff;
+}
+
+.cc-about-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: #fff;
+  transition: grid-template-rows 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.cc-about-panel[hidden] {
+  display: none;
+}
+
+.cc-about.cc-open .cc-about-panel {
+  grid-template-rows: 1fr;
+}
+
+.cc-about-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cc-about-body {
+  max-width: 36em;
+  padding: 0.85rem 0 0.15rem;
+  transform-origin: center center;
+  transform: scale(0.94);
+  opacity: 0;
+  transition: transform 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95), opacity 0.32s ease;
+}
+
+.cc-about.cc-open .cc-about-body {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.cc-about-block {
+  margin: 0 0 0.85rem;
+}
+
+.cc-about-block h2 {
+  margin: 0 0 0.2rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cc-about-block p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.cc-about-video {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-about-panel,
+  .cc-about-body {
+    transition: none;
+  }
+
+  .cc-about-body {
+    transform: none;
+    opacity: 1;
   }
 }
