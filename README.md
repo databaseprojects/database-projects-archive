@@ -2,6 +2,10 @@
 
 A quiet, photo-first archive. Static HTML, CSS, and JavaScript. No build step, no CMS, no backend.
 
+## Standing rule
+
+For now, open pull requests should be merged to main without a preview. The live site being imperfect or broken is acceptable. Billy is not sharing it with many people.
+
 The index is a small Courier filing line: uppercase, tracked out, with a black rule. Two records are open on this slice.
 
 - [Home](./) — title, a short note, and the index
