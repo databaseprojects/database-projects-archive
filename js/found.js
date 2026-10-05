@@ -943,6 +943,8 @@
     agLastTs = 0;
     if (!resume) agRampT0 = 0;
     var items = tiles();
+    /* Any enter — row, table, or a slide still in motion — starts from the on-screen spots. */
+    var held = !resume ? snapshotTiles(g) : null;
     items.forEach(function (tile) {
       (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
         if (a.id === "fp-flow") a.cancel();
@@ -1001,7 +1003,6 @@
     var gh = Math.max(agSurfaceHeight(g, tw, items), Math.ceil(fit));
     g.style.setProperty("--fp-ag-h", gh + "px");
     g.style.setProperty("--fp-tile-w", tw + "px");
-    var held = !resume ? snapshotTiles(g) : null;
     if (!resume) beginShadowFade(g);
     planned.forEach(function (p) {
       var tile = p.tile;
