@@ -1505,79 +1505,47 @@
     });
   }
 
-  function hullCross(o, a, b) {
-    return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-  }
-
-  function tableEdgeIndex(slots) {
-    var pts = [];
+  function derange(n) {
+    var order = [];
     var i;
-    for (i = 0; i < slots.length; i++) {
-      var s = slots[i];
-      pts.push({ x: s.x, y: s.y, i: i });
-      pts.push({ x: s.x + s.w, y: s.y, i: i });
-      pts.push({ x: s.x, y: s.y + s.h, i: i });
-      pts.push({ x: s.x + s.w, y: s.y + s.h, i: i });
+    for (i = 0; i < n; i++) order.push(i);
+    for (i = n - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = order[i];
+      order[i] = order[j];
+      order[j] = tmp;
     }
-    pts.sort(function (a, b) {
-      if (a.x === b.x) return a.y - b.y;
-      return a.x - b.x;
-    });
-    var uniq = [];
-    for (i = 0; i < pts.length; i++) {
-      var prev = uniq.length ? uniq[uniq.length - 1] : null;
-      if (!prev || prev.x !== pts[i].x || prev.y !== pts[i].y) uniq.push(pts[i]);
+    for (i = 0; i < n; i++) {
+      if (order[i] !== i) continue;
+      var swapWith = i === n - 1 ? 0 : i + 1;
+      var held = order[i];
+      order[i] = order[swapWith];
+      order[swapWith] = held;
     }
-    pts = uniq;
-    var lower = [];
-    var upper = [];
-    for (i = 0; i < pts.length; i++) {
-      while (lower.length >= 2 && hullCross(lower[lower.length - 2], lower[lower.length - 1], pts[i]) < 0) lower.pop();
-      lower.push(pts[i]);
-    }
-    for (i = pts.length - 1; i >= 0; i--) {
-      while (upper.length >= 2 && hullCross(upper[upper.length - 2], upper[upper.length - 1], pts[i]) < 0) upper.pop();
-      upper.push(pts[i]);
-    }
-    var edge = {};
-    lower.forEach(function (p) { edge[p.i] = true; });
-    upper.forEach(function (p) { edge[p.i] = true; });
-    return edge;
+    return order;
   }
 
-  function shuffleTableInterior() {
+  function shuffleTableSpread() {
     var list = tiles();
     var slots = list.map(function (tile) {
-      var w = parseFloat(tile.style.getPropertyValue("--fp-tile-w"));
-      if (!(w > 0)) w = tile.offsetWidth || 0;
       return {
         tile: tile,
         x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
-        y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
-        w: w,
-        h: tile.offsetHeight || tileHeight(tile, w)
+        y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0
       };
     });
-    var edge = tableEdgeIndex(slots);
-    var inner = [];
-    var i;
-    for (i = 0; i < slots.length; i++) if (!edge[i]) inner.push(slots[i]);
-    var pos = inner.map(function (s) { return { x: s.x, y: s.y }; });
-    for (i = pos.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = pos[i];
-      pos[i] = pos[j];
-      pos[j] = tmp;
-    }
-    var step = Math.min(14, 360 / Math.max(list.length, 1));
-    inner.forEach(function (s, k) {
-      var nx = pos[k].x;
-      var ny = pos[k].y;
+    if (slots.length < 2) return;
+    var perm = derange(slots.length);
+    var step = Math.min(14, 360 / slots.length);
+    slots.forEach(function (s, k) {
+      var dest = slots[perm[k]];
+      var nx = dest.x;
+      var ny = dest.y;
       var dx = s.x - nx;
       var dy = s.y - ny;
       s.tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
       s.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
-      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
       var an = s.tile.animate(
         [
           { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
@@ -1600,7 +1568,7 @@
       return;
     }
     if (isTable()) {
-      shuffleTableInterior();
+      shuffleTableSpread();
       return;
     }
     for (var i = items.length - 1; i > 0; i--) {
