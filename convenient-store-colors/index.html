@@ -14,48 +14,80 @@
 
 <main>
   <h1 class="record-name">Convenient Store Colors</h1>
-  <p class="csc-note">Circle K</p>
-  <figure class="csc-photo">
-    <img src="https://res.cloudinary.com/vtyvhdpv/image/upload/f_auto,q_auto,c_limit,w_1600/v1791223296/convenient-store-colours/convenient-store-colours/aisle.jpg" alt="Circle K aisle" width="1600" height="1200" decoding="async">
-  </figure>
-  <ul class="csc-swatches">
-    <li><span class="csc-dot" style="background:#C62828" title="#C62828" role="img" aria-label="#C62828"></span></li>
-    <li><span class="csc-dot" style="background:#E53935" title="#E53935" role="img" aria-label="#E53935"></span></li>
-    <li><span class="csc-dot" style="background:#B71C1C" title="#B71C1C" role="img" aria-label="#B71C1C"></span></li>
-    <li><span class="csc-dot" style="background:#D32F2F" title="#D32F2F" role="img" aria-label="#D32F2F"></span></li>
-    <li><span class="csc-dot" style="background:#EF6C00" title="#EF6C00" role="img" aria-label="#EF6C00"></span></li>
-    <li><span class="csc-dot" style="background:#FF9800" title="#FF9800" role="img" aria-label="#FF9800"></span></li>
-    <li><span class="csc-dot" style="background:#F57C00" title="#F57C00" role="img" aria-label="#F57C00"></span></li>
-    <li><span class="csc-dot" style="background:#FFB300" title="#FFB300" role="img" aria-label="#FFB300"></span></li>
-    <li><span class="csc-dot" style="background:#FBC02D" title="#FBC02D" role="img" aria-label="#FBC02D"></span></li>
-    <li><span class="csc-dot" style="background:#FFEB3B" title="#FFEB3B" role="img" aria-label="#FFEB3B"></span></li>
-    <li><span class="csc-dot" style="background:#F9A825" title="#F9A825" role="img" aria-label="#F9A825"></span></li>
-    <li><span class="csc-dot" style="background:#8BC34A" title="#8BC34A" role="img" aria-label="#8BC34A"></span></li>
-    <li><span class="csc-dot" style="background:#4CAF50" title="#4CAF50" role="img" aria-label="#4CAF50"></span></li>
-    <li><span class="csc-dot" style="background:#43A047" title="#43A047" role="img" aria-label="#43A047"></span></li>
-    <li><span class="csc-dot" style="background:#2E7D32" title="#2E7D32" role="img" aria-label="#2E7D32"></span></li>
-    <li><span class="csc-dot" style="background:#00BCD4" title="#00BCD4" role="img" aria-label="#00BCD4"></span></li>
-    <li><span class="csc-dot" style="background:#26A69A" title="#26A69A" role="img" aria-label="#26A69A"></span></li>
-    <li><span class="csc-dot" style="background:#0288D1" title="#0288D1" role="img" aria-label="#0288D1"></span></li>
-    <li><span class="csc-dot" style="background:#2196F3" title="#2196F3" role="img" aria-label="#2196F3"></span></li>
-    <li><span class="csc-dot" style="background:#03A9F4" title="#03A9F4" role="img" aria-label="#03A9F4"></span></li>
-    <li><span class="csc-dot" style="background:#5C6BC0" title="#5C6BC0" role="img" aria-label="#5C6BC0"></span></li>
-    <li><span class="csc-dot" style="background:#7B1FA2" title="#7B1FA2" role="img" aria-label="#7B1FA2"></span></li>
-    <li><span class="csc-dot" style="background:#9C27B0" title="#9C27B0" role="img" aria-label="#9C27B0"></span></li>
-    <li><span class="csc-dot" style="background:#6A1B9A" title="#6A1B9A" role="img" aria-label="#6A1B9A"></span></li>
-    <li><span class="csc-dot" style="background:#E91E63" title="#E91E63" role="img" aria-label="#E91E63"></span></li>
-    <li><span class="csc-dot" style="background:#F06292" title="#F06292" role="img" aria-label="#F06292"></span></li>
-    <li><span class="csc-dot" style="background:#AD1457" title="#AD1457" role="img" aria-label="#AD1457"></span></li>
-    <li><span class="csc-dot" style="background:#5D4037" title="#5D4037" role="img" aria-label="#5D4037"></span></li>
-    <li><span class="csc-dot" style="background:#795548" title="#795548" role="img" aria-label="#795548"></span></li>
-    <li><span class="csc-dot" style="background:#3E2723" title="#3E2723" role="img" aria-label="#3E2723"></span></li>
-    <li><span class="csc-dot" style="background:#212121" title="#212121" role="img" aria-label="#212121"></span></li>
-    <li><span class="csc-dot" style="background:#424242" title="#424242" role="img" aria-label="#424242"></span></li>
-    <li><span class="csc-dot csc-pale" style="background:#FAFAFA" title="#FAFAFA" role="img" aria-label="#FAFAFA"></span></li>
-    <li><span class="csc-dot csc-pale" style="background:#ECEFF1" title="#ECEFF1" role="img" aria-label="#ECEFF1"></span></li>
-  </ul>
+  <div class="csc-controls">
+    <div class="csc-group" role="group" aria-label="Store">
+      <button type="button" class="csc-opt csc-on" data-csc-store="all" aria-pressed="true">All</button>
+      <button type="button" class="csc-opt" data-csc-store="circle-k" aria-pressed="false">Circle K</button>
+    </div>
+    <div class="csc-group" role="group" aria-label="Category">
+      <button type="button" class="csc-opt" data-csc-cat="candy" aria-pressed="false">Candy</button>
+      <button type="button" class="csc-opt" data-csc-cat="chips" aria-pressed="false">Chips</button>
+      <button type="button" class="csc-opt" data-csc-cat="drinks" aria-pressed="false">Drinks</button>
+    </div>
+    <button type="button" class="csc-thumb" aria-label="Open the Circle K aisle photo">
+      <img src="https://res.cloudinary.com/vtyvhdpv/image/upload/f_auto,q_auto,c_limit,w_400/v1791223296/convenient-store-colours/convenient-store-colours/aisle.jpg" alt="" width="400" height="300">
+    </button>
+  </div>
+  <div class="csc-board">
+    <section class="csc-block" data-cat="candy">
+      <h2>Candy</h2>
+      <ul class="csc-swatches">
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#C62828" title="#C62828" role="img" aria-label="#C62828"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#E53935" title="#E53935" role="img" aria-label="#E53935"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#EF6C00" title="#EF6C00" role="img" aria-label="#EF6C00"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#FF9800" title="#FF9800" role="img" aria-label="#FF9800"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#FFEB3B" title="#FFEB3B" role="img" aria-label="#FFEB3B"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#F9A825" title="#F9A825" role="img" aria-label="#F9A825"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#8BC34A" title="#8BC34A" role="img" aria-label="#8BC34A"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#43A047" title="#43A047" role="img" aria-label="#43A047"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#00BCD4" title="#00BCD4" role="img" aria-label="#00BCD4"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#2196F3" title="#2196F3" role="img" aria-label="#2196F3"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#03A9F4" title="#03A9F4" role="img" aria-label="#03A9F4"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#5C6BC0" title="#5C6BC0" role="img" aria-label="#5C6BC0"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#7B1FA2" title="#7B1FA2" role="img" aria-label="#7B1FA2"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#9C27B0" title="#9C27B0" role="img" aria-label="#9C27B0"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#6A1B9A" title="#6A1B9A" role="img" aria-label="#6A1B9A"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#E91E63" title="#E91E63" role="img" aria-label="#E91E63"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#F06292" title="#F06292" role="img" aria-label="#F06292"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#5D4037" title="#5D4037" role="img" aria-label="#5D4037"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="candy"><span class="csc-dot" style="background:#795548" title="#795548" role="img" aria-label="#795548"></span></li>
+      </ul>
+    </section>
+    <section class="csc-block" data-cat="chips">
+      <h2>Chips</h2>
+      <ul class="csc-swatches">
+        <li class="csc-swatch" data-store="circle-k" data-cat="chips"><span class="csc-dot" style="background:#F57C00" title="#F57C00" role="img" aria-label="#F57C00"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="chips"><span class="csc-dot" style="background:#FFB300" title="#FFB300" role="img" aria-label="#FFB300"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="chips"><span class="csc-dot" style="background:#FBC02D" title="#FBC02D" role="img" aria-label="#FBC02D"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="chips"><span class="csc-dot" style="background:#4CAF50" title="#4CAF50" role="img" aria-label="#4CAF50"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="chips"><span class="csc-dot" style="background:#3E2723" title="#3E2723" role="img" aria-label="#3E2723"></span></li>
+      </ul>
+    </section>
+    <section class="csc-block" data-cat="drinks">
+      <h2>Drinks</h2>
+      <ul class="csc-swatches">
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#B71C1C" title="#B71C1C" role="img" aria-label="#B71C1C"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#D32F2F" title="#D32F2F" role="img" aria-label="#D32F2F"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#2E7D32" title="#2E7D32" role="img" aria-label="#2E7D32"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#26A69A" title="#26A69A" role="img" aria-label="#26A69A"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#0288D1" title="#0288D1" role="img" aria-label="#0288D1"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#AD1457" title="#AD1457" role="img" aria-label="#AD1457"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#212121" title="#212121" role="img" aria-label="#212121"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot" style="background:#424242" title="#424242" role="img" aria-label="#424242"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot csc-pale" style="background:#FAFAFA" title="#FAFAFA" role="img" aria-label="#FAFAFA"></span></li>
+        <li class="csc-swatch" data-store="circle-k" data-cat="drinks"><span class="csc-dot csc-pale" style="background:#ECEFF1" title="#ECEFF1" role="img" aria-label="#ECEFF1"></span></li>
+      </ul>
+    </section>
+  </div>
 </main>
 
   </div>
+  <div class="csc-pop" aria-hidden="true">
+    <button type="button" class="csc-pop-backdrop" aria-label="Close photo"></button>
+    <figure class="csc-pop-frame" role="dialog" aria-modal="true" aria-label="Circle K aisle">
+      <img src="https://res.cloudinary.com/vtyvhdpv/image/upload/f_auto,q_auto,c_limit,w_1600/v1791223296/convenient-store-colours/convenient-store-colours/aisle.jpg" alt="Circle K aisle" width="1600" height="1200">
+    </figure>
+  </div>
+  <script src="../js/convenient-store-colors.js"></script>
 </body>
 </html>

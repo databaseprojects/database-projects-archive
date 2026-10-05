@@ -1,27 +1,95 @@
-/* Convenient Store Colors. One Circle K aisle photograph and the colours read from it. */
+/* Convenient Store Colors. Colour circles are the page. The aisle photo is a small thumbnail. */
 
-.csc-note {
+.csc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0.85rem 0 1.7rem;
+}
+
+.csc-group {
+  display: inline-flex;
+  max-width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap;
+}
+
+.csc-opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 8px;
   margin: 0;
-  color: rgba(0, 0, 0, 0.55);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  border: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.75;
 }
 
-.csc-photo {
-  margin: 1.1rem 0 1.8rem;
+.csc-opt:last-child {
+  border-right: 0;
 }
 
-.csc-photo img {
+.csc-opt:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.csc-opt.csc-on {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.csc-thumb {
+  width: 112px;
+  height: 84px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #fff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.csc-thumb img {
   display: block;
-  width: 100%;
-  height: auto;
+  width: 112px;
+  height: 84px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.csc-board {
+  margin: 0 0 4rem;
+}
+
+.csc-block {
+  margin: 0 0 1.5rem;
+}
+
+.csc-block h2 {
+  margin: 0 0 0.7rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .csc-swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin: 0 0 4rem;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -39,4 +107,43 @@
 
 .csc-dot.csc-pale {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.csc-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.csc-pop.csc-on {
+  display: flex;
+}
+
+.csc-pop-backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+}
+
+.csc-pop-frame {
+  position: relative;
+  z-index: 1;
+  width: min(420px, calc(100vw - 3rem));
+  margin: 0;
+  background: #fff;
+  transform-origin: center center;
+}
+
+.csc-pop-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
