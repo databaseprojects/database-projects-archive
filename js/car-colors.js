@@ -431,6 +431,66 @@
     return copy;
   }
 
+  function tightenScatter(placed, size) {
+    if (placed.length < 2) return;
+    var gap = Math.max(4, Math.round(size * 0.12));
+    var minD = size + gap;
+    var min2 = minD * minD;
+    var factor = 0.66;
+    var cx = 0;
+    var cy = 0;
+    var i;
+    var j;
+    for (i = 0; i < placed.length; i++) {
+      cx += placed[i].x;
+      cy += placed[i].y;
+    }
+    cx /= placed.length;
+    cy /= placed.length;
+    for (i = 0; i < placed.length; i++) {
+      placed[i].x = cx + (placed[i].x - cx) * factor;
+      placed[i].y = cy + (placed[i].y - cy) * factor;
+    }
+    var pass;
+    for (pass = 0; pass < 24; pass++) {
+      var moved = false;
+      for (i = 0; i < placed.length; i++) {
+        for (j = i + 1; j < placed.length; j++) {
+          var dx = placed[j].x - placed[i].x;
+          var dy = placed[j].y - placed[i].y;
+          var d2 = dx * dx + dy * dy;
+          if (d2 >= min2) continue;
+          var dist = Math.sqrt(d2) || 0.01;
+          if (minD - dist < 0.05) continue;
+          var push = (minD - dist) / 2;
+          var ux = dx / dist;
+          var uy = dy / dist;
+          placed[i].x -= ux * push;
+          placed[i].y -= uy * push;
+          placed[j].x += ux * push;
+          placed[j].y += uy * push;
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+    var minX = Infinity;
+    var minY = Infinity;
+    for (i = 0; i < placed.length; i++) {
+      if (placed[i].x < minX) minX = placed[i].x;
+      if (placed[i].y < minY) minY = placed[i].y;
+    }
+    var pad = 2;
+    if (minX < pad || minY < pad) {
+      var sx = minX < pad ? pad - minX : 0;
+      var sy = minY < pad ? pad - minY : 0;
+      for (i = 0; i < placed.length; i++) {
+        placed[i].x += sx;
+        placed[i].y += sy;
+      }
+    }
+  }
+
   function renderScatter() {
     clear(stage);
     var width = Math.max(160, stage.clientWidth);
@@ -484,9 +544,16 @@
       placed.push({ car: car, x: found.x, y: found.y });
     });
 
+    tightenScatter(placed, size);
+    var bottom = 0;
+    placed.forEach(function (item) {
+      var edge = item.y + size;
+      if (edge > bottom) bottom = edge;
+    });
+
     var field = document.createElement("div");
     field.className = "cc-scatter";
-    field.style.height = Math.ceil(height) + "px";
+    field.style.height = Math.ceil(bottom + 8) + "px";
     placed.forEach(function (item) {
       var el = dot(item.car);
       el.style.left = item.x + "px";
@@ -599,7 +666,7 @@
     renderCityOptions(view);
     var width = Math.max(160, stage.clientWidth);
     var cols = regionColumns(width);
-    var gap = 38;
+    var gap = 22;
     var colW = (width - gap * (cols - 1)) / cols;
     var here = carsIn(city);
     var wrap = document.createElement("div");

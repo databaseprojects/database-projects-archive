@@ -163,7 +163,7 @@ body.cc-under-menu .cc-ag-field {
 .cc-regions {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.2rem 2.4rem;
+  gap: 1.25rem 1.4rem;
   align-items: start;
 }
 
