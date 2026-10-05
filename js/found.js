@@ -846,43 +846,52 @@
     return { x: x, y: y, exact: true, vw: r.width, vh: r.height };
   }
 
-  var AG_SHADOW_CLEAR = "0 2px 10px rgba(0,0,0,0), 0 1px 2px rgba(0,0,0,0)";
+  var AG_FADE_MS = 3200;
 
-  function stillShadow(cs) {
-    if (!cs || cs === "none") return AG_SHADOW_CLEAR;
-    var colors = cs.split(/,(?![^(]*\))/).map(function (part) {
-      var m = part.match(/rgba?\([^)]+\)/);
-      return m ? m[0] : "rgba(0,0,0,0)";
+  function zeroShadowAlpha(cs) {
+    if (!cs || cs === "none") return "0 2px 6px rgba(0,0,0,0), 0 1px 1px rgba(0,0,0,0)";
+    return cs.replace(/rgba?\(([^)]+)\)/g, function (_, inner) {
+      var parts = inner.split(",").map(function (s) { return s.trim(); });
+      if (parts.length >= 3) return "rgba(" + parts[0] + ", " + parts[1] + ", " + parts[2] + ", 0)";
+      return "rgba(0, 0, 0, 0)";
     });
-    var a = colors[0] || "rgba(0,0,0,0)";
-    var b = colors[1] || "rgba(0,0,0,0)";
-    return "0 2px 10px " + a + ", 0 1px 2px " + b;
   }
 
   function beginShadowFade(g) {
-    /* Box-shadow interpolation moves the blur and offset for about half a second.
-       Pin the final shape first so only the shadow strength fades in. */
-    var primed = tiles().map(function (tile) {
-      return { tile: tile, shadow: stillShadow(getComputedStyle(tile).boxShadow) };
-    });
-    primed.forEach(function (item) {
-      item.tile.style.setProperty("transition", "none", "important");
-      item.tile.style.setProperty("box-shadow", item.shadow);
-    });
-    void g.offsetWidth;
-    primed.forEach(function (item) {
-      item.tile.style.removeProperty("box-shadow");
+    tiles().forEach(function (tile) {
+      tile._fpShade = getComputedStyle(tile).boxShadow;
+      tile.style.setProperty("transition", "none", "important");
     });
     g.classList.add("fp-ag-in");
     clearTimeout(g._agShade);
     g._agShade = setTimeout(function () {
       g.classList.remove("fp-ag-in");
-    }, 1500);
+      if (g.getAttribute("data-fp-layout") !== "antigravity") return;
+      tiles().forEach(function (tile) {
+        tile.style.removeProperty("transition");
+      });
+    }, AG_FADE_MS + 800);
+  }
+
+  function pinAgShadowFade() {
+    tiles().forEach(function (tile) {
+      var target = getComputedStyle(tile).boxShadow;
+      var prev = tile._fpShade;
+      delete tile._fpShade;
+      var start = !prev || prev === "none" ? zeroShadowAlpha(target) : prev;
+      tile.style.setProperty("box-shadow", start);
+    });
   }
 
   function releaseAgMotion() {
-    tiles().forEach(function (tile) {
-      tile.style.removeProperty("transition");
+    var list = tiles();
+    list.forEach(function (tile) {
+      tile.style.setProperty("transition", "box-shadow " + (AG_FADE_MS / 1000) + "s cubic-bezier(0.45, 0.05, 0.55, 0.95)");
+    });
+    var g = grid();
+    if (g) void g.offsetWidth;
+    list.forEach(function (tile) {
+      tile.style.removeProperty("box-shadow");
     });
   }
 
@@ -1106,6 +1115,7 @@
       });
       void g.offsetWidth;
       restoreSnapshot(g, held, bodies);
+      pinAgShadowFade();
       requestAnimationFrame(function () {
         bodies.forEach(function (b) {
           if (!b || !b.tile) return;
