@@ -1,0 +1,35 @@
+/* Convenient Store Colors. One aisle photograph and the colours read from it. */
+
+.csc-photo {
+  margin: 1.1rem 0 1.8rem;
+}
+
+.csc-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.csc-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0 0 4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.csc-dot {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  box-sizing: border-box;
+  transform-origin: center center;
+}
+
+.csc-dot.csc-pale {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
