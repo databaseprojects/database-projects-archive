@@ -29,7 +29,7 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   position: relative;
   z-index: 20;
   margin: 0 0 1.2em;
-  padding: 0.5em 0;
+  padding: 0.5em 26rem 0.5em 0;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   font-family: "Courier New", Courier, monospace;
@@ -37,6 +37,14 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   min-height: 28px;
+}
+
+.fp-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 0.85em 0 0;
 }
 
 .fp-label {
@@ -224,6 +232,10 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 /* Below 590px the right-aligned control row covers the title or runs off the bar.
    Same controls, still inside this bar; they drop to the next line instead of disappearing. */
 @media (max-width: 590px) {
+  .fp-bar {
+    padding-right: 0;
+  }
+
   .fp-zoom {
     position: static;
     top: auto;

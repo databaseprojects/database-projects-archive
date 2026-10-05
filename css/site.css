@@ -22,6 +22,7 @@ body {
 
 /* Tag buttons. The same look and selected state on every page. */
 .vsf-tag,
+.fp-tag,
 .csc-opt,
 .csc-row,
 .fp-laybtn,
@@ -49,6 +50,7 @@ body {
 }
 
 .vsf-tag:hover,
+.fp-tag:hover,
 .csc-opt:hover,
 .csc-row:hover,
 .fp-laybtn:hover,
@@ -61,6 +63,7 @@ body {
 }
 
 .vsf-tag.active,
+.fp-tag.active,
 .csc-opt.csc-on,
 .csc-row.csc-row-on,
 .fp-laybtn.fp-lay-on,
@@ -73,6 +76,7 @@ body {
 }
 
 .vsf-tag:focus-visible,
+.fp-tag:focus-visible,
 .csc-opt:focus-visible,
 .csc-row:focus-visible,
 .fp-laybtn:focus-visible,
