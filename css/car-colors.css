@@ -194,6 +194,10 @@ body.cc-screen .cc-controls {
   z-index: 2;
 }
 
+body.cc-screen .cc-about.cc-open + .cc-controls {
+  background: #fff;
+}
+
 body.cc-under-menu .cc-about.cc-open {
   position: relative;
   z-index: 70;
