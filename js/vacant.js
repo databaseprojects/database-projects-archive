@@ -400,13 +400,27 @@
     sharpen(tile, bw * s);
   }
 
+  function holdTile(tile) {
+    var cs = getComputedStyle(tile);
+    tile.style.transition = "none";
+    if (cs.scale && cs.scale !== "none") tile.style.scale = cs.scale;
+    if (cs.translate && cs.translate !== "none") tile.style.translate = cs.translate;
+    void tile.offsetWidth;
+  }
+
+  function dropTile(tile) {
+    if (!tile) return;
+    tile.style.transition = "";
+    tile.style.scale = "";
+    tile.style.translate = "";
+  }
+
   function closeLb() {
     var lb = document.getElementById("vsf-lb");
     if (!lb || lb._closing) return;
     lb._closing = true;
     var big = lb.querySelector(":scope > img");
     var from = lb._from;
-    document.body.classList.remove("vsf-lb-lock");
     lb.classList.add("vsf-lb-closing");
     lb.classList.remove("vsf-lb-on");
     if (big && from) {
@@ -419,6 +433,7 @@
       }
     }
     setTimeout(function () {
+      dropTile(lb._tile);
       if (lb.parentNode) lb.parentNode.removeChild(lb);
     }, 340);
   }
@@ -489,16 +504,21 @@
     if (dragging) return;
     var img = imgOf(tile);
     if (!img) return;
+    holdTile(tile);
     var lo = img.currentSrc || img.getAttribute("src") || "";
     var src = hiSrc(lo, 1600) || lo;
     var thumb = tile.getBoundingClientRect();
     var existing = document.getElementById("vsf-lb");
-    if (existing) existing.parentNode.removeChild(existing);
+    if (existing) {
+      dropTile(existing._tile);
+      existing.parentNode.removeChild(existing);
+    }
     var lb = document.createElement("div");
     lb.id = "vsf-lb";
     lb.className = "vsf-lb";
     lb.setAttribute("role", "dialog");
     lb.setAttribute("aria-modal", "true");
+    lb._tile = tile;
     lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
     var big = document.createElement("img");
     big.alt = img.alt || "";
@@ -556,11 +576,15 @@
       if (lb._closing || !lo || big.getAttribute("src") === lo) return;
       big.src = lo;
     });
-    big.src = src || lo;
+    big.src = lo || src;
     lb.appendChild(big);
     document.body.appendChild(lb);
-    document.body.classList.add("vsf-lb-lock");
     if (big.complete && big.naturalWidth) onOpenLoad();
+    if (src && src !== lo) {
+      requestAnimationFrame(function () {
+        if (!lb._closing) big.src = src;
+      });
+    }
     if (gpsOn) {
       var lat = parseFloat(tile.getAttribute("data-lat"));
       var lon = parseFloat(tile.getAttribute("data-lon"));
