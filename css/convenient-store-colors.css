@@ -1,4 +1,11 @@
-/* Convenient Store Colors. One aisle photograph and the colours read from it. */
+/* Convenient Store Colors. One Circle K aisle photograph and the colours read from it. */
+
+.csc-note {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
 
 .csc-photo {
   margin: 1.1rem 0 1.8rem;
