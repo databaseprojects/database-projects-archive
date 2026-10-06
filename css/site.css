@@ -25,6 +25,7 @@ body {
 .fp-tag,
 .csc-opt,
 .csc-row,
+.csc-shelf,
 .fp-laybtn,
 .cc-mode,
 .cc-city {
@@ -53,6 +54,7 @@ body {
 .fp-tag:hover,
 .csc-opt:hover,
 .csc-row:hover,
+.csc-shelf:hover,
 .fp-laybtn:hover,
 .cc-mode:hover,
 .cc-city:hover {
@@ -66,6 +68,7 @@ body {
 .fp-tag.active,
 .csc-opt.csc-on,
 .csc-row.csc-row-on,
+.csc-shelf.csc-shelf-on,
 .fp-laybtn.fp-lay-on,
 .cc-mode.cc-on,
 .cc-city.cc-on {
@@ -79,6 +82,7 @@ body {
 .fp-tag:focus-visible,
 .csc-opt:focus-visible,
 .csc-row:focus-visible,
+.csc-shelf:focus-visible,
 .fp-laybtn:focus-visible,
 .cc-mode:focus-visible,
 .cc-city:focus-visible {

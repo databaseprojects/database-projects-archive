@@ -15,12 +15,52 @@
   var agLastTs = 0;
   var AG_SPEED_MIN = 12;
   var AG_SPEED_MAX = 58;
+  var mode = "row";
+  var showSec = false;
+  var showTer = false;
+  var COL_KEY = "cscZoomCols";
+  var SIZE_MIN = 6;
+  var SIZE_MAX = 20;
+  var SIZE_DEF = 6;
+  var SIZE_BIG = 40;
+  var SIZE_SMALL = 14;
+  var SIZE_PHONE_SMALL = 22;
+  var SIZE_HYST = 0.72;
+  var sizeN = SIZE_DEF;
+  var draggingSlider = false;
+  var zVal = null;
+  var phone = false;
+  var shelfCols = 1;
   if (!board) return;
 
   var storeNames = { "circle-k": "Circle K" };
   var svgNs = "http://www.w3.org/2000/svg";
   var ringN = 0;
+
+  function addOrbits(dot, n) {
+    [
+      ["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", -(n * 0.41)],
+      ["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", -(n * 0.57 + 4.2)]
+    ].forEach(function (spec) {
+      var orbit = document.createElement("span");
+      orbit.className = spec[0];
+      orbit.setAttribute("aria-hidden", "true");
+      orbit.style.animationDelay = spec[2].toFixed(2) + "s";
+      var moon = document.createElement("span");
+      moon.className = spec[1];
+      orbit.appendChild(moon);
+      dot.appendChild(orbit);
+    });
+  }
+
   Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
+    var shelf = parseInt(item.getAttribute("data-shelf"), 10);
+    var slot = parseInt(item.getAttribute("data-slot"), 10);
+    if (shelf > 0) item.style.setProperty("--csc-shelf", String(shelf));
+    if (slot > 0) {
+      item.style.setProperty("--csc-slot", String(slot));
+      if (slot > shelfCols) shelfCols = slot;
+    }
     var storeName = storeNames[item.getAttribute("data-store")] || "";
     var catName = item.getAttribute("data-cat") || "";
     var text = storeName && catName ? storeName + " / " + catName : (storeName || catName);
@@ -29,6 +69,7 @@
       var hex = dot.getAttribute("title") || dot.getAttribute("aria-label") || "";
       dot.removeAttribute("title");
       dot.setAttribute("aria-label", hex ? text + ", " + hex : text);
+      addOrbits(dot, ringN);
     }
     var id = "csc-ring-" + (ringN++);
     var svg = document.createElementNS(svgNs, "svg");
@@ -52,13 +93,14 @@
     svg.appendChild(textEl);
     item.appendChild(svg);
   });
+  board.style.setProperty("--csc-shelf-cols", String(shelfCols || 1));
 
   function anyCat() {
     return picked.candy || picked.chips || picked.drinks;
   }
 
   function wants(item) {
-    var storeOk = item.getAttribute("data-store") === store;
+    var storeOk = store === "all" || item.getAttribute("data-store") === store;
     var name = item.getAttribute("data-cat");
     return storeOk && (!anyCat() || !!picked[name]);
   }
@@ -329,11 +371,58 @@
       ag.classList.toggle("csc-ag-on", agOn);
       ag.setAttribute("aria-pressed", agOn ? "true" : "false");
     }
+    var rowOn = !agOn && mode === "row";
+    var shelfOn = !agOn && mode === "shelf";
     var row = document.querySelector(".csc-row");
     if (row) {
-      row.classList.toggle("csc-row-on", !agOn);
-      row.setAttribute("aria-pressed", agOn ? "false" : "true");
+      row.classList.toggle("csc-row-on", rowOn);
+      row.setAttribute("aria-pressed", rowOn ? "true" : "false");
     }
+    var shelf = document.querySelector(".csc-shelf");
+    if (shelf) {
+      shelf.classList.toggle("csc-shelf-on", shelfOn);
+      shelf.setAttribute("aria-pressed", shelfOn ? "true" : "false");
+    }
+    board.classList.toggle("csc-mode-shelf", shelfOn);
+  }
+
+  function syncMoons() {
+    board.classList.toggle("csc-show-2", showSec);
+    board.classList.toggle("csc-show-3", showTer);
+    var sec = document.querySelector("[data-csc-moon='2']");
+    var ter = document.querySelector("[data-csc-moon='3']");
+    if (sec) {
+      sec.classList.toggle("csc-on", showSec);
+      sec.setAttribute("aria-pressed", showSec ? "true" : "false");
+    }
+    if (ter) {
+      ter.classList.toggle("csc-on", showTer);
+      ter.setAttribute("aria-pressed", showTer ? "true" : "false");
+    }
+  }
+
+  function snapshotVisible() {
+    var before = new Map();
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
+      if (item.hidden || item.classList.contains("csc-leave")) return;
+      var r = item.getBoundingClientRect();
+      if (r.width) before.set(item, r);
+    });
+    return before;
+  }
+
+  function goMode(next) {
+    if (next !== "row" && next !== "shelf") return;
+    if (agOn) {
+      mode = next;
+      leaveAg();
+      return;
+    }
+    if (mode === next) return;
+    var before = snapshotVisible();
+    mode = next;
+    syncAgButton();
+    slideFrom(before);
   }
 
   function slideFrom(before) {
@@ -475,6 +564,7 @@
     });
     stopAg();
     agOn = false;
+    syncAgButton();
     agBodies.forEach(function (b) {
       clearMove(b.el);
       var dot = b.el.querySelector(".csc-dot");
@@ -492,7 +582,6 @@
     var block = blockEl();
     if (block) block.hidden = false;
     finishBlocks();
-    syncAgButton();
     slideFrom(before);
   }
 
@@ -513,7 +602,7 @@
         clearLeave(item);
         clearMove(item);
         item.hidden = false;
-        var spot = randomSpot(field, 40);
+        var spot = randomSpot(field, dotPx());
         item.style.setProperty("--csc-x", spot.x.toFixed(1) + "px");
         item.style.setProperty("--csc-y", spot.y.toFixed(1) + "px");
         field.appendChild(item);
@@ -522,8 +611,8 @@
           el: item,
           x: spot.x,
           y: spot.y,
-          w: 40,
-          h: 40,
+          w: dotPx(),
+          h: dotPx(),
           vx: 0,
           vy: 0,
           tvx: vel.vx * 0.85,
@@ -666,7 +755,14 @@
   var rowButton = document.querySelector(".csc-row");
   if (rowButton) {
     rowButton.addEventListener("click", function () {
-      if (agOn) leaveAg();
+      goMode("row");
+    });
+  }
+
+  var shelfButton = document.querySelector(".csc-shelf");
+  if (shelfButton) {
+    shelfButton.addEventListener("click", function () {
+      goMode("shelf");
     });
   }
 
@@ -685,7 +781,190 @@
     });
   }
 
+  Array.prototype.forEach.call(document.querySelectorAll("[data-csc-moon]"), function (button) {
+    button.addEventListener("click", function () {
+      var which = button.getAttribute("data-csc-moon");
+      if (which === "2") showSec = !showSec;
+      else if (which === "3") showTer = !showTer;
+      syncMoons();
+    });
+  });
+
+  function phoneSlider() {
+    return window.matchMedia("(max-width: 767px)").matches;
+  }
+
+  function sliderEnds() {
+    return phoneSlider() ? { min: 4, max: 7 } : { min: SIZE_MIN, max: SIZE_MAX };
+  }
+
+  function clampSlider(n) {
+    var ends = sliderEnds();
+    n = Math.round(+n);
+    if (n < ends.min) return ends.min;
+    if (n > ends.max) return ends.max;
+    return n;
+  }
+
+  function storedCols() {
+    var n = SIZE_DEF;
+    try {
+      n = parseInt(localStorage.getItem(COL_KEY), 10);
+    } catch (e) {}
+    n = Math.round(+n);
+    return n >= SIZE_MIN && n <= SIZE_MAX ? n : SIZE_DEF;
+  }
+
+  function saveCols(n) {
+    try {
+      localStorage.setItem(COL_KEY, String(n));
+    } catch (e) {}
+  }
+
+  function dotPx() {
+    var ends = sliderEnds();
+    var t = (sizeN - ends.min) / (ends.max - ends.min);
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var small = phoneSlider() ? SIZE_PHONE_SMALL : SIZE_SMALL;
+    return Math.round(SIZE_BIG + (small - SIZE_BIG) * t);
+  }
+
+  function gapPx() {
+    return Math.max(8, Math.round(14 * dotPx() / 40));
+  }
+
+  function applyMetrics() {
+    board.style.setProperty("--csc-size", dotPx() + "px");
+    board.style.setProperty("--csc-gap", gapPx() + "px");
+  }
+
+  function sliderEl() {
+    return document.querySelector(".csc-zslider");
+  }
+
+  function fillSlider(v) {
+    var s = sliderEl();
+    if (!s) return;
+    var ends = sliderEnds();
+    s.min = String(ends.min);
+    s.max = String(ends.max);
+    s.title = "Size (" + ends.min + " – " + ends.max + ") — left is larger";
+    if (draggingSlider) return;
+    s.style.setProperty("--csc-p", (((v - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
+    if (+s.value !== v) s.value = String(v);
+  }
+
+  function pickSize(v, current) {
+    var ends = sliderEnds();
+    v = +v;
+    if (!(v >= ends.min)) v = ends.min;
+    if (v > ends.max) v = ends.max;
+    return Math.abs(v - current) < SIZE_HYST ? current : clampSlider(v);
+  }
+
+  function valueFromClientX(s, clientX) {
+    var rect = s.getBoundingClientRect();
+    var span = rect.width || 1;
+    var thumb = 14;
+    var usable = Math.max(1, span - thumb);
+    var t = (clientX - rect.left - thumb / 2) / usable;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var ends = sliderEnds();
+    s.style.setProperty("--csc-p", (t * 100).toFixed(2) + "%");
+    return pickSize(ends.min + t * (ends.max - ends.min), zVal != null ? zVal : sizeN);
+  }
+
+  function resizeAg(px) {
+    agBodies.forEach(function (b) {
+      if (Math.abs(b.w - px) < 0.5) return;
+      b.x += (b.w - px) / 2;
+      b.y += (b.h - px) / 2;
+      b.w = px;
+      b.h = px;
+      paintBody(b);
+    });
+  }
+
+  function applySize(n) {
+    n = clampSlider(n);
+    var prev = dotPx();
+    sizeN = n;
+    var px = dotPx();
+    applyMetrics();
+    fillSlider(n);
+    if (agOn && Math.abs(prev - px) > 0.5) {
+      resizeAg(px);
+      clampAg();
+    }
+  }
+
+  function isSlider(t) {
+    return t && t.classList && t.classList.contains("csc-zslider");
+  }
+
+  document.addEventListener("pointerdown", function (e) {
+    if (!isSlider(e.target)) return;
+    draggingSlider = true;
+    document.documentElement.classList.add("csc-sizing");
+    var n = valueFromClientX(e.target, e.clientX);
+    if (n !== sizeN) {
+      zVal = n;
+      applySize(n);
+    }
+  }, true);
+
+  document.addEventListener("pointermove", function (e) {
+    if (!draggingSlider) return;
+    var s = isSlider(e.target) ? e.target : sliderEl();
+    if (!s) return;
+    var n = valueFromClientX(s, e.clientX);
+    if (n !== sizeN) {
+      zVal = n;
+      applySize(n);
+    }
+  }, true);
+
+  function endSlider() {
+    if (!draggingSlider) return;
+    var n = zVal != null ? zVal : sizeN;
+    zVal = null;
+    draggingSlider = false;
+    document.documentElement.classList.remove("csc-sizing");
+    applySize(n);
+    if (!phoneSlider()) saveCols(n);
+  }
+
+  document.addEventListener("pointerup", endSlider, true);
+  document.addEventListener("pointercancel", endSlider, true);
+  window.addEventListener("blur", endSlider);
+
+  document.addEventListener("input", function (e) {
+    if (!isSlider(e.target)) return;
+    if (draggingSlider) return;
+    var k = clampSlider(e.target.value);
+    if (!phoneSlider()) saveCols(k);
+    applySize(k);
+  });
+
   window.addEventListener("resize", clampAg);
 
+  var resizeTimer = 0;
+  window.addEventListener("resize", function () {
+    if (draggingSlider) return;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(function () {
+      var nowPhone = phoneSlider();
+      if (nowPhone !== phone) {
+        phone = nowPhone;
+        applySize(nowPhone ? 4 : storedCols());
+      }
+    }, 80);
+  });
+
+  phone = phoneSlider();
+  applySize(phone ? 4 : storedCols());
+  syncMoons();
   apply();
 })();
