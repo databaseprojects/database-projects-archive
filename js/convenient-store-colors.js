@@ -37,15 +37,17 @@
   var svgNs = "http://www.w3.org/2000/svg";
   var ringN = 0;
 
-  function addOrbits(dot, n) {
+  function addOrbits(dot) {
     [
-      ["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", -(n * 0.41)],
-      ["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", -(n * 0.57 + 4.2)]
+      ["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", 18],
+      ["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", 27]
     ].forEach(function (spec) {
       var orbit = document.createElement("span");
       orbit.className = spec[0];
       orbit.setAttribute("aria-hidden", "true");
-      orbit.style.animationDelay = spec[2].toFixed(2) + "s";
+      var span = spec[2] * (0.85 + Math.random() * 0.3);
+      orbit.style.animationDuration = span.toFixed(2) + "s";
+      orbit.style.animationDelay = (-Math.random() * span).toFixed(2) + "s";
       var moon = document.createElement("span");
       moon.className = spec[1];
       orbit.appendChild(moon);
@@ -69,7 +71,7 @@
       var hex = dot.getAttribute("title") || dot.getAttribute("aria-label") || "";
       dot.removeAttribute("title");
       dot.setAttribute("aria-label", hex ? text + ", " + hex : text);
-      addOrbits(dot, ringN);
+      addOrbits(dot);
     }
     var id = "csc-ring-" + (ringN++);
     var svg = document.createElementNS(svgNs, "svg");
