@@ -276,7 +276,8 @@
 
   function agLimits(field, w, h) {
     var rect = field.getBoundingClientRect();
-    var viewW = document.documentElement.clientWidth || window.innerWidth || 0;
+    var root = document.documentElement.getBoundingClientRect();
+    var viewW = root.width || document.documentElement.clientWidth || window.innerWidth || 0;
     var viewH = window.innerHeight || 0;
     var minX = -rect.left;
     var minY = -rect.top;
