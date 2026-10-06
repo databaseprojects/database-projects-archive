@@ -163,7 +163,12 @@
 
 .csc-swatch {
   position: relative;
+  list-style: none;
   transform-origin: center center;
+}
+
+.csc-swatch::marker {
+  content: none;
 }
 
 .csc-arc {
