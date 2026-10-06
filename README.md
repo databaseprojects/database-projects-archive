@@ -8,6 +8,8 @@ For now, open pull requests should be merged to main without a preview. The live
 
 GitHub Pages builds from `cursor/archive-portfolio-b69f`, not from main. After a change is merged to main, put that same change on the Pages branch and push it. Keep anything on that branch that main does not have.
 
+Layout width must not change when a scrollbar appears; use the shared gutter rule and avoid 100vw for full-width layers.
+
 The index is a small Courier filing line: uppercase, tracked out, with a black rule. Two records are open on this slice.
 
 - [Home](./) — title, a short note, and the index
