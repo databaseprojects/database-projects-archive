@@ -80,8 +80,10 @@
 .cc-zoom {
   display: inline-flex;
   align-items: center;
+  align-self: stretch;
   gap: 0.55em;
   margin-left: auto;
+  background: #fff;
 }
 
 .cc-stage {
@@ -197,11 +199,17 @@ body.cc-screen .cc-about.cc-open + .cc-controls {
   background: #fff;
 }
 
-/* A picked page colour fills the city labels and the slider strip. */
+/* A picked page colour stays under the city labels. The slider strip stays white. */
 html.cc-paged .cc-controls,
 html.cc-paged body.cc-under-menu .cc-controls,
 html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls {
   background: var(--cc-page);
+}
+
+html.cc-paged .cc-zoom,
+html.cc-paged body.cc-under-menu .cc-zoom,
+html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls .cc-zoom {
+  background: #fff;
 }
 
 body.cc-under-menu .cc-about.cc-open {
@@ -345,11 +353,11 @@ body.cc-under-menu .cc-about.cc-open {
 }
 
 html.cc-paged .cc-zslider::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 3px #fff, 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 html.cc-paged .cc-zslider::-moz-range-thumb {
-  box-shadow: 0 0 0 3px var(--cc-page), 0 1px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 3px #fff, 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .cc-zslider:hover::-webkit-slider-thumb,
