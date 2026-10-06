@@ -180,6 +180,9 @@
   box-shadow: none;
   box-sizing: border-box;
   transform-origin: center center;
+  background:
+    radial-gradient(circle closest-side, var(--csc-main) calc(100% - 2.5px), transparent calc(100% - 2px)),
+    conic-gradient(from 0deg, var(--csc-sec) 0deg 240deg, var(--csc-ter) 240deg 360deg);
 }
 
 .csc-dot.csc-pale {
