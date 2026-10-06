@@ -343,7 +343,7 @@
   function screenBox() {
     var doc = document.documentElement;
     return {
-      width: Math.max(160, doc.clientWidth || window.innerWidth || 800),
+      width: Math.max(160, doc.getBoundingClientRect().width || doc.clientWidth || window.innerWidth || 800),
       height: Math.max(360, doc.clientHeight || window.innerHeight || 800)
     };
   }
@@ -751,7 +751,8 @@
 
   function agLimits(field, w, h) {
     var rect = field.getBoundingClientRect();
-    var viewW = document.documentElement.clientWidth || window.innerWidth || 0;
+    var root = document.documentElement.getBoundingClientRect();
+    var viewW = root.width || document.documentElement.clientWidth || window.innerWidth || 0;
     var viewH = window.innerHeight || 0;
     var minX = -rect.left;
     var minY = -rect.top;
