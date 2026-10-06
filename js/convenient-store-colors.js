@@ -274,15 +274,24 @@
     agLastTs = 0;
   }
 
+  function agLimits(field, w, h) {
+    var rect = field.getBoundingClientRect();
+    var viewW = document.documentElement.clientWidth || window.innerWidth || 0;
+    var viewH = window.innerHeight || 0;
+    var minX = -rect.left;
+    var minY = -rect.top;
+    var maxX = viewW - rect.left - w;
+    var maxY = viewH - rect.top - h;
+    if (!(maxX > minX)) maxX = minX;
+    if (!(maxY > minY)) maxY = minY;
+    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+  }
+
   function randomSpot(field, size) {
-    var W = field.clientWidth || board.clientWidth || 800;
-    var H = field.clientHeight || 400;
-    var pad = 4;
-    var maxX = Math.max(pad, W - size - pad);
-    var maxY = Math.max(pad, H - size - pad);
+    var lim = agLimits(field, size, size);
     return {
-      x: pad + Math.random() * Math.max(1, maxX - pad),
-      y: pad + Math.random() * Math.max(1, maxY - pad)
+      x: lim.minX + Math.random() * Math.max(1, lim.maxX - lim.minX),
+      y: lim.minY + Math.random() * Math.max(1, lim.maxY - lim.minY)
     };
   }
 
@@ -300,9 +309,6 @@
       stopAg();
       return;
     }
-    var W = field.clientWidth || board.clientWidth || 800;
-    var H = field.clientHeight || 400;
-    var pad = 4;
     for (var i = 0; i < agBodies.length; i++) {
       var b = agBodies[i];
       if (!b || !b.el) continue;
@@ -342,23 +348,22 @@
       }
       b.x += b.vx * dt;
       b.y += b.vy * dt;
-      var maxX = Math.max(pad, W - b.w - pad);
-      var maxY = Math.max(pad, H - b.h - pad);
-      if (b.x < pad) {
-        b.x = pad;
+      var lim = agLimits(field, b.w, b.h);
+      if (b.x < lim.minX) {
+        b.x = lim.minX;
         b.vx = Math.abs(b.vx);
         if (b.tvx != null) b.tvx = Math.abs(b.tvx);
-      } else if (b.x > maxX) {
-        b.x = maxX;
+      } else if (b.x > lim.maxX) {
+        b.x = lim.maxX;
         b.vx = -Math.abs(b.vx);
         if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
       }
-      if (b.y < pad) {
-        b.y = pad;
+      if (b.y < lim.minY) {
+        b.y = lim.minY;
         b.vy = Math.abs(b.vy);
         if (b.tvy != null) b.tvy = Math.abs(b.tvy);
-      } else if (b.y > maxY) {
-        b.y = maxY;
+      } else if (b.y > lim.maxY) {
+        b.y = lim.maxY;
         b.vy = -Math.abs(b.vy);
         if (b.tvy != null) b.tvy = -Math.abs(b.tvy);
       }
@@ -373,6 +378,7 @@
       ag.classList.toggle("csc-ag-on", agOn);
       ag.setAttribute("aria-pressed", agOn ? "true" : "false");
     }
+    document.body.classList.toggle("csc-ag-over", agOn);
     var rowOn = !agOn && mode === "row";
     var shelfOn = !agOn && mode === "shelf";
     var row = document.querySelector(".csc-row");
@@ -722,16 +728,12 @@
   function clampAg() {
     var field = fieldEl();
     if (!agOn || !field) return;
-    var W = field.clientWidth || board.clientWidth || 800;
-    var H = field.clientHeight || 400;
-    var pad = 4;
     agBodies.forEach(function (b) {
-      var maxX = Math.max(pad, W - b.w - pad);
-      var maxY = Math.max(pad, H - b.h - pad);
-      if (b.x < pad) b.x = pad;
-      else if (b.x > maxX) b.x = maxX;
-      if (b.y < pad) b.y = pad;
-      else if (b.y > maxY) b.y = maxY;
+      var lim = agLimits(field, b.w, b.h);
+      if (b.x < lim.minX) b.x = lim.minX;
+      else if (b.x > lim.maxX) b.x = lim.maxX;
+      if (b.y < lim.minY) b.y = lim.minY;
+      else if (b.y > lim.maxY) b.y = lim.maxY;
       paintBody(b);
     });
   }
