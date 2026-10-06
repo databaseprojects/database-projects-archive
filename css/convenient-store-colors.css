@@ -255,14 +255,14 @@
 }
 
 .csc-moon-2 {
-  width: 17%;
-  height: 17%;
+  width: calc(var(--csc-size, 40px) * 0.2638);
+  height: calc(var(--csc-size, 40px) * 0.2638);
   background: var(--csc-sec);
 }
 
 .csc-moon-3 {
-  width: 11%;
-  height: 11%;
+  width: calc(var(--csc-size, 40px) * 0.2154);
+  height: calc(var(--csc-size, 40px) * 0.2154);
   background: var(--csc-ter);
 }
 
