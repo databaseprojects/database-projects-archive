@@ -245,6 +245,12 @@
   transition: opacity 0.35s ease, scale 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), translate 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
 }
 
+html.vsf-lb-open .vsf-tile:hover {
+  scale: 1;
+  translate: 0 0;
+  box-shadow: none;
+}
+
 .vsf-tile[data-vsf-wait] {
   opacity: 0;
   transition: none;
