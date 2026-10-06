@@ -405,14 +405,34 @@
     tile.style.transition = "none";
     if (cs.scale && cs.scale !== "none") tile.style.scale = cs.scale;
     if (cs.translate && cs.translate !== "none") tile.style.translate = cs.translate;
+    tile.style.boxShadow = cs.boxShadow;
     void tile.offsetWidth;
+  }
+
+  function retractHeldTile(tile) {
+    if (!tile) return;
+    tile.style.transition = "scale 1s cubic-bezier(0.16, 1, 0.3, 1), translate 1s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 1s ease";
+    void tile.offsetWidth;
+    tile.style.scale = "1";
+    tile.style.translate = "0px 0px";
+    tile.style.boxShadow = "none";
+    tile._vsfRetractUntil = Date.now() + 1000;
   }
 
   function dropTile(tile) {
     if (!tile) return;
-    tile.style.transition = "";
-    tile.style.scale = "";
-    tile.style.translate = "";
+    var stamp = tile._vsfRetractUntil || 0;
+    var clear = function () {
+      if ((tile._vsfRetractUntil || 0) !== stamp) return;
+      tile._vsfRetractUntil = 0;
+      tile.style.transition = "";
+      tile.style.scale = "";
+      tile.style.translate = "";
+      tile.style.boxShadow = "";
+    };
+    var wait = stamp - Date.now();
+    if (wait > 0) setTimeout(clear, wait);
+    else clear();
   }
 
   function closeLb() {
@@ -435,6 +455,7 @@
     setTimeout(function () {
       dropTile(lb._tile);
       if (lb.parentNode) lb.parentNode.removeChild(lb);
+      if (!document.getElementById("vsf-lb")) document.documentElement.classList.remove("vsf-lb-open");
     }, 340);
   }
 
@@ -585,6 +606,8 @@
         if (!lb._closing) big.src = src;
       });
     }
+    document.documentElement.classList.add("vsf-lb-open");
+    retractHeldTile(tile);
     if (gpsOn) {
       var lat = parseFloat(tile.getAttribute("data-lat"));
       var lon = parseFloat(tile.getAttribute("data-lon"));
