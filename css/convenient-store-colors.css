@@ -136,10 +136,6 @@
   list-style: none;
 }
 
-.csc-board.csc-mode-shelf {
-  overflow-x: auto;
-}
-
 .csc-board.csc-mode-shelf .csc-swatches {
   display: grid;
   grid-template-columns: repeat(var(--csc-shelf-cols, 8), var(--csc-size, 40px));
