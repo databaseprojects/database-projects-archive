@@ -6,7 +6,7 @@
   var SECONDARY_COLOURS = false;
   /* Packaging tag (Bag). Set to true to show the tag and its filter again. */
   var SHOW_PACKAGING = false;
-  var store = "";
+  var store = "all";
   var catOn = {};
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
@@ -913,6 +913,7 @@
   var SPILL_SOLID = 0.15;
 
   function pageBackground(hex) {
+    document.documentElement.classList.remove("csc-spilling");
     var bg = hex || "";
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
@@ -972,6 +973,7 @@
       pageBackground(hex);
       return;
     }
+    document.documentElement.classList.add("csc-spilling");
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
     var dotR = rect.width / 2;
@@ -1082,6 +1084,6 @@
 
   applyMetrics();
   syncMoons();
+  setPressed("[data-csc-store]", "data-csc-store", store);
   apply();
-  board.classList.add("csc-ready");
 })();

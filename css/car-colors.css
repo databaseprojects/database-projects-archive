@@ -212,6 +212,13 @@ html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls .cc-zoom {
   background: #fff;
 }
 
+/* The spill is the colour for the controls bar and the page together. The slider strip stays white. */
+html.cc-spilling .cc-controls,
+html.cc-spilling body.cc-under-menu .cc-controls,
+html.cc-spilling body.cc-screen .cc-about.cc-open + .cc-controls {
+  background: transparent;
+}
+
 body.cc-under-menu .cc-about.cc-open {
   position: relative;
   z-index: 70;

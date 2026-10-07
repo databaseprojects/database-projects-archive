@@ -127,6 +127,7 @@
   var zTop = 30;
 
   function pageBackground(hex) {
+    document.documentElement.classList.remove("cc-spilling");
     var bg = hex || "";
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
@@ -184,6 +185,7 @@
     spillGen += 1;
     var gen = spillGen;
     removeSpills();
+    document.documentElement.classList.add("cc-spilling");
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
     var dotR = rect.width / 2;
