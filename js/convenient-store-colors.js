@@ -38,11 +38,18 @@
 
   function addOrbits(dot) {
     if (!dot.getAttribute("data-sec")) return;
-    var ring = document.createElement("span");
-    ring.className = "csc-sec-ring";
-    ring.setAttribute("aria-hidden", "true");
-    ring.style.setProperty("--csc-sec", dot.style.getPropertyValue("--csc-sec"));
-    dot.parentNode.appendChild(ring);
+    var orbit = document.createElement("span");
+    orbit.className = "csc-orbit csc-orbit-2";
+    orbit.setAttribute("aria-hidden", "true");
+    orbit.style.setProperty("--csc-sec", dot.style.getPropertyValue("--csc-sec"));
+    var span = 18 * (0.85 + Math.random() * 0.3);
+    orbit.style.animationDuration = span.toFixed(2) + "s";
+    orbit.style.animationDelay = (-Math.random() * span).toFixed(2) + "s";
+    var moon = document.createElement("span");
+    moon.className = "csc-moon csc-moon-2";
+    if (dot.classList.contains("csc-pale")) moon.classList.add("csc-moon-pale");
+    orbit.appendChild(moon);
+    dot.parentNode.insertBefore(orbit, dot);
   }
 
   Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
