@@ -11,7 +11,7 @@ body {
 }
 
 .csc-banner {
-  background: #fff;
+  background: transparent;
   margin-left: -1.5rem;
   margin-right: -1.5rem;
   padding-left: 1.5rem;
@@ -25,31 +25,6 @@ body {
 .csc-banner .csc-top,
 .csc-banner .csc-group,
 .csc-banner .csc-zoom {
-  background: #fff;
-}
-
-html.csc-paged .csc-banner,
-html.csc-paged .csc-banner .bk-nav,
-html.csc-paged .csc-banner .record-name,
-html.csc-paged .csc-banner .csc-controls,
-html.csc-paged .csc-banner .csc-rows,
-html.csc-paged .csc-banner .csc-top,
-html.csc-paged .csc-banner .csc-group {
-  background: var(--csc-page);
-}
-
-html.csc-paged .csc-zoom {
-  background: #fff;
-}
-
-/* The spill is the colour for the banner and the page together. */
-html.csc-spilling .csc-banner,
-html.csc-spilling .csc-banner .bk-nav,
-html.csc-spilling .csc-banner .record-name,
-html.csc-spilling .csc-banner .csc-controls,
-html.csc-spilling .csc-banner .csc-rows,
-html.csc-spilling .csc-banner .csc-top,
-html.csc-spilling .csc-banner .csc-group {
   background: transparent;
 }
 
@@ -88,7 +63,6 @@ html.csc-spilling .csc-banner .csc-group {
   align-items: center;
   gap: 0.55em;
   margin-left: auto;
-  background: #fff;
 }
 
 .csc-zoom .csc-opt {
