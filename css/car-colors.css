@@ -231,13 +231,12 @@ body.cc-under-menu .cc-about.cc-open {
   overflow: hidden;
   pointer-events: none;
   background: #e4e2dc;
-  filter: grayscale(0.22) saturate(0.72) brightness(0.92) contrast(1.12);
 }
 
-.cc-map-tiles img {
-  position: absolute;
-  display: block;
-  max-width: none;
+.cc-map-tiles .maplibregl-map,
+.cc-map-tiles .maplibregl-canvas-container {
+  width: 100%;
+  height: 100%;
 }
 
 .cc-map-credit {
