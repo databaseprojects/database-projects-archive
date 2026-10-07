@@ -79,6 +79,24 @@ body {
   gap: 2px;
 }
 
+.csc-facets {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.9rem;
+}
+
+.csc-facet {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.csc-facets .csc-opt {
+  margin: 0;
+}
+
 .csc-ag,
 .csc-shuffle {
   display: inline-flex;
@@ -171,10 +189,12 @@ body {
   list-style: none;
 }
 
-.csc-board.csc-mode-shelf .csc-swatches {
+.csc-board.csc-mode-shelf {
   display: grid;
   width: min(100%, max-content);
   max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   grid-template-columns: repeat(var(--csc-shelf-cols, 8), minmax(0, var(--csc-size, 40px)));
   grid-auto-rows: auto;
   justify-content: center;
@@ -182,6 +202,15 @@ body {
   align-items: center;
   column-gap: var(--csc-gap, 14px);
   row-gap: calc(var(--csc-gap, 14px) * 2);
+}
+
+.csc-board.csc-mode-shelf .csc-block,
+.csc-board.csc-mode-shelf .csc-swatches {
+  display: contents;
+}
+
+.csc-board.csc-mode-shelf h2 {
+  display: none;
 }
 
 .csc-board.csc-mode-shelf .csc-swatch {
