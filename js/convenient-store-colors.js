@@ -4,7 +4,9 @@
    The orbit sizes in this file and in convenient-store-colors.css stay as they are. */
 (function () {
   var SECONDARY_COLOURS = false;
-  var store = "circle-k";
+  /* Packaging tag (Bag). Set to true to show the tag and its filter again. */
+  var SHOW_PACKAGING = false;
+  var store = "";
   var catOn = {};
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
@@ -21,18 +23,6 @@
   var mode = "row";
   var showSec = false;
   var packFilter = "";
-  var COL_KEY = "cscDotSize";
-  var SIZE_MIN = 6;
-  var SIZE_MAX = 20;
-  var SIZE_BIG = 40;
-  var SIZE_SMALL = 14;
-  var SIZE_PHONE_SMALL = 22;
-  /* Right end of the slider. Past the fixed 40px slot plus the 14px gap, so neighbours overlap. */
-  var SIZE_LARGE = 76;
-  var sizeN = SIZE_MIN;
-  var draggingSlider = false;
-  var zVal = null;
-  var phone = false;
   var shelfCols = 1;
   if (!board) return;
 
@@ -121,9 +111,11 @@
   }
 
   function wants(item) {
+    if (!store) return false;
     var storeOk = store === "all" || item.getAttribute("data-store") === store;
     if (!storeOk) return false;
     if (anyCategory() && !catOn[item.getAttribute("data-cat")]) return false;
+    if (!SHOW_PACKAGING) return true;
     if (item.getAttribute("data-store") !== "circle-k") return true;
     if (packFilter && item.getAttribute("data-packaging") !== packFilter) return false;
     return true;
@@ -142,6 +134,11 @@
   function buildFacets() {
     var host = document.querySelector(".csc-facets");
     if (!host) return;
+    if (!SHOW_PACKAGING) {
+      host.hidden = true;
+      return;
+    }
+    host.hidden = false;
     ["packaging"].forEach(function (kind) {
       var group = host.querySelector('[data-csc-facet-group="' + kind + '"]');
       if (!group) return;
@@ -166,6 +163,7 @@
   }
 
   function syncCategories() {
+    if (cats) cats.hidden = !store;
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
       var on = !!catOn[button.getAttribute("data-csc-category")];
       button.classList.toggle("csc-on", on);
@@ -230,7 +228,17 @@
     });
   }
 
+  function syncGaps() {
+    var storeOk = store === "all" || store === "circle-k";
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps span"), function (item) {
+      var catOk = !anyCategory() || !!catOn[item.getAttribute("data-cat")];
+      item.hidden = !(storeOk && catOk);
+    });
+  }
+
   function apply(animate) {
+    syncCategories();
+    syncGaps();
     if (agOn) {
       syncAgFilter(animate);
       return;
@@ -819,6 +827,7 @@
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
     button.addEventListener("click", function () {
+      clearPageColour();
       store = button.getAttribute("data-csc-store");
       setPressed("[data-csc-store]", "data-csc-store", store);
       apply(true);
@@ -836,6 +845,7 @@
       if (!button || button === facetHost) return;
       var kind = button.getAttribute("data-csc-facet");
       var value = button.getAttribute("data-csc-value");
+      clearPageColour();
       if (kind === "packaging") packFilter = packFilter === value ? "" : value;
       syncFacets();
       apply(true);
@@ -850,6 +860,7 @@
         button = button.parentNode;
       }
       if (!button || button === cats) return;
+      clearPageColour();
       var name = button.getAttribute("data-csc-category");
       catOn[name] = !catOn[name];
       syncCategories();
@@ -860,6 +871,7 @@
   var rowButton = document.querySelector(".csc-irow");
   if (rowButton) {
     rowButton.addEventListener("click", function () {
+      clearPageColour();
       goMode("row");
     });
   }
@@ -867,6 +879,7 @@
   var shelfButton = document.querySelector(".csc-ishelf");
   if (shelfButton) {
     shelfButton.addEventListener("click", function () {
+      clearPageColour();
       goMode("shelf");
     });
   }
@@ -874,6 +887,7 @@
   var agButton = document.querySelector(".csc-ag");
   if (agButton) {
     agButton.addEventListener("click", function () {
+      clearPageColour();
       if (agOn) leaveAg();
       else enterAg();
     });
@@ -882,66 +896,152 @@
   var shuffleButton = document.querySelector(".csc-shuffle");
   if (shuffleButton) {
     shuffleButton.addEventListener("click", function () {
+      clearPageColour();
       shuffleOrder();
     });
   }
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-moon]"), function (button) {
     button.addEventListener("click", function () {
+      clearPageColour();
       if (button.getAttribute("data-csc-moon") === "2") showSec = !showSec;
       syncMoons();
     });
   });
 
-  function phoneSlider() {
+  var spillGen = 0;
+  var SPILL_SOLID = 0.15;
+
+  function pageBackground(hex) {
+    var bg = hex || "";
+    document.documentElement.style.background = bg;
+    document.body.style.background = bg;
+    if (hex) {
+      document.documentElement.style.setProperty("--csc-page", hex);
+      document.documentElement.classList.add("csc-paged");
+    } else {
+      document.documentElement.style.removeProperty("--csc-page");
+      document.documentElement.classList.remove("csc-paged");
+    }
+  }
+
+  function removeSpills() {
+    var nodes = document.querySelectorAll(".csc-spill");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      if (nodes[i].parentNode) nodes[i].parentNode.removeChild(nodes[i]);
+    }
+  }
+
+  function clearPageColour() {
+    spillGen += 1;
+    removeSpills();
+    pageBackground("");
+  }
+
+  function spillEase(p) {
+    if (p <= 0) return 0;
+    if (p >= 1) return 1;
+    return p * p * (3 - 2 * p);
+  }
+
+  function spillRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16)
+    };
+  }
+
+  function spillFar(cx, cy, vw, vh) {
+    var dx = Math.max(cx, vw - cx);
+    var dy = Math.max(cy, vh - cy);
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function spillFrom(dotEl) {
+    var hex = dotEl.getAttribute("data-main");
+    if (!hex) return;
+    var rect = dotEl.getBoundingClientRect();
+    if (!(rect.width > 0)) return;
+    spillGen += 1;
+    var gen = spillGen;
+    removeSpills();
+    if (motion.matches) {
+      pageBackground(hex);
+      return;
+    }
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var dotR = rect.width / 2;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var endR = spillFar(cx, cy, vw, vh) / SPILL_SOLID;
+    if (!(endR > dotR)) endR = dotR;
+    var rgb = spillRgb(hex);
+    var ink = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
+    var fade = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0)";
+    var spill = document.createElement("div");
+    spill.className = "csc-spill";
+    var disk = document.createElement("div");
+    disk.className = "csc-spill-disk";
+    disk.style.left = cx.toFixed(1) + "px";
+    disk.style.top = cy.toFixed(1) + "px";
+    disk.style.width = (endR * 2).toFixed(1) + "px";
+    disk.style.height = (endR * 2).toFixed(1) + "px";
+    disk.style.marginLeft = (-endR).toFixed(1) + "px";
+    disk.style.marginTop = (-endR).toFixed(1) + "px";
+    var solidStop = Math.round(SPILL_SOLID * 100) + "%";
+    disk.style.background = "radial-gradient(circle closest-side, " + ink + " 0%, " + ink + " " + solidStop + ", " + fade + " 100%)";
+    spill.appendChild(disk);
+    document.body.appendChild(spill);
+    var t0 = performance.now();
+    var life = 640;
+    var start = dotR / endR;
+    function draw(t) {
+      var p = t <= 0 ? 0 : t >= life ? 1 : spillEase(t / life);
+      var s = start + (1 - start) * p;
+      disk.style.transform = "scale(" + s.toFixed(4) + ")";
+    }
+    function frame(now) {
+      if (gen !== spillGen) return;
+      var t = now - t0;
+      if (t > life) t = life;
+      draw(t);
+      if (t < life) {
+        window.requestAnimationFrame(frame);
+        return;
+      }
+      if (gen !== spillGen) return;
+      pageBackground(hex);
+      if (spill.parentNode) spill.parentNode.removeChild(spill);
+    }
+    draw(0);
+    window.requestAnimationFrame(frame);
+  }
+
+  document.addEventListener("click", function (e) {
+    var dot = e.target.closest && e.target.closest(".csc-dot");
+    if (!dot || !dot.getAttribute("data-main")) return;
+    if (dot.closest(".csc-gaps")) return;
+    spillFrom(dot);
+  });
+
+  /* Fixed size: 40% along the old slider track (left was smallest, right was largest). */
+  var LAYOUT_PX = 40;
+  var SIZE_LARGE = 76;
+  var SIZE_SMALL = 14;
+  var SIZE_PHONE_SMALL = 22;
+  var TRACK = 0.4;
+
+  function phoneLayout() {
     return window.matchMedia("(max-width: 767px)").matches;
   }
 
-  function sliderEnds() {
-    return phoneSlider() ? { min: 4, max: 7 } : { min: SIZE_MIN, max: SIZE_MAX };
-  }
-
-  function clampSlider(n) {
-    var ends = sliderEnds();
-    n = +n;
-    if (!(n >= ends.min)) return ends.min;
-    if (n > ends.max) return ends.max;
-    return n;
-  }
-
-  function storedCols() {
-    var n = NaN;
-    try {
-      n = parseFloat(localStorage.getItem(COL_KEY));
-    } catch (e) {}
-    var ends = sliderEnds();
-    return n >= ends.min && n <= ends.max ? n : nForRest();
-  }
-
-  function saveCols(n) {
-    try {
-      localStorage.setItem(COL_KEY, String(n));
-    } catch (e) {}
-  }
-
-  function sizeSmall() {
-    return phoneSlider() ? SIZE_PHONE_SMALL : SIZE_SMALL;
-  }
-
-  /* Slider position whose dots match the fixed slot, so the page opens as it does now. */
-  function nForRest() {
-    var ends = sliderEnds();
-    var small = sizeSmall();
-    var t = (SIZE_BIG - small) / (SIZE_LARGE - small);
-    return ends.min + t * (ends.max - ends.min);
-  }
-
   function dotPx() {
-    var ends = sliderEnds();
-    var t = (sizeN - ends.min) / (ends.max - ends.min);
-    if (t < 0) t = 0;
-    if (t > 1) t = 1;
-    return sizeSmall() + (SIZE_LARGE - sizeSmall()) * t;
+    var small = phoneLayout() ? SIZE_PHONE_SMALL : SIZE_SMALL;
+    return small + (SIZE_LARGE - small) * TRACK;
   }
 
   function applyMetrics() {
@@ -950,38 +1050,9 @@
       board.style.setProperty("--csc-size", px + "px");
       board.style.setProperty("--csc-scale", "1");
     } else {
-      board.style.setProperty("--csc-size", SIZE_BIG + "px");
-      board.style.setProperty("--csc-scale", (px / SIZE_BIG).toFixed(4));
+      board.style.setProperty("--csc-size", LAYOUT_PX + "px");
+      board.style.setProperty("--csc-scale", (px / LAYOUT_PX).toFixed(4));
     }
-  }
-
-  function sliderEl() {
-    return document.querySelector(".csc-zslider");
-  }
-
-  function fillSlider(v) {
-    var s = sliderEl();
-    if (!s) return;
-    var ends = sliderEnds();
-    s.min = String(ends.min);
-    s.max = String(ends.max);
-    s.title = "Size (" + ends.min + " – " + ends.max + ") — right is larger";
-    if (draggingSlider) return;
-    s.style.setProperty("--csc-p", (((v - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
-    if (+s.value !== v) s.value = String(v);
-  }
-
-  function valueFromClientX(s, clientX) {
-    var rect = s.getBoundingClientRect();
-    var span = rect.width || 1;
-    var thumb = 14;
-    var usable = Math.max(1, span - thumb);
-    var t = (clientX - rect.left - thumb / 2) / usable;
-    if (t < 0) t = 0;
-    if (t > 1) t = 1;
-    var ends = sliderEnds();
-    s.style.setProperty("--csc-p", (t * 100).toFixed(2) + "%");
-    return clampSlider(ends.min + t * (ends.max - ends.min));
   }
 
   function resizeAg(px) {
@@ -995,84 +1066,22 @@
     });
   }
 
-  function applySize(n) {
-    n = clampSlider(n);
-    var prev = dotPx();
-    sizeN = n;
+  var phone = phoneLayout();
+  window.addEventListener("resize", function () {
+    clampAg();
+    var now = phoneLayout();
+    if (now === phone) return;
+    phone = now;
     var px = dotPx();
     applyMetrics();
-    fillSlider(n);
-    if (agOn && Math.abs(prev - px) > 0.5) {
+    if (agOn) {
       resizeAg(px);
       clampAg();
     }
-  }
-
-  function isSlider(t) {
-    return t && t.classList && t.classList.contains("csc-zslider");
-  }
-
-  document.addEventListener("pointerdown", function (e) {
-    if (!isSlider(e.target)) return;
-    draggingSlider = true;
-    document.documentElement.classList.add("csc-sizing");
-    var n = valueFromClientX(e.target, e.clientX);
-    if (n !== sizeN) {
-      zVal = n;
-      applySize(n);
-    }
-  }, true);
-
-  document.addEventListener("pointermove", function (e) {
-    if (!draggingSlider) return;
-    var s = isSlider(e.target) ? e.target : sliderEl();
-    if (!s) return;
-    var n = valueFromClientX(s, e.clientX);
-    if (n !== sizeN) {
-      zVal = n;
-      applySize(n);
-    }
-  }, true);
-
-  function endSlider() {
-    if (!draggingSlider) return;
-    var n = zVal != null ? zVal : sizeN;
-    zVal = null;
-    draggingSlider = false;
-    document.documentElement.classList.remove("csc-sizing");
-    applySize(n);
-    if (!phoneSlider()) saveCols(n);
-  }
-
-  document.addEventListener("pointerup", endSlider, true);
-  document.addEventListener("pointercancel", endSlider, true);
-  window.addEventListener("blur", endSlider);
-
-  document.addEventListener("input", function (e) {
-    if (!isSlider(e.target)) return;
-    if (draggingSlider) return;
-    var k = clampSlider(e.target.value);
-    if (!phoneSlider()) saveCols(k);
-    applySize(k);
   });
 
-  window.addEventListener("resize", clampAg);
-
-  var resizeTimer = 0;
-  window.addEventListener("resize", function () {
-    if (draggingSlider) return;
-    window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(function () {
-      var nowPhone = phoneSlider();
-      if (nowPhone !== phone) {
-        phone = nowPhone;
-        applySize(nowPhone ? nForRest() : storedCols());
-      }
-    }, 80);
-  });
-
-  phone = phoneSlider();
-  applySize(phone ? nForRest() : storedCols());
+  applyMetrics();
   syncMoons();
   apply();
+  board.classList.add("csc-ready");
 })();
