@@ -18,6 +18,8 @@
   var mode = "row";
   var showSec = false;
   var showTer = false;
+  var packFilter = "";
+  var typeFilter = "";
   var COL_KEY = "cscZoomCols";
   var SIZE_MIN = 6;
   var SIZE_MAX = 20;
@@ -38,10 +40,10 @@
   var ringN = 0;
 
   function addOrbits(dot) {
-    [
-      ["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", 18],
-      ["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", 27]
-    ].forEach(function (spec) {
+    var specs = [];
+    if (dot.getAttribute("data-sec")) specs.push(["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", 18]);
+    if (dot.getAttribute("data-ter")) specs.push(["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", 27]);
+    specs.forEach(function (spec) {
       var orbit = document.createElement("span");
       orbit.className = spec[0];
       orbit.setAttribute("aria-hidden", "true");
@@ -56,6 +58,7 @@
   }
 
   Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
+    item._cscHome = item.parentNode;
     var shelf = parseInt(item.getAttribute("data-shelf"), 10);
     var slot = parseInt(item.getAttribute("data-slot"), 10);
     if (shelf > 0) item.style.setProperty("--csc-shelf", String(shelf));
@@ -96,15 +99,61 @@
     item.appendChild(svg);
   });
   board.style.setProperty("--csc-shelf-cols", String(shelfCols || 1));
+  buildFacets();
 
   function anyCat() {
     return picked.candy || picked.chips || picked.drinks;
   }
 
+  function putHome(item) {
+    var home = item._cscHome || listEl();
+    if (home) home.appendChild(item);
+  }
+
   function wants(item) {
     var storeOk = store === "all" || item.getAttribute("data-store") === store;
     var name = item.getAttribute("data-cat");
-    return storeOk && (!anyCat() || !!picked[name]);
+    if (!(storeOk && (!anyCat() || !!picked[name]))) return false;
+    if (item.getAttribute("data-store") !== "circle-k") return true;
+    if (packFilter && item.getAttribute("data-packaging") !== packFilter) return false;
+    if (typeFilter && item.getAttribute("data-cat") !== typeFilter) return false;
+    return true;
+  }
+
+  function syncFacets() {
+    Array.prototype.forEach.call(document.querySelectorAll(".csc-facets [data-csc-facet]"), function (button) {
+      var kind = button.getAttribute("data-csc-facet");
+      var value = button.getAttribute("data-csc-value");
+      var on = (kind === "packaging" && packFilter === value) || (kind === "type" && typeFilter === value);
+      button.classList.toggle("csc-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function buildFacets() {
+    var host = document.querySelector(".csc-facets");
+    if (!host) return;
+    ["packaging", "type"].forEach(function (kind) {
+      var group = host.querySelector('[data-csc-facet-group="' + kind + '"]');
+      if (!group) return;
+      var seen = [];
+      Array.prototype.forEach.call(board.querySelectorAll('.csc-swatch[data-store="circle-k"]'), function (item) {
+        var value = kind === "packaging" ? item.getAttribute("data-packaging") : item.getAttribute("data-cat");
+        if (!value || seen.indexOf(value) !== -1) return;
+        seen.push(value);
+      });
+      seen.forEach(function (value) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "csc-opt";
+        button.setAttribute("data-csc-facet", kind);
+        button.setAttribute("data-csc-value", value);
+        button.setAttribute("aria-pressed", "false");
+        button.textContent = value;
+        group.appendChild(button);
+      });
+    });
+    syncFacets();
   }
 
   function clearMove(item) {
@@ -190,7 +239,7 @@
       }
     });
     finishBlocks();
-    if (cats) cats.hidden = !storePicked;
+    if (cats) cats.hidden = !storePicked || !cats.querySelector("[data-csc-cat]");
     if (reduce) return;
 
     plan.forEach(function (entry) {
@@ -506,10 +555,8 @@
 
   function enterAg() {
     if (agOn) return;
-    var list = listEl();
-    if (!list) return;
     var items = [];
-    Array.prototype.forEach.call(list.querySelectorAll(".csc-swatch"), function (item) {
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
       if (!item.hidden && !item.classList.contains("csc-leave")) items.push(item);
     });
     if (!items.length) return;
@@ -550,8 +597,9 @@
         shufT0: null
       });
     });
-    var block = blockEl();
-    if (block) block.hidden = true;
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-block"), function (block) {
+      block.hidden = true;
+    });
     board.appendChild(field);
     fadeAgShadow(field);
     agBodies = bodies;
@@ -584,7 +632,7 @@
       b.el.style.removeProperty("--csc-x");
       b.el.style.removeProperty("--csc-y");
       b.el.style.removeProperty("--csc-z");
-      if (list) list.appendChild(b.el);
+      putHome(b.el);
     });
     agBodies = [];
     if (field) field.remove();
@@ -652,20 +700,20 @@
             item.style.removeProperty("--csc-x");
             item.style.removeProperty("--csc-y");
             item.style.removeProperty("--csc-z");
-            if (list) list.appendChild(item);
+            putHome(item);
           };
         } else {
           item.hidden = true;
           item.style.removeProperty("--csc-x");
           item.style.removeProperty("--csc-y");
           item.style.removeProperty("--csc-z");
-          if (list) list.appendChild(item);
+          putHome(item);
         }
         return;
       }
       if (!show) item.hidden = true;
     });
-    if (cats) cats.hidden = !storePicked;
+    if (cats) cats.hidden = !storePicked || !cats.querySelector("[data-csc-cat]");
   }
 
   function shuffleOrder() {
@@ -673,26 +721,28 @@
       shuffleFloat();
       return;
     }
-    var list = listEl();
-    if (!list) return;
-    var items = [];
-    Array.prototype.forEach.call(list.querySelectorAll(".csc-swatch"), function (item) {
-      if (!item.hidden && !item.classList.contains("csc-leave")) items.push(item);
-    });
-    if (items.length < 2) return;
     var before = new Map();
-    items.forEach(function (item) {
-      var r = item.getBoundingClientRect();
-      if (r.width) before.set(item, r);
+    var moved = false;
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-swatches"), function (list) {
+      var items = [];
+      Array.prototype.forEach.call(list.querySelectorAll(".csc-swatch"), function (item) {
+        if (!item.hidden && !item.classList.contains("csc-leave")) items.push(item);
+      });
+      if (items.length < 2) return;
+      items.forEach(function (item) {
+        var r = item.getBoundingClientRect();
+        if (r.width) before.set(item, r);
+      });
+      for (var i = items.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var held = items[i];
+        items[i] = items[j];
+        items[j] = held;
+      }
+      items.forEach(function (item) { list.appendChild(item); });
+      moved = true;
     });
-    for (var i = items.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var held = items[i];
-      items[i] = items[j];
-      items[j] = held;
-    }
-    items.forEach(function (item) { list.appendChild(item); });
-    slideFrom(before);
+    if (moved) slideFrom(before);
   }
 
   function shuffleFloat() {
@@ -747,6 +797,24 @@
       apply(true);
     });
   });
+
+  var facetHost = document.querySelector(".csc-facets");
+  if (facetHost) {
+    facetHost.addEventListener("click", function (e) {
+      var button = e.target;
+      while (button && button !== facetHost) {
+        if (button.getAttribute && button.getAttribute("data-csc-facet")) break;
+        button = button.parentNode;
+      }
+      if (!button || button === facetHost) return;
+      var kind = button.getAttribute("data-csc-facet");
+      var value = button.getAttribute("data-csc-value");
+      if (kind === "packaging") packFilter = packFilter === value ? "" : value;
+      else if (kind === "type") typeFilter = typeFilter === value ? "" : value;
+      syncFacets();
+      apply(true);
+    });
+  }
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-cat]"), function (button) {
     button.addEventListener("click", function () {
