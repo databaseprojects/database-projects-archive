@@ -70,6 +70,10 @@ body {
   margin: 0;
 }
 
+.csc-zoom .csc-opt[hidden] {
+  display: none !important;
+}
+
 .csc-facets {
   display: inline-flex;
   flex-wrap: wrap;
@@ -305,6 +309,7 @@ body {
   border-radius: 50%;
   box-shadow: none;
   box-sizing: border-box;
+  transform: scale(var(--csc-scale, 1));
   transform-origin: center center;
   background: var(--csc-main);
 }
@@ -319,8 +324,8 @@ body {
 }
 
 .csc-orbit-2 {
-  width: 115%;
-  height: 115%;
+  width: calc(115% * var(--csc-scale, 1));
+  height: calc(115% * var(--csc-scale, 1));
   animation: csc-spin 18s linear infinite;
 }
 
@@ -387,6 +392,7 @@ body.csc-ag-over .csc-controls {
 
 .csc-ag-field .csc-dot {
   box-shadow: var(--ag-shadow);
+  transform: none;
 }
 
 .csc-ag-field .csc-dot.csc-pale {
