@@ -42,6 +42,17 @@ html.csc-paged .csc-zoom {
   background: #fff;
 }
 
+/* The spill is the colour for the banner and the page together. */
+html.csc-spilling .csc-banner,
+html.csc-spilling .csc-banner .bk-nav,
+html.csc-spilling .csc-banner .record-name,
+html.csc-spilling .csc-banner .csc-controls,
+html.csc-spilling .csc-banner .csc-rows,
+html.csc-spilling .csc-banner .csc-top,
+html.csc-spilling .csc-banner .csc-group {
+  background: transparent;
+}
+
 .csc-opt {
   background-color: #fff;
 }
@@ -189,10 +200,6 @@ html.csc-paged .csc-zoom {
 
 .csc-board {
   margin: 0 0 4rem;
-}
-
-.csc-board:not(.csc-ready) .csc-swatch {
-  display: none;
 }
 
 .csc-block {
