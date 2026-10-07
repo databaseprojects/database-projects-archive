@@ -239,6 +239,12 @@ body {
 
 .csc-board.csc-mode-shelf .csc-gaps span {
   display: block;
+  box-sizing: border-box;
+  border: 1.5px dotted rgba(0, 0, 0, 0.42);
+  border-radius: 50%;
+  background: transparent;
+  transform: scale(var(--csc-scale, 1));
+  transform-origin: center center;
 }
 
 .csc-board.csc-mode-shelf .csc-dot {
