@@ -309,6 +309,7 @@
   }
 
   function clear(node) {
+    if (node === stage) destroyBasemap();
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
@@ -519,61 +520,75 @@
   }
 
   /* Dot positions follow these Vancouver street paths.
-     The picture under them is a muted CARTO Voyager map with no labels. */
+     The picture under them is OpenFreeMap Positron, with labels removed
+     and a faint tint on water and parks. */
   var MAP_WEST = -123.27;
   var MAP_EAST = -123.02;
   var MAP_NORTH = 49.35;
   var MAP_SOUTH = 49.2;
+  var ccBasemap = null;
 
-  function mapTileXY(lon, lat, zoom) {
-    var n = Math.pow(2, zoom);
-    var x = ((lon + 180) / 360) * n;
-    var s = Math.sin(lat * Math.PI / 180);
-    var y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
-    return { x: x, y: y };
+  function destroyBasemap() {
+    if (!ccBasemap) return;
+    ccBasemap.remove();
+    ccBasemap = null;
   }
 
-  function vancouverBasemap(width, height) {
-    var zoom = 11;
-    var z;
-    for (z = 11; z <= 16; z++) {
-      var nwTry = mapTileXY(MAP_WEST, MAP_NORTH, z);
-      var seTry = mapTileXY(MAP_EAST, MAP_SOUTH, z);
-      zoom = z;
-      if ((seTry.x - nwTry.x) * 256 >= width && (seTry.y - nwTry.y) * 256 >= height) break;
+  function tintStyle(style) {
+    delete style.sprite;
+    delete style.glyphs;
+    style.layers = style.layers.filter(function (layer) {
+      return layer.type !== "symbol";
+    });
+    style.layers.forEach(function (layer) {
+      var paint = layer.paint || (layer.paint = {});
+      if (layer.id === "water") paint["fill-color"] = "#c3d3de";
+      if (layer.id === "waterway") paint["line-color"] = "#a9c0ce";
+      if (layer.id === "park") paint["fill-color"] = "#d3e0d2";
+      if (layer.id === "landcover_wood") paint["fill-color"] = "#c5d4c4";
+    });
+    return style;
+  }
+
+  var positronStyle = null;
+
+  function loadPositron() {
+    if (!positronStyle) {
+      positronStyle = fetch("https://tiles.openfreemap.org/styles/positron")
+        .then(function (res) { return res.json(); })
+        .then(tintStyle);
     }
-    var nw = mapTileXY(MAP_WEST, MAP_NORTH, zoom);
-    var se = mapTileXY(MAP_EAST, MAP_SOUTH, zoom);
-    var spanW = (se.x - nw.x) * 256;
-    var spanH = (se.y - nw.y) * 256;
-    var scale = Math.max(width / spanW, height / spanH);
-    var tilePx = 256 * scale;
-    var originX = (width - spanW * scale) / 2;
-    var originY = (height - spanH * scale) / 2;
-    var layer = document.createElement("div");
-    layer.className = "cc-map-tiles";
-    layer.setAttribute("aria-hidden", "true");
-    var x0 = Math.floor(nw.x);
-    var y0 = Math.floor(nw.y);
-    var x1 = Math.floor(se.x - 1e-9);
-    var y1 = Math.floor(se.y - 1e-9);
-    var tx;
-    var ty;
-    for (tx = x0; tx <= x1; tx++) {
-      for (ty = y0; ty <= y1; ty++) {
-        var img = document.createElement("img");
-        img.alt = "";
-        img.draggable = false;
-        var sub = "abcd".charAt(Math.abs(tx + ty) % 4);
-        img.src = "https://" + sub + ".basemaps.cartocdn.com/rastertiles/voyager_nolabels/" + zoom + "/" + tx + "/" + ty + "@2x.png";
-        img.style.left = (originX + (tx - nw.x) * tilePx).toFixed(1) + "px";
-        img.style.top = (originY + (ty - nw.y) * tilePx).toFixed(1) + "px";
-        img.style.width = tilePx.toFixed(1) + "px";
-        img.style.height = tilePx.toFixed(1) + "px";
-        layer.appendChild(img);
-      }
-    }
-    return layer;
+    return positronStyle;
+  }
+
+  function mountBasemap(field) {
+    var el = document.createElement("div");
+    el.className = "cc-map-tiles";
+    el.setAttribute("aria-hidden", "true");
+    field.insertBefore(el, field.firstChild);
+    if (!window.maplibregl) return;
+    var token = {};
+    el._ccToken = token;
+    loadPositron().then(function (style) {
+      if (el._ccToken !== token || !el.isConnected) return;
+      var map = new maplibregl.Map({
+        container: el,
+        style: JSON.parse(JSON.stringify(style)),
+        bounds: [[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]],
+        fitBoundsOptions: { padding: 0, animate: false },
+        interactive: false,
+        attributionControl: false,
+        fadeDuration: 0,
+        preserveDrawingBuffer: true,
+        failIfMajorPerformanceCaveat: false
+      });
+      ccBasemap = map;
+      map.on("load", function () {
+        if (el._ccToken !== token) return;
+        map.resize();
+        map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
+      });
+    });
   }
 
   /* Street paths, viewBox 0 0 120 100, north up. Shore lines are not streets. */
@@ -629,6 +644,90 @@
     return segs;
   }
 
+  /* Even gaps along the streets. A larger dot uses more of the line
+     so the circles still do not overlap. */
+  function evenStreetPoints(segs, count, size) {
+    var pts = [];
+    if (!count || !segs.length) return pts;
+    var pitch = Math.max(1, size);
+    var segIndex = 0;
+    var dist = Math.min(pitch * 0.5, segs[0].len);
+    var guard = 0;
+
+    function pointOn(seg, d) {
+      var u = seg.len ? d / seg.len : 0;
+      return {
+        x: seg.x1 + (seg.x2 - seg.x1) * u,
+        y: seg.y1 + (seg.y2 - seg.y1) * u
+      };
+    }
+
+    function tooClose(p) {
+      var i;
+      var limit = pitch * pitch - 0.25;
+      for (i = 0; i < pts.length; i++) {
+        var dx = p.x - pts[i].x;
+        var dy = p.y - pts[i].y;
+        if (dx * dx + dy * dy < limit) return true;
+      }
+      return false;
+    }
+
+    while (pts.length < count && segIndex < segs.length && guard < 100000) {
+      guard += 1;
+      var seg = segs[segIndex];
+      if (dist > seg.len) {
+        dist -= seg.len;
+        segIndex += 1;
+        continue;
+      }
+      var p = pointOn(seg, dist);
+      if (tooClose(p)) {
+        dist += Math.max(1, pitch * 0.25);
+        continue;
+      }
+      pts.push(p);
+      dist += pitch;
+    }
+
+    if (pts.length >= count) return pts;
+
+    var total = 0;
+    var i;
+    for (i = 0; i < segs.length; i++) total += segs[i].len;
+    var step = total / count;
+    pts = [];
+    var walk = step * 0.5;
+    var acc = 0;
+    segIndex = 0;
+    while (pts.length < count && segIndex < segs.length) {
+      var seg2 = segs[segIndex];
+      if (acc + seg2.len < walk) {
+        acc += seg2.len;
+        segIndex += 1;
+        continue;
+      }
+      pts.push(pointOn(seg2, walk - acc));
+      walk += step;
+    }
+    return pts;
+  }
+
+  function positionMapDots(field) {
+    var width = field.clientWidth || Math.max(280, stage.clientWidth);
+    var height = field.clientHeight || parseFloat(field.style.height) || 640;
+    var size = dotPx();
+    var segs = mapStreetSegments(width, height);
+    var dots = field.querySelectorAll(".cc-dot");
+    var pts = evenStreetPoints(segs, dots.length, size);
+    Array.prototype.forEach.call(dots, function (el, i) {
+      var p = pts[i];
+      if (!p) return;
+      el.style.left = (p.x - size / 2).toFixed(1) + "px";
+      el.style.top = (p.y - size / 2).toFixed(1) + "px";
+    });
+  }
+
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
@@ -636,67 +735,17 @@
     var field = document.createElement("div");
     field.className = "cc-map";
     field.style.height = height + "px";
-    field.appendChild(vancouverBasemap(width, height));
     var credit = document.createElement("p");
     credit.className = "cc-map-credit";
-    credit.textContent = "© OpenStreetMap © CARTO";
+    credit.textContent = "© OpenStreetMap";
     field.appendChild(credit);
-    var size = dotPx();
     var rng = mulberry32(0x5A11);
-    var cars = shuffle(carsIn("Vancouver"), rng);
-    var segs = mapStreetSegments(width, height);
-    var total = 0;
-    var si;
-    for (si = 0; si < segs.length; si++) total += segs[si].len;
-
-    function clampU(u) {
-      if (u < 0.03) return 0.03;
-      if (u > 0.97) return 0.97;
-      return u;
-    }
-
-    function placeAt(item) {
-      var seg = segs[item.seg];
-      item.u = clampU(item.u);
-      item.cx = seg.x1 + (seg.x2 - seg.x1) * item.u;
-      item.cy = seg.y1 + (seg.y2 - seg.y1) * item.u;
-    }
-
-    function pickSeg(t) {
-      var walk = t * total;
-      var i;
-      for (i = 0; i < segs.length; i++) {
-        walk -= segs[i].len;
-        if (walk <= 0) return i;
-      }
-      return segs.length - 1;
-    }
-
-    var items = [];
-    cars.forEach(function (car) {
-      var segIndex;
-      var u;
-      if (items.length && rng() < 0.46) {
-        var host = items[Math.floor(rng() * items.length)];
-        segIndex = host.seg;
-        var along = (rng() - 0.5) * Math.min(0.62, 140 / (segs[segIndex].len || 1));
-        u = host.u + along;
-      } else {
-        segIndex = pickSeg(rng());
-        u = rng();
-      }
-      var item = { car: car, seg: segIndex, u: u };
-      placeAt(item);
-      items.push(item);
-    });
-
-    items.forEach(function (item) {
-      var el = dot(item.car);
-      el.style.left = (item.cx - size / 2).toFixed(1) + "px";
-      el.style.top = (item.cy - size / 2).toFixed(1) + "px";
-      field.appendChild(el);
+    shuffle(carsIn("Vancouver"), rng).forEach(function (car) {
+      field.appendChild(dot(car));
     });
     stage.appendChild(field);
+    mountBasemap(field);
+    positionMapDots(field);
   }
 
 
@@ -727,7 +776,6 @@
     sorted.forEach(function (car, i) {
       var row = Math.floor(i / cols);
       var col = i % cols;
-      if (row % 2 === 1) col = cols - 1 - col;
       var el = dot(car);
       el.style.gridRow = String(row + 1);
       el.style.gridColumn = String(col + 1);
@@ -1047,6 +1095,13 @@
     if (agOn) {
       if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
       return;
+    }
+    if (mode === "map") {
+      var mapField = stage.querySelector(".cc-map");
+      if (mapField) {
+        positionMapDots(mapField);
+        return;
+      }
     }
     if (stage.querySelector(".cc-dot")) {
       if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
