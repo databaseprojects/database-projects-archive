@@ -7,6 +7,7 @@
   /* Packaging tag (Bag). Set to true to show the tag and its filter again. */
   var SHOW_PACKAGING = false;
   var store = "all";
+  var city = "vancouver";
   var catOn = {};
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
@@ -111,7 +112,7 @@
   }
 
   function wants(item) {
-    if (!store) return false;
+    if (!store || city !== "vancouver") return false;
     var storeOk = store === "all" || item.getAttribute("data-store") === store;
     if (!storeOk) return false;
     if (anyCategory() && !catOn[item.getAttribute("data-cat")]) return false;
@@ -163,7 +164,7 @@
   }
 
   function syncCategories() {
-    if (cats) cats.hidden = store !== "all" && store !== "circle-k";
+    if (cats) cats.hidden = city !== "vancouver" || (store !== "all" && store !== "circle-k");
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
       var on = !!catOn[button.getAttribute("data-csc-category")];
       button.classList.toggle("csc-on", on);
@@ -229,7 +230,7 @@
   }
 
   function syncGaps() {
-    var storeOk = store === "all" || store === "circle-k";
+    var storeOk = city === "vancouver" && (store === "all" || store === "circle-k");
     Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps span"), function (item) {
       var catOk = !anyCategory() || !!catOn[item.getAttribute("data-cat")];
       item.hidden = !(storeOk && catOk);
@@ -825,6 +826,15 @@
     });
   }
 
+  Array.prototype.forEach.call(document.querySelectorAll("[data-csc-city]"), function (button) {
+    button.addEventListener("click", function () {
+      clearPageColour();
+      city = button.getAttribute("data-csc-city");
+      setPressed("[data-csc-city]", "data-csc-city", city);
+      apply(true);
+    });
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
     button.addEventListener("click", function () {
       clearPageColour();
@@ -1075,6 +1085,7 @@
 
   applyMetrics();
   syncMoons();
+  setPressed("[data-csc-city]", "data-csc-city", city);
   setPressed("[data-csc-store]", "data-csc-store", store);
   apply();
 })();
