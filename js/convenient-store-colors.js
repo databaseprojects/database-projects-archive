@@ -25,6 +25,52 @@
   var showSec = false;
   var packFilter = "";
   var shelfCols = 1;
+  /* Each city owns its store buttons and its category buttons.
+     A store with no samples stays a grey placeholder. */
+  var CITIES = {
+    vancouver: {
+      stores: [
+        ["circle-k", "Circle K"],
+        ["7-eleven", "7-Eleven"],
+        ["hasty-market", "Hasty Market"],
+        ["on-the-run", "On the Run"],
+        ["shell-select", "Shell Select"],
+        ["petro-canada", "Petro-Canada"],
+        ["esso", "Esso"],
+        ["chevron", "Chevron"],
+        ["the-tuck-shop", "The Tuck Shop"],
+        ["sunshine-coast-convenience", "Sunshine Coast Convenience"],
+        ["quick-stop", "Quick Stop"],
+        ["smoke-da-snack", "Smoke Da Snack"],
+        ["sunoco", "Sunoco"]
+      ],
+      categories: ["Chocolate", "Candy"]
+    },
+    seattle: {
+      stores: [
+        ["circle-k", "Circle K"],
+        ["7-eleven", "7-Eleven"],
+        ["ampm", "ampm"],
+        ["chevron-extramile", "Chevron ExtraMile"],
+        ["shell", "Shell"],
+        ["plaid-pantry", "Plaid Pantry"],
+        ["76", "76"]
+      ],
+      categories: ["Chocolate", "Candy"]
+    },
+    toronto: {
+      stores: [
+        ["circle-k", "Circle K"],
+        ["7-eleven", "7-Eleven"],
+        ["hasty-market", "Hasty Market"],
+        ["quickie", "Quickie"],
+        ["petro-canada", "Petro-Canada"],
+        ["esso", "Esso"],
+        ["shell-select", "Shell Select"]
+      ],
+      categories: ["Chocolate", "Candy"]
+    }
+  };
   if (!board) return;
 
   var storeNames = { "circle-k": "Circle K" };
@@ -101,8 +147,19 @@
   buildFacets();
   buildCategories();
 
+  function cityRecord() {
+    return CITIES[city] || null;
+  }
+
+  function cityCategories() {
+    var record = cityRecord();
+    return record ? record.categories : [];
+  }
+
   function anyCategory() {
-    for (var key in catOn) if (catOn[key]) return true;
+    var list = cityCategories();
+    var i;
+    for (i = 0; i < list.length; i++) if (catOn[list[i]]) return true;
     return false;
   }
 
@@ -113,9 +170,10 @@
 
   function wants(item) {
     if (!store || city !== "vancouver") return false;
+    if (!anyCategory()) return false;
     var storeOk = item.getAttribute("data-store") === store;
     if (!storeOk) return false;
-    if (anyCategory() && !catOn[item.getAttribute("data-cat")]) return false;
+    if (!catOn[item.getAttribute("data-cat")]) return false;
     if (!SHOW_PACKAGING) return true;
     if (item.getAttribute("data-store") !== "circle-k") return true;
     if (packFilter && item.getAttribute("data-packaging") !== packFilter) return false;
@@ -164,7 +222,7 @@
   }
 
   function syncCategories() {
-    if (cats) cats.hidden = store !== "circle-k";
+    if (cats) cats.hidden = !store;
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
       var on = !!catOn[button.getAttribute("data-csc-category")];
       button.classList.toggle("csc-on", on);
@@ -172,23 +230,44 @@
     });
   }
 
+  var listsFor = null;
+
+  function tagButton(attr, value, label) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "csc-opt";
+    button.setAttribute(attr, value);
+    button.setAttribute("aria-pressed", "false");
+    button.textContent = label;
+    return button;
+  }
+
+  function ensureLists() {
+    if (listsFor === city) return;
+    listsFor = city;
+    var record = cityRecord();
+    var stores = record ? record.stores : [];
+    var ids = [];
+    var i;
+    for (i = 0; i < stores.length; i++) ids.push(stores[i][0]);
+    if (store && ids.indexOf(store) === -1) store = "";
+    var group = document.querySelector(".csc-stores");
+    if (group) {
+      group.innerHTML = "";
+      stores.forEach(function (pair) {
+        group.appendChild(tagButton("data-csc-store", pair[0], pair[1]));
+      });
+    }
+    if (cats) {
+      cats.innerHTML = "";
+      cityCategories().forEach(function (name) {
+        cats.appendChild(tagButton("data-csc-category", name, name));
+      });
+    }
+  }
+
   function buildCategories() {
-    if (!cats) return;
-    var seen = [];
-    Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
-      var value = item.getAttribute("data-cat");
-      if (!value || seen.indexOf(value) !== -1) return;
-      seen.push(value);
-    });
-    seen.forEach(function (value) {
-      var button = document.createElement("button");
-      button.type = "button";
-      button.className = "csc-opt";
-      button.setAttribute("data-csc-category", value);
-      button.setAttribute("aria-pressed", "false");
-      button.textContent = value;
-      cats.appendChild(button);
-    });
+    ensureLists();
     syncCategories();
   }
 
@@ -230,9 +309,9 @@
   }
 
   function syncGaps() {
-    var storeOk = city === "vancouver" && store === "circle-k";
+    var storeOk = city === "vancouver" && store === "circle-k" && anyCategory();
     Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps span"), function (item) {
-      var catOk = !anyCategory() || !!catOn[item.getAttribute("data-cat")];
+      var catOk = !!catOn[item.getAttribute("data-cat")];
       item.hidden = !(storeOk && catOk);
     });
   }
@@ -262,12 +341,14 @@
   }
 
   function selectAllCategories() {
-    Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
-      catOn[button.getAttribute("data-csc-category")] = true;
+    cityCategories().forEach(function (name) {
+      catOn[name] = true;
     });
   }
 
   function apply(animate) {
+    ensureLists();
+    setPressed("[data-csc-store]", "data-csc-store", store);
     syncPlaceholders();
     syncCategories();
     syncGaps();
@@ -866,15 +947,22 @@
     });
   });
 
-  Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
-    button.addEventListener("click", function () {
+  var storeGroup = document.querySelector(".csc-stores");
+  if (storeGroup) {
+    storeGroup.addEventListener("click", function (e) {
+      var button = e.target;
+      while (button && button !== storeGroup) {
+        if (button.getAttribute && button.getAttribute("data-csc-store")) break;
+        button = button.parentNode;
+      }
+      if (!button || button === storeGroup) return;
       clearPageColour();
       store = button.getAttribute("data-csc-store");
       if (store === "circle-k") selectAllCategories();
       setPressed("[data-csc-store]", "data-csc-store", store);
       apply(true);
     });
-  });
+  }
 
   var facetHost = document.querySelector(".csc-facets");
   if (facetHost) {
