@@ -1,8 +1,7 @@
 /* Store and category filters. */
 (function () {
   var store = "circle-k";
-  var storePicked = false;
-  var picked = { candy: false, chips: false, drinks: false };
+  var catOn = {};
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
   var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -17,7 +16,6 @@
   var AG_SPEED_MAX = 58;
   var mode = "row";
   var showSec = false;
-  var showTer = false;
   var packFilter = "";
   var typeFilter = "";
   var COL_KEY = "cscZoomCols";
@@ -42,7 +40,6 @@
   function addOrbits(dot) {
     var specs = [];
     if (dot.getAttribute("data-sec")) specs.push(["csc-orbit csc-orbit-2", "csc-moon csc-moon-2", 18]);
-    if (dot.getAttribute("data-ter")) specs.push(["csc-orbit csc-orbit-3", "csc-moon csc-moon-3", 27]);
     specs.forEach(function (spec) {
       var orbit = document.createElement("span");
       orbit.className = spec[0];
@@ -100,9 +97,11 @@
   });
   board.style.setProperty("--csc-shelf-cols", String(shelfCols || 1));
   buildFacets();
+  buildCategories();
 
-  function anyCat() {
-    return picked.candy || picked.chips || picked.drinks;
+  function anyCategory() {
+    for (var key in catOn) if (catOn[key]) return true;
+    return false;
   }
 
   function putHome(item) {
@@ -112,8 +111,8 @@
 
   function wants(item) {
     var storeOk = store === "all" || item.getAttribute("data-store") === store;
-    var name = item.getAttribute("data-cat");
-    if (!(storeOk && (!anyCat() || !!picked[name]))) return false;
+    if (!storeOk) return false;
+    if (anyCategory() && !catOn[item.getAttribute("data-category")]) return false;
     if (item.getAttribute("data-store") !== "circle-k") return true;
     if (packFilter && item.getAttribute("data-packaging") !== packFilter) return false;
     if (typeFilter && item.getAttribute("data-cat") !== typeFilter) return false;
@@ -156,6 +155,40 @@
     syncFacets();
   }
 
+  function syncCategories() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
+      var on = !!catOn[button.getAttribute("data-csc-category")];
+      button.classList.toggle("csc-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function buildCategories() {
+    if (!cats) return;
+    var seen = [];
+    Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
+      var value = item.getAttribute("data-category");
+      if (!value || seen.indexOf(value) !== -1) return;
+      seen.push(value);
+    });
+    var lead = "Chocolate Candy";
+    var ordered = [];
+    if (seen.indexOf(lead) !== -1) ordered.push(lead);
+    seen.forEach(function (value) {
+      if (value !== lead) ordered.push(value);
+    });
+    ordered.forEach(function (value) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "csc-opt";
+      button.setAttribute("data-csc-category", value);
+      button.setAttribute("aria-pressed", "false");
+      button.textContent = value;
+      cats.appendChild(button);
+    });
+    syncCategories();
+  }
+
   function clearMove(item) {
     if (!item.getAnimations) return;
     item.getAnimations().forEach(function (anim) {
@@ -190,14 +223,6 @@
         block.hidden = true;
         if (heading) heading.hidden = false;
       }
-    });
-  }
-
-  function syncCats() {
-    Array.prototype.forEach.call(document.querySelectorAll("[data-csc-cat]"), function (button) {
-      var on = !!picked[button.getAttribute("data-csc-cat")];
-      button.classList.toggle("csc-on", on);
-      button.setAttribute("aria-pressed", on ? "true" : "false");
     });
   }
 
@@ -239,7 +264,6 @@
       }
     });
     finishBlocks();
-    if (cats) cats.hidden = !storePicked || !cats.querySelector("[data-csc-cat]");
     if (reduce) return;
 
     plan.forEach(function (entry) {
@@ -431,14 +455,14 @@
     document.body.classList.toggle("csc-ag-over", agOn);
     var rowOn = !agOn && mode === "row";
     var shelfOn = !agOn && mode === "shelf";
-    var row = document.querySelector(".csc-row");
+    var row = document.querySelector(".csc-irow");
     if (row) {
-      row.classList.toggle("csc-row-on", rowOn);
+      row.classList.toggle("csc-irow-on", rowOn);
       row.setAttribute("aria-pressed", rowOn ? "true" : "false");
     }
-    var shelf = document.querySelector(".csc-shelf");
+    var shelf = document.querySelector(".csc-ishelf");
     if (shelf) {
-      shelf.classList.toggle("csc-shelf-on", shelfOn);
+      shelf.classList.toggle("csc-ishelf-on", shelfOn);
       shelf.setAttribute("aria-pressed", shelfOn ? "true" : "false");
     }
     board.classList.toggle("csc-mode-shelf", shelfOn);
@@ -446,16 +470,10 @@
 
   function syncMoons() {
     board.classList.toggle("csc-show-2", showSec);
-    board.classList.toggle("csc-show-3", showTer);
     var sec = document.querySelector("[data-csc-moon='2']");
-    var ter = document.querySelector("[data-csc-moon='3']");
     if (sec) {
       sec.classList.toggle("csc-on", showSec);
       sec.setAttribute("aria-pressed", showSec ? "true" : "false");
-    }
-    if (ter) {
-      ter.classList.toggle("csc-on", showTer);
-      ter.setAttribute("aria-pressed", showTer ? "true" : "false");
     }
   }
 
@@ -713,7 +731,6 @@
       }
       if (!show) item.hidden = true;
     });
-    if (cats) cats.hidden = !storePicked || !cats.querySelector("[data-csc-cat]");
   }
 
   function shuffleOrder() {
@@ -792,7 +809,6 @@
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
     button.addEventListener("click", function () {
       store = button.getAttribute("data-csc-store");
-      storePicked = true;
       setPressed("[data-csc-store]", "data-csc-store", store);
       apply(true);
     });
@@ -816,23 +832,29 @@
     });
   }
 
-  Array.prototype.forEach.call(document.querySelectorAll("[data-csc-cat]"), function (button) {
-    button.addEventListener("click", function () {
-      var name = button.getAttribute("data-csc-cat");
-      picked[name] = !picked[name];
-      syncCats();
+  if (cats) {
+    cats.addEventListener("click", function (e) {
+      var button = e.target;
+      while (button && button !== cats) {
+        if (button.getAttribute && button.getAttribute("data-csc-category")) break;
+        button = button.parentNode;
+      }
+      if (!button || button === cats) return;
+      var name = button.getAttribute("data-csc-category");
+      catOn[name] = !catOn[name];
+      syncCategories();
       apply(true);
     });
-  });
+  }
 
-  var rowButton = document.querySelector(".csc-row");
+  var rowButton = document.querySelector(".csc-irow");
   if (rowButton) {
     rowButton.addEventListener("click", function () {
       goMode("row");
     });
   }
 
-  var shelfButton = document.querySelector(".csc-shelf");
+  var shelfButton = document.querySelector(".csc-ishelf");
   if (shelfButton) {
     shelfButton.addEventListener("click", function () {
       goMode("shelf");
@@ -856,9 +878,7 @@
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-csc-moon]"), function (button) {
     button.addEventListener("click", function () {
-      var which = button.getAttribute("data-csc-moon");
-      if (which === "2") showSec = !showSec;
-      else if (which === "3") showTer = !showTer;
+      if (button.getAttribute("data-csc-moon") === "2") showSec = !showSec;
       syncMoons();
     });
   });
