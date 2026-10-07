@@ -583,155 +583,115 @@
         failIfMajorPerformanceCaveat: false
       });
       ccBasemap = map;
+      function place() {
+        if (el._ccToken !== token) return;
+        projectStreetDots(field);
+      }
       map.on("load", function () {
         if (el._ccToken !== token) return;
         map.resize();
         map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
+        place();
       });
+      map.on("move", place);
+      map.on("resize", place);
     });
   }
 
-  /* Street paths, viewBox 0 0 120 100, north up. Shore lines are not streets. */
-  var MAP_VB_W = 120;
-  var MAP_VB_H = 100;
-  var MAP_PATHS = [
-    { shore: true, pts: [[8, 5], [28, 7], [52, 3], [78, 6], [104, 8], [118, 6]] },
-    { shore: true, pts: [[30, 9], [20, 13], [15, 22], [17, 32], [26, 38], [36, 36], [41, 26], [39, 16], [30, 9]] },
-    { shore: true, pts: [[41, 16], [54, 12], [72, 14], [92, 18], [112, 24]] },
-    { shore: true, pts: [[17, 34], [10, 42], [8, 54], [10, 70], [14, 86], [22, 98]] },
-    { shore: true, pts: [[18, 50], [28, 44], [40, 46], [52, 41], [64, 39], [73, 46], [74, 54], [66, 58], [52, 56], [36, 58], [24, 55], [18, 50]] },
-    { shore: true, pts: [[22, 98], [46, 95], [74, 99], [100, 96], [118, 98]] },
-    { pts: [[31, 18], [40, 32]] },
-    { pts: [[42, 18], [66, 36]] },
-    { pts: [[44, 26], [58, 38]] },
-    { pts: [[42, 34], [50, 40]] },
-    { pts: [[46, 15], [70, 32]] },
-    { pts: [[60, 13], [46, 42], [40, 56]] },
-    { pts: [[54, 16], [44, 36]] },
-    { pts: [[66, 17], [54, 40], [50, 56], [46, 96]] },
-    { pts: [[72, 22], [66, 38], [64, 56], [64, 96]] },
-    { pts: [[68, 32], [110, 30]] },
-    { pts: [[12, 60], [38, 60]] },
-    { pts: [[12, 68], [112, 68]] },
-    { pts: [[14, 78], [110, 78]] },
-    { pts: [[16, 88], [112, 88]] },
-    { pts: [[24, 96], [108, 96]] },
-    { pts: [[20, 58], [20, 96]] },
-    { pts: [[32, 60], [32, 96]] },
-    { pts: [[56, 58], [56, 96]] },
-    { pts: [[80, 34], [80, 98]] },
-    { pts: [[94, 28], [94, 78]] },
-    { pts: [[106, 26], [106, 96]] },
-    { pts: [[76, 50], [112, 48]] }
+  /* Approximate Vancouver arterials, [lng, lat]. Mock positions on real streets. */
+  var STREET_LL = [
+    [[-123.1855, 49.220], [-123.1855, 49.270]],
+    [[-123.1680, 49.218], [-123.1680, 49.270]],
+    [[-123.1525, 49.214], [-123.1525, 49.268]],
+    [[-123.1386, 49.210], [-123.1386, 49.268]],
+    [[-123.1275, 49.210], [-123.1275, 49.268]],
+    [[-123.1148, 49.210], [-123.1148, 49.272]],
+    [[-123.1005, 49.210], [-123.1005, 49.282]],
+    [[-123.0900, 49.210], [-123.0900, 49.270]],
+    [[-123.0765, 49.210], [-123.0765, 49.270]],
+    [[-123.0693, 49.210], [-123.0693, 49.276]],
+    [[-123.0560, 49.210], [-123.0560, 49.268]],
+    [[-123.0450, 49.210], [-123.0450, 49.268]],
+    [[-123.205, 49.2680], [-123.140, 49.2680]],
+    [[-123.205, 49.2634], [-123.045, 49.2634]],
+    [[-123.200, 49.2570], [-123.070, 49.2570]],
+    [[-123.195, 49.2493], [-123.055, 49.2493]],
+    [[-123.190, 49.2415], [-123.050, 49.2415]],
+    [[-123.195, 49.2340], [-123.040, 49.2340]],
+    [[-123.185, 49.2262], [-123.040, 49.2262]],
+    [[-123.150, 49.2120], [-123.070, 49.2120]],
+    [[-123.1430, 49.285], [-123.1430, 49.291]],
+    [[-123.1290, 49.274], [-123.1290, 49.288]],
+    [[-123.138, 49.2795], [-123.115, 49.2795]],
+    [[-123.133, 49.2755], [-123.120, 49.2755]],
+    [[-123.120, 49.2816], [-123.050, 49.2816]]
   ];
 
-  function mapStreetSegments(width, height) {
+  function streetLngLats(count) {
     var segs = [];
-    MAP_PATHS.forEach(function (path) {
-      if (path.shore) return;
-      var pts = path.pts;
+    var total = 0;
+    var cos = Math.cos(49.26 * Math.PI / 180);
+    STREET_LL.forEach(function (line) {
       var i;
-      for (i = 1; i < pts.length; i++) {
-        var x1 = (pts[i - 1][0] / MAP_VB_W) * width;
-        var y1 = (pts[i - 1][1] / MAP_VB_H) * height;
-        var x2 = (pts[i][0] / MAP_VB_W) * width;
-        var y2 = (pts[i][1] / MAP_VB_H) * height;
-        var len = Math.hypot(x2 - x1, y2 - y1);
-        if (len < 1) continue;
-        segs.push({ x1: x1, y1: y1, x2: x2, y2: y2, len: len });
+      for (i = 1; i < line.length; i++) {
+        var a = line[i - 1];
+        var b = line[i];
+        var len = Math.hypot((b[0] - a[0]) * cos, b[1] - a[1]);
+        if (len < 1e-6) continue;
+        segs.push({ a: a, b: b, len: len });
+        total += len;
       }
     });
-    return segs;
-  }
-
-  /* Even gaps along the streets. A larger dot uses more of the line
-     so the circles still do not overlap. */
-  function evenStreetPoints(segs, count, size) {
     var pts = [];
-    if (!count || !segs.length) return pts;
-    var pitch = Math.max(1, size);
-    var segIndex = 0;
-    var dist = Math.min(pitch * 0.5, segs[0].len);
-    var guard = 0;
-
-    function pointOn(seg, d) {
-      var u = seg.len ? d / seg.len : 0;
-      return {
-        x: seg.x1 + (seg.x2 - seg.x1) * u,
-        y: seg.y1 + (seg.y2 - seg.y1) * u
-      };
-    }
-
-    function tooClose(p) {
-      var i;
-      var limit = pitch * pitch - 0.25;
-      for (i = 0; i < pts.length; i++) {
-        var dx = p.x - pts[i].x;
-        var dy = p.y - pts[i].y;
-        if (dx * dx + dy * dy < limit) return true;
-      }
-      return false;
-    }
-
-    while (pts.length < count && segIndex < segs.length && guard < 100000) {
-      guard += 1;
-      var seg = segs[segIndex];
-      if (dist > seg.len) {
-        dist -= seg.len;
-        segIndex += 1;
-        continue;
-      }
-      var p = pointOn(seg, dist);
-      if (tooClose(p)) {
-        dist += Math.max(1, pitch * 0.25);
-        continue;
-      }
-      pts.push(p);
-      dist += pitch;
-    }
-
-    if (pts.length >= count) return pts;
-
-    var total = 0;
-    var i;
-    for (i = 0; i < segs.length; i++) total += segs[i].len;
+    if (!count || !total) return pts;
     var step = total / count;
-    pts = [];
     var walk = step * 0.5;
     var acc = 0;
-    segIndex = 0;
-    while (pts.length < count && segIndex < segs.length) {
-      var seg2 = segs[segIndex];
-      if (acc + seg2.len < walk) {
-        acc += seg2.len;
-        segIndex += 1;
+    var si = 0;
+    while (pts.length < count && si < segs.length) {
+      var seg = segs[si];
+      if (acc + seg.len < walk) {
+        acc += seg.len;
+        si += 1;
         continue;
       }
-      pts.push(pointOn(seg2, walk - acc));
+      var u = (walk - acc) / seg.len;
+      pts.push([
+        seg.a[0] + (seg.b[0] - seg.a[0]) * u,
+        seg.a[1] + (seg.b[1] - seg.a[1]) * u
+      ]);
       walk += step;
     }
     return pts;
   }
 
-  function positionMapDots(field) {
-    var width = field.clientWidth || Math.max(280, stage.clientWidth);
-    var height = field.clientHeight || parseFloat(field.style.height) || 640;
-    var size = dotPx();
-    var segs = mapStreetSegments(width, height);
+  function assignStreetDots(field) {
     var dots = field.querySelectorAll(".cc-dot");
-    var pts = evenStreetPoints(segs, dots.length, size);
+    var pts = streetLngLats(dots.length);
     Array.prototype.forEach.call(dots, function (el, i) {
-      var p = pts[i];
-      if (!p) return;
+      if (!pts[i]) return;
+      el.dataset.lng = String(pts[i][0]);
+      el.dataset.lat = String(pts[i][1]);
+      el.style.visibility = "hidden";
+    });
+  }
+
+  function projectStreetDots(field) {
+    if (!ccBasemap || !field) return;
+    var size = dotPx();
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      if (!el.dataset.lng) return;
+      var p = ccBasemap.project([+el.dataset.lng, +el.dataset.lat]);
       el.style.left = (p.x - size / 2).toFixed(1) + "px";
       el.style.top = (p.y - size / 2).toFixed(1) + "px";
+      el.style.visibility = "visible";
     });
   }
 
   function renderMap() {
     clear(stage);
     var width = Math.max(280, stage.clientWidth);
-    var height = Math.max(640, Math.round(width * MAP_VB_H / MAP_VB_W));
+    var height = Math.max(640, Math.round(width * 100 / 120));
     var field = document.createElement("div");
     field.className = "cc-map";
     field.style.height = height + "px";
@@ -744,8 +704,8 @@
       field.appendChild(dot(car));
     });
     stage.appendChild(field);
+    assignStreetDots(field);
     mountBasemap(field);
-    positionMapDots(field);
   }
 
 
@@ -1095,13 +1055,6 @@
     if (agOn) {
       if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
       return;
-    }
-    if (mode === "map") {
-      var mapField = stage.querySelector(".cc-map");
-      if (mapField) {
-        positionMapDots(mapField);
-        return;
-      }
     }
     if (stage.querySelector(".cc-dot")) {
       if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
