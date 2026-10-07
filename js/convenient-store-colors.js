@@ -1,5 +1,9 @@
-/* Store and category filters. */
+/* Store and category filters.
+   Secondary colours switch: SECONDARY_COLOURS.
+   Set it to true to show the "2" button and the orbiting moons again.
+   The orbit sizes in this file and in convenient-store-colors.css stay as they are. */
 (function () {
+  var SECONDARY_COLOURS = false;
   var store = "circle-k";
   var catOn = {};
   var cats = document.querySelector(".csc-cats");
@@ -17,15 +21,15 @@
   var mode = "row";
   var showSec = false;
   var packFilter = "";
-  var COL_KEY = "cscZoomCols";
+  var COL_KEY = "cscDotSize";
   var SIZE_MIN = 6;
   var SIZE_MAX = 20;
-  var SIZE_DEF = 6;
   var SIZE_BIG = 40;
   var SIZE_SMALL = 14;
   var SIZE_PHONE_SMALL = 22;
-  var SIZE_HYST = 0.72;
-  var sizeN = SIZE_DEF;
+  /* Right end of the slider. Past the fixed 40px slot plus the 14px gap, so neighbours overlap. */
+  var SIZE_LARGE = 76;
+  var sizeN = SIZE_MIN;
   var draggingSlider = false;
   var zVal = null;
   var phone = false;
@@ -469,10 +473,12 @@
   }
 
   function syncMoons() {
-    board.classList.toggle("csc-show-2", showSec);
+    if (!SECONDARY_COLOURS) showSec = false;
+    board.classList.toggle("csc-show-2", SECONDARY_COLOURS && showSec);
     var sec = document.querySelector("[data-csc-moon='2']");
     if (sec) {
-      sec.classList.toggle("csc-on", showSec);
+      sec.hidden = !SECONDARY_COLOURS;
+      sec.classList.toggle("csc-on", SECONDARY_COLOURS && showSec);
       sec.setAttribute("aria-pressed", showSec ? "true" : "false");
     }
   }
@@ -579,9 +585,12 @@
     });
     if (!items.length) return;
     var origin = board.getBoundingClientRect();
+    var px = dotPx();
     var seeds = items.map(function (el) {
       var r = el.getBoundingClientRect();
-      return { el: el, x: r.left - origin.left, y: r.top - origin.top, w: r.width || 40, h: r.height || 40 };
+      var cx = r.left + r.width / 2 - origin.left;
+      var cy = r.top + r.height / 2 - origin.top;
+      return { el: el, x: cx - px / 2, y: cy - px / 2, w: px, h: px };
     });
     var field = document.createElement("div");
     field.className = "csc-ag-field";
@@ -622,6 +631,7 @@
     fadeAgShadow(field);
     agBodies = bodies;
     agOn = true;
+    applyMetrics();
     agRunning = true;
     agLastTs = 0;
     syncAgButton();
@@ -639,6 +649,7 @@
     });
     stopAg();
     agOn = false;
+    applyMetrics();
     syncAgButton();
     agBodies.forEach(function (b) {
       clearMove(b.el);
@@ -892,19 +903,19 @@
 
   function clampSlider(n) {
     var ends = sliderEnds();
-    n = Math.round(+n);
-    if (n < ends.min) return ends.min;
+    n = +n;
+    if (!(n >= ends.min)) return ends.min;
     if (n > ends.max) return ends.max;
     return n;
   }
 
   function storedCols() {
-    var n = SIZE_DEF;
+    var n = NaN;
     try {
-      n = parseInt(localStorage.getItem(COL_KEY), 10);
+      n = parseFloat(localStorage.getItem(COL_KEY));
     } catch (e) {}
-    n = Math.round(+n);
-    return n >= SIZE_MIN && n <= SIZE_MAX ? n : SIZE_DEF;
+    var ends = sliderEnds();
+    return n >= ends.min && n <= ends.max ? n : nForRest();
   }
 
   function saveCols(n) {
@@ -913,22 +924,35 @@
     } catch (e) {}
   }
 
+  function sizeSmall() {
+    return phoneSlider() ? SIZE_PHONE_SMALL : SIZE_SMALL;
+  }
+
+  /* Slider position whose dots match the fixed slot, so the page opens as it does now. */
+  function nForRest() {
+    var ends = sliderEnds();
+    var small = sizeSmall();
+    var t = (SIZE_BIG - small) / (SIZE_LARGE - small);
+    return ends.min + t * (ends.max - ends.min);
+  }
+
   function dotPx() {
     var ends = sliderEnds();
     var t = (sizeN - ends.min) / (ends.max - ends.min);
     if (t < 0) t = 0;
     if (t > 1) t = 1;
-    var small = phoneSlider() ? SIZE_PHONE_SMALL : SIZE_SMALL;
-    return Math.round(SIZE_BIG + (small - SIZE_BIG) * t);
-  }
-
-  function gapPx() {
-    return Math.max(8, Math.round(14 * dotPx() / 40));
+    return sizeSmall() + (SIZE_LARGE - sizeSmall()) * t;
   }
 
   function applyMetrics() {
-    board.style.setProperty("--csc-size", dotPx() + "px");
-    board.style.setProperty("--csc-gap", gapPx() + "px");
+    var px = dotPx();
+    if (agOn) {
+      board.style.setProperty("--csc-size", px + "px");
+      board.style.setProperty("--csc-scale", "1");
+    } else {
+      board.style.setProperty("--csc-size", SIZE_BIG + "px");
+      board.style.setProperty("--csc-scale", (px / SIZE_BIG).toFixed(4));
+    }
   }
 
   function sliderEl() {
@@ -941,18 +965,10 @@
     var ends = sliderEnds();
     s.min = String(ends.min);
     s.max = String(ends.max);
-    s.title = "Size (" + ends.min + " – " + ends.max + ") — left is larger";
+    s.title = "Size (" + ends.min + " – " + ends.max + ") — right is larger";
     if (draggingSlider) return;
     s.style.setProperty("--csc-p", (((v - ends.min) / (ends.max - ends.min)) * 100).toFixed(2) + "%");
     if (+s.value !== v) s.value = String(v);
-  }
-
-  function pickSize(v, current) {
-    var ends = sliderEnds();
-    v = +v;
-    if (!(v >= ends.min)) v = ends.min;
-    if (v > ends.max) v = ends.max;
-    return Math.abs(v - current) < SIZE_HYST ? current : clampSlider(v);
   }
 
   function valueFromClientX(s, clientX) {
@@ -965,7 +981,7 @@
     if (t > 1) t = 1;
     var ends = sliderEnds();
     s.style.setProperty("--csc-p", (t * 100).toFixed(2) + "%");
-    return pickSize(ends.min + t * (ends.max - ends.min), zVal != null ? zVal : sizeN);
+    return clampSlider(ends.min + t * (ends.max - ends.min));
   }
 
   function resizeAg(px) {
@@ -1050,13 +1066,13 @@
       var nowPhone = phoneSlider();
       if (nowPhone !== phone) {
         phone = nowPhone;
-        applySize(nowPhone ? 4 : storedCols());
+        applySize(nowPhone ? nForRest() : storedCols());
       }
     }, 80);
   });
 
   phone = phoneSlider();
-  applySize(phone ? 4 : storedCols());
+  applySize(phone ? nForRest() : storedCols());
   syncMoons();
   apply();
 })();
