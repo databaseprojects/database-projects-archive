@@ -102,7 +102,7 @@ body.cc-under-menu .cc-controls {
   position: sticky;
   top: var(--cc-nav-h, 48px);
   z-index: 40;
-  background: #fff;
+  background: transparent;
 }
 
 body.cc-under-menu .cc-ag-field {
@@ -193,30 +193,6 @@ body.cc-screen .record-name,
 body.cc-screen .cc-controls {
   position: relative;
   z-index: 2;
-}
-
-body.cc-screen .cc-about.cc-open + .cc-controls {
-  background: #fff;
-}
-
-/* A picked page colour stays under the city labels. The slider strip stays white. */
-html.cc-paged .cc-controls,
-html.cc-paged body.cc-under-menu .cc-controls,
-html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls {
-  background: var(--cc-page);
-}
-
-html.cc-paged .cc-zoom,
-html.cc-paged body.cc-under-menu .cc-zoom,
-html.cc-paged body.cc-screen .cc-about.cc-open + .cc-controls .cc-zoom {
-  background: #fff;
-}
-
-/* The spill is the colour for the controls bar and the page together. The slider strip stays white. */
-html.cc-spilling .cc-controls,
-html.cc-spilling body.cc-under-menu .cc-controls,
-html.cc-spilling body.cc-screen .cc-about.cc-open + .cc-controls {
-  background: transparent;
 }
 
 body.cc-under-menu .cc-about.cc-open {

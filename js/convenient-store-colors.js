@@ -913,17 +913,9 @@
   var SPILL_SOLID = 0.15;
 
   function pageBackground(hex) {
-    document.documentElement.classList.remove("csc-spilling");
     var bg = hex || "";
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
-    if (hex) {
-      document.documentElement.style.setProperty("--csc-page", hex);
-      document.documentElement.classList.add("csc-paged");
-    } else {
-      document.documentElement.style.removeProperty("--csc-page");
-      document.documentElement.classList.remove("csc-paged");
-    }
   }
 
   function removeSpills() {
@@ -973,7 +965,6 @@
       pageBackground(hex);
       return;
     }
-    document.documentElement.classList.add("csc-spilling");
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
     var dotR = rect.width / 2;
