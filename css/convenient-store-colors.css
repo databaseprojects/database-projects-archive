@@ -217,7 +217,7 @@ body {
 }
 
 .csc-board.csc-mode-shelf .csc-swatch,
-.csc-board.csc-mode-shelf .csc-gaps li {
+.csc-board.csc-mode-shelf .csc-gaps span {
   grid-row: var(--csc-shelf);
   grid-column: var(--csc-slot);
   width: 100%;
@@ -227,17 +227,14 @@ body {
 
 .csc-gaps {
   display: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .csc-board.csc-mode-shelf .csc-gaps {
   display: contents;
 }
 
-.csc-board.csc-mode-shelf .csc-gaps li {
-  list-style: none;
+.csc-board.csc-mode-shelf .csc-gaps span {
+  display: block;
 }
 
 .csc-board.csc-mode-shelf .csc-dot {
@@ -344,6 +341,24 @@ body {
 }
 
 .csc-show-2 .csc-moon-2 {
+  opacity: 1;
+}
+
+.csc-sec-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 115%;
+  height: 115%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side, transparent 86.96%, var(--csc-sec) 86.96%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.csc-show-2 .csc-sec-ring {
   opacity: 1;
 }
 
@@ -504,7 +519,8 @@ html.csc-sizing .csc-swatch {
     transform: translate(-50%, -50%) rotate(200deg);
   }
 
-  .csc-moon {
+  .csc-moon,
+  .csc-sec-ring {
     transition: none;
   }
 }
