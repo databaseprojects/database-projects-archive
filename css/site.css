@@ -91,28 +91,16 @@ body {
   outline-offset: 2px;
 }
 
-/* Convenient Store Colours and Car Colours: the tag shows the page colour.
-   Pressed is heavier type and a second outline, not a fill. */
-.csc-opt,
-.csc-opt:hover,
-.csc-opt.csc-on,
-.cc-mode,
-.cc-mode:hover,
-.cc-mode.cc-on,
-.cc-city,
-.cc-city:hover,
-.cc-city.cc-on {
+/* Convenient Store Colours and Car Colours: an unselected tag shows the page colour.
+   Pressed keeps the site fill above. */
+.csc-opt:not(.csc-on),
+.csc-opt:hover:not(.csc-on),
+.cc-mode:not(.cc-on),
+.cc-mode:hover:not(.cc-on),
+.cc-city:not(.cc-on),
+.cc-city:hover:not(.cc-on) {
   background: transparent;
   color: #111;
-}
-
-.csc-opt.csc-on,
-.cc-mode.cc-on,
-.cc-city.cc-on {
-  border-color: #000;
-  font-weight: 700;
-  outline: 1px solid #000;
-  outline-offset: 2px;
 }
 
 .sheet {
