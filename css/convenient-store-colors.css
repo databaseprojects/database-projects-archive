@@ -217,7 +217,7 @@ body {
 }
 
 .csc-board.csc-mode-shelf .csc-swatch,
-.csc-board.csc-mode-shelf .csc-gaps li {
+.csc-board.csc-mode-shelf .csc-gaps span {
   grid-row: var(--csc-shelf);
   grid-column: var(--csc-slot);
   width: 100%;
@@ -227,17 +227,14 @@ body {
 
 .csc-gaps {
   display: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .csc-board.csc-mode-shelf .csc-gaps {
   display: contents;
 }
 
-.csc-board.csc-mode-shelf .csc-gaps li {
-  list-style: none;
+.csc-board.csc-mode-shelf .csc-gaps span {
+  display: block;
 }
 
 .csc-board.csc-mode-shelf .csc-dot {

@@ -94,7 +94,7 @@
     svg.appendChild(textEl);
     item.appendChild(svg);
   });
-  Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps li"), function (item) {
+  Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps span"), function (item) {
     var shelf = parseInt(item.getAttribute("data-shelf"), 10);
     var slot = parseInt(item.getAttribute("data-slot"), 10);
     if (shelf > 0) item.style.setProperty("--csc-shelf", String(shelf));
