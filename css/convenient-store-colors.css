@@ -54,6 +54,10 @@ body {
   width: 100%;
 }
 
+.csc-top[hidden] {
+  display: none !important;
+}
+
 .csc-zoom {
   display: inline-flex;
   align-items: center;
@@ -169,8 +173,19 @@ body {
   display: none !important;
 }
 
+.csc-opt.csc-placeholder:not(.csc-on),
+.csc-opt.csc-placeholder:not(.csc-on):hover {
+  color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.2);
+  background: transparent;
+}
+
 .csc-board {
   margin: 0 0 4rem;
+}
+
+.csc-board:not(.csc-live) .csc-block {
+  display: none;
 }
 
 .csc-block {

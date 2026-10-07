@@ -221,24 +221,35 @@ body.cc-under-menu .cc-about.cc-open {
   background: none;
 }
 
-.cc-map-lines {
+.cc-map-tiles {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
+  overflow: hidden;
   pointer-events: none;
-  overflow: visible;
+  background: #e4e2dc;
+  filter: grayscale(0.22) saturate(0.72) brightness(0.92) contrast(1.12);
 }
 
-.cc-map-lines path {
-  fill: none;
-  stroke: rgba(0, 0, 0, 0.38);
-  stroke-width: 1.15;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
+.cc-map-tiles img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+.cc-map-credit {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.3rem;
+  z-index: 2;
+  margin: 0;
+  pointer-events: none;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.45);
 }
 
 .cc-map .cc-dot {
