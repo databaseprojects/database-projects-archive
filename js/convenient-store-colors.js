@@ -17,7 +17,6 @@
   var mode = "row";
   var showSec = false;
   var packFilter = "";
-  var typeFilter = "";
   var COL_KEY = "cscZoomCols";
   var SIZE_MIN = 6;
   var SIZE_MAX = 20;
@@ -112,10 +111,9 @@
   function wants(item) {
     var storeOk = store === "all" || item.getAttribute("data-store") === store;
     if (!storeOk) return false;
-    if (anyCategory() && !catOn[item.getAttribute("data-category")]) return false;
+    if (anyCategory() && !catOn[item.getAttribute("data-cat")]) return false;
     if (item.getAttribute("data-store") !== "circle-k") return true;
     if (packFilter && item.getAttribute("data-packaging") !== packFilter) return false;
-    if (typeFilter && item.getAttribute("data-cat") !== typeFilter) return false;
     return true;
   }
 
@@ -123,7 +121,7 @@
     Array.prototype.forEach.call(document.querySelectorAll(".csc-facets [data-csc-facet]"), function (button) {
       var kind = button.getAttribute("data-csc-facet");
       var value = button.getAttribute("data-csc-value");
-      var on = (kind === "packaging" && packFilter === value) || (kind === "type" && typeFilter === value);
+      var on = kind === "packaging" && packFilter === value;
       button.classList.toggle("csc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
@@ -132,12 +130,12 @@
   function buildFacets() {
     var host = document.querySelector(".csc-facets");
     if (!host) return;
-    ["packaging", "type"].forEach(function (kind) {
+    ["packaging"].forEach(function (kind) {
       var group = host.querySelector('[data-csc-facet-group="' + kind + '"]');
       if (!group) return;
       var seen = [];
       Array.prototype.forEach.call(board.querySelectorAll('.csc-swatch[data-store="circle-k"]'), function (item) {
-        var value = kind === "packaging" ? item.getAttribute("data-packaging") : item.getAttribute("data-cat");
+        var value = item.getAttribute("data-packaging");
         if (!value || seen.indexOf(value) !== -1) return;
         seen.push(value);
       });
@@ -167,17 +165,11 @@
     if (!cats) return;
     var seen = [];
     Array.prototype.forEach.call(board.querySelectorAll(".csc-swatch"), function (item) {
-      var value = item.getAttribute("data-category");
+      var value = item.getAttribute("data-cat");
       if (!value || seen.indexOf(value) !== -1) return;
       seen.push(value);
     });
-    var lead = "Chocolate Candy";
-    var ordered = [];
-    if (seen.indexOf(lead) !== -1) ordered.push(lead);
     seen.forEach(function (value) {
-      if (value !== lead) ordered.push(value);
-    });
-    ordered.forEach(function (value) {
       var button = document.createElement("button");
       button.type = "button";
       button.className = "csc-opt";
@@ -826,7 +818,6 @@
       var kind = button.getAttribute("data-csc-facet");
       var value = button.getAttribute("data-csc-value");
       if (kind === "packaging") packFilter = packFilter === value ? "" : value;
-      else if (kind === "type") typeFilter = typeFilter === value ? "" : value;
       syncFacets();
       apply(true);
     });
