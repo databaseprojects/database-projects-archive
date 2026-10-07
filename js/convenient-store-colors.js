@@ -163,7 +163,7 @@
   }
 
   function syncCategories() {
-    if (cats) cats.hidden = !store;
+    if (cats) cats.hidden = store !== "all" && store !== "circle-k";
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
       var on = !!catOn[button.getAttribute("data-csc-category")];
       button.classList.toggle("csc-on", on);
