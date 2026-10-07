@@ -6,8 +6,8 @@
   var SECONDARY_COLOURS = false;
   /* Packaging tag (Bag). Set to true to show the tag and its filter again. */
   var SHOW_PACKAGING = false;
-  var store = "all";
-  var city = "vancouver";
+  var store = "";
+  var city = "";
   var catOn = {};
   var cats = document.querySelector(".csc-cats");
   var board = document.querySelector(".csc-board");
@@ -113,7 +113,7 @@
 
   function wants(item) {
     if (!store || city !== "vancouver") return false;
-    var storeOk = store === "all" || item.getAttribute("data-store") === store;
+    var storeOk = item.getAttribute("data-store") === store;
     if (!storeOk) return false;
     if (anyCategory() && !catOn[item.getAttribute("data-cat")]) return false;
     if (!SHOW_PACKAGING) return true;
@@ -164,7 +164,7 @@
   }
 
   function syncCategories() {
-    if (cats) cats.hidden = city !== "vancouver" || (store !== "all" && store !== "circle-k");
+    if (cats) cats.hidden = store !== "circle-k";
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
       var on = !!catOn[button.getAttribute("data-csc-category")];
       button.classList.toggle("csc-on", on);
@@ -230,14 +230,45 @@
   }
 
   function syncGaps() {
-    var storeOk = city === "vancouver" && (store === "all" || store === "circle-k");
+    var storeOk = city === "vancouver" && store === "circle-k";
     Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps span"), function (item) {
       var catOk = !anyCategory() || !!catOn[item.getAttribute("data-cat")];
       item.hidden = !(storeOk && catOk);
     });
   }
 
+  function sampleCity(item) {
+    return item.getAttribute("data-city") || "vancouver";
+  }
+
+  function storeHasSamples(storeId) {
+    if (!city) return false;
+    var items = board.querySelectorAll(".csc-swatch");
+    var i;
+    for (i = 0; i < items.length; i++) {
+      if (sampleCity(items[i]) !== city) continue;
+      if (items[i].getAttribute("data-store") === storeId) return true;
+    }
+    return false;
+  }
+
+  function syncPlaceholders() {
+    var top = document.querySelector(".csc-top");
+    if (top) top.hidden = !city;
+    if (board) board.classList.toggle("csc-live", !!city);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
+      button.classList.toggle("csc-placeholder", !storeHasSamples(button.getAttribute("data-csc-store")));
+    });
+  }
+
+  function selectAllCategories() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-csc-category]"), function (button) {
+      catOn[button.getAttribute("data-csc-category")] = true;
+    });
+  }
+
   function apply(animate) {
+    syncPlaceholders();
     syncCategories();
     syncGaps();
     if (agOn) {
@@ -839,6 +870,7 @@
     button.addEventListener("click", function () {
       clearPageColour();
       store = button.getAttribute("data-csc-store");
+      if (store === "circle-k") selectAllCategories();
       setPressed("[data-csc-store]", "data-csc-store", store);
       apply(true);
     });

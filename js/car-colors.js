@@ -110,9 +110,9 @@
 
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll("[data-cc-mode]");
-  var mode = "scatter";
+  var mode = "hue";
   var agOn = false;
-  var agPrev = "scatter";
+  var agPrev = "hue";
   var sizeN = DEF;
   var phone = false;
   var draggingSlider = false;
@@ -518,8 +518,65 @@
     stage.appendChild(view);
   }
 
-  /* Schematic Vancouver, viewBox 0 0 120 100, north up. No names.
-     Shore lines draw the waterfront only. Dots sit on the street paths. */
+  /* Dot positions follow these Vancouver street paths.
+     The picture under them is a muted CARTO Voyager map with no labels. */
+  var MAP_WEST = -123.27;
+  var MAP_EAST = -123.02;
+  var MAP_NORTH = 49.35;
+  var MAP_SOUTH = 49.2;
+
+  function mapTileXY(lon, lat, zoom) {
+    var n = Math.pow(2, zoom);
+    var x = ((lon + 180) / 360) * n;
+    var s = Math.sin(lat * Math.PI / 180);
+    var y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
+    return { x: x, y: y };
+  }
+
+  function vancouverBasemap(width, height) {
+    var zoom = 11;
+    var z;
+    for (z = 11; z <= 16; z++) {
+      var nwTry = mapTileXY(MAP_WEST, MAP_NORTH, z);
+      var seTry = mapTileXY(MAP_EAST, MAP_SOUTH, z);
+      zoom = z;
+      if ((seTry.x - nwTry.x) * 256 >= width && (seTry.y - nwTry.y) * 256 >= height) break;
+    }
+    var nw = mapTileXY(MAP_WEST, MAP_NORTH, zoom);
+    var se = mapTileXY(MAP_EAST, MAP_SOUTH, zoom);
+    var spanW = (se.x - nw.x) * 256;
+    var spanH = (se.y - nw.y) * 256;
+    var scale = Math.max(width / spanW, height / spanH);
+    var tilePx = 256 * scale;
+    var originX = (width - spanW * scale) / 2;
+    var originY = (height - spanH * scale) / 2;
+    var layer = document.createElement("div");
+    layer.className = "cc-map-tiles";
+    layer.setAttribute("aria-hidden", "true");
+    var x0 = Math.floor(nw.x);
+    var y0 = Math.floor(nw.y);
+    var x1 = Math.floor(se.x - 1e-9);
+    var y1 = Math.floor(se.y - 1e-9);
+    var tx;
+    var ty;
+    for (tx = x0; tx <= x1; tx++) {
+      for (ty = y0; ty <= y1; ty++) {
+        var img = document.createElement("img");
+        img.alt = "";
+        img.draggable = false;
+        var sub = "abcd".charAt(Math.abs(tx + ty) % 4);
+        img.src = "https://" + sub + ".basemaps.cartocdn.com/rastertiles/voyager_nolabels/" + zoom + "/" + tx + "/" + ty + "@2x.png";
+        img.style.left = (originX + (tx - nw.x) * tilePx).toFixed(1) + "px";
+        img.style.top = (originY + (ty - nw.y) * tilePx).toFixed(1) + "px";
+        img.style.width = tilePx.toFixed(1) + "px";
+        img.style.height = tilePx.toFixed(1) + "px";
+        layer.appendChild(img);
+      }
+    }
+    return layer;
+  }
+
+  /* Street paths, viewBox 0 0 120 100, north up. Shore lines are not streets. */
   var MAP_VB_W = 120;
   var MAP_VB_H = 100;
   var MAP_PATHS = [
@@ -553,26 +610,6 @@
     { pts: [[76, 50], [112, 48]] }
   ];
 
-  function mapPathD(pts) {
-    return pts.map(function (p, i) {
-      return (i ? "L " : "M ") + p[0] + " " + p[1];
-    }).join(" ");
-  }
-
-  function vancouverMapLines() {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", "cc-map-lines");
-    svg.setAttribute("viewBox", "0 0 " + MAP_VB_W + " " + MAP_VB_H);
-    svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-hidden", "true");
-    MAP_PATHS.forEach(function (path) {
-      var el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      el.setAttribute("d", mapPathD(path.pts));
-      svg.appendChild(el);
-    });
-    return svg;
-  }
-
   function mapStreetSegments(width, height) {
     var segs = [];
     MAP_PATHS.forEach(function (path) {
@@ -599,7 +636,11 @@
     var field = document.createElement("div");
     field.className = "cc-map";
     field.style.height = height + "px";
-    field.appendChild(vancouverMapLines());
+    field.appendChild(vancouverBasemap(width, height));
+    var credit = document.createElement("p");
+    credit.className = "cc-map-credit";
+    credit.textContent = "© OpenStreetMap © CARTO";
+    field.appendChild(credit);
     var size = dotPx();
     var rng = mulberry32(0x5A11);
     var cars = shuffle(carsIn("Vancouver"), rng);
@@ -990,7 +1031,7 @@
     stopAg();
     agOn = false;
     itemDrag = null;
-    mode = next || agPrev || "scatter";
+    mode = next || agPrev || "hue";
     syncButtons();
     render();
     slideInto(before);
