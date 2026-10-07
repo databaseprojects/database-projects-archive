@@ -245,6 +245,22 @@
     return n;
   }
 
+  /* Left is larger. Hue and Scattered open there; Map opens at the small end. */
+  function modeSize(next) {
+    var ends = sliderEnds();
+    if (next === "map") return ends.max;
+    if (next === "hue" || next === "scatter") return ends.min;
+    return null;
+  }
+
+  function useModeSize(next) {
+    var n = modeSize(next);
+    if (n == null) return;
+    sizeN = clampSlider(n);
+    applyMetrics();
+    fillSlider(sizeN);
+  }
+
   function storedCols() {
     var n = DEF;
     try {
@@ -1070,6 +1086,7 @@
       var next = button.getAttribute("data-cc-mode");
       if (next === "map") city = "Vancouver";
       if (agOn) {
+        useModeSize(next);
         leaveAg(next);
         return;
       }
@@ -1077,6 +1094,7 @@
       var before = snapshotDots();
       mode = next;
       syncButtons();
+      useModeSize(next);
       render();
       slideInto(before);
     });
@@ -1089,14 +1107,17 @@
       var name = button.getAttribute("data-cc-city");
       if (agOn) {
         city = name;
+        useModeSize("scatter");
         leaveAg("scatter");
         return;
       }
       if (name === city && mode === "scatter") return;
       var before = snapshotDots();
+      var enteringScatter = mode !== "scatter";
       city = name;
       mode = "scatter";
       syncButtons();
+      if (enteringScatter) useModeSize("scatter");
       render();
       slideInto(before);
     });
@@ -1282,7 +1303,7 @@
   });
 
   phone = phoneSlider();
-  applySize(phone ? 4 : storedCols());
+  applySize(modeSize(mode));
   syncButtons();
 
   var resizeTimer = 0;
