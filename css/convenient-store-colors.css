@@ -216,12 +216,28 @@ body {
   display: none;
 }
 
-.csc-board.csc-mode-shelf .csc-swatch {
+.csc-board.csc-mode-shelf .csc-swatch,
+.csc-board.csc-mode-shelf .csc-gaps li {
   grid-row: var(--csc-shelf);
   grid-column: var(--csc-slot);
   width: 100%;
   min-width: 0;
   aspect-ratio: 1;
+}
+
+.csc-gaps {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csc-board.csc-mode-shelf .csc-gaps {
+  display: contents;
+}
+
+.csc-board.csc-mode-shelf .csc-gaps li {
+  list-style: none;
 }
 
 .csc-board.csc-mode-shelf .csc-dot {
