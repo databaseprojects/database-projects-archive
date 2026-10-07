@@ -94,6 +94,15 @@
     svg.appendChild(textEl);
     item.appendChild(svg);
   });
+  Array.prototype.forEach.call(board.querySelectorAll(".csc-gaps li"), function (item) {
+    var shelf = parseInt(item.getAttribute("data-shelf"), 10);
+    var slot = parseInt(item.getAttribute("data-slot"), 10);
+    if (shelf > 0) item.style.setProperty("--csc-shelf", String(shelf));
+    if (slot > 0) {
+      item.style.setProperty("--csc-slot", String(slot));
+      if (slot > shelfCols) shelfCols = slot;
+    }
+  });
   board.style.setProperty("--csc-shelf-cols", String(shelfCols || 1));
   buildFacets();
   buildCategories();
