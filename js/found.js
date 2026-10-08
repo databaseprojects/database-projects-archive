@@ -2518,16 +2518,32 @@
     return tw / ar;
   }
 
+  function clusterSpec(tile, tw) {
+    var h = tileSpan(tile, tw);
+    var rot = parseFloat(tile.style.getPropertyValue("--fp-rot")) || 0;
+    var sc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
+    if (!(sc > 0)) sc = 1;
+    var rad = Math.abs(rot) * Math.PI / 180;
+    var c = Math.abs(Math.cos(rad));
+    var s = Math.abs(Math.sin(rad));
+    var boxW = (tw * c + h * s) * sc;
+    var boxH = (tw * s + h * c) * sc;
+    return {
+      tile: tile,
+      h: h,
+      padX: Math.max(0, (boxW - tw) / 2),
+      padY: Math.max(0, (boxH - h) / 2)
+    };
+  }
+
   function placeCluster() {
     var g = document.querySelector(".fp-grid");
     if (!g) return;
     var keep = allTiles().filter(tileOk);
-    keep.sort(function (a, b) {
-      return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
-    });
     if (!keep.length) return;
     var tw = 0;
     var i;
+    var j;
     for (i = 0; i < keep.length; i++) {
       if (!keep[i].hidden && keep[i].offsetWidth > 20) {
         tw = keep[i].offsetWidth;
@@ -2536,54 +2552,124 @@
     }
     if (!(tw > 0)) tw = parseFloat(g.style.getPropertyValue("--fp-tile-w")) || 160;
     var gr = g.getBoundingClientRect();
-    var viewTop = Math.max(gr.top, 0);
-    var viewBottom = Math.min(gr.bottom, window.innerHeight);
-    if (!(viewBottom > viewTop)) {
-      viewTop = gr.top;
-      viewBottom = gr.bottom;
-    }
-    var cx = window.innerWidth / 2 - gr.left;
-    var cy = (viewTop + viewBottom) / 2 - gr.top;
+    var margin = 8;
+    var viewW = document.documentElement.clientWidth || window.innerWidth;
+    var viewLeft = margin - gr.left;
+    var viewRight = viewW - margin - gr.left;
+    var viewTop = margin - gr.top;
+    var viewBottom = window.innerHeight - margin - gr.top;
     var n = keep.length;
-    var cols = Math.max(1, Math.ceil(Math.sqrt(n)));
-    var rows = Math.ceil(n / cols);
-    var gap = 12;
-    var heights = keep.map(function (tile) { return tileSpan(tile, tw); });
-    var rowH = [];
-    var r;
-    var c;
-    for (r = 0; r < rows; r++) {
-      var rh = 0;
-      for (c = 0; c < cols; c++) {
-        i = r * cols + c;
-        if (i < n && heights[i] > rh) rh = heights[i];
-      }
-      rowH.push(rh);
+    var specs = [];
+    var widest = 0;
+    for (i = 0; i < n; i++) {
+      specs.push(clusterSpec(keep[i], tw));
+      var need = tw + specs[i].padX * 2;
+      if (need > widest) widest = need;
     }
-    var totalH = gap * Math.max(0, rows - 1);
-    for (r = 0; r < rows; r++) totalH += rowH[r];
-    var cursorY = cy - totalH / 2;
-    var minY = Math.max(0, -gr.top);
-    var maxY = minY + window.innerHeight - totalH;
-    if (maxY < minY) maxY = minY;
-    if (cursorY < minY) cursorY = minY;
-    else if (cursorY > maxY) cursorY = maxY;
-    var gw = g.clientWidth || tw;
-    for (r = 0; r < rows; r++) {
-      var count = Math.min(cols, n - r * cols);
-      var rowW = count * tw + gap * (count - 1);
-      var cursorX = cx - rowW / 2;
-      if (cursorX < 8) cursorX = 8;
-      if (cursorX + rowW > gw - 8) cursorX = Math.max(8, gw - 8 - rowW);
-      for (c = 0; c < count; c++) {
-        i = r * cols + c;
-        var ny = cursorY + (rowH[r] - heights[i]) / 2;
-        keep[i].style.setProperty("--fp-nx", cursorX.toFixed(1) + "px");
-        keep[i].style.setProperty("--fp-ny", ny.toFixed(1) + "px");
-        keep[i].style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
-        cursorX += tw + gap;
+    var availW = viewRight - viewLeft - 4;
+    if (widest > availW && widest > 0) {
+      tw = Math.max(48, tw * (availW / widest));
+      specs = [];
+      for (i = 0; i < n; i++) specs.push(clusterSpec(keep[i], tw));
+    }
+    var avgW = tw;
+    var avgH = 0;
+    for (i = 0; i < n; i++) avgH += specs[i].h;
+    avgH /= n;
+    var cx = (viewLeft + viewRight) / 2;
+    var cy = (viewTop + viewBottom) / 2;
+    var spacing = avgW * (0.8 + Math.random() * 0.1);
+    var radius = n === 1 ? 0 : spacing * Math.sqrt(n / Math.PI) * 1.05;
+    var pts = [];
+    var overlap = [];
+    for (i = 0; i < n; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var dist = Math.sqrt(Math.random()) * radius;
+      pts.push({
+        x: Math.cos(ang) * dist,
+        y: Math.sin(ang) * dist * (avgH / Math.max(avgW, 1))
+      });
+      overlap.push(0.8 + Math.random() * 0.1);
+    }
+    var pass;
+    for (pass = 0; pass < 6; pass++) {
+      for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+          var dx = pts[j].x - pts[i].x;
+          var dy = pts[j].y - pts[i].y;
+          var d = Math.hypot(dx, dy);
+          if (d < 0.01) {
+            dx = Math.random() - 0.5;
+            dy = Math.random() - 0.5;
+            d = Math.hypot(dx, dy) || 0.01;
+          }
+          var want = avgW * ((overlap[i] + overlap[j]) / 2);
+          if (d >= want) continue;
+          var push = (want - d) * 0.22;
+          var ux = dx / d;
+          var uy = dy / d;
+          pts[i].x -= ux * push;
+          pts[i].y -= uy * push;
+          pts[j].x += ux * push;
+          pts[j].y += uy * push;
+        }
       }
-      cursorY += rowH[r] + gap;
+    }
+    for (i = 0; i < n; i++) {
+      pts[i].x += (Math.random() - 0.5) * avgW * 0.16;
+      pts[i].y += (Math.random() - 0.5) * avgH * 0.16;
+    }
+    var mx = 0;
+    var my = 0;
+    for (i = 0; i < n; i++) {
+      mx += pts[i].x;
+      my += pts[i].y;
+    }
+    mx /= n;
+    my /= n;
+    var fit = 1;
+    for (i = 0; i < n; i++) {
+      var spec = specs[i];
+      var dxp = pts[i].x - mx;
+      var dyp = pts[i].y - my;
+      var lo = viewLeft + 2 + spec.padX;
+      var hi = viewRight - 2 - spec.padX - tw;
+      var top = viewTop + 2 + spec.padY;
+      var bot = viewBottom - 2 - spec.padY - spec.h;
+      if (hi < lo) hi = lo;
+      if (bot < top) bot = top;
+      var limL = lo - (cx - tw / 2);
+      var limR = hi - (cx - tw / 2);
+      var limT = top - (cy - spec.h / 2);
+      var limB = bot - (cy - spec.h / 2);
+      if (dxp > 0.5 && limR > 0) fit = Math.min(fit, limR / dxp);
+      else if (dxp < -0.5 && limL < 0) fit = Math.min(fit, limL / dxp);
+      if (dyp > 0.5 && limB > 0) fit = Math.min(fit, limB / dyp);
+      else if (dyp < -0.5 && limT < 0) fit = Math.min(fit, limT / dyp);
+    }
+    if (!(fit > 0)) fit = 0;
+    else if (fit > 1) fit = 1;
+    for (i = 0; i < n; i++) {
+      var spec2 = specs[i];
+      var nx = cx + (pts[i].x - mx) * fit - tw / 2;
+      var ny = cy + (pts[i].y - my) * fit - spec2.h / 2;
+      var lo2 = viewLeft + 2 + spec2.padX;
+      var hi2 = viewRight - 2 - spec2.padX - tw;
+      var top2 = viewTop + 2 + spec2.padY;
+      var bot2 = viewBottom - 2 - spec2.padY - spec2.h;
+      if (!(hi2 > lo2)) nx = Math.max(0, (viewLeft + viewRight - tw) / 2);
+      else {
+        if (nx < lo2) nx = lo2;
+        if (nx > hi2) nx = hi2;
+      }
+      if (!(bot2 > top2)) ny = Math.max(0, (viewTop + viewBottom - spec2.h) / 2);
+      else {
+        if (ny < top2) ny = top2;
+        if (ny > bot2) ny = bot2;
+      }
+      spec2.tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
+      spec2.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
+      spec2.tile.style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
     }
   }
 
@@ -2704,14 +2790,6 @@
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
-    var clear = document.createElement("button");
-    clear.type = "button";
-    clear.className = "fp-tag";
-    clear.setAttribute("data-fp-clear", "");
-    clear.setAttribute("aria-pressed", "false");
-    clear.hidden = true;
-    clear.textContent = "Clear";
-    bar.appendChild(clear);
     var seen = {};
     (featured || []).forEach(function (tag) {
       if (!tag || seen[tag]) return;

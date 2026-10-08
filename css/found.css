@@ -8,8 +8,8 @@ body.fp-under-menu .bk-nav {
 }
 
 body.fp-under-menu .fp-bar {
-  position: sticky;
-  top: var(--fp-nav-h, 48px);
+  position: relative;
+  top: auto;
   z-index: 40;
   background: #fff;
 }
