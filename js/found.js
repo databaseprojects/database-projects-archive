@@ -632,8 +632,13 @@
 
   function applyScatter(g, force, resetSpread) {
     if (!g) return;
+    var filtering = document.documentElement.hasAttribute("data-fp-filter");
+    if (filtering && !force && !resetSpread) {
+      if (window.fpTagLayout) window.fpTagLayout();
+      return;
+    }
     var map = force || resetSpread ? {} : loadPos();
-    if (force || resetSpread) {
+    if ((force || resetSpread) && !filtering) {
       try {
         localStorage.removeItem(POS_KEY);
       } catch (e) {}
@@ -723,7 +728,8 @@
       tile.style.setProperty("--fp-ty", "0px");
     });
     zTop += 1;
-    if (!force && map) savePos(map);
+    if (!force && map && !document.documentElement.hasAttribute("data-fp-filter")) savePos(map);
+    if (document.documentElement.hasAttribute("data-fp-filter") && window.fpTagLayout) window.fpTagLayout();
   }
 
   function persist(tile) {
@@ -1479,6 +1485,7 @@
         }
       }
       syncLayoutButtons();
+      if (window.fpTagLayout) window.fpTagLayout();
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
@@ -2417,11 +2424,257 @@
     if (!c) return;
     var all = allTiles();
     var shown = 0;
-    all.forEach(function (tile) { if (!tile.hidden) shown++; });
+    all.forEach(function (tile) {
+      if (!tile.hidden && !tile.classList.contains("fp-tag-leave")) shown++;
+    });
     c.textContent = shown + " of " + all.length;
   }
 
   var picked = [];
+  var tableHome = null;
+  var TAG_EASE = "cubic-bezier(.22,.8,.25,1)";
+  var TAG_MS = 380;
+
+  function layoutNow() {
+    var g = document.querySelector(".fp-grid");
+    return g ? (g.getAttribute("data-fp-layout") || "row") : "row";
+  }
+
+  function tileOk(tile) {
+    var tags = tile._fpTags || [];
+    var i;
+    for (i = 0; i < picked.length; i++) {
+      if (tags.indexOf(picked[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  function stopTagAnim(tile) {
+    (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
+      if (a.id === "fp-tag") a.cancel();
+    });
+  }
+
+  function clearLeave(tile) {
+    tile.classList.remove("fp-tag-leave");
+    tile.style.position = "";
+    tile.style.left = "";
+    tile.style.top = "";
+    tile.style.width = "";
+    tile.style.height = "";
+    tile.style.margin = "";
+    tile.style.maxWidth = "";
+    tile.style.pointerEvents = "";
+    tile.style.zIndex = "";
+  }
+
+  function pinLeave(tile, rect) {
+    tile.hidden = false;
+    tile.classList.add("fp-tag-leave");
+    tile.style.position = "fixed";
+    tile.style.left = rect.left + "px";
+    tile.style.top = rect.top + "px";
+    tile.style.width = rect.width + "px";
+    tile.style.height = rect.height + "px";
+    tile.style.margin = "0";
+    tile.style.maxWidth = "none";
+    tile.style.pointerEvents = "none";
+    tile.style.zIndex = "40";
+  }
+
+  function saveTableHome() {
+    if (tableHome) return;
+    var g = document.querySelector(".fp-grid");
+    if (!g || g.getAttribute("data-fp-layout") !== "table") return;
+    var sample = allTiles()[0];
+    if (!sample || !sample.style.getPropertyValue("--fp-nx")) return;
+    var map = new Map();
+    allTiles().forEach(function (tile) {
+      map.set(tile, {
+        x: tile.style.getPropertyValue("--fp-nx"),
+        y: tile.style.getPropertyValue("--fp-ny"),
+        w: tile.style.getPropertyValue("--fp-tile-w")
+      });
+    });
+    tableHome = { h: g.style.getPropertyValue("--fp-table-h"), tiles: map };
+  }
+
+  function restoreTableHome() {
+    if (!tableHome) return;
+    var g = document.querySelector(".fp-grid");
+    if (g && tableHome.h) g.style.setProperty("--fp-table-h", tableHome.h);
+    tableHome.tiles.forEach(function (rec, tile) {
+      if (rec.x) tile.style.setProperty("--fp-nx", rec.x);
+      if (rec.y) tile.style.setProperty("--fp-ny", rec.y);
+      if (rec.w) tile.style.setProperty("--fp-tile-w", rec.w);
+    });
+    tableHome = null;
+  }
+
+  function tileSpan(tile, tw) {
+    var ar = parseFloat(tile.style.getPropertyValue("--fp-ar"));
+    if (!(ar > 0.2 && ar < 5)) ar = 0.85;
+    if (!tile.hidden && tile.offsetHeight > 20) return tile.offsetHeight;
+    return tw / ar;
+  }
+
+  function placeCluster() {
+    var g = document.querySelector(".fp-grid");
+    if (!g) return;
+    var keep = allTiles().filter(tileOk);
+    keep.sort(function (a, b) {
+      return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
+    });
+    if (!keep.length) return;
+    var tw = 0;
+    var i;
+    for (i = 0; i < keep.length; i++) {
+      if (!keep[i].hidden && keep[i].offsetWidth > 20) {
+        tw = keep[i].offsetWidth;
+        break;
+      }
+    }
+    if (!(tw > 0)) tw = parseFloat(g.style.getPropertyValue("--fp-tile-w")) || 160;
+    var gr = g.getBoundingClientRect();
+    var viewTop = Math.max(gr.top, 0);
+    var viewBottom = Math.min(gr.bottom, window.innerHeight);
+    if (!(viewBottom > viewTop)) {
+      viewTop = gr.top;
+      viewBottom = gr.bottom;
+    }
+    var cx = window.innerWidth / 2 - gr.left;
+    var cy = (viewTop + viewBottom) / 2 - gr.top;
+    var n = keep.length;
+    var cols = Math.max(1, Math.ceil(Math.sqrt(n)));
+    var rows = Math.ceil(n / cols);
+    var gap = 12;
+    var heights = keep.map(function (tile) { return tileSpan(tile, tw); });
+    var rowH = [];
+    var r;
+    var c;
+    for (r = 0; r < rows; r++) {
+      var rh = 0;
+      for (c = 0; c < cols; c++) {
+        i = r * cols + c;
+        if (i < n && heights[i] > rh) rh = heights[i];
+      }
+      rowH.push(rh);
+    }
+    var totalH = gap * Math.max(0, rows - 1);
+    for (r = 0; r < rows; r++) totalH += rowH[r];
+    var cursorY = cy - totalH / 2;
+    var minY = Math.max(0, -gr.top);
+    var maxY = minY + window.innerHeight - totalH;
+    if (maxY < minY) maxY = minY;
+    if (cursorY < minY) cursorY = minY;
+    else if (cursorY > maxY) cursorY = maxY;
+    var gw = g.clientWidth || tw;
+    for (r = 0; r < rows; r++) {
+      var count = Math.min(cols, n - r * cols);
+      var rowW = count * tw + gap * (count - 1);
+      var cursorX = cx - rowW / 2;
+      if (cursorX < 8) cursorX = 8;
+      if (cursorX + rowW > gw - 8) cursorX = Math.max(8, gw - 8 - rowW);
+      for (c = 0; c < count; c++) {
+        i = r * cols + c;
+        var ny = cursorY + (rowH[r] - heights[i]) / 2;
+        keep[i].style.setProperty("--fp-nx", cursorX.toFixed(1) + "px");
+        keep[i].style.setProperty("--fp-ny", ny.toFixed(1) + "px");
+        keep[i].style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
+        cursorX += tw + gap;
+      }
+      cursorY += rowH[r] + gap;
+    }
+  }
+
+  window.fpTagLayout = function () {
+    if (!picked.length) return;
+    if (layoutNow() !== "table") return;
+    saveTableHome();
+    placeCluster();
+  };
+
+  function copyRect(box) {
+    return { left: box.left, top: box.top, width: box.width, height: box.height };
+  }
+
+  function runFilter() {
+    var mode = layoutNow();
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var root = document.documentElement;
+    if (picked.length) root.setAttribute("data-fp-filter", picked.join("\u001f"));
+    else root.removeAttribute("data-fp-filter");
+    if (mode === "table" && picked.length) saveTableHome();
+    var plan = allTiles().map(function (tile) {
+      var show = tileOk(tile);
+      var rect = null;
+      var leaving = tile.classList.contains("fp-tag-leave");
+      if ((!tile.hidden && !leaving) || leaving) {
+        var box = tile.getBoundingClientRect();
+        if (box.width > 0) rect = copyRect(box);
+      }
+      return { tile: tile, show: show, rect: rect };
+    });
+    if (mode === "table") {
+      if (picked.length) placeCluster();
+      else restoreTableHome();
+    } else if (!picked.length) {
+      tableHome = null;
+    }
+    plan.forEach(function (entry) {
+      stopTagAnim(entry.tile);
+      if (entry.show) {
+        clearLeave(entry.tile);
+        entry.tile.hidden = false;
+      } else if (!reduce && entry.rect) {
+        pinLeave(entry.tile, entry.rect);
+      } else {
+        clearLeave(entry.tile);
+        entry.tile.hidden = true;
+      }
+    });
+    paintTags();
+    paintCount();
+    if (reduce) return;
+    var g = document.querySelector(".fp-grid");
+    if (g) void g.offsetWidth;
+    plan.forEach(function (entry) {
+      var tile = entry.tile;
+      var reorder = mode === "row" || mode === "table";
+      if (entry.show && entry.rect && reorder) {
+        var now = tile.getBoundingClientRect();
+        var dx = entry.rect.left + entry.rect.width / 2 - (now.left + now.width / 2);
+        var dy = entry.rect.top + entry.rect.height / 2 - (now.top + now.height / 2);
+        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+        var move = tile.animate(
+          [
+            { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
+            { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px)", offset: 0.82 },
+            { transform: "none" }
+          ],
+          { duration: TAG_MS, easing: TAG_EASE, fill: "backwards" }
+        );
+        move.id = "fp-tag";
+      } else if (entry.show && !entry.rect) {
+        var enter = tile.animate(
+          [{ transform: "scale(0)" }, { transform: "scale(1)" }],
+          { duration: TAG_MS, easing: TAG_EASE, fill: "backwards" }
+        );
+        enter.id = "fp-tag";
+      } else if (!entry.show && entry.rect && tile.classList.contains("fp-tag-leave")) {
+        var leave = tile.animate(
+          [{ transform: "scale(1)" }, { transform: "scale(0)" }],
+          { duration: TAG_MS, easing: TAG_EASE }
+        );
+        leave.id = "fp-tag";
+        leave.onfinish = function () {
+          if (!tile.classList.contains("fp-tag-leave")) return;
+          clearLeave(tile);
+          tile.hidden = true;
+        };
+      }
+    });
+  }
 
   function paintTags() {
     var on = {};
@@ -2431,32 +2684,34 @@
       btn.classList.toggle("active", hit);
       btn.setAttribute("aria-pressed", hit ? "true" : "false");
     });
+    var clear = document.querySelector(".fp-tag[data-fp-clear]");
+    if (!clear) return;
+    clear.hidden = !picked.length;
+    clear.classList.remove("active");
+    clear.setAttribute("aria-pressed", "false");
   }
 
   function showAll() {
     picked = [];
-    allTiles().forEach(function (tile) { tile.hidden = false; });
-    paintTags();
-    paintCount();
+    runFilter();
   }
 
   function applyFilter() {
-    allTiles().forEach(function (tile) {
-      var tags = tile._fpTags || [];
-      var ok = true;
-      for (var i = 0; i < picked.length; i++) {
-        if (tags.indexOf(picked[i]) === -1) { ok = false; break; }
-      }
-      tile.hidden = !ok;
-    });
-    paintTags();
-    paintCount();
+    runFilter();
   }
 
   function renderBar(featured, counts, minTagCount) {
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
+    var clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "fp-tag";
+    clear.setAttribute("data-fp-clear", "");
+    clear.setAttribute("aria-pressed", "false");
+    clear.hidden = true;
+    clear.textContent = "Clear";
+    bar.appendChild(clear);
     var seen = {};
     (featured || []).forEach(function (tag) {
       if (!tag || seen[tag]) return;
@@ -2495,10 +2750,14 @@
   }
 
   document.addEventListener("click", function (e) {
-    var btn = e.target && e.target.closest && e.target.closest(".fp-tag[data-fp-filter]");
+    var btn = e.target && e.target.closest && e.target.closest(".fp-tag[data-fp-filter], .fp-tag[data-fp-clear]");
     if (!btn || document.getElementById("fp-lb")) return;
     e.preventDefault();
     e.stopPropagation();
+    if (btn.hasAttribute("data-fp-clear")) {
+      showAll();
+      return;
+    }
     var name = btn.getAttribute("data-fp-filter");
     var at = picked.indexOf(name);
     if (at >= 0) picked.splice(at, 1);
