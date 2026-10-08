@@ -1,14 +1,11 @@
 # On-demand sync from the Found Photographs Google Sheet into
 # found-photographs/photo-tags.json on the Pages branch.
 #
-# A push made with GITHUB_TOKEN does not start pages-build-deployment.
-# GitHub documents that for sites published from a branch, and this
-# repository publishes from cursor/archive-portfolio-b69f that way.
-# POST /repos/{owner}/{repo}/pages/builds is not a substitute: it builds
-# the default branch (main), not the Pages branch.
-# After the file changes, this workflow deploys that same tree with the
-# official Pages actions, still using GITHUB_TOKEN. That step can publish
-# only after Settings → Pages → Source is GitHub Actions.
+# Pages stays on "Deploy from a branch" (cursor/archive-portfolio-b69f).
+# A GITHUB_TOKEN push does not start that build, so the push uses the
+# fine-grained PAT in the Actions secret SHEET_SYNC_TOKEN. That is the
+# same token the sheet script stores. A push by that token runs the
+# normal branch Pages build.
 
 name: Sync Found Photographs tags
 
@@ -28,11 +25,17 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
     steps:
+      - name: Require the sheet sync token
+        env:
+          SHEET_SYNC_TOKEN: ${{ secrets.SHEET_SYNC_TOKEN }}
+        run: |
+          if [ -z "$SHEET_SYNC_TOKEN" ]; then
+            echo "SHEET_SYNC_TOKEN is not set. Add it under Settings > Secrets and variables > Actions."
+            echo "Use the same fine-grained token as the sheet script: this repository only, Contents read and write."
+            exit 1
+          fi
+
       - name: Checkout converter
         uses: actions/checkout@v4
         with:
@@ -45,6 +48,7 @@ jobs:
         with:
           ref: cursor/archive-portfolio-b69f
           path: live
+          token: ${{ secrets.SHEET_SYNC_TOKEN }}
           persist-credentials: true
 
       - name: Rebuild photo-tags.json
@@ -66,24 +70,3 @@ jobs:
           git commit -m "Sync Found Photographs tags from the Google Sheet."
           git push origin HEAD:cursor/archive-portfolio-b69f
           echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: Configure Pages
-        if: steps.commit.outputs.changed == 'true'
-        uses: actions/configure-pages@v5
-
-      - name: Pack the Pages branch without .git
-        if: steps.commit.outputs.changed == 'true'
-        run: |
-          mkdir -p "$RUNNER_TEMP/site"
-          tar -C live --exclude .git -cf - . | tar -C "$RUNNER_TEMP/site" -xf -
-
-      - name: Upload Pages artifact
-        if: steps.commit.outputs.changed == 'true'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ${{ runner.temp }}/site
-
-      - name: Deploy GitHub Pages
-        if: steps.commit.outputs.changed == 'true'
-        id: deployment
-        uses: actions/deploy-pages@v4
