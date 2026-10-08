@@ -8,7 +8,7 @@
   var MAX = 20;
   var DEF = 6;
   var PRINT_MAX = 430;
-  var HOVER_BOOST = 1.12;
+  var HOVER_BOOST = 1.04;
   var HOVER_CAP = 6;
   var HYST = 0.72;
   var DELAY = 280;
@@ -21,6 +21,7 @@
   var zLock = null;
   var draggingSlider = false;
   var zVal = null;
+  var pendingCols = null;
 
   function grid() {
     return document.querySelector(".fp-grid");
@@ -447,6 +448,105 @@
     return Math.ceil(Math.max(base * 1.55, vh * 1.4));
   }
 
+  /* Nudge apart pairs that nearly cover each other. A little overlap stays.
+     Equal-and-opposite pushes keep the scatter centred. */
+  function easeCovers(pts, widthOf, heightOf, bounds) {
+    var n = pts.length;
+    var limit = 0.36;
+    var i;
+    var j;
+    var iter;
+    for (iter = 0; iter < 22; iter++) {
+      var worst = 0;
+      for (i = 0; i < n; i++) {
+        var aw = widthOf(i);
+        var ah = heightOf(i);
+        for (j = i + 1; j < n; j++) {
+          var bw = widthOf(j);
+          var bh = heightOf(j);
+          var ax = pts[i].x;
+          var ay = pts[i].y;
+          var bx = pts[j].x;
+          var by = pts[j].y;
+          var ox = Math.min(ax + aw, bx + bw) - Math.max(ax, bx);
+          var oy = Math.min(ay + ah, by + bh) - Math.max(ay, by);
+          if (!(ox > 0) || !(oy > 0)) continue;
+          var small = Math.min(aw * ah, bw * bh);
+          if (!(small > 1)) continue;
+          var cover = (ox * oy) / small;
+          if (cover > worst) worst = cover;
+          if (cover <= limit) continue;
+          var dx = (bx + bw / 2) - (ax + aw / 2);
+          var dy = (by + bh / 2) - (ay + ah / 2);
+          var len = Math.hypot(dx, dy);
+          if (len < 1) {
+            dx = (j - i) || 1;
+            dy = ((i * 5 + j) % 7) - 3;
+            if (!dy) dy = 1;
+            len = Math.hypot(dx, dy);
+          }
+          var push = Math.min(ox, oy) * (cover > 0.62 ? 0.55 : 0.34) * 0.5;
+          var ux = dx / len;
+          var uy = dy / len;
+          pts[i].x -= ux * push;
+          pts[i].y -= uy * push;
+          pts[j].x += ux * push;
+          pts[j].y += uy * push;
+        }
+      }
+      if (bounds) {
+        for (i = 0; i < n; i++) {
+          if (pts[i].x < bounds.minX) pts[i].x = bounds.minX;
+          else if (pts[i].x > bounds.maxX) pts[i].x = bounds.maxX;
+        }
+      }
+      if (worst <= limit) break;
+    }
+  }
+
+  function easeTileCovers(list, bounds) {
+    var pts = [];
+    list.forEach(function (tile) {
+      if (!tile || tile.hidden) return;
+      var w = parseFloat(tile.style.getPropertyValue("--fp-tile-w")) || tile.offsetWidth || 80;
+      var h = tile.offsetHeight > 20 ? tile.offsetHeight : tileHeight(tile, w);
+      pts.push({
+        tile: tile,
+        x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
+        y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+        w: w,
+        h: h
+      });
+    });
+    easeCovers(pts, function (i) { return pts[i].w; }, function (i) { return pts[i].h; }, bounds);
+    pts.forEach(function (p) {
+      p.tile.style.setProperty("--fp-nx", p.x.toFixed(1) + "px");
+      p.tile.style.setProperty("--fp-ny", p.y.toFixed(1) + "px");
+    });
+  }
+
+  function fitTableHeight(g) {
+    g = g || grid();
+    if (!g || g.getAttribute("data-fp-layout") !== "table") return;
+    var bottom = 0;
+    var any = false;
+    tiles().forEach(function (tile) {
+      if (tile.hidden || tile.classList.contains("fp-tag-leave")) return;
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      if (!isFinite(ny)) return;
+      var tw = parseFloat(tile.style.getPropertyValue("--fp-tile-w")) || columnWidth(g);
+      var th = tile.offsetHeight > 20 ? tile.offsetHeight : tileHeight(tile, tw);
+      var rot = Math.abs(parseFloat(tile.style.getPropertyValue("--fp-rot")) || 0) * Math.PI / 180;
+      var overhang = Math.abs(Math.sin(rot)) * tw * 0.5;
+      var end = ny + th + overhang;
+      if (end > bottom) bottom = end;
+      any = true;
+    });
+    if (!any) return;
+    var buffer = (window.innerHeight || 700) * 0.18;
+    g.style.setProperty("--fp-table-h", Math.ceil(Math.max(0, bottom) + buffer) + "px");
+  }
+
   function freshTilt(used) {
     var deg = 0;
     var guard = 0;
@@ -681,6 +781,10 @@
       if (points[i].x < pad) points[i].x = pad;
       else if (points[i].x > limX2) points[i].x = limX2;
     }
+    easeCovers(points, function () { return tw; }, function (idx) { return heights[idx]; }, {
+      minX: pad,
+      maxX: Math.max(pad, gw - tw - pad)
+    });
     return points;
   }
 
@@ -809,6 +913,7 @@
     zTop += 1;
     if (!force && map && !document.documentElement.hasAttribute("data-fp-filter")) savePos(map);
     if (document.documentElement.hasAttribute("data-fp-filter") && window.fpTagLayout) window.fpTagLayout("scale");
+    fitTableHeight(g);
   }
 
   function persist(tile) {
@@ -1135,21 +1240,24 @@
         easeMs = 560 + Math.random() * 1640;
         if (!resume && window.fpAgPrev === "table") {
           var base = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+          if (!isFinite(base)) base = parseFloat(tile.getAttribute("data-fp-tilt"));
           if (!isFinite(base)) base = 0;
           rot = base;
           rot0 = base;
-          var arc = 2.6 + Math.random() * 5.6;
-          var skew = 0.55 + Math.random() * 0.45;
+          /* A small, slow rock. Each photo keeps its own swing and timing. */
+          var amp = 0.7 + Math.random() * 0.9;
+          var skew = 0.75 + Math.random() * 0.25;
           if (Math.random() < 0.5) {
-            spinHi = arc;
-            spinLo = arc * skew;
+            spinHi = amp;
+            spinLo = amp * skew;
           } else {
-            spinLo = arc;
-            spinHi = arc * skew;
+            spinLo = amp;
+            spinHi = amp * skew;
           }
-          spinLim = arc;
-          var leg = 4.2 + Math.random() * 5.5;
-          spin = (Math.random() < 0.5 ? -1 : 1) * (arc / leg);
+          spinLim = amp;
+          var leg = 9 + Math.random() * 8;
+          spin = (Math.random() < 0.5 ? -1 : 1) * (((spinHi + spinLo) / 2) / leg);
+          tile.style.setProperty("--fp-rot", base.toFixed(2) + "deg");
         }
       }
       var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
@@ -1594,6 +1702,11 @@
     return s;
   }
 
+  function layoutSliderDefault(mode) {
+    var ends = sliderEnds();
+    return ends.min + (ends.max - ends.min) * (mode === "table" ? 0.5 : 1 / 3);
+  }
+
   function setCols(n, animate) {
     n = clampSlider(n);
     fillSlider(n);
@@ -1634,13 +1747,7 @@
     g.style.removeProperty("--fp-ag-h");
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
-    var tw = tileWidth(g);
-    var bottom = 0;
     items.forEach(function (tile) {
-      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
-      if (!isFinite(ny)) ny = 0;
-      var th = tile.offsetHeight || tileHeight(tile, tw);
-      if (ny + th > bottom) bottom = ny + th;
       persist(tile);
     });
     requestAnimationFrame(function () {
@@ -1648,8 +1755,7 @@
         tile.style.removeProperty("transition");
       });
     });
-    var gh = Math.max(surfaceHeight(g, tw, items), Math.ceil(bottom + 8));
-    g.style.setProperty("--fp-table-h", gh + "px");
+    fitTableHeight(g);
   }
 
   function setLayout(mode, animate) {
@@ -1663,6 +1769,7 @@
     }
     /* Clicking Table while it is already showing keeps the spread on screen. */
     if (mode === "table" && from === "table" && g.getAttribute("data-fp-layout") === "table") {
+      pendingCols = null;
       syncLayoutButtons();
       return;
     }
@@ -1679,6 +1786,14 @@
     }
     var reuseTable = false;
     var apply = function () {
+      if (pendingCols != null && mode !== "antigravity") {
+        var preset = pendingCols;
+        pendingCols = null;
+        g.setAttribute("data-columns", String(preset));
+        g.style.setProperty("--fp-cols", String(preset));
+        fillSlider(preset);
+        if (!phoneSlider()) saveCols(preset);
+      }
       if (mode === "table") {
         if (from === "antigravity") landAsTable(g);
         else {
@@ -1727,6 +1842,7 @@
          is restored underneath. */
       var tagOn = document.documentElement.hasAttribute("data-fp-filter");
       if (window.fpTagLayout && from !== "antigravity" && (!reuseTable || tagOn)) window.fpTagLayout();
+      if (mode === "table") fitTableHeight(g);
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
@@ -1814,8 +1930,15 @@
       var dest = slots[perm[k]];
       tile.style.setProperty("--fp-nx", dest.x.toFixed(1) + "px");
       tile.style.setProperty("--fp-ny", dest.y.toFixed(1) + "px");
-      persist(tile);
     });
+    var coverBound = null;
+    if (g) {
+      var coverW = parseFloat(list[0].style.getPropertyValue("--fp-tile-w")) || columnWidth(g);
+      coverBound = { minX: 8, maxX: Math.max(8, (g.clientWidth || 800) - coverW - 8) };
+    }
+    easeTileCovers(list, coverBound);
+    list.forEach(persist);
+    fitTableHeight(g);
     if (g) void g.offsetWidth;
     var listGlide = [];
     list.forEach(function (tile) {
@@ -2294,7 +2417,15 @@
     var lay = e.target.closest && e.target.closest(".fp-laybtn");
     if (lay) {
       e.preventDefault();
-      setLayout(lay.getAttribute("data-fp-lay") || "row", true);
+      var nextLay = lay.getAttribute("data-fp-lay") || "row";
+      if ((nextLay === "table" || nextLay === "row") && layoutMode() !== "antigravity") {
+        var want = clampSlider(layoutSliderDefault(nextLay));
+        var gNow = grid();
+        var already = layoutMode() === nextLay && gNow && gNow.getAttribute("data-fp-layout") === nextLay;
+        if (already) setCols(want, true);
+        else pendingCols = want;
+      }
+      setLayout(nextLay, true);
       return;
     }
     if (e.target.closest && e.target.closest(".fp-ag")) {
@@ -2615,6 +2746,8 @@
   window.fpColumnWidth = columnWidth;
   window.fpAspectHeight = aspectHeight;
   window.fpTableSpreadHeight = tableSpreadHeight;
+  window.fpFitTableHeight = fitTableHeight;
+  window.fpEaseCovers = easeCovers;
 })();
 
 /* Photo tags from photo-tags.json: label the matching print and filter the grid. */
@@ -2929,6 +3062,38 @@
       spec2.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
       spec2.tile.style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
     }
+    if (window.fpEaseCovers) {
+      var eased = [];
+      for (i = 0; i < n; i++) {
+        eased.push({
+          x: parseFloat(specs[i].tile.style.getPropertyValue("--fp-nx")) || 0,
+          y: parseFloat(specs[i].tile.style.getPropertyValue("--fp-ny")) || 0,
+          w: tw,
+          h: specs[i].h,
+          tile: specs[i].tile
+        });
+      }
+      window.fpEaseCovers(eased, function (k) { return eased[k].w; }, function (k) { return eased[k].h; });
+      for (i = 0; i < eased.length; i++) {
+        var spec3 = specs[i];
+        var nx3 = eased[i].x;
+        var ny3 = eased[i].y;
+        var lo3 = viewLeft + 2 + spec3.padX;
+        var hi3 = viewRight - 2 - spec3.padX - tw;
+        var top3 = viewTop + 2 + spec3.padY;
+        var bot3 = viewBottom - 2 - spec3.padY - spec3.h;
+        if (hi3 > lo3) {
+          if (nx3 < lo3) nx3 = lo3;
+          if (nx3 > hi3) nx3 = hi3;
+        }
+        if (bot3 > top3) {
+          if (ny3 < top3) ny3 = top3;
+          if (ny3 > bot3) ny3 = bot3;
+        }
+        spec3.tile.style.setProperty("--fp-nx", nx3.toFixed(1) + "px");
+        spec3.tile.style.setProperty("--fp-ny", ny3.toFixed(1) + "px");
+      }
+    }
   }
 
   function rescalePlaced() {
@@ -2970,11 +3135,7 @@
       });
     }
     g.style.setProperty("--fp-tile-w", tw + "px");
-    if (window.fpTableSpreadHeight) {
-      var h = Math.ceil(window.fpTableSpreadHeight(g, tw, allTiles())) + "px";
-      g.style.setProperty("--fp-table-h", h);
-      if (tableHome) tableHome.h = h;
-    }
+    if (window.fpFitTableHeight) window.fpFitTableHeight(g);
   }
 
   window.fpTagLayout = function (reason) {
@@ -3032,6 +3193,7 @@
     });
     paintTags();
     paintCount();
+    if (mode === "table" && window.fpFitTableHeight) window.fpFitTableHeight();
     if (reduce) return;
     var g = document.querySelector(".fp-grid");
     if (g) void g.offsetWidth;
