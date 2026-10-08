@@ -621,12 +621,13 @@
     }
     mx /= n;
     my /= n;
-    var pull = 0.82;
+    var pullX = 1;
+    var pullY = 0.9;
     for (i = 0; i < n; i++) {
       var cx = points[i].x + tw / 2;
       var cy = points[i].y + heights[i] / 2;
-      points[i].x = mx + (cx - mx) * pull - tw / 2;
-      points[i].y = my + (cy - my) * pull - heights[i] / 2;
+      points[i].x = mx + (cx - mx) * pullX - tw / 2;
+      points[i].y = my + (cy - my) * pullY - heights[i] / 2;
     }
     for (iter = 0; iter < 8; iter++) {
       for (i = 0; i < n; i++) {
@@ -654,8 +655,28 @@
     var top = Infinity;
     for (i = 0; i < n; i++) if (points[i].y < top) top = points[i].y;
     var shiftY = top - minY;
+    for (i = 0; i < n; i++) points[i].y -= shiftY;
+    var bx = 0;
+    var by = 0;
     for (i = 0; i < n; i++) {
-      points[i].y -= shiftY;
+      bx += points[i].x + tw / 2;
+      by += points[i].y + heights[i] / 2;
+    }
+    bx /= n;
+    by /= n;
+    var widenX = 1.2;
+    var widenY = 1.05;
+    for (i = 0; i < n; i++) {
+      var sx = points[i].x + tw / 2;
+      var sy = points[i].y + heights[i] / 2;
+      points[i].x = bx + (sx - bx) * widenX - tw / 2;
+      points[i].y = by + (sy - by) * widenY - heights[i] / 2;
+    }
+    var top2 = Infinity;
+    for (i = 0; i < n; i++) if (points[i].y < top2) top2 = points[i].y;
+    var shift2 = top2 - minY;
+    for (i = 0; i < n; i++) {
+      points[i].y -= shift2;
       var limX2 = Math.max(pad, gw - tw - pad);
       if (points[i].x < pad) points[i].x = pad;
       else if (points[i].x > limX2) points[i].x = limX2;
@@ -667,8 +688,23 @@
     if (!g) return;
     var filtering = document.documentElement.hasAttribute("data-fp-filter");
     if (filtering && !force && !resetSpread) {
-      if (window.fpTagLayout) window.fpTagLayout("scale");
-      return;
+      var placed = false;
+      var probe = tiles();
+      var pi;
+      for (pi = 0; pi < probe.length; pi++) {
+        var px = parseFloat(probe[pi].style.getPropertyValue("--fp-nx"));
+        var py = parseFloat(probe[pi].style.getPropertyValue("--fp-ny"));
+        if (isFinite(px) && isFinite(py)) {
+          placed = true;
+          break;
+        }
+      }
+      /* Positions were just cleared on the way back from Row. Restore the
+         saved spread instead of leaving every print at the corner. */
+      if (placed) {
+        if (window.fpTagLayout) window.fpTagLayout("scale");
+        return;
+      }
     }
     var map = force || resetSpread ? {} : loadPos();
     if ((force || resetSpread) && !filtering) {
@@ -692,6 +728,15 @@
         if (end > bottom) bottom = end;
       });
       gh = Math.ceil(bottom + pad);
+    } else if (map) {
+      var savedBottom = minY;
+      items.forEach(function (tile) {
+        var rec = map[posKey(tile)];
+        if (!rec || typeof rec.y !== "number") return;
+        var end = rec.y + tileHeight(tile, tw);
+        if (end > savedBottom) savedBottom = end;
+      });
+      gh = Math.max(gh, Math.ceil(savedBottom + pad));
     }
     g.style.setProperty("--fp-table-h", gh + "px");
     var usedTilts = {};
@@ -1677,9 +1722,11 @@
         }
       }
       syncLayoutButtons();
-      /* Landing from antigravity, or returning to a saved spread, must not
-         gather the filtered photos into a new cluster. */
-      if (window.fpTagLayout && from !== "antigravity" && !reuseTable) window.fpTagLayout();
+      /* Antigravity keeps the pose it landed on. A tag on the way back from
+         Row still gathers into the tagged cluster, after the saved spread
+         is restored underneath. */
+      var tagOn = document.documentElement.hasAttribute("data-fp-filter");
+      if (window.fpTagLayout && from !== "antigravity" && (!reuseTable || tagOn)) window.fpTagLayout();
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
@@ -2861,9 +2908,9 @@
     else if (fit > 1) fit = 1;
     for (i = 0; i < n; i++) {
       var spec2 = specs[i];
-      /* A little looser than the packed cluster. The clamps below keep it on screen. */
-      var nx = cx + (pts[i].x - mx) * fit * 1.09 - tw / 2;
-      var ny = cy + (pts[i].y - my) * fit * 1.09 - spec2.h / 2;
+      /* Wider than tall, and a bit more open than the previous cluster. */
+      var nx = cx + (pts[i].x - mx) * fit * 1.18 - tw / 2;
+      var ny = cy + (pts[i].y - my) * fit * 1.1 - spec2.h / 2;
       var lo2 = viewLeft + 2 + spec2.padX;
       var hi2 = viewRight - 2 - spec2.padX - tw;
       var top2 = viewTop + 2 + spec2.padY;
