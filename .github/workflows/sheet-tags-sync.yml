@@ -1,0 +1,89 @@
+# On-demand sync from the Found Photographs Google Sheet into
+# found-photographs/photo-tags.json on the Pages branch.
+#
+# A push made with GITHUB_TOKEN does not start pages-build-deployment.
+# GitHub documents that for sites published from a branch, and this
+# repository publishes from cursor/archive-portfolio-b69f that way.
+# POST /repos/{owner}/{repo}/pages/builds is not a substitute: it builds
+# the default branch (main), not the Pages branch.
+# After the file changes, this workflow deploys that same tree with the
+# official Pages actions, still using GITHUB_TOKEN. That step can publish
+# only after Settings → Pages → Source is GitHub Actions.
+
+name: Sync Found Photographs tags
+
+on:
+  repository_dispatch:
+    types: [sheet-sync]
+  workflow_dispatch:
+
+concurrency:
+  group: sheet-tags-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout converter
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: repo
+          persist-credentials: false
+
+      - name: Checkout Pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: cursor/archive-portfolio-b69f
+          path: live
+          persist-credentials: true
+
+      - name: Rebuild photo-tags.json
+        working-directory: live
+        run: python3 "$GITHUB_WORKSPACE/repo/.github/scripts/sheet_to_tags.py" found-photographs/photo-tags.json
+
+      - name: Commit and push when the file changed
+        id: commit
+        working-directory: live
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- found-photographs/photo-tags.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "photo-tags.json is unchanged"
+            exit 0
+          fi
+          git add -- found-photographs/photo-tags.json
+          git commit -m "Sync Found Photographs tags from the Google Sheet."
+          git push origin HEAD:cursor/archive-portfolio-b69f
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Pages
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Pack the Pages branch without .git
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          tar -C live --exclude .git -cf - . | tar -C "$RUNNER_TEMP/site" -xf -
+
+      - name: Upload Pages artifact
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+
+      - name: Deploy GitHub Pages
+        if: steps.commit.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
