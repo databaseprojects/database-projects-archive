@@ -230,9 +230,9 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   pointer-events: none;
 }
 
-/* Below 590px the right-aligned control row covers the title or runs off the bar.
-   Same controls, still inside this bar; they drop to the next line instead of disappearing. */
-@media (max-width: 590px) {
+/* Through 1100px the right-aligned control row covers the title or squeezes the tags.
+   Same controls, still inside this bar; they drop to the next line instead of floating over it. */
+@media (max-width: 1100px) {
   .fp-bar {
     padding-right: 0;
   }
