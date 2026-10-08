@@ -179,6 +179,15 @@
     } catch (e) {}
   }
 
+  function hasTableArrangement() {
+    var map = loadPos();
+    var k;
+    for (k in map) {
+      if (Object.prototype.hasOwnProperty.call(map, k)) return true;
+    }
+    return false;
+  }
+
   function clampSc(s) {
     s = +s;
     if (!(s > 0)) return 1;
@@ -1605,6 +1614,11 @@
       g.classList.remove("fp-hold");
       g.classList.remove("fp-reveal");
     }
+    /* Clicking Table while it is already showing keeps the spread on screen. */
+    if (mode === "table" && from === "table" && g.getAttribute("data-fp-layout") === "table") {
+      syncLayoutButtons();
+      return;
+    }
     stopAntigravity();
     var agSeeds = mode === "antigravity" ? captureAgSeeds(g) : null;
     var agToRow = animate && from === "antigravity" && mode === "row";
@@ -1616,14 +1630,27 @@
         if (r.width) agFrom.set(tile, { left: r.left, top: r.top, width: r.width, height: r.height });
       });
     }
+    var reuseTable = false;
     var apply = function () {
       if (mode === "table") {
         if (from === "antigravity") landAsTable(g);
         else {
           g.setAttribute("data-fp-layout", mode);
           clearAntigravity(g);
-          applyScatter(g, false, true);
-          if (from === "row") assignTableSkew();
+          reuseTable = hasTableArrangement();
+          applyScatter(g, false, !reuseTable);
+          if (reuseTable) {
+            tiles().forEach(function (tile) {
+              var raw = tile.getAttribute("data-fp-tilt");
+              var rot = parseFloat(raw);
+              if (!isFinite(rot)) return;
+              var text = raw.indexOf(".") === -1 ? rot.toFixed(1) : String(rot);
+              tile.style.setProperty("--fp-rot", text + "deg");
+            });
+          } else {
+            assignTableSkew();
+            tiles().forEach(persist);
+          }
         }
       } else if (mode === "antigravity") {
         g.style.removeProperty("--fp-table-h");
@@ -1648,7 +1675,9 @@
         }
       }
       syncLayoutButtons();
-      if (window.fpTagLayout) window.fpTagLayout();
+      /* Landing from antigravity, or returning to a saved spread, must not
+         gather the filtered photos into a new cluster. */
+      if (window.fpTagLayout && from !== "antigravity" && !reuseTable) window.fpTagLayout();
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
@@ -1711,6 +1740,7 @@
       var dest = slots[perm[k]];
       tile.style.setProperty("--fp-nx", dest.x.toFixed(1) + "px");
       tile.style.setProperty("--fp-ny", dest.y.toFixed(1) + "px");
+      persist(tile);
     });
     if (g) void g.offsetWidth;
     var listGlide = [];
