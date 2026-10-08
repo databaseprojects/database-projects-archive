@@ -45,6 +45,7 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   align-items: center;
   vertical-align: middle;
   margin: 0 0.85em 0 0;
+  row-gap: 7px;
 }
 
 .fp-label {
@@ -479,7 +480,7 @@ html.fp-item-dragging * {
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
   transform-origin: center center;
   will-change: transform, opacity;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-user-drag: none;
   user-select: none;
   cursor: pointer;
@@ -488,6 +489,12 @@ html.fp-item-dragging * {
 
 .fp-lb.fp-lb-flip > img {
   transition: opacity 0.18s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-lb > img {
+    transition: opacity 0.32s ease;
+  }
 }
 
 .fp-lb.fp-lb-closing {
@@ -566,23 +573,6 @@ body.fp-lb-lock {
   outline-offset: 2px;
 }
 
-.fp-photo-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  align-content: flex-start;
-  width: 100%;
-  margin: 0.45em 0 0;
-  row-gap: 0.35em;
-}
-
 .fp-tag[hidden] {
   display: none;
-}
-
-.fp-grid[data-fp-layout="row"] .fp-tile.fp-tagged,
-.fp-grid[data-fp-layout="table"] .fp-tile.fp-tagged,
-.fp-grid[data-fp-layout="antigravity"] .fp-tile.fp-tagged {
-  overflow: visible;
-  aspect-ratio: auto;
 }
