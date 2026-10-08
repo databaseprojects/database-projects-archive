@@ -580,3 +580,24 @@ body.fp-lb-lock {
   outline: 1px solid #000;
   outline-offset: 2px;
 }
+
+.fp-photo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  width: 100%;
+  margin: 0.45em 0 0;
+  row-gap: 0.35em;
+}
+
+.fp-tag[hidden] {
+  display: none;
+}
+
+.fp-grid[data-fp-layout="row"] .fp-tile.fp-tagged,
+.fp-grid[data-fp-layout="table"] .fp-tile.fp-tagged,
+.fp-grid[data-fp-layout="antigravity"] .fp-tile.fp-tagged {
+  overflow: visible;
+  aspect-ratio: auto;
+}
