@@ -1258,8 +1258,8 @@
     var pad = 6;
     var minY = topInset(g);
     var now = performance.now();
-    var step = Math.min(14, 360 / Math.max(agBodies.length, 1));
-    agBodies.forEach(function (b, i) {
+    var moving = [];
+    agBodies.forEach(function (b) {
       if (!b || !b.tile) return;
       (b.tile.getAnimations ? b.tile.getAnimations() : []).forEach(function (a) {
         if (a.id === "fp-flow") a.cancel();
@@ -1287,14 +1287,19 @@
       b.shufY0 = b.y;
       b.shufX1 = tx;
       b.shufY1 = ty;
-      b.shufT0 = now + i * step;
-      b.shufMs = 520;
       b.held = true;
+      moving.push(b);
       b.vx = 0;
       b.vy = 0;
       var vel = randSpeed();
       b.tvx = vel.vx;
       b.tvy = vel.vy;
+    });
+    inReadingOrder(moving, function (b) { return b.shufY1 + (b.h || 0) / 2; }, function (b) { return b.shufX1; });
+    var timing = staggerDelays(moving, 520);
+    moving.forEach(function (b, i) {
+      b.shufT0 = now + (timing.delays[i] || 0);
+      b.shufMs = timing.move;
     });
     if (!agRunning) {
       agRunning = true;
@@ -1303,6 +1308,59 @@
       if (agRaf) cancelAnimationFrame(agRaf);
       agRaf = requestAnimationFrame(agTick);
     }
+  }
+
+  /* One spread per visual row, reused down the page. Neighbours in a row
+     start apart, and the latest start still finishes at `total`. */
+  function staggerDelays(items, total) {
+    total = total > 0 ? total : 480;
+    var n = items.length;
+    if (n <= 1) return { move: Math.round(total), delays: n === 1 ? [0] : [] };
+    var rows = [];
+    var longest = 1;
+    items.forEach(function (item) {
+      var row = item._fpRow || 0;
+      if (!rows[row]) rows[row] = [];
+      rows[row].push(item);
+      if (rows[row].length > longest) longest = rows[row].length;
+    });
+    var spread = Math.min(total * 0.62, Math.max(0, (longest - 1) * 72));
+    var delays = new Array(n);
+    var maxDelay = 0;
+    var index = new Map();
+    items.forEach(function (item, i) {
+      index.set(item, i);
+      delays[i] = 0;
+    });
+    rows.forEach(function (row, rIndex) {
+      if (!row || row.length <= 1) return;
+      var m = row.length;
+      var shift = rIndex % m;
+      var i;
+      for (i = 0; i < m; i++) {
+        var slot = (i + shift) % m;
+        var d = Math.round((slot * spread) / (m - 1));
+        delays[index.get(row[i])] = d;
+        if (d > maxDelay) maxDelay = d;
+      }
+    });
+    return { move: Math.max(1, Math.round(total - maxDelay)), delays: delays };
+  }
+
+  function glideDelta(tile, from, screen) {
+    if (!tile || !from || !(from.width > 0)) return null;
+    var b = tile.getBoundingClientRect();
+    if (!(b.width > 0)) return null;
+    if (screen) {
+      var vh = window.innerHeight;
+      var fromBottom = from.bottom != null ? from.bottom : from.top + from.height;
+      var onScreen = (b.bottom > -40 && b.top < vh + 40) || (fromBottom > -40 && from.top < vh + 40);
+      if (!onScreen) return null;
+    }
+    var dx = from.left + from.width / 2 - (b.left + b.width / 2);
+    var dy = from.top + from.height / 2 - (b.top + b.height / 2);
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return null;
+    return { dx: dx, dy: dy };
   }
 
   function clearGlide(tile) {
@@ -1329,18 +1387,10 @@
 
   function holdGlide(tile, from, opts) {
     opts = opts || {};
-    if (!tile || !from || !(from.width > 0)) return null;
-    var b = tile.getBoundingClientRect();
-    if (!(b.width > 0)) return null;
-    if (opts.screen) {
-      var vh = window.innerHeight;
-      var fromBottom = from.bottom != null ? from.bottom : from.top + from.height;
-      var onScreen = (b.bottom > -40 && b.top < vh + 40) || (fromBottom > -40 && from.top < vh + 40);
-      if (!onScreen) return null;
-    }
-    var dx = from.left + from.width / 2 - (b.left + b.width / 2);
-    var dy = from.top + from.height / 2 - (b.top + b.height / 2);
-    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return null;
+    var delta = glideDelta(tile, from, !!opts.screen);
+    if (!delta) return null;
+    var dx = delta.dx;
+    var dy = delta.dy;
     var start = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
     /* Paint the current on-screen spot before any motion. A same-turn
        animation can replace this hold for one frame and flash the destination. */
@@ -1380,6 +1430,50 @@
     return token;
   }
 
+  function inReadingOrder(items, midY, leftOf) {
+    items.sort(function (a, b) {
+      return midY(a) - midY(b) || leftOf(a) - leftOf(b);
+    });
+    var rowMid = -1e9;
+    var row = -1;
+    items.forEach(function (item) {
+      var y = midY(item);
+      if (y - rowMid > 56) {
+        row++;
+        rowMid = y;
+      }
+      item._fpRow = row;
+    });
+    items.sort(function (a, b) {
+      return a._fpRow - b._fpRow || leftOf(a) - leftOf(b);
+    });
+    return items;
+  }
+
+  function runGlides(list, opts) {
+    opts = opts || {};
+    var plans = [];
+    list.forEach(function (item) {
+      if (!item || !glideDelta(item.tile, item.from, !!opts.screen)) return;
+      plans.push(item);
+    });
+    inReadingOrder(plans, function (item) {
+      var b = item.tile.getBoundingClientRect();
+      return b.top + b.height / 2;
+    }, function (item) {
+      return item.tile.getBoundingClientRect().left;
+    });
+    var timing = staggerDelays(plans, opts.dur || 520);
+    plans.forEach(function (item, i) {
+      holdGlide(item.tile, item.from, {
+        dur: timing.move,
+        delay: timing.delays[i] || 0,
+        easing: opts.easing,
+        id: opts.id || "fp-flow"
+      });
+    });
+  }
+
   function flow(mutate, opts) {
     opts = opts || {};
     var g = grid();
@@ -1396,18 +1490,12 @@
     items.forEach(dropMotion);
     mutate();
     void g.offsetWidth;
-    var step = Math.min(opts.step || 26, (opts.total || 620) / Math.max(items.length, 1));
-    var dur = opts.dur || 520;
-    var k = 0;
+    var list = [];
     items.forEach(function (tile) {
-      var started = holdGlide(tile, before.get(tile), {
-        dur: dur,
-        delay: k * step,
-        screen: true,
-        id: "fp-flow"
-      });
-      if (started) k++;
+      var from = before.get(tile);
+      if (from) list.push({ tile: tile, from: from });
     });
+    runGlides(list, { dur: opts.dur || 520, screen: true, id: "fp-flow", easing: opts.easing });
   }
 
   function hoverScale() {
@@ -1543,12 +1631,12 @@
     var items = tiles();
     items.forEach(dropMotion);
     void g.offsetWidth;
-    var step = Math.min(20, 480 / Math.max(items.length, 1));
-    var k = 0;
+    var list = [];
     items.forEach(function (tile) {
-      var started = holdGlide(tile, before.get(tile), { dur: 480, delay: k * step, id: "fp-flow" });
-      if (started) k++;
+      var from = before.get(tile);
+      if (from) list.push({ tile: tile, from: from });
     });
+    runGlides(list, { dur: 480, id: "fp-flow" });
   }
 
   function derange(n) {
@@ -1594,15 +1682,12 @@
       tile.style.setProperty("--fp-ny", dest.y.toFixed(1) + "px");
     });
     if (g) void g.offsetWidth;
-    var step = Math.min(14, 360 / slots.length);
-    list.forEach(function (tile, k) {
-      holdGlide(tile, before.get(tile), {
-        dur: 520,
-        delay: k * step,
-        arc: false,
-        id: "fp-flow"
-      });
+    var listGlide = [];
+    list.forEach(function (tile) {
+      var from = before.get(tile);
+      if (from) listGlide.push({ tile: tile, from: from });
     });
+    runGlides(listGlide, { dur: 520, id: "fp-flow" });
   }
 
   function shuffle() {
@@ -2390,6 +2475,7 @@
   });
 
   window.fpHoldGlide = holdGlide;
+  window.fpRunGlides = runGlides;
   window.fpDropMotion = dropMotion;
   window.fpColumnWidth = columnWidth;
   window.fpAspectHeight = aspectHeight;
@@ -2813,13 +2899,12 @@
     if (reduce) return;
     var g = document.querySelector(".fp-grid");
     if (g) void g.offsetWidth;
+    var movers = [];
     plan.forEach(function (entry) {
       var tile = entry.tile;
       var reorder = mode === "row" || mode === "table";
       if (entry.show && entry.rect && reorder) {
-        if (window.fpHoldGlide) {
-          window.fpHoldGlide(tile, entry.rect, { dur: TAG_MS, easing: TAG_EASE, id: "fp-tag" });
-        }
+        movers.push({ tile: tile, from: entry.rect });
       } else if (entry.show && !entry.rect) {
         var enter = tile.animate(
           [{ transform: "scale(0)" }, { transform: "scale(1)" }],
@@ -2845,6 +2930,9 @@
         };
       }
     });
+    if (movers.length && window.fpRunGlides) {
+      window.fpRunGlides(movers, { dur: TAG_MS, easing: TAG_EASE, id: "fp-tag" });
+    }
   }
 
   function paintTags() {
