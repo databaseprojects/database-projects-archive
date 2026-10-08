@@ -579,7 +579,7 @@ body.fp-lb-lock {
 
 .fp-tile.fp-tag-leave {
   pointer-events: none;
-  z-index: 40;
+  z-index: 0;
   margin: 0;
   max-width: none;
 }
