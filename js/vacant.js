@@ -214,7 +214,7 @@
         { transform: "translate(0,-6px)", opacity: 0.35, offset: 0.45 },
         { transform: "none", opacity: 1 }
       ],
-      { duration: 560, easing: "cubic-bezier(.25,.8,.3,1)", fill: "backwards" }
+      { duration: 280, easing: "cubic-bezier(.25,.8,.3,1)", fill: "backwards" }
     );
     an.id = "vsf-flow";
     an.onfinish = function () {
@@ -245,7 +245,7 @@
         if (!r || r.top > vh + 80 || r.bottom < -40) tile.removeAttribute("data-vsf-wait");
         else on.push(tile);
       });
-      var step = Math.max(70, Math.min(120, 1600 / Math.max(on.length, 1)));
+      var step = Math.max(35, Math.min(60, 800 / Math.max(on.length, 1)));
       on.forEach(function (tile, i) {
         setTimeout(function () {
           if (run !== window.vsfCasc) return;
