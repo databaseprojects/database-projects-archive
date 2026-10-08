@@ -291,7 +291,7 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   margin: 0;
   width: var(--fp-tile-w, 100%);
   max-width: min(100%, var(--fp-tile-w, 430px));
-  aspect-ratio: var(--fp-ar, auto);
+  aspect-ratio: var(--fp-ar, 1);
   background: transparent;
   overflow: hidden;
   box-sizing: border-box;
@@ -303,14 +303,15 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 }
 
 .fp-tile img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
-  max-width: 100%;
+  height: 100%;
+  max-width: none;
   object-fit: contain;
   object-position: center center;
   background: transparent;
-  vertical-align: top;
   transition: opacity 0.22s ease;
   -webkit-user-drag: none;
   user-select: none;
