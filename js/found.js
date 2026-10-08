@@ -3017,7 +3017,7 @@
     else applyFilter();
   }, true);
 
-  fetch("photo-tags.json").then(function (res) {
+  fetch("photo-tags.json?v=20261008f").then(function (res) {
     if (!res.ok) return null;
     return res.json();
   }).then(function (data) {
