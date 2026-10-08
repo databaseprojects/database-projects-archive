@@ -2552,20 +2552,12 @@
     }
     if (!(tw > 0)) tw = parseFloat(g.style.getPropertyValue("--fp-tile-w")) || 160;
     var gr = g.getBoundingClientRect();
-    var gw = g.clientWidth || tw;
-    var viewLeft = Math.max(0, -gr.left);
-    var viewRight = Math.min(gw, window.innerWidth - gr.left);
-    if (!(viewRight > viewLeft + 16)) {
-      viewLeft = 0;
-      viewRight = gw;
-    }
-    var gridH = g.clientHeight || gr.height || window.innerHeight;
-    var viewTop = Math.max(0, -gr.top);
-    var viewBottom = Math.min(gridH, window.innerHeight - gr.top);
-    if (!(viewBottom > viewTop + 16)) {
-      viewTop = Math.max(0, -gr.top);
-      viewBottom = viewTop + Math.max(window.innerHeight * 0.6, 240);
-    }
+    var margin = 8;
+    var viewW = document.documentElement.clientWidth || window.innerWidth;
+    var viewLeft = margin - gr.left;
+    var viewRight = viewW - margin - gr.left;
+    var viewTop = margin - gr.top;
+    var viewBottom = window.innerHeight - margin - gr.top;
     var n = keep.length;
     var specs = [];
     var widest = 0;
@@ -2612,8 +2604,8 @@
             d = Math.hypot(dx, dy) || 0.01;
           }
           var want = avgW * ((overlap[i] + overlap[j]) / 2);
-          var push = (want - d) * 0.18;
-          if (Math.abs(push) < 0.2) continue;
+          if (d >= want) continue;
+          var push = (want - d) * 0.22;
           var ux = dx / d;
           var uy = dy / d;
           pts[i].x -= ux * push;
