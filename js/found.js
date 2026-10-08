@@ -1860,20 +1860,17 @@
     }
     lockGalleryBox(big, nw, nh, allowUpscale);
     function measureAndZoom() {
-      var r = big.getBoundingClientRect();
-      if (!r.width || !r.height) return false;
-      var s = Math.min(thumb.width / r.width, thumb.height / r.height);
-      var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
-      var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       big.style.transition = "none";
-      big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-      big.style.opacity = "1";
+      big.style.transform = reduce ? "none" : "translateY(100vh)";
+      big.style.opacity = "0";
       void big.offsetWidth;
       big.style.transition = "";
       requestAnimationFrame(function () {
         if (lb._closing) return;
         lb.classList.add("fp-lb-on");
         big.style.transform = "none";
+        big.style.opacity = "1";
       });
       return true;
     }

@@ -480,7 +480,7 @@ html.fp-item-dragging * {
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
   transform-origin: center center;
   will-change: transform, opacity;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-user-drag: none;
   user-select: none;
   cursor: pointer;
@@ -489,6 +489,12 @@ html.fp-item-dragging * {
 
 .fp-lb.fp-lb-flip > img {
   transition: opacity 0.18s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-lb > img {
+    transition: opacity 0.32s ease;
+  }
 }
 
 .fp-lb.fp-lb-closing {
