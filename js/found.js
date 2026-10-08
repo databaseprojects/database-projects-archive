@@ -2358,8 +2358,6 @@
 
 /* Photo tags from photo-tags.json: label the matching print and filter the grid. */
 (function () {
-  var MIN_TAG_COUNT = 4;
-
   function addId(set, value) {
     var raw = String(value || "").trim();
     if (!raw) return;
@@ -2467,7 +2465,7 @@
     tile._fpTags = tags.slice();
   }
 
-  function renderBar(featured, counts) {
+  function renderBar(featured, counts, minTagCount) {
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
@@ -2487,7 +2485,7 @@
     });
     var rest = [];
     Object.keys(counts).forEach(function (tag) {
-      if (seen[tag] || counts[tag] < MIN_TAG_COUNT) return;
+      if (seen[tag] || counts[tag] < minTagCount) return;
       rest.push(tag);
     });
     rest.sort(function (a, b) {
@@ -2513,7 +2511,7 @@
         renderPhotoTags(tile, tags);
       });
     });
-    renderBar(data.featuredTags || [], counts);
+    renderBar(data.featuredTags || [], counts, data.minTagCount);
   }
 
   document.addEventListener("click", function (e) {

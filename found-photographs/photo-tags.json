@@ -1,6 +1,7 @@
 {
   "cloudName": "vtyvhdpv",
-  "featuredTags": ["house"],
+  "minTagCount": 3,
+  "featuredTags": [],
   "photos": [
     {
       "file": "FastFoto_2026_08_0018_a",
