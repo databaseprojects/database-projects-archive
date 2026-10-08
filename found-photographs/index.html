@@ -3,6 +3,12 @@
 <head>
   <meta charset="utf-8">
   <script>
+  window.fpTagsReady = fetch("photo-tags.json?v=20261008g").then(function (res) {
+    if (!res.ok) throw new Error("tags");
+    return res.json();
+  }).catch(function () { return null; });
+  </script>
+  <script>
   (function () {
     try {
       var mode = localStorage.getItem("fpLayout") || "row";
@@ -27,12 +33,7 @@
     
 <main>
   <div class="fp-bar">
-    <span class="fp-tags" role="group" aria-label="Tags">
-      <button type="button" class="fp-tag" aria-pressed="false">Home</button>
-      <button type="button" class="fp-tag" aria-pressed="false">Flowers</button>
-      <button type="button" class="fp-tag" aria-pressed="false">Niagara Falls</button>
-      <button type="button" class="fp-tag" aria-pressed="false">Zoo</button>
-    </span>
+    <span class="fp-tags" role="group" aria-label="Tags"></span>
     <span class="fp-label">Found Photographs</span>
     <span class="fp-count"></span>
     <span class="fp-zoom">
@@ -51,6 +52,6 @@
 </main>
 
   </div>
-  <script src="../js/found.js?v=20261008f" defer></script>
+  <script src="../js/found.js?v=20261008g" defer></script>
 </body>
 </html>
