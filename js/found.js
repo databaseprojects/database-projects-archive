@@ -293,7 +293,28 @@
       imgs.forEach(function (img) {
         img.style.filter = "";
       });
-      releaseHold(g, waited);
+      /* Tags start loading in the document head. Hold the photos until they
+         are mounted so the bar and the prints appear together. A failed or
+         stalled file still opens the page. */
+      var paint = function () {
+        if (window.fpHoldReleased) return;
+        window.fpHoldReleased = true;
+        releaseHold(g, waited);
+      };
+      var ready = window.fpTagsReady;
+      if (!ready || !ready.then) {
+        paint();
+        return;
+      }
+      var timer = setTimeout(paint, 4000);
+      ready.then(function (data) {
+        clearTimeout(timer);
+        if (window.fpMountTags) window.fpMountTags(data);
+        paint();
+      }).catch(function () {
+        clearTimeout(timer);
+        paint();
+      });
     }
     function note(late) {
       if (opened) return;
@@ -1544,11 +1565,19 @@
   }
 
   function landAsTable(g) {
+    var items = tiles();
+    items.forEach(function (tile) {
+      tile.style.setProperty("transition", "none", "important");
+      var rot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+      if (!isFinite(rot)) rot = 0;
+      tile.setAttribute("data-fp-tilt", String(rot));
+      if (rot === 0) tile.setAttribute("data-fp-straight", "1");
+      else tile.removeAttribute("data-fp-straight");
+    });
     g.setAttribute("data-fp-layout", "table");
     g.style.removeProperty("--fp-ag-h");
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
-    var items = tiles();
     var tw = tileWidth(g);
     var bottom = 0;
     items.forEach(function (tile) {
@@ -1556,10 +1585,12 @@
       if (!isFinite(ny)) ny = 0;
       var th = tile.offsetHeight || tileHeight(tile, tw);
       if (ny + th > bottom) bottom = ny + th;
-    });
-    assignTableSkew();
-    items.forEach(function (tile) {
       persist(tile);
+    });
+    requestAnimationFrame(function () {
+      items.forEach(function (tile) {
+        tile.style.removeProperty("transition");
+      });
     });
     var gh = Math.max(surfaceHeight(g, tw, items), Math.ceil(bottom + 8));
     g.style.setProperty("--fp-table-h", gh + "px");
@@ -3017,11 +3048,18 @@
     else applyFilter();
   }, true);
 
-  fetch("photo-tags.json?v=20261008f").then(function (res) {
-    if (!res.ok) return null;
-    return res.json();
-  }).then(function (data) {
-    if (!data) return;
+  window.fpMountTags = function (data) {
+    if (!data || window.fpTagsMounted) return;
+    window.fpTagsMounted = true;
     mount(data);
-  }).catch(function () {});
+  };
+  if (!window.fpTagsReady) {
+    window.fpTagsReady = fetch("photo-tags.json?v=20261008g").then(function (res) {
+      if (!res.ok) throw new Error("tags");
+      return res.json();
+    }).catch(function () { return null; });
+  }
+  window.fpTagsReady.then(function (data) {
+    if (window.fpHoldReleased) window.fpMountTags(data);
+  });
 })();
