@@ -1305,6 +1305,12 @@
     }
   }
 
+  function clearGlide(tile) {
+    tile.style.translate = "";
+    tile.style.transform = "";
+    tile.style.removeProperty("transition");
+  }
+
   function dropMotion(tile) {
     var owned = tile._fpGlide;
     if (owned) tile._fpGlide = null;
@@ -1312,7 +1318,7 @@
       if (a.id === "fp-flow") a.cancel();
       else if (a.id === "fp-tag" && !tile.classList.contains("fp-tag-leave")) a.cancel();
     });
-    if (owned) tile.style.transform = "";
+    if (owned) clearGlide(tile);
   }
 
   function holdGlide(tile, from, opts) {
@@ -1329,14 +1335,15 @@
     var dx = from.left + from.width / 2 - (b.left + b.width / 2);
     var dy = from.top + from.height / 2 - (b.top + b.height / 2);
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return null;
-    var start = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)";
-    tile.style.transform = start;
+    var start = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
+    tile.style.setProperty("transition", "none", "important");
+    tile.style.translate = start;
     var frames = opts.arc === false
-      ? [{ transform: start }, { transform: "none" }]
+      ? [{ translate: start }, { translate: "0px 0px" }]
       : [
-          { transform: start },
-          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px)", offset: 0.82 },
-          { transform: "none" }
+          { translate: start },
+          { translate: (dx * 0.04).toFixed(1) + "px " + (dy * 0.04 - 2).toFixed(1) + "px", offset: 0.82 },
+          { translate: "0px 0px" }
         ];
     var an = tile.animate(frames, {
       duration: opts.dur || 520,
@@ -1349,7 +1356,7 @@
     var done = function () {
       if (tile._fpGlide !== an) return;
       tile._fpGlide = null;
-      tile.style.transform = "";
+      clearGlide(tile);
     };
     an.onfinish = done;
     an.oncancel = done;
