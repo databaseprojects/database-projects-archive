@@ -1614,7 +1614,7 @@
       g.classList.remove("fp-hold");
       g.classList.remove("fp-reveal");
     }
-    /* Table again, or Row then Table, keeps the spread already on screen. */
+    /* Clicking Table while it is already showing keeps the spread on screen. */
     if (mode === "table" && from === "table" && g.getAttribute("data-fp-layout") === "table") {
       syncLayoutButtons();
       return;
