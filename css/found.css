@@ -25,11 +25,13 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 }
 
 .fp-bar {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   position: relative;
   z-index: 20;
   margin: 0 0 1.2em;
-  padding: 0.5em 26rem 0.5em 0;
+  padding: 0.5em 0;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   font-family: "Courier New", Courier, monospace;
@@ -40,11 +42,11 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 }
 
 .fp-tags {
-  display: inline-flex;
+  display: flex;
+  flex: 1 0 100%;
   flex-wrap: wrap;
   align-items: center;
-  vertical-align: middle;
-  margin: 0 0.85em 0 0;
+  margin: 0 0 0.55em;
   row-gap: 7px;
 }
 
@@ -59,13 +61,11 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
 }
 
 .fp-zoom {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
   display: inline-flex;
   align-items: center;
   gap: 0.55em;
+  margin-left: auto;
   white-space: nowrap;
 }
 
@@ -230,24 +230,17 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   pointer-events: none;
 }
 
-/* Below 590px the right-aligned control row covers the title or runs off the bar.
+/* Below 590px the controls no longer fit beside the title.
    Same controls, still inside this bar; they drop to the next line instead of disappearing. */
 @media (max-width: 590px) {
-  .fp-bar {
-    padding-right: 0;
-  }
-
   .fp-zoom {
-    position: static;
-    top: auto;
-    right: auto;
-    transform: none;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     width: 100%;
     max-width: 100%;
     margin-top: 0.4em;
+    margin-left: 0;
     white-space: normal;
     row-gap: 0.35em;
   }
@@ -510,6 +503,11 @@ body.fp-lb-lock {
   overflow: hidden;
 }
 
+/* The tag bar is tall enough to sit beside a small back scan and show through the dim backdrop. */
+body.fp-lb-lock .fp-tags {
+  visibility: hidden;
+}
+
 .fp-lb .vsf-lb-map {
   cursor: pointer;
 }
@@ -573,6 +571,3 @@ body.fp-lb-lock {
   outline-offset: 2px;
 }
 
-.fp-tag[hidden] {
-  display: none;
-}

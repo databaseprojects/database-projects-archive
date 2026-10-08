@@ -2431,11 +2431,6 @@
       btn.classList.toggle("active", hit);
       btn.setAttribute("aria-pressed", hit ? "true" : "false");
     });
-    var clear = document.querySelector(".fp-tag[data-fp-clear]");
-    if (!clear) return;
-    clear.hidden = !picked.length;
-    clear.classList.remove("active");
-    clear.setAttribute("aria-pressed", "false");
   }
 
   function showAll() {
@@ -2462,14 +2457,6 @@
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
-    var clear = document.createElement("button");
-    clear.type = "button";
-    clear.className = "fp-tag";
-    clear.setAttribute("data-fp-clear", "");
-    clear.setAttribute("aria-pressed", "false");
-    clear.hidden = true;
-    clear.textContent = "Clear";
-    bar.appendChild(clear);
     var seen = {};
     (featured || []).forEach(function (tag) {
       if (!tag || seen[tag]) return;
@@ -2508,14 +2495,10 @@
   }
 
   document.addEventListener("click", function (e) {
-    var btn = e.target && e.target.closest && e.target.closest(".fp-tag[data-fp-filter], .fp-tag[data-fp-clear]");
+    var btn = e.target && e.target.closest && e.target.closest(".fp-tag[data-fp-filter]");
     if (!btn || document.getElementById("fp-lb")) return;
     e.preventDefault();
     e.stopPropagation();
-    if (btn.hasAttribute("data-fp-clear")) {
-      showAll();
-      return;
-    }
     var name = btn.getAttribute("data-fp-filter");
     var at = picked.indexOf(name);
     if (at >= 0) picked.splice(at, 1);
