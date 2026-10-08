@@ -227,7 +227,9 @@
   function syncAspect(tile) {
     var img = imgOf(tile);
     if (!img) return;
+    if (tile.style.getPropertyValue("--fp-ar")) return;
     var go = function () {
+      if (tile.style.getPropertyValue("--fp-ar")) return;
       if (!(img.naturalWidth > 1 && img.naturalHeight > 1)) return;
       var ar = (img.naturalWidth / img.naturalHeight).toFixed(5);
       tile.style.setProperty("--fp-ar", ar);
@@ -960,11 +962,7 @@
     var items = tiles();
     /* Any enter — row, table, or a slide still in motion — starts from the on-screen spots. */
     var held = !resume ? snapshotTiles(g) : null;
-    items.forEach(function (tile) {
-      (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
-        if (a.id === "fp-flow") a.cancel();
-      });
-    });
+    items.forEach(dropMotion);
     var tw = columnWidth(g);
     var gw = g.clientWidth || g.offsetWidth || 800;
     if (!(gw > 40)) gw = Math.min(document.documentElement.clientWidth || 900, 1200);
@@ -1123,13 +1121,15 @@
       restoreSnapshot(g, held, bodies);
       pinAgShadowFade();
       requestAnimationFrame(function () {
-        bodies.forEach(function (b) {
-          if (!b || !b.tile) return;
-          b.tile.style.removeProperty("left");
-          b.tile.style.removeProperty("top");
-          b.tile.style.removeProperty("translate");
+        requestAnimationFrame(function () {
+          bodies.forEach(function (b) {
+            if (!b || !b.tile) return;
+            b.tile.style.removeProperty("left");
+            b.tile.style.removeProperty("top");
+            b.tile.style.removeProperty("translate");
+          });
+          releaseAgMotion();
         });
-        requestAnimationFrame(releaseAgMotion);
       });
     }
     zTop = Math.max(zTop, maxZ + 1);
@@ -1309,11 +1309,17 @@
     tile.style.translate = "";
     tile.style.transform = "";
     tile.style.removeProperty("transition");
+    tile.style.removeProperty("transition-property");
+    tile.style.removeProperty("transition-duration");
+    tile.style.removeProperty("transition-timing-function");
+    tile.style.removeProperty("transition-delay");
   }
 
   function dropMotion(tile) {
     var owned = tile._fpGlide;
     if (owned) tile._fpGlide = null;
+    if (owned && owned.timer) clearTimeout(owned.timer);
+    if (owned && owned.onEnd) tile.removeEventListener("transitionend", owned.onEnd);
     (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
       if (a.id === "fp-flow") a.cancel();
       else if (a.id === "fp-tag" && !tile.classList.contains("fp-tag-leave")) a.cancel();
@@ -1336,31 +1342,42 @@
     var dy = from.top + from.height / 2 - (b.top + b.height / 2);
     if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return null;
     var start = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
+    /* Paint the current on-screen spot before any motion. A same-turn
+       animation can replace this hold for one frame and flash the destination. */
     tile.style.setProperty("transition", "none", "important");
     tile.style.translate = start;
-    var frames = opts.arc === false
-      ? [{ translate: start }, { translate: "0px 0px" }]
-      : [
-          { translate: start },
-          { translate: (dx * 0.04).toFixed(1) + "px " + (dy * 0.04 - 2).toFixed(1) + "px", offset: 0.82 },
-          { translate: "0px 0px" }
-        ];
-    var an = tile.animate(frames, {
-      duration: opts.dur || 520,
-      delay: opts.delay || 0,
-      easing: opts.easing || "cubic-bezier(.22,.8,.25,1)",
-      fill: "backwards"
-    });
-    an.id = opts.id || "fp-flow";
-    tile._fpGlide = an;
-    var done = function () {
-      if (tile._fpGlide !== an) return;
+    var token = {};
+    tile._fpGlide = token;
+    var dur = opts.dur || 520;
+    var delay = opts.delay || 0;
+    var easing = opts.easing || "cubic-bezier(.22,.8,.25,1)";
+    var finish = function () {
+      if (tile._fpGlide !== token) return;
       tile._fpGlide = null;
+      if (token.timer) clearTimeout(token.timer);
+      if (token.onEnd) tile.removeEventListener("transitionend", token.onEnd);
       clearGlide(tile);
     };
-    an.onfinish = done;
-    an.oncancel = done;
-    return an;
+    var onEnd = function (ev) {
+      if (ev.propertyName !== "translate") return;
+      finish();
+    };
+    token.onEnd = onEnd;
+    requestAnimationFrame(function () {
+      if (tile._fpGlide !== token) return;
+      requestAnimationFrame(function () {
+        if (tile._fpGlide !== token) return;
+        tile.addEventListener("transitionend", onEnd);
+        tile.style.removeProperty("transition");
+        tile.style.setProperty("transition-property", "translate", "important");
+        tile.style.setProperty("transition-duration", dur + "ms", "important");
+        tile.style.setProperty("transition-timing-function", easing, "important");
+        tile.style.setProperty("transition-delay", delay + "ms", "important");
+        tile.style.translate = "0px 0px";
+        token.timer = setTimeout(finish, delay + dur + 90);
+      });
+    });
+    return token;
   }
 
   function flow(mutate, opts) {
