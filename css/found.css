@@ -428,21 +428,6 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   transition: rotate 0.18s ease;
 }
 
-.fp-tile[data-back]:not([data-back=""]):hover {
-  overflow: visible;
-}
-
-.fp-tile[data-back]:not([data-back=""]):hover::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  width: 1px;
-  background: #000;
-  pointer-events: none;
-}
-
 html.fp-sizing {
   overflow-anchor: none;
 }
