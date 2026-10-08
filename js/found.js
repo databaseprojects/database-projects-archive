@@ -3,6 +3,7 @@
   var COL_KEY = "fpZoomCols";
   var LAYOUT_KEY = "fpLayout";
   var POS_KEY = "fpTablePosV2";
+  var TIGHT_KEY = "fpTableShuffleTight";
   var MIN = 6;
   var MAX = 20;
   var DEF = 6;
@@ -620,7 +621,7 @@
     }
     mx /= n;
     my /= n;
-    var pull = 0.58;
+    var pull = 0.82;
     for (i = 0; i < n; i++) {
       var cx = points[i].x + tw / 2;
       var cy = points[i].y + heights[i] / 2;
@@ -673,6 +674,7 @@
     if ((force || resetSpread) && !filtering) {
       try {
         localStorage.removeItem(POS_KEY);
+        localStorage.removeItem(TIGHT_KEY);
       } catch (e) {}
     }
     var items = tiles();
@@ -1729,11 +1731,36 @@
     });
     list.forEach(dropMotion);
     var slots = list.map(function (tile) {
+      var w = parseFloat(tile.style.getPropertyValue("--fp-tile-w")) || tile.offsetWidth || 0;
+      var h = tile.offsetHeight || tileHeight(tile, w);
       return {
         x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
-        y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0
+        y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+        w: w,
+        h: h
       };
     });
+    var alreadyTight = false;
+    try { alreadyTight = localStorage.getItem(TIGHT_KEY) === "1"; } catch (e) {}
+    if (!alreadyTight) {
+      var mx = 0;
+      var my = 0;
+      var si;
+      for (si = 0; si < slots.length; si++) {
+        mx += slots[si].x + slots[si].w / 2;
+        my += slots[si].y + slots[si].h / 2;
+      }
+      mx /= slots.length;
+      my /= slots.length;
+      for (si = 0; si < slots.length; si++) {
+        var cx = slots[si].x + slots[si].w / 2;
+        var cy = slots[si].y + slots[si].h / 2;
+        /* One modest pull-in. Later shuffles only swap these slots. */
+        slots[si].x = mx + (cx - mx) * 0.76 - slots[si].w / 2;
+        slots[si].y = my + (cy - my) * 0.76 - slots[si].h / 2;
+      }
+      try { localStorage.setItem(TIGHT_KEY, "1"); } catch (e2) {}
+    }
     var perm = derange(slots.length);
     var g = grid();
     list.forEach(function (tile, k) {
@@ -2834,8 +2861,9 @@
     else if (fit > 1) fit = 1;
     for (i = 0; i < n; i++) {
       var spec2 = specs[i];
-      var nx = cx + (pts[i].x - mx) * fit - tw / 2;
-      var ny = cy + (pts[i].y - my) * fit - spec2.h / 2;
+      /* A little looser than the packed cluster. The clamps below keep it on screen. */
+      var nx = cx + (pts[i].x - mx) * fit * 1.09 - tw / 2;
+      var ny = cy + (pts[i].y - my) * fit * 1.09 - spec2.h / 2;
       var lo2 = viewLeft + 2 + spec2.padX;
       var hi2 = viewRight - 2 - spec2.padX - tw;
       var top2 = viewTop + 2 + spec2.padY;
