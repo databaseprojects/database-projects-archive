@@ -576,3 +576,10 @@ body.fp-lb-lock {
 .fp-tag[hidden] {
   display: none;
 }
+
+.fp-tile.fp-tag-leave {
+  pointer-events: none;
+  z-index: 40;
+  margin: 0;
+  max-width: none;
+}
