@@ -2424,45 +2424,41 @@
     c.textContent = shown + " of " + all.length;
   }
 
-  function paintTags(name) {
+  var picked = [];
+
+  function paintTags() {
+    var on = {};
+    picked.forEach(function (name) { on[name] = true; });
     document.querySelectorAll(".fp-tag[data-fp-filter]").forEach(function (btn) {
-      var on = !!name && btn.getAttribute("data-fp-filter") === name;
-      btn.classList.toggle("active", on);
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      var hit = !!on[btn.getAttribute("data-fp-filter")];
+      btn.classList.toggle("active", hit);
+      btn.setAttribute("aria-pressed", hit ? "true" : "false");
     });
     var clear = document.querySelector(".fp-tag[data-fp-clear]");
     if (!clear) return;
-    clear.hidden = !name;
+    clear.hidden = !picked.length;
     clear.classList.remove("active");
     clear.setAttribute("aria-pressed", "false");
   }
 
   function showAll() {
+    picked = [];
     allTiles().forEach(function (tile) { tile.hidden = false; });
-    paintTags(null);
+    paintTags();
     paintCount();
   }
 
-  function applyFilter(name) {
+  function applyFilter() {
     allTiles().forEach(function (tile) {
       var tags = tile._fpTags || [];
-      tile.hidden = tags.indexOf(name) === -1;
+      var ok = true;
+      for (var i = 0; i < picked.length; i++) {
+        if (tags.indexOf(picked[i]) === -1) { ok = false; break; }
+      }
+      tile.hidden = !ok;
     });
-    paintTags(name);
+    paintTags();
     paintCount();
-  }
-
-  function renderPhotoTags(tile, tags) {
-    var old = tile.querySelector(".fp-photo-tags");
-    if (old) old.parentNode.removeChild(old);
-    var line = document.createElement("span");
-    line.className = "fp-photo-tags";
-    line.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
-    line.addEventListener("dblclick", function (e) { e.stopPropagation(); });
-    tags.forEach(function (tag) { line.appendChild(tagButton(tag)); });
-    tile.appendChild(line);
-    tile.classList.add("fp-tagged");
-    tile._fpTags = tags.slice();
   }
 
   function renderBar(featured, counts, minTagCount) {
@@ -2508,7 +2504,7 @@
       });
       allTiles().forEach(function (tile) {
         if (!entryMatches(entry, tile)) return;
-        renderPhotoTags(tile, tags);
+        tile._fpTags = tags.slice();
       });
     });
     renderBar(data.featuredTags || [], counts, data.minTagCount);
@@ -2524,8 +2520,11 @@
       return;
     }
     var name = btn.getAttribute("data-fp-filter");
-    if (btn.classList.contains("active")) showAll();
-    else applyFilter(name);
+    var at = picked.indexOf(name);
+    if (at >= 0) picked.splice(at, 1);
+    else picked.push(name);
+    if (!picked.length) showAll();
+    else applyFilter();
   }, true);
 
   fetch("photo-tags.json").then(function (res) {
