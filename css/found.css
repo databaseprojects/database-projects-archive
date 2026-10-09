@@ -101,6 +101,10 @@ html.fp-tags-open .fp-tags {
   padding-top: 0.45em;
 }
 
+html.fp-fold-hold .fp-grid[data-fp-layout="table"] .fp-tile {
+  transition: box-shadow 0.25s ease, rotate 0.22s ease, top 0.22s ease;
+}
+
 .fp-label {
   opacity: 0.85;
   margin-right: 0.6em;
@@ -183,7 +187,8 @@ html.fp-tags-open .fp-tags {
 @media (prefers-reduced-motion: reduce) {
   .fp-tagdrop,
   .fp-about-panel,
-  .fp-about-body {
+  .fp-about-body,
+  html.fp-fold-hold .fp-grid[data-fp-layout="table"] .fp-tile {
     transition: none;
   }
 

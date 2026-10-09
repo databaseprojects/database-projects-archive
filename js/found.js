@@ -44,8 +44,46 @@
     return window.matchMedia("(max-width: 767px)").matches;
   }
 
+  function tabletSlider() {
+    return !phoneSlider() && window.matchMedia("(max-width: 1100px)").matches;
+  }
+
+  function sliderBand() {
+    if (phoneSlider()) return "phone";
+    if (tabletSlider()) return "tablet";
+    return "desk";
+  }
+
   function sliderEnds() {
-    return phoneSlider() ? { min: 4, max: 7 } : { min: MIN, max: MAX };
+    if (phoneSlider()) return { min: 3, max: 7 };
+    if (tabletSlider()) return { min: 4, max: 18 };
+    return { min: MIN, max: MAX };
+  }
+
+  /* Tablet column counts sit on a shorter track so each slider position is
+     about a fifth wider, with 4 across at the large end. Store the desktop
+     equivalent so a tablet visit does not overwrite a desktop size. */
+  function desktopColsForStore(n) {
+    n = Math.round(+n);
+    if (!tabletSlider()) return n;
+    var ends = sliderEnds();
+    var t = (n - ends.min) / (ends.max - ends.min);
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return Math.round(MIN + t * (MAX - MIN));
+  }
+
+  function colsForThisScreen(stored) {
+    stored = clampCols(stored);
+    if (!tabletSlider()) return stored;
+    var ends = sliderEnds();
+    var t = (stored - MIN) / (MAX - MIN);
+    return Math.round(ends.min + t * (ends.max - ends.min));
+  }
+
+  function persistCols(n) {
+    if (phoneSlider()) return;
+    saveCols(desktopColsForStore(n));
   }
 
   function clampSlider(n) {
@@ -59,7 +97,7 @@
   function cols() {
     var g = grid();
     var raw = g ? g.getAttribute("data-columns") || DEF : DEF;
-    if (phoneSlider()) return clampSlider(raw);
+    if (phoneSlider() || tabletSlider()) return clampSlider(raw);
     return clampCols(raw);
   }
 
@@ -1704,7 +1742,13 @@
 
   function layoutSliderDefault(mode) {
     var ends = sliderEnds();
-    return ends.min + (ends.max - ends.min) * (mode === "table" ? 0.5 : 1 / 3);
+    if (mode === "table") {
+      if (phoneSlider() || tabletSlider()) return ends.min;
+      return ends.min + (ends.max - ends.min) * 0.5;
+    }
+    /* Phone Row stays on the previous one-third step (5 of the old 4–7 track). */
+    if (phoneSlider()) return 5;
+    return ends.min + (ends.max - ends.min) / 3;
   }
 
   function setCols(n, animate) {
@@ -1792,7 +1836,7 @@
         g.setAttribute("data-columns", String(preset));
         g.style.setProperty("--fp-cols", String(preset));
         fillSlider(preset);
-        if (!phoneSlider()) saveCols(preset);
+        persistCols(preset);
       }
       if (mode === "table") {
         if (from === "antigravity") landAsTable(g);
@@ -2392,7 +2436,7 @@
       if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
     });
     setCount();
-    setCols(phoneSlider() ? 4 : storedCols(), false);
+    setCols(phoneSlider() ? 4 : colsForThisScreen(storedCols()), false);
     setLayout(layoutMode(), false);
     settleArrival();
   } finally {
@@ -2685,7 +2729,7 @@
     draggingSlider = false;
     setCols(n, false);
     fillSlider(n);
-    if (!phoneSlider()) saveCols(n);
+    persistCols(n);
     requestAnimationFrame(unlockScroll);
   }
 
@@ -2708,7 +2752,7 @@
       return;
     }
     var k = clampSlider(s.value);
-    if (!phoneSlider()) saveCols(k);
+    persistCols(k);
     setCols(k, true);
   });
 
@@ -2723,15 +2767,15 @@
     }, 600);
   });
 
-  var phoneCols = phoneSlider();
+  var colsBand = sliderBand();
   window.addEventListener("resize", function () {
     if (draggingSlider) return;
     clearTimeout(window.fpResize);
     window.fpResize = setTimeout(function () {
-      var nowPhone = phoneSlider();
-      if (nowPhone !== phoneCols) {
-        phoneCols = nowPhone;
-        setCols(nowPhone ? 4 : storedCols(), false);
+      var nowBand = sliderBand();
+      if (nowBand !== colsBand) {
+        colsBand = nowBand;
+        setCols(nowBand === "phone" ? 4 : colsForThisScreen(storedCols()), false);
       }
       hoverScale();
       if (isTable()) applyScatter(grid(), false);
@@ -2753,6 +2797,7 @@
 /* Photo tags from photo-tags.json: label the matching print and filter the grid. */
 (function () {
   var TAGS_KEY = "fpTagsOpen";
+  var foldHold = 0;
 
   function syncTagsFold() {
     var open = document.documentElement.classList.contains("fp-tags-open");
@@ -2762,12 +2807,86 @@
     if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
   }
 
+  function tagsSaved() {
+    try { return localStorage.getItem(TAGS_KEY); } catch (e) { return null; }
+  }
+
+  function visibleTableTiles() {
+    return Array.prototype.filter.call(document.querySelectorAll(".fp-grid .fp-tile"), function (tile) {
+      return !tile.hidden && !tile.classList.contains("fp-tag-leave");
+    });
+  }
+
+  function shiftTableNy(tiles, dy) {
+    tiles.forEach(function (tile) {
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      if (!isFinite(ny)) return;
+      tile.style.setProperty("--fp-ny", (ny + dy).toFixed(1) + "px");
+    });
+  }
+
+  /* Tagged table prints are pinned to the viewport, so a collapsing tag row
+     can carry them above the page. Ride the row with the untagged spread,
+     and stop at the top of the page instead of following it past that edge. */
+  function armFoldSlide() {
+    var root = document.documentElement;
+    root.classList.add("fp-fold-hold");
+    void root.offsetWidth;
+    clearTimeout(window.fpFoldHoldT);
+    window.fpFoldHoldT = setTimeout(function () {
+      root.classList.remove("fp-fold-hold");
+    }, 280);
+  }
+
+  function holdTaggedFold(willOpen) {
+    var g = document.querySelector(".fp-grid");
+    if (!g || g.getAttribute("data-fp-layout") !== "table") return;
+    if (!document.documentElement.hasAttribute("data-fp-filter")) return;
+    var drop = document.getElementById("fp-tagdrop");
+    if (!drop) return;
+    var tiles = visibleTableTiles();
+    if (!tiles.length) return;
+    if (willOpen) {
+      if (!(foldHold > 0)) return;
+      armFoldSlide();
+      shiftTableNy(tiles, -foldHold);
+      foldHold = 0;
+      if (window.fpFitTableHeight) window.fpFitTableHeight(g);
+      return;
+    }
+    var dropH = drop.getBoundingClientRect().height;
+    if (!(dropH > 1)) return;
+    var minTop = Infinity;
+    var i;
+    for (i = 0; i < tiles.length; i++) {
+      var top = tiles[i].getBoundingClientRect().top;
+      if (top < minTop) minTop = top;
+    }
+    var ceiling = -(window.pageYOffset || 0);
+    var finalMin = minTop - dropH;
+    if (finalMin >= ceiling) return;
+    var lift = ceiling - finalMin + 1;
+    armFoldSlide();
+    shiftTableNy(tiles, lift);
+    foldHold += lift;
+    if (window.fpFitTableHeight) window.fpFitTableHeight(g);
+  }
+
   function setTagsFold(open) {
+    holdTaggedFold(!!open);
     document.documentElement.classList.add("fp-tags-motion");
     document.documentElement.classList.toggle("fp-tags-open", !!open);
     try { localStorage.setItem(TAGS_KEY, open ? "1" : "0"); } catch (e) {}
     syncTagsFold();
   }
+
+  window.addEventListener("resize", function () {
+    var saved = tagsSaved();
+    if (saved === "1" || saved === "0") return;
+    var phone = window.matchMedia("(max-width: 767px)").matches;
+    document.documentElement.classList.toggle("fp-tags-open", phone);
+    syncTagsFold();
+  });
 
   syncTagsFold();
   var tagsToggle = document.getElementById("fp-tags-toggle");
@@ -2917,6 +3036,7 @@
   }
 
   function restoreTableHome() {
+    foldHold = 0;
     if (!tableHome) return;
     var g = document.querySelector(".fp-grid");
     if (g && tableHome.h) g.style.setProperty("--fp-table-h", tableHome.h);
@@ -2954,6 +3074,7 @@
   }
 
   function placeCluster() {
+    foldHold = 0;
     var g = document.querySelector(".fp-grid");
     if (!g) return;
     var keep = allTiles().filter(tileOk);
