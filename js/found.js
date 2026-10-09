@@ -1840,12 +1840,32 @@
     g.style.removeProperty("--fp-ag-h");
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
-    seatTableBelowBar(g);
+    void g.offsetWidth;
+    /* Keep the pose. Only a print that overlaps the bar eases down to just under it. */
+    var bar = document.querySelector(".fp-bar");
+    var limit = bar ? bar.getBoundingClientRect().bottom + 1 : 0;
+    var moves = [];
+    items.forEach(function (tile) {
+      var rect = tile.getBoundingClientRect();
+      if (!(rect.width > 0) || !(rect.height > 0)) return;
+      var overlap = limit - rect.top;
+      if (!(overlap > 0.5)) return;
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0;
+      tile.style.setProperty("--fp-ny", (ny + overlap).toFixed(1) + "px");
+      moves.push({ tile: tile, from: rect });
+    });
     items.forEach(function (tile) {
       persist(tile);
     });
+    moves.forEach(function (item) {
+      holdGlide(item.tile, item.from, { dur: 420, easing: "cubic-bezier(.22,.8,.25,1)" });
+    });
     requestAnimationFrame(function () {
       items.forEach(function (tile) {
+        var i;
+        for (i = 0; i < moves.length; i++) {
+          if (moves[i].tile === tile) return;
+        }
         tile.style.removeProperty("transition");
       });
     });
@@ -3064,6 +3084,8 @@
     tile.style.maxWidth = "";
     tile.style.pointerEvents = "";
     tile.style.zIndex = "";
+    tile.style.transition = "";
+    tile.style.scale = "";
   }
 
   function pinLeave(tile, rect) {
@@ -3078,6 +3100,7 @@
     tile.style.maxWidth = "none";
     tile.style.pointerEvents = "none";
     tile.style.zIndex = "0";
+    tile.style.transition = "none";
   }
 
   function saveTableHome() {
@@ -3422,14 +3445,21 @@
         );
         enter.id = "fp-tag";
       } else if (!entry.show && entry.rect && tile.classList.contains("fp-tag-leave")) {
-        var leaveOpts = { duration: TAG_MS, easing: TAG_EASE };
+        var leaveOpts = { duration: TAG_MS, easing: TAG_EASE, fill: "both" };
         if (mode === "table") {
+          /* Per-photo shrink from the table stagger: random start, varied length. */
           leaveOpts.delay = Math.round(Math.random() * 160);
           leaveOpts.duration = Math.round(280 + Math.random() * 220);
-          leaveOpts.fill = "backwards";
+        } else if (mode === "row") {
+          /* Same kind of random start, still finished inside the row exit. */
+          var rowDelay = Math.round(Math.random() * 150);
+          leaveOpts.delay = rowDelay;
+          leaveOpts.duration = Math.max(200, TAG_MS - rowDelay);
         }
+        var startScale = window.getComputedStyle(tile).scale;
+        if (!startScale || startScale === "none") startScale = "1";
         var leave = tile.animate(
-          [{ transform: "scale(1)" }, { transform: "scale(0)" }],
+          [{ scale: startScale }, { scale: "0" }],
           leaveOpts
         );
         leave.id = "fp-tag";
@@ -3568,7 +3598,7 @@
     mount(data);
   };
   if (!window.fpTagsReady) {
-    window.fpTagsReady = fetch("photo-tags.json?v=20261009a").then(function (res) {
+    window.fpTagsReady = fetch("photo-tags.json?v=20261009b").then(function (res) {
       if (!res.ok) throw new Error("tags");
       return res.json();
     }).catch(function () { return null; });

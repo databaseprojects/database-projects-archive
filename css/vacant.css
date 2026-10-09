@@ -19,7 +19,7 @@
 
 .vsf-tagfold {
   flex: 1 0 100%;
-  margin: 0 0 0.55em;
+  margin: 0.55em 0 0;
 }
 
 .vsf-tags-toggle,
