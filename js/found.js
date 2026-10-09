@@ -488,9 +488,9 @@
 
   /* Nudge apart pairs that nearly cover each other. A little overlap stays.
      Equal-and-opposite pushes keep the scatter centred. */
-  function easeCovers(pts, widthOf, heightOf, bounds) {
+  function easeCovers(pts, widthOf, heightOf, bounds, coverLimit) {
     var n = pts.length;
-    var limit = 0.36;
+    var limit = coverLimit > 0 ? coverLimit : 0.36;
     var i;
     var j;
     var iter;
@@ -862,7 +862,64 @@
       minX: pad,
       maxX: Math.max(pad, gw - tw - pad)
     });
+    /* The pack used to hang from the top of a tall table, so the lower
+       page went sparse. Space centres evenly through the full height. */
+    evenVertical(points, heights, minY, gh, pad, tw, gw, rng);
     return points;
+  }
+
+  function evenVertical(points, heights, minY, gh, pad, tw, gw, rng) {
+    var n = points.length;
+    if (n < 2) return;
+    var order = [];
+    var i;
+    var k;
+    for (i = 0; i < n; i++) order.push(i);
+    order.sort(function (a, b) {
+      return (points[a].y + heights[a] / 2) - (points[b].y + heights[b] / 2);
+    });
+    for (k = 0; k < n; k++) {
+      i = order[k];
+      var lo = minY;
+      var hi = Math.max(lo, gh - heights[i] - pad);
+      var band = (hi - lo) / n;
+      var y = lo + band * (k + 0.5) + (rng() - 0.5) * band * 0.65;
+      if (y < lo) y = lo;
+      if (y > hi) y = hi;
+      points[i].y = y;
+    }
+    var iter;
+    var j;
+    for (iter = 0; iter < 6; iter++) {
+      for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+          var ax = points[i].x;
+          var ay = points[i].y;
+          var ah = heights[i];
+          var bx = points[j].x;
+          var by = points[j].y;
+          var bh = heights[j];
+          var ox = Math.min(ax + tw, bx + tw) - Math.max(ax, bx);
+          var oy = Math.min(ay + ah, by + bh) - Math.max(ay, by);
+          if (!(ox > 2) || !(oy > 2)) continue;
+          var cover = (ox * oy) / Math.min(tw * ah, tw * bh);
+          if (cover <= 0.36) continue;
+          var push = Math.min(ox, tw * 0.28);
+          if (bx >= ax) {
+            points[i].x -= push * 0.5;
+            points[j].x += push * 0.5;
+          } else {
+            points[i].x += push * 0.5;
+            points[j].x -= push * 0.5;
+          }
+        }
+      }
+      for (i = 0; i < n; i++) {
+        var limX = Math.max(pad, gw - tw - pad);
+        if (points[i].x < pad) points[i].x = pad;
+        else if (points[i].x > limX) points[i].x = limX;
+      }
+    }
   }
 
   function applyScatter(g, force, resetSpread) {
@@ -901,7 +958,10 @@
     g.style.setProperty("--fp-tile-w", tw + "px");
     var pad = 8;
     var minY = pageTop(g);
-    var points = resetSpread ? spreadPoints(items, gw, gh, tw, pad, minY) : null;
+    /* Desktop Table (no tag) is gathered with the tagged cluster, not this
+       full-page scatter. Phone and tablet keep the scatter. */
+    var freshDesk = resetSpread && !phoneSlider() && !tabletSlider();
+    var points = resetSpread && !freshDesk ? spreadPoints(items, gw, gh, tw, pad, minY) : null;
     if (points) {
       var bottom = minY;
       items.forEach(function (tile, i) {
@@ -1826,47 +1886,6 @@
     g.style.gridAutoRows = "max-content";
   }
 
-  function boxCover(a, b) {
-    var ox = Math.min(a.left + a.w, b.left + b.w) - Math.max(a.left, b.left);
-    var oy = Math.min(a.top + a.h, b.top + b.h) - Math.max(a.top, b.top);
-    if (!(ox > 0) || !(oy > 0)) return 0;
-    var small = Math.min(a.w * a.h, b.w * b.h);
-    if (!(small > 1)) return 0;
-    return (ox * oy) / small;
-  }
-
-  /* Each print cleared under the bar picks its own depth. A nearly full
-     cover yields downward so one print does not swallow another. */
-  function varyDropDepths(moves, stayed) {
-    var limit = 0.62;
-    var iter;
-    var i;
-    var j;
-    for (iter = 0; iter < 14; iter++) {
-      var worst = 0;
-      for (i = 0; i < moves.length; i++) {
-        var box = moves[i];
-        var others = stayed.concat(moves);
-        for (j = 0; j < others.length; j++) {
-          var other = others[j];
-          if (other === box) continue;
-          var cover = boxCover(box, other);
-          if (cover > worst) worst = cover;
-          if (cover <= limit) continue;
-          if (other.tile && other.top > box.top + 0.5) continue;
-          var oy = Math.min(box.top + box.h, other.top + other.h) - Math.max(box.top, other.top);
-          var push = Math.max(2, Math.min(oy * 0.55, box.h * 0.45));
-          var cap = box.overlap + box.h * 1.35;
-          if (box.drop + push > cap) push = Math.max(0, cap - box.drop);
-          if (!(push > 0)) continue;
-          box.drop += push;
-          box.top += push;
-        }
-      }
-      if (worst <= limit) break;
-    }
-  }
-
   function landAsTable(g) {
     var items = tiles();
     items.forEach(function (tile) {
@@ -1882,55 +1901,30 @@
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
     void g.offsetWidth;
-    /* Keep the pose. Only a print that overlaps the bar eases down under it,
-       each with its own depth and a slightly different start. */
+    /* Keep the pose. Only a print that overlaps the bar eases down to just under it. */
     var bar = document.querySelector(".fp-bar");
     var limit = bar ? bar.getBoundingClientRect().bottom + 1 : 0;
-    var DROP_MS = 420;
-    var plans = [];
-    var stayed = [];
+    var moves = [];
     items.forEach(function (tile) {
       var rect = tile.getBoundingClientRect();
       if (!(rect.width > 0) || !(rect.height > 0)) return;
       var overlap = limit - rect.top;
-      if (!(overlap > 0.5)) {
-        stayed.push({ left: rect.left, top: rect.top, w: rect.width, h: rect.height });
-        return;
-      }
-      var extra = Math.random() * rect.height;
-      plans.push({
-        tile: tile,
-        from: rect,
-        ny: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
-        overlap: overlap,
-        drop: overlap + extra,
-        left: rect.left,
-        top: limit + extra,
-        w: rect.width,
-        h: rect.height
-      });
-    });
-    varyDropDepths(plans, stayed);
-    plans.forEach(function (plan) {
-      plan.tile.style.setProperty("--fp-ny", (plan.ny + plan.drop).toFixed(1) + "px");
+      if (!(overlap > 0.5)) return;
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0;
+      tile.style.setProperty("--fp-ny", (ny + overlap).toFixed(1) + "px");
+      moves.push({ tile: tile, from: rect });
     });
     items.forEach(function (tile) {
       persist(tile);
     });
-    plans.forEach(function (plan) {
-      var delay = Math.round(Math.random() * 150);
-      plan.delay = delay;
-      holdGlide(plan.tile, plan.from, {
-        delay: delay,
-        dur: Math.max(220, DROP_MS - delay),
-        easing: "cubic-bezier(.22,.8,.25,1)"
-      });
+    moves.forEach(function (item) {
+      holdGlide(item.tile, item.from, { dur: 420, easing: "cubic-bezier(.22,.8,.25,1)" });
     });
     requestAnimationFrame(function () {
       items.forEach(function (tile) {
         var i;
-        for (i = 0; i < plans.length; i++) {
-          if (plans[i].tile === tile) return;
+        for (i = 0; i < moves.length; i++) {
+          if (moves[i].tile === tile) return;
         }
         tile.style.removeProperty("transition");
       });
@@ -1991,6 +1985,9 @@
             });
           } else {
             assignTableSkew();
+            if (!phoneSlider() && !tabletSlider() && window.fpLayoutCluster) {
+              window.fpLayoutCluster(tiles());
+            }
             tiles().forEach(persist);
           }
         }
@@ -3224,12 +3221,60 @@
     };
   }
 
-  function placeCluster() {
+  function clusterScreen() {
+    if (window.matchMedia("(max-width: 767px)").matches) return "phone";
+    if (window.matchMedia("(min-width: 1101px)").matches) return "desk";
+    return "tablet";
+  }
+
+  /* Phone tagged piles are opened downward until overlaps are only slight.
+     Horizontal room is used first; the rest grows the page. */
+  function spillDown(boxes, loX, hiX) {
+    var n = boxes.length;
+    var pass;
+    var i;
+    var j;
+    for (pass = 0; pass < 18; pass++) {
+      var moved = false;
+      for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+          var a = boxes[i];
+          var b = boxes[j];
+          var ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+          var oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+          if (!(ox > 0) || !(oy > 0)) continue;
+          var cover = (ox * oy) / Math.min(a.w * a.h, b.w * b.h);
+          if (cover <= 0.1) continue;
+          moved = true;
+          var v = (b.y + b.h / 2) >= (a.y + a.h / 2) ? 1 : -1;
+          var pushY = Math.max(4, Math.min(oy, a.h, b.h) * 0.42);
+          a.y -= v * pushY;
+          b.y += v * pushY;
+          var dir = (b.x + b.w / 2) >= (a.x + a.w / 2) ? 1 : -1;
+          var pushX = Math.min(ox, pushY) * 0.28;
+          var nxA = a.x - dir * pushX;
+          var nxB = b.x + dir * pushX;
+          if (nxA >= loX && nxA <= hiX && nxB >= loX && nxB <= hiX) {
+            a.x = nxA;
+            b.x = nxB;
+          }
+        }
+      }
+      if (!moved) break;
+    }
+    for (i = 0; i < n; i++) {
+      if (boxes[i].x < loX) boxes[i].x = loX;
+      else if (boxes[i].x > hiX) boxes[i].x = hiX;
+    }
+  }
+
+  function layoutCluster(keep) {
     foldHold = 0;
     var g = document.querySelector(".fp-grid");
-    if (!g) return;
-    var keep = allTiles().filter(tileOk);
-    if (!keep.length) return;
+    if (!g || !keep || !keep.length) return;
+    var screen = clusterScreen();
+    var phone = screen === "phone";
+    var desk = screen === "desk";
     var tw = 0;
     var i;
     var j;
@@ -3267,8 +3312,9 @@
     avgH /= n;
     var cx = (viewLeft + viewRight) / 2;
     var cy = (viewTop + viewBottom) / 2;
-    var spacing = avgW * (0.8 + Math.random() * 0.1);
-    var radius = n === 1 ? 0 : spacing * Math.sqrt(n / Math.PI) * 1.05;
+    var spacing = avgW * (phone ? (0.96 + Math.random() * 0.06) : (0.8 + Math.random() * 0.1));
+    var radiusK = phone ? 1.25 : (desk ? 1.12 : 1.05);
+    var radius = n === 1 ? 0 : spacing * Math.sqrt(n / Math.PI) * radiusK;
     var pts = [];
     var overlap = [];
     for (i = 0; i < n; i++) {
@@ -3278,10 +3324,11 @@
         x: Math.cos(ang) * dist,
         y: Math.sin(ang) * dist * (avgH / Math.max(avgW, 1))
       });
-      overlap.push(0.8 + Math.random() * 0.1);
+      overlap.push(phone ? (0.96 + Math.random() * 0.06) : (0.8 + Math.random() * 0.1));
     }
     var pass;
-    for (pass = 0; pass < 6; pass++) {
+    var passes = phone ? 10 : 6;
+    for (pass = 0; pass < passes; pass++) {
       for (i = 0; i < n; i++) {
         for (j = i + 1; j < n; j++) {
           var dx = pts[j].x - pts[i].x;
@@ -3333,16 +3380,23 @@
       var limB = bot - (cy - spec.h / 2);
       if (dxp > 0.5 && limR > 0) fit = Math.min(fit, limR / dxp);
       else if (dxp < -0.5 && limL < 0) fit = Math.min(fit, limL / dxp);
+      if (phone) continue;
       if (dyp > 0.5 && limB > 0) fit = Math.min(fit, limB / dyp);
       else if (dyp < -0.5 && limT < 0) fit = Math.min(fit, limT / dyp);
     }
     if (!(fit > 0)) fit = 0;
     else if (fit > 1) fit = 1;
+    var fitX = fit;
+    var fitY = phone ? 1 : fit;
+    /* Desktop is a little wider (about 12%) and a touch less tightly gathered.
+       Phone keeps its own spacing and is allowed to grow downward. */
+    var spreadX = desk ? 1.18 * 1.125 : (phone ? 1 : 1.18);
+    var spreadY = phone ? 1 : 1.1;
+    var boxes = [];
     for (i = 0; i < n; i++) {
       var spec2 = specs[i];
-      /* Wider than tall, and a bit more open than the previous cluster. */
-      var nx = cx + (pts[i].x - mx) * fit * 1.18 - tw / 2;
-      var ny = cy + (pts[i].y - my) * fit * 1.1 - spec2.h / 2;
+      var nx = cx + (pts[i].x - mx) * fitX * spreadX - tw / 2;
+      var ny = cy + (pts[i].y - my) * fitY * spreadY - spec2.h / 2;
       var lo2 = viewLeft + 2 + spec2.padX;
       var hi2 = viewRight - 2 - spec2.padX - tw;
       var top2 = viewTop + 2 + spec2.padY;
@@ -3352,14 +3406,20 @@
         if (nx < lo2) nx = lo2;
         if (nx > hi2) nx = hi2;
       }
-      if (!(bot2 > top2)) ny = Math.max(0, (viewTop + viewBottom - spec2.h) / 2);
-      else {
-        if (ny < top2) ny = top2;
-        if (ny > bot2) ny = bot2;
+      if (!phone) {
+        if (!(bot2 > top2)) ny = Math.max(0, (viewTop + viewBottom - spec2.h) / 2);
+        else {
+          if (ny < top2) ny = top2;
+          if (ny > bot2) ny = bot2;
+        }
       }
-      spec2.tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
-      spec2.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
-      spec2.tile.style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
+      boxes.push({ x: nx, y: ny, w: tw, h: spec2.h });
+    }
+    if (phone) spillDown(boxes, Math.max(4, viewLeft), Math.max(Math.max(4, viewLeft), Math.min(g.clientWidth, viewRight) - 4 - tw));
+    for (i = 0; i < n; i++) {
+      specs[i].tile.style.setProperty("--fp-nx", boxes[i].x.toFixed(1) + "px");
+      specs[i].tile.style.setProperty("--fp-ny", boxes[i].y.toFixed(1) + "px");
+      specs[i].tile.style.setProperty("--fp-tile-w", tw.toFixed(1) + "px");
     }
     if (window.fpEaseCovers) {
       var eased = [];
@@ -3372,7 +3432,7 @@
           tile: specs[i].tile
         });
       }
-      window.fpEaseCovers(eased, function (k) { return eased[k].w; }, function (k) { return eased[k].h; });
+      window.fpEaseCovers(eased, function (k) { return eased[k].w; }, function (k) { return eased[k].h; }, null, phone ? 0.16 : 0);
       for (i = 0; i < eased.length; i++) {
         var spec3 = specs[i];
         var nx3 = eased[i].x;
@@ -3385,16 +3445,29 @@
           if (nx3 < lo3) nx3 = lo3;
           if (nx3 > hi3) nx3 = hi3;
         }
-        if (bot3 > top3) {
+        if (!phone && bot3 > top3) {
           if (ny3 < top3) ny3 = top3;
           if (ny3 > bot3) ny3 = bot3;
         }
-        spec3.tile.style.setProperty("--fp-nx", nx3.toFixed(1) + "px");
-        spec3.tile.style.setProperty("--fp-ny", ny3.toFixed(1) + "px");
+        eased[i].x = nx3;
+        eased[i].y = ny3;
+      }
+      if (phone) spillDown(eased, Math.max(4, viewLeft), Math.max(Math.max(4, viewLeft), Math.min(g.clientWidth, viewRight) - 4 - tw));
+      for (i = 0; i < eased.length; i++) {
+        specs[i].tile.style.setProperty("--fp-nx", eased[i].x.toFixed(1) + "px");
+        specs[i].tile.style.setProperty("--fp-ny", eased[i].y.toFixed(1) + "px");
       }
     }
     if (window.fpSeatTable) window.fpSeatTable(keep);
   }
+
+  function placeCluster() {
+    layoutCluster(allTiles().filter(tileOk));
+  }
+
+  window.fpLayoutCluster = function (list) {
+    layoutCluster(list);
+  };
 
   function rescalePlaced() {
     var g = document.querySelector(".fp-grid");
