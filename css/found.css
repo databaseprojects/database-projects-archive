@@ -41,18 +41,156 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   min-height: 28px;
 }
 
+.fp-tagfold {
+  flex: 1 0 100%;
+  margin: 0 0 0.55em;
+}
+
+.fp-tags-toggle,
+.fp-about-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.fp-tags-toggle:hover,
+.fp-tags-toggle:focus-visible,
+.fp-about-toggle:hover,
+.fp-about-toggle:focus-visible {
+  text-decoration: underline;
+}
+
+.fp-tags-toggle:focus-visible,
+.fp-about-toggle:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+.fp-tagdrop {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+html.fp-tags-motion .fp-tagdrop {
+  transition: grid-template-rows 0.22s ease;
+}
+
+html.fp-tags-open .fp-tagdrop {
+  grid-template-rows: 1fr;
+}
+
 .fp-tags {
   display: flex;
-  flex: 1 0 100%;
   flex-wrap: wrap;
   align-items: center;
-  margin: 0 0 0.55em;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
   row-gap: 7px;
+}
+
+html.fp-tags-open .fp-tags {
+  padding-top: 0.45em;
 }
 
 .fp-label {
   opacity: 0.85;
   margin-right: 0.6em;
+  flex-shrink: 0;
+}
+
+/* Title disclosure, same motion as Car Colours. Two columns, one on a phone. */
+.fp-about-panel {
+  flex: 1 0 100%;
+  display: grid;
+  grid-template-rows: 0fr;
+  background: #fff;
+  text-transform: none;
+  letter-spacing: normal;
+  transition: grid-template-rows 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.fp-about-panel[hidden] {
+  display: none;
+}
+
+.fp-bar.fp-about-open {
+  background: #fff;
+}
+
+.fp-bar.fp-about-open .fp-about-panel {
+  grid-template-rows: 1fr;
+}
+
+.fp-about-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fp-about-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+  width: 100%;
+  padding: 0.85rem 0 0.15rem;
+  transform-origin: center center;
+  transform: scale(0.94);
+  opacity: 0;
+  transition: transform 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95), opacity 0.32s ease;
+}
+
+.fp-bar.fp-about-open .fp-about-body {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.fp-about-block {
+  margin: 0 0 0.85rem;
+}
+
+.fp-about-block h2 {
+  margin: 0 0 0.2rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fp-about-block p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+@media (max-width: 767px) {
+  .fp-about-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-tagdrop,
+  .fp-about-panel,
+  .fp-about-body {
+    transition: none;
+  }
+
+  .fp-about-body {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .fp-count {
