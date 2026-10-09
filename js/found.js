@@ -2752,6 +2752,33 @@
 
 /* Photo tags from photo-tags.json: label the matching print and filter the grid. */
 (function () {
+  var TAGS_KEY = "fpTagsOpen";
+
+  function syncTagsFold() {
+    var open = document.documentElement.classList.contains("fp-tags-open");
+    var btn = document.getElementById("fp-tags-toggle");
+    var drop = document.getElementById("fp-tagdrop");
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
+  function setTagsFold(open) {
+    document.documentElement.classList.add("fp-tags-motion");
+    document.documentElement.classList.toggle("fp-tags-open", !!open);
+    try { localStorage.setItem(TAGS_KEY, open ? "1" : "0"); } catch (e) {}
+    syncTagsFold();
+  }
+
+  syncTagsFold();
+  var tagsToggle = document.getElementById("fp-tags-toggle");
+  if (tagsToggle) {
+    tagsToggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setTagsFold(!document.documentElement.classList.contains("fp-tags-open"));
+    });
+  }
+
   function addId(set, value) {
     var raw = String(value || "").trim();
     if (!raw) return;
@@ -3328,5 +3355,53 @@
   }
   window.fpTagsReady.then(function (data) {
     if (window.fpHoldReleased) window.fpMountTags(data);
+  });
+})();
+
+/* Page title disclosure, same open and close as Car Colours. */
+(function () {
+  var bar = document.querySelector(".fp-bar");
+  var toggle = document.getElementById("fp-about-toggle");
+  var panel = document.getElementById("fp-about-panel");
+  if (!bar || !toggle || !panel) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hideTimer = 0;
+
+  function finishClose() {
+    if (!bar.classList.contains("fp-about-open")) panel.hidden = true;
+  }
+
+  toggle.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var open = !bar.classList.contains("fp-about-open");
+    window.clearTimeout(hideTimer);
+    if (open) {
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+      if (reduce) {
+        bar.classList.add("fp-about-open");
+        return;
+      }
+      panel.getBoundingClientRect();
+      bar.classList.add("fp-about-open");
+      return;
+    }
+    bar.classList.remove("fp-about-open");
+    toggle.setAttribute("aria-expanded", "false");
+    panel.setAttribute("aria-hidden", "true");
+    if (reduce) {
+      panel.hidden = true;
+      return;
+    }
+    hideTimer = window.setTimeout(finishClose, 480);
+  });
+
+  panel.addEventListener("transitionend", function (e) {
+    if (e.target !== panel || e.propertyName !== "grid-template-rows") return;
+    window.clearTimeout(hideTimer);
+    finishClose();
   });
 })();
