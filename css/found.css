@@ -97,8 +97,23 @@ html.fp-tags-open .fp-tagdrop {
   row-gap: 7px;
 }
 
+html.fp-tags-open .fp-tagdrop,
+html.fp-tags-open .fp-tags {
+  --fp-tag-rows: 4;
+  max-height: calc(0.45em + var(--fp-tag-rows) * (1.4em + 0.5em + 2px) + (var(--fp-tag-rows) - 1) * 7px + 2px);
+}
+
 html.fp-tags-open .fp-tags {
   padding-top: 0.45em;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 767px) {
+  html.fp-tags-open .fp-tagdrop,
+  html.fp-tags-open .fp-tags {
+    --fp-tag-rows: 8;
+  }
 }
 
 html.fp-fold-hold .fp-grid[data-fp-layout="table"] .fp-tile {
