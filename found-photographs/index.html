@@ -27,10 +27,12 @@
   <link rel="stylesheet" href="../css/site.css">
   <script>
   try {
-    if (localStorage.getItem("fpTagsOpen") === "1") document.documentElement.classList.add("fp-tags-open");
+    var savedTags = localStorage.getItem("fpTagsOpen");
+    var tagsPhone = window.matchMedia("(max-width: 767px)").matches;
+    if (savedTags === "1" || (savedTags !== "0" && tagsPhone)) document.documentElement.classList.add("fp-tags-open");
   } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/found.css?v=20261008g">
+  <link rel="stylesheet" href="../css/found.css?v=20261008h">
 </head>
 <body>
   <div class="sheet">
@@ -80,6 +82,6 @@
 </main>
 
   </div>
-  <script src="../js/found.js?v=20261008l" defer></script>
+  <script src="../js/found.js?v=20261008m" defer></script>
 </body>
 </html>

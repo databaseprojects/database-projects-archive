@@ -847,3 +847,81 @@
     }, 150);
   });
 })();
+
+/* Tag list folds behind a plain "tags" label. Remember the choice. */
+(function () {
+  var TAGS_KEY = "vsfTagsOpen";
+
+  function syncTagsFold() {
+    var open = document.documentElement.classList.contains("vsf-tags-open");
+    var btn = document.getElementById("vsf-tags-toggle");
+    var drop = document.getElementById("vsf-tagdrop");
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
+  function setTagsFold(open) {
+    document.documentElement.classList.add("vsf-tags-motion");
+    document.documentElement.classList.toggle("vsf-tags-open", !!open);
+    try { localStorage.setItem(TAGS_KEY, open ? "1" : "0"); } catch (e) {}
+    syncTagsFold();
+  }
+
+  syncTagsFold();
+  var tagsToggle = document.getElementById("vsf-tags-toggle");
+  if (tagsToggle) {
+    tagsToggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setTagsFold(!document.documentElement.classList.contains("vsf-tags-open"));
+    });
+  }
+})();
+
+/* Page title disclosure, same open and close as Found Photographs. */
+(function () {
+  var bar = document.querySelector(".vsf-bar");
+  var toggle = document.getElementById("vsf-about-toggle");
+  var panel = document.getElementById("vsf-about-panel");
+  if (!bar || !toggle || !panel) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hideTimer = 0;
+
+  function finishClose() {
+    if (!bar.classList.contains("vsf-about-open")) panel.hidden = true;
+  }
+
+  toggle.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var open = !bar.classList.contains("vsf-about-open");
+    window.clearTimeout(hideTimer);
+    if (open) {
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+      if (reduce) {
+        bar.classList.add("vsf-about-open");
+        return;
+      }
+      panel.getBoundingClientRect();
+      bar.classList.add("vsf-about-open");
+      return;
+    }
+    bar.classList.remove("vsf-about-open");
+    toggle.setAttribute("aria-expanded", "false");
+    panel.setAttribute("aria-hidden", "true");
+    if (reduce) {
+      panel.hidden = true;
+      return;
+    }
+    hideTimer = window.setTimeout(finishClose, 480);
+  });
+
+  panel.addEventListener("transitionend", function (e) {
+    if (e.target !== panel || e.propertyName !== "grid-template-rows") return;
+    window.clearTimeout(hideTimer);
+    finishClose();
+  });
+})();
