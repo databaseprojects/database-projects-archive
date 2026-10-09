@@ -37,7 +37,7 @@
   function visible() {
     var g = grid();
     if (!g) return [];
-    return Array.prototype.slice.call(g.querySelectorAll(".vsf-tile")).sort(function (a, b) {
+    return Array.prototype.slice.call(g.querySelectorAll(".vsf-tile:not(.vsf-leaving)")).sort(function (a, b) {
       return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
     });
   }
@@ -274,6 +274,74 @@
     return true;
   }
 
+  function clearLeave(tile) {
+    if (tile._vsfLeave) {
+      tile._vsfLeave.cancel();
+      tile._vsfLeave = null;
+    }
+    tile.classList.remove("vsf-leaving");
+    tile.style.position = "";
+    tile.style.left = "";
+    tile.style.top = "";
+    tile.style.width = "";
+    tile.style.height = "";
+    tile.style.margin = "";
+    tile.style.maxWidth = "";
+    tile.style.zIndex = "";
+    tile.style.pointerEvents = "";
+    tile.style.transition = "";
+    tile.style.scale = "";
+  }
+
+  function parkLeave(tile) {
+    var h = hold();
+    clearLeave(tile);
+    if (h) h.appendChild(tile);
+  }
+
+  /* Random starts, same overall exit length as the row shrink on Found Photographs. */
+  function staggerLeave(tiles) {
+    var h = hold();
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var total = 380;
+    tiles.forEach(function (tile) {
+      var rect = tile.getBoundingClientRect();
+      if (reduce || !tile.animate || !(rect.width > 0)) {
+        if (h) h.appendChild(tile);
+        return;
+      }
+      tile.classList.add("vsf-leaving");
+      tile.style.transition = "none";
+      tile.style.position = "fixed";
+      tile.style.left = rect.left + "px";
+      tile.style.top = rect.top + "px";
+      tile.style.width = rect.width + "px";
+      tile.style.height = rect.height + "px";
+      tile.style.margin = "0";
+      tile.style.maxWidth = "none";
+      tile.style.pointerEvents = "none";
+      tile.style.zIndex = "0";
+      var delay = Math.round(Math.random() * 150);
+      var start = window.getComputedStyle(tile).scale;
+      if (!start || start === "none") start = "1";
+      var anim = tile.animate(
+        [{ scale: start }, { scale: "0" }],
+        {
+          delay: delay,
+          duration: Math.max(200, total - delay),
+          easing: "cubic-bezier(.22,.8,.25,1)",
+          fill: "both"
+        }
+      );
+      anim.id = "vsf-leave";
+      tile._vsfLeave = anim;
+      anim.onfinish = function () {
+        if (tile._vsfLeave !== anim) return;
+        parkLeave(tile);
+      };
+    });
+  }
+
   function applyFilter(btn) {
     var g = grid();
     var h = hold();
@@ -304,18 +372,26 @@
       return matches(tile, tags);
     }).length;
     setCount(shown, items.length);
+    items.forEach(clearLeave);
+    var leaveGen = (window.vsfLeaveGen = (window.vsfLeaveGen || 0) + 1);
     if (!shown) {
       window.vsfCasc = (window.vsfCasc || 0) + 1;
-      items.forEach(function (tile) {
-        g.appendChild(tile);
-        tile.removeAttribute("data-vsf-wait");
-      });
-      g.classList.add("vsf-empty");
+      var outgoing = items.filter(function (tile) { return tile.parentNode === g; });
+      staggerLeave(outgoing);
+      if (!outgoing.length) g.classList.add("vsf-empty");
+      else setTimeout(function () {
+        if (window.vsfLeaveGen !== leaveGen) return;
+        if (grid() && !visible().length) grid().classList.add("vsf-empty");
+      }, 420);
       return;
     }
+    var leaving = [];
     items.forEach(function (tile) {
-      (matches(tile, tags) ? g : h).appendChild(tile);
+      if (matches(tile, tags)) g.appendChild(tile);
+      else if (tile.parentNode === g) leaving.push(tile);
+      else if (h) h.appendChild(tile);
     });
+    staggerLeave(leaving);
     g.classList.remove("vsf-empty");
     cascade(g);
     setTimeout(hoverScale, 80);
@@ -325,7 +401,7 @@
     if (dragging) return;
     var g = grid();
     if (!g || g.classList.contains("vsf-empty")) return;
-    var items = Array.prototype.slice.call(g.querySelectorAll(".vsf-tile"));
+    var items = Array.prototype.slice.call(g.querySelectorAll(".vsf-tile:not(.vsf-leaving)"));
     if (items.length < 2) return;
     for (var i = items.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
