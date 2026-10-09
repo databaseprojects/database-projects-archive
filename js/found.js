@@ -1826,6 +1826,47 @@
     g.style.gridAutoRows = "max-content";
   }
 
+  function boxCover(a, b) {
+    var ox = Math.min(a.left + a.w, b.left + b.w) - Math.max(a.left, b.left);
+    var oy = Math.min(a.top + a.h, b.top + b.h) - Math.max(a.top, b.top);
+    if (!(ox > 0) || !(oy > 0)) return 0;
+    var small = Math.min(a.w * a.h, b.w * b.h);
+    if (!(small > 1)) return 0;
+    return (ox * oy) / small;
+  }
+
+  /* Each print cleared under the bar picks its own depth. A nearly full
+     cover yields downward so one print does not swallow another. */
+  function varyDropDepths(moves, stayed) {
+    var limit = 0.62;
+    var iter;
+    var i;
+    var j;
+    for (iter = 0; iter < 14; iter++) {
+      var worst = 0;
+      for (i = 0; i < moves.length; i++) {
+        var box = moves[i];
+        var others = stayed.concat(moves);
+        for (j = 0; j < others.length; j++) {
+          var other = others[j];
+          if (other === box) continue;
+          var cover = boxCover(box, other);
+          if (cover > worst) worst = cover;
+          if (cover <= limit) continue;
+          if (other.tile && other.top > box.top + 0.5) continue;
+          var oy = Math.min(box.top + box.h, other.top + other.h) - Math.max(box.top, other.top);
+          var push = Math.max(2, Math.min(oy * 0.55, box.h * 0.45));
+          var cap = box.overlap + box.h * 1.35;
+          if (box.drop + push > cap) push = Math.max(0, cap - box.drop);
+          if (!(push > 0)) continue;
+          box.drop += push;
+          box.top += push;
+        }
+      }
+      if (worst <= limit) break;
+    }
+  }
+
   function landAsTable(g) {
     var items = tiles();
     items.forEach(function (tile) {
@@ -1841,30 +1882,55 @@
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
     void g.offsetWidth;
-    /* Keep the pose. Only a print that overlaps the bar eases down to just under it. */
+    /* Keep the pose. Only a print that overlaps the bar eases down under it,
+       each with its own depth and a slightly different start. */
     var bar = document.querySelector(".fp-bar");
     var limit = bar ? bar.getBoundingClientRect().bottom + 1 : 0;
-    var moves = [];
+    var DROP_MS = 420;
+    var plans = [];
+    var stayed = [];
     items.forEach(function (tile) {
       var rect = tile.getBoundingClientRect();
       if (!(rect.width > 0) || !(rect.height > 0)) return;
       var overlap = limit - rect.top;
-      if (!(overlap > 0.5)) return;
-      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0;
-      tile.style.setProperty("--fp-ny", (ny + overlap).toFixed(1) + "px");
-      moves.push({ tile: tile, from: rect });
+      if (!(overlap > 0.5)) {
+        stayed.push({ left: rect.left, top: rect.top, w: rect.width, h: rect.height });
+        return;
+      }
+      var extra = Math.random() * rect.height;
+      plans.push({
+        tile: tile,
+        from: rect,
+        ny: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+        overlap: overlap,
+        drop: overlap + extra,
+        left: rect.left,
+        top: limit + extra,
+        w: rect.width,
+        h: rect.height
+      });
+    });
+    varyDropDepths(plans, stayed);
+    plans.forEach(function (plan) {
+      plan.tile.style.setProperty("--fp-ny", (plan.ny + plan.drop).toFixed(1) + "px");
     });
     items.forEach(function (tile) {
       persist(tile);
     });
-    moves.forEach(function (item) {
-      holdGlide(item.tile, item.from, { dur: 420, easing: "cubic-bezier(.22,.8,.25,1)" });
+    plans.forEach(function (plan) {
+      var delay = Math.round(Math.random() * 150);
+      plan.delay = delay;
+      holdGlide(plan.tile, plan.from, {
+        delay: delay,
+        dur: Math.max(220, DROP_MS - delay),
+        easing: "cubic-bezier(.22,.8,.25,1)"
+      });
     });
     requestAnimationFrame(function () {
       items.forEach(function (tile) {
         var i;
-        for (i = 0; i < moves.length; i++) {
-          if (moves[i].tile === tile) return;
+        for (i = 0; i < plans.length; i++) {
+          if (plans[i].tile === tile) return;
         }
         tile.style.removeProperty("transition");
       });
