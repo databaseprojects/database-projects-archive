@@ -2,6 +2,9 @@
   "cloudName": "vtyvhdpv",
   "featuredTags": [],
   "minTagCount": 3,
+  "tagGroups": [
+    ["black-and-white", "colour", "color", "sepia"]
+  ],
   "photos": [
     {
       "file": "FastFoto_2026_08_0018_a",
