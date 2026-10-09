@@ -73,8 +73,23 @@ html.vsf-tags-open .vsf-tagdrop {
   row-gap: 7px;
 }
 
+html.vsf-tags-open .vsf-tagdrop,
+html.vsf-tags-open .vsf-tags {
+  --vsf-tag-rows: 4;
+  max-height: calc(0.45em + var(--vsf-tag-rows) * (1.4em + 0.5em + 2px) + (var(--vsf-tag-rows) - 1) * 7px + 2px);
+}
+
 html.vsf-tags-open .vsf-tags {
   padding-top: 0.45em;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 767px) {
+  html.vsf-tags-open .vsf-tagdrop,
+  html.vsf-tags-open .vsf-tags {
+    --vsf-tag-rows: 8;
+  }
 }
 
 .vsf-label {

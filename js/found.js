@@ -646,6 +646,45 @@
     return isFinite(top) ? -top : 0;
   }
 
+  /* Table prints are positioned on the grid, which already starts under the
+     bar. Rotation and scale can still reach back up into the tags. */
+  function tableTopFloor(tile, tw, th) {
+    var rot = Math.abs(parseFloat(tile.style.getPropertyValue("--fp-rot")) || 0) * Math.PI / 180;
+    var sc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
+    if (!(sc > 0)) sc = 1;
+    if (!(tw > 0)) tw = tile.offsetWidth || 0;
+    if (!(th > 0)) th = tile.offsetHeight > 20 ? tile.offsetHeight : tileHeight(tile, tw || 1);
+    var boxH = (tw * Math.abs(Math.sin(rot)) + th * Math.abs(Math.cos(rot))) * sc;
+    return Math.max(0, boxH / 2 - th / 2);
+  }
+
+  function seatTableBelowBar(g, only) {
+    g = g || grid();
+    if (!g || g.getAttribute("data-fp-layout") !== "table") return 0;
+    var list = only || tiles();
+    var need = 0;
+    var rows = [];
+    var i;
+    for (i = 0; i < list.length; i++) {
+      var tile = list[i];
+      if (!tile) continue;
+      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+      if (!isFinite(ny)) continue;
+      var tw = parseFloat(tile.style.getPropertyValue("--fp-tile-w")) || tile.offsetWidth || columnWidth(g);
+      var th = tile.offsetHeight > 20 ? tile.offsetHeight : tileHeight(tile, tw);
+      var gap = tableTopFloor(tile, tw, th) - ny;
+      if (gap > need) need = gap;
+      rows.push(tile);
+    }
+    if (!(need > 0.5)) return 0;
+    need += 1;
+    for (i = 0; i < rows.length; i++) {
+      var y = parseFloat(rows[i].style.getPropertyValue("--fp-ny"));
+      rows[i].style.setProperty("--fp-ny", (y + need).toFixed(1) + "px");
+    }
+    return need;
+  }
+
   function spreadRng(seed) {
     var a = seed >>> 0;
     return function () {
@@ -949,6 +988,14 @@
       tile.style.setProperty("--fp-ty", "0px");
     });
     zTop += 1;
+    if (seatTableBelowBar(g) && map) {
+      items.forEach(function (tile) {
+        var key = posKey(tile);
+        if (!map[key]) return;
+        var seatedY = parseFloat(tile.style.getPropertyValue("--fp-ny"));
+        if (isFinite(seatedY)) map[key].y = seatedY;
+      });
+    }
     if (!force && map && !document.documentElement.hasAttribute("data-fp-filter")) savePos(map);
     if (document.documentElement.hasAttribute("data-fp-filter") && window.fpTagLayout) window.fpTagLayout("scale");
     fitTableHeight(g);
@@ -1743,11 +1790,13 @@
   function layoutSliderDefault(mode) {
     var ends = sliderEnds();
     if (mode === "table") {
-      if (phoneSlider() || tabletSlider()) return ends.min;
+      /* Phone Table is one step under the 3-across maximum, so 4 across. */
+      if (phoneSlider()) return ends.min + 1;
+      if (tabletSlider()) return ends.min;
       return ends.min + (ends.max - ends.min) * 0.5;
     }
-    /* Phone Row stays on the previous one-third step (5 of the old 4–7 track). */
-    if (phoneSlider()) return 5;
+    /* Phone Row is the large end (3 across). Tablet Row matches tablet Table at 4. */
+    if (phoneSlider() || tabletSlider()) return ends.min;
     return ends.min + (ends.max - ends.min) / 3;
   }
 
@@ -1791,6 +1840,7 @@
     g.style.removeProperty("--fp-ag-h");
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
+    seatTableBelowBar(g);
     items.forEach(function (tile) {
       persist(tile);
     });
@@ -1981,6 +2031,7 @@
       coverBound = { minX: 8, maxX: Math.max(8, (g.clientWidth || 800) - coverW - 8) };
     }
     easeTileCovers(list, coverBound);
+    seatTableBelowBar(g);
     list.forEach(persist);
     fitTableHeight(g);
     if (g) void g.offsetWidth;
@@ -2436,7 +2487,7 @@
       if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
     });
     setCount();
-    setCols(phoneSlider() ? 4 : colsForThisScreen(storedCols()), false);
+    setCols(phoneSlider() ? 3 : colsForThisScreen(storedCols()), false);
     setLayout(layoutMode(), false);
     settleArrival();
   } finally {
@@ -2590,6 +2641,12 @@
     e.preventDefault();
     var nx = itemDrag.nx0 + dx;
     var ny = itemDrag.ny0 + dy;
+    if (isTable()) {
+      var dragTw = parseFloat(itemDrag.tile.style.getPropertyValue("--fp-tile-w")) || itemDrag.tile.offsetWidth || 0;
+      var dragTh = itemDrag.tile.offsetHeight || 0;
+      var dragFloor = tableTopFloor(itemDrag.tile, dragTw, dragTh);
+      if (ny < dragFloor) ny = dragFloor;
+    }
     itemDrag.tile.style.setProperty("--fp-nx", nx.toFixed(1) + "px");
     itemDrag.tile.style.setProperty("--fp-ny", ny.toFixed(1) + "px");
     if (isAg()) {
@@ -2775,7 +2832,7 @@
       var nowBand = sliderBand();
       if (nowBand !== colsBand) {
         colsBand = nowBand;
-        setCols(nowBand === "phone" ? 4 : colsForThisScreen(storedCols()), false);
+        setCols(nowBand === "phone" ? 3 : colsForThisScreen(storedCols()), false);
       }
       hoverScale();
       if (isTable()) applyScatter(grid(), false);
@@ -2791,6 +2848,11 @@
   window.fpAspectHeight = aspectHeight;
   window.fpTableSpreadHeight = tableSpreadHeight;
   window.fpFitTableHeight = fitTableHeight;
+  window.fpSeatTable = function (only) {
+    var n = seatTableBelowBar(grid(), only);
+    if (n) fitTableHeight(grid());
+    return n;
+  };
   window.fpEaseCovers = easeCovers;
 })();
 
@@ -3242,6 +3304,7 @@
         spec3.tile.style.setProperty("--fp-ny", ny3.toFixed(1) + "px");
       }
     }
+    if (window.fpSeatTable) window.fpSeatTable(keep);
   }
 
   function rescalePlaced() {
@@ -3283,7 +3346,8 @@
       });
     }
     g.style.setProperty("--fp-tile-w", tw + "px");
-    if (window.fpFitTableHeight) window.fpFitTableHeight(g);
+    if (window.fpSeatTable) window.fpSeatTable();
+    else if (window.fpFitTableHeight) window.fpFitTableHeight(g);
   }
 
   window.fpTagLayout = function (reason) {
@@ -3405,15 +3469,47 @@
     runFilter();
   }
 
-  function renderBar(featured, counts, minTagCount) {
+  function clusterTagGroups(tags, counts, groups) {
+    var out = tags.slice();
+    (groups || []).forEach(function (group) {
+      if (!group || !group.length) return;
+      var present = [];
+      group.forEach(function (tag) {
+        if (out.indexOf(tag) >= 0 && present.indexOf(tag) < 0) present.push(tag);
+      });
+      if (present.length < 2) return;
+      var best = present[0];
+      var bestAt = out.indexOf(best);
+      present.forEach(function (tag) {
+        var at = out.indexOf(tag);
+        var bestCount = counts[best] || 0;
+        var count = counts[tag] || 0;
+        if (count > bestCount || (count === bestCount && at < bestAt)) {
+          best = tag;
+          bestAt = at;
+        }
+      });
+      var removedBefore = 0;
+      present.forEach(function (tag) {
+        if (out.indexOf(tag) < bestAt) removedBefore += 1;
+      });
+      out = out.filter(function (tag) { return present.indexOf(tag) < 0; });
+      var insertAt = bestAt - removedBefore;
+      present.forEach(function (tag, i) { out.splice(insertAt + i, 0, tag); });
+    });
+    return out;
+  }
+
+  function renderBar(featured, counts, minTagCount, groups) {
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
     var seen = {};
+    var tags = [];
     (featured || []).forEach(function (tag) {
       if (!tag || seen[tag]) return;
       seen[tag] = true;
-      bar.appendChild(tagButton(tag));
+      tags.push(tag);
     });
     var rest = [];
     Object.keys(counts).forEach(function (tag) {
@@ -3424,7 +3520,10 @@
       if (counts[a] !== counts[b]) return counts[b] - counts[a];
       return a < b ? -1 : a > b ? 1 : 0;
     });
-    rest.forEach(function (tag) { bar.appendChild(tagButton(tag)); });
+    rest.forEach(function (tag) { tags.push(tag); });
+    clusterTagGroups(tags, counts, groups).forEach(function (tag) {
+      bar.appendChild(tagButton(tag));
+    });
   }
 
   function mount(data) {
@@ -3443,7 +3542,7 @@
         tile._fpTags = tags.slice();
       });
     });
-    renderBar(data.featuredTags || [], counts, data.minTagCount);
+    renderBar(data.featuredTags || [], counts, data.minTagCount, data.tagGroups);
   }
 
   document.addEventListener("click", function (e) {
@@ -3469,7 +3568,7 @@
     mount(data);
   };
   if (!window.fpTagsReady) {
-    window.fpTagsReady = fetch("photo-tags.json?v=20261008g").then(function (res) {
+    window.fpTagsReady = fetch("photo-tags.json?v=20261009a").then(function (res) {
       if (!res.ok) throw new Error("tags");
       return res.json();
     }).catch(function () { return null; });
