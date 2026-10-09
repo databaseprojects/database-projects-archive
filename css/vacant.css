@@ -1,21 +1,12 @@
 /* Vacant storefronts: tag filter, column slider, hover, lightbox map. */
 
-.vsf-title {
-  margin: 0.4rem 0 0;
-  color: rgba(0, 0, 0, 0.85);
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1.1rem;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
 .vsf-bar {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   position: relative;
   z-index: 20;
-  margin: 1.2em 0 1.2em;
+  margin: 0 0 1.2em;
   padding: 0.5em 0;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
@@ -24,6 +15,153 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   min-height: 28px;
+}
+
+.vsf-tagfold {
+  flex: 1 0 100%;
+  margin: 0 0 0.55em;
+}
+
+.vsf-tags-toggle,
+.vsf-about-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.vsf-tags-toggle:hover,
+.vsf-tags-toggle:focus-visible,
+.vsf-about-toggle:hover,
+.vsf-about-toggle:focus-visible {
+  text-decoration: underline;
+}
+
+.vsf-tags-toggle:focus-visible,
+.vsf-about-toggle:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+.vsf-tagdrop {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+html.vsf-tags-motion .vsf-tagdrop {
+  transition: grid-template-rows 0.22s ease;
+}
+
+html.vsf-tags-open .vsf-tagdrop {
+  grid-template-rows: 1fr;
+}
+
+.vsf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  row-gap: 7px;
+}
+
+html.vsf-tags-open .vsf-tags {
+  padding-top: 0.45em;
+}
+
+.vsf-label {
+  opacity: 0.85;
+  margin-right: 0.6em;
+  flex-shrink: 0;
+}
+
+.vsf-about-panel {
+  flex: 1 0 100%;
+  display: grid;
+  grid-template-rows: 0fr;
+  background: #fff;
+  text-transform: none;
+  letter-spacing: normal;
+  transition: grid-template-rows 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.vsf-about-panel[hidden] {
+  display: none;
+}
+
+.vsf-bar.vsf-about-open .vsf-about-panel {
+  grid-template-rows: 1fr;
+}
+
+.vsf-about-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vsf-about-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+  width: 100%;
+  padding: 0.85rem 0 0.15rem;
+  transform-origin: center center;
+  transform: scale(0.94);
+  opacity: 0;
+  transition: transform 0.42s cubic-bezier(0.45, 0.05, 0.55, 0.95), opacity 0.32s ease;
+}
+
+.vsf-bar.vsf-about-open .vsf-about-body {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.vsf-about-block {
+  margin: 0 0 0.85rem;
+}
+
+.vsf-about-block h2 {
+  margin: 0 0 0.2rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.vsf-about-block p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+@media (max-width: 767px) {
+  .vsf-about-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vsf-tagdrop,
+  .vsf-about-panel,
+  .vsf-about-body {
+    transition: none;
+  }
+
+  .vsf-about-body {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .vsf-count {
@@ -37,13 +175,11 @@
 }
 
 .vsf-zoom {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
   display: inline-flex;
   align-items: center;
   gap: 0.6em;
+  margin-left: auto;
   white-space: nowrap;
 }
 
@@ -177,16 +313,13 @@
    Same controls, still inside this bar; they drop to the next line instead of disappearing. */
 @media (max-width: 767px) {
   .vsf-zoom {
-    position: static;
-    top: auto;
-    right: auto;
-    transform: none;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     width: 100%;
     max-width: 100%;
     margin-top: 0.4em;
+    margin-left: 0;
     white-space: normal;
     row-gap: 0.35em;
   }
