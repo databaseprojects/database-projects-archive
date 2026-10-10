@@ -1787,7 +1787,6 @@
     tile.style.removeProperty("transition-duration");
     tile.style.removeProperty("transition-timing-function");
     tile.style.removeProperty("transition-delay");
-    tile.style.rotate = "";
   }
 
   function dropMotion(tile) {
@@ -1796,7 +1795,7 @@
     if (owned && owned.timer) clearTimeout(owned.timer);
     if (owned && owned.onEnd) tile.removeEventListener("transitionend", owned.onEnd);
     (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
-      if (a.id === "fp-flow" || a.id === "fp-land") a.cancel();
+      if (a.id === "fp-flow") a.cancel();
       else if (a.id === "fp-tag" && !tile.classList.contains("fp-tag-leave")) a.cancel();
     });
     if (owned) clearGlide(tile);
@@ -1813,7 +1812,6 @@
        animation can replace this hold for one frame and flash the destination. */
     tile.style.setProperty("transition", "none", "important");
     tile.style.translate = start;
-    if (opts.land) tile.style.rotate = opts.rot0.toFixed(2) + "deg";
     var token = {};
     tile._fpGlide = token;
     var dur = opts.dur || 520;
@@ -1824,10 +1822,6 @@
       tile._fpGlide = null;
       if (token.timer) clearTimeout(token.timer);
       if (token.onEnd) tile.removeEventListener("transitionend", token.onEnd);
-      if (token.anim) {
-        token.anim.onfinish = null;
-        token.anim.cancel();
-      }
       clearGlide(tile);
     };
     var onEnd = function (ev) {
@@ -1839,23 +1833,6 @@
       if (tile._fpGlide !== token) return;
       requestAnimationFrame(function () {
         if (tile._fpGlide !== token) return;
-        if (opts.land) {
-          /* Most of the drop is linear. The last quarter eases to a stop. */
-          var mid = (dx * 0.24).toFixed(1) + "px " + (dy * 0.24).toFixed(1) + "px";
-          var rot0 = opts.rot0;
-          var rot1 = opts.rot1;
-          var rotMid = rot0 + (rot1 - rot0) * 0.76;
-          var anim = tile.animate([
-            { translate: start, rotate: rot0.toFixed(2) + "deg", easing: "linear", offset: 0 },
-            { translate: mid, rotate: rotMid.toFixed(2) + "deg", easing: "cubic-bezier(0.25, 0.25, 0.4, 1)", offset: 0.76 },
-            { translate: "0px 0px", rotate: rot1.toFixed(2) + "deg", offset: 1 }
-          ], { duration: dur, fill: "forwards" });
-          anim.id = "fp-land";
-          token.anim = anim;
-          anim.onfinish = finish;
-          token.timer = setTimeout(finish, dur + 90);
-          return;
-        }
         tile.addEventListener("transitionend", onEnd);
         tile.style.removeProperty("transition");
         tile.style.setProperty("transition-property", "translate", "important");
@@ -2099,27 +2076,6 @@
         h: rect.height
       });
     });
-    plans.forEach(function (plan) {
-      var sign = Math.random() < 0.5 ? -1 : 1;
-      var drift = sign * (4 + Math.random() * 6);
-      var nx = parseFloat(plan.tile.style.getPropertyValue("--fp-nx")) || 0;
-      var gw = g.clientWidth || 800;
-      var lo = 8;
-      var hi = Math.max(lo, gw - plan.w - 8);
-      var next = nx + drift;
-      if (next < lo) next = lo;
-      if (next > hi) next = hi;
-      plan.left += next - nx;
-      plan.tile.style.setProperty("--fp-nx", next.toFixed(1) + "px");
-      var rot0 = parseFloat(plan.tile.style.getPropertyValue("--fp-rot"));
-      if (!isFinite(rot0)) rot0 = 0;
-      plan.rot0 = rot0;
-      plan.rot1 = Math.round((rot0 + sign * (0.8 + Math.random() * 1.4)) * 10) / 10;
-      plan.tile.style.setProperty("--fp-rot", plan.rot1.toFixed(1) + "deg");
-      plan.tile.setAttribute("data-fp-tilt", String(plan.rot1));
-      if (plan.rot1 === 0) plan.tile.setAttribute("data-fp-straight", "1");
-      else plan.tile.removeAttribute("data-fp-straight");
-    });
     varyDropLandings(plans, stayed);
     plans.forEach(function (plan) {
       plan.tile.style.setProperty("--fp-ny", (plan.ny + plan.overlap + plan.extra).toFixed(1) + "px");
@@ -2132,9 +2088,7 @@
       plan.tile.setAttribute("data-fp-drop-dur", String(dur));
       holdGlide(plan.tile, plan.from, {
         dur: dur,
-        land: true,
-        rot0: plan.rot0,
-        rot1: plan.rot1
+        easing: "linear"
       });
     });
     requestAnimationFrame(function () {
