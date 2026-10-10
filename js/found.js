@@ -1972,9 +1972,73 @@
     g.style.gridAutoRows = "max-content";
   }
 
+  function boxCover(a, b) {
+    var ox = Math.min(a.left + a.w, b.left + b.w) - Math.max(a.left, b.left);
+    var oy = Math.min(a.top + a.h, b.top + b.h) - Math.max(a.top, b.top);
+    if (!(ox > 0) || !(oy > 0)) return 0;
+    var small = Math.min(a.w * a.h, b.w * b.h);
+    if (!(small > 1)) return 0;
+    return (ox * oy) / small;
+  }
+
+  function dropBox(plan) {
+    return { left: plan.left, top: plan.limit + plan.extra, w: plan.w, h: plan.h };
+  }
+
+  function worstDropCover(plan, plans, stayed) {
+    var box = dropBox(plan);
+    var worst = 0;
+    var i;
+    var c;
+    for (i = 0; i < stayed.length; i++) {
+      c = boxCover(box, stayed[i]);
+      if (c > worst) worst = c;
+    }
+    for (i = 0; i < plans.length; i++) {
+      if (plans[i] === plan) continue;
+      c = boxCover(box, dropBox(plans[i]));
+      if (c > worst) worst = c;
+    }
+    return worst;
+  }
+
+  /* Extra depth under the bar is random and at most 36% of the print.
+     A landing that would cover more than 75% of a smaller print is
+     redrawn inside that same range. */
+  function varyDropLandings(plans, stayed) {
+    var COVER = 0.75;
+    var i;
+    var pass;
+    for (i = 0; i < plans.length; i++) {
+      plans[i].extra = Math.random() * plans[i].h * 0.36;
+    }
+    for (pass = 0; pass < 8; pass++) {
+      var hot = false;
+      for (i = 0; i < plans.length; i++) {
+        var plan = plans[i];
+        var cover = worstDropCover(plan, plans, stayed);
+        if (cover <= COVER) continue;
+        hot = true;
+        var cap = plan.h * 0.36;
+        var cands = [0, cap, Math.random() * cap, Math.random() * cap, Math.random() * cap];
+        var c;
+        for (c = 0; c < cands.length; c++) {
+          var prev = plan.extra;
+          plan.extra = cands[c];
+          var next = worstDropCover(plan, plans, stayed);
+          if (next < cover) cover = next;
+          else plan.extra = prev;
+        }
+      }
+      if (!hot) break;
+    }
+  }
+
   function landAsTable(g) {
     var items = tiles();
     items.forEach(function (tile) {
+      tile.removeAttribute("data-fp-drop-dur");
+      tile.removeAttribute("data-fp-drop-delay");
       tile.style.setProperty("transition", "none", "important");
       var rot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
       if (!isFinite(rot)) rot = 0;
@@ -1987,30 +2051,56 @@
     g.classList.remove("fp-ag-in");
     clearTimeout(g._agShade);
     void g.offsetWidth;
-    /* Keep the pose. Only a print that overlaps the bar eases down to just under it. */
+    /* Keep the pose. Only a print that overlaps the bar eases down under it. */
     var bar = document.querySelector(".fp-bar");
     var limit = bar ? bar.getBoundingClientRect().bottom + 1 : 0;
-    var moves = [];
+    var BASE_MS = 420;
+    var plans = [];
+    var stayed = [];
     items.forEach(function (tile) {
       var rect = tile.getBoundingClientRect();
       if (!(rect.width > 0) || !(rect.height > 0)) return;
       var overlap = limit - rect.top;
-      if (!(overlap > 0.5)) return;
-      var ny = parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0;
-      tile.style.setProperty("--fp-ny", (ny + overlap).toFixed(1) + "px");
-      moves.push({ tile: tile, from: rect });
+      if (!(overlap > 0.5)) {
+        stayed.push({ left: rect.left, top: rect.top, w: rect.width, h: rect.height });
+        return;
+      }
+      plans.push({
+        tile: tile,
+        from: rect,
+        ny: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0,
+        overlap: overlap,
+        extra: 0,
+        limit: limit,
+        left: rect.left,
+        w: rect.width,
+        h: rect.height
+      });
+    });
+    varyDropLandings(plans, stayed);
+    plans.forEach(function (plan) {
+      plan.tile.style.setProperty("--fp-ny", (plan.ny + plan.overlap + plan.extra).toFixed(1) + "px");
     });
     items.forEach(function (tile) {
       persist(tile);
     });
-    moves.forEach(function (item) {
-      holdGlide(item.tile, item.from, { dur: 420, easing: "cubic-bezier(.22,.8,.25,1)" });
+    plans.forEach(function (plan) {
+      var dur = Math.round(BASE_MS * (0.7 + Math.random() * 0.7));
+      var delayCap = Math.min(360, Math.max(0, 980 - dur));
+      var delay = Math.round(Math.random() * delayCap);
+      plan.tile.setAttribute("data-fp-drop-dur", String(dur));
+      plan.tile.setAttribute("data-fp-drop-delay", String(delay));
+      holdGlide(plan.tile, plan.from, {
+        delay: delay,
+        dur: dur,
+        easing: "cubic-bezier(.22,.8,.25,1)"
+      });
     });
     requestAnimationFrame(function () {
       items.forEach(function (tile) {
         var i;
-        for (i = 0; i < moves.length; i++) {
-          if (moves[i].tile === tile) return;
+        for (i = 0; i < plans.length; i++) {
+          if (plans[i].tile === tile) return;
         }
         tile.style.removeProperty("transition");
       });
