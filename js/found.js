@@ -702,7 +702,7 @@
     return true;
   }
 
-  function spreadPoints(items, gw, gh, tw, pad, minY) {
+  function spreadPoints(items, gw, gh, tw, pad, minY, tablet) {
     var n = items.length;
     var rng = spreadRng(0x51A7B);
     var heights = new Array(n);
@@ -865,7 +865,93 @@
     /* The pack used to hang from the top of a tall table, so the lower
        page went sparse. Space centres evenly through the full height. */
     evenVertical(points, heights, minY, gh, pad, tw, gw, rng);
+    /* Tablet photos were packing against the left. Slide the crowded ones
+       sideways into open gaps so the scatter sits in the middle. */
+    if (tablet) balanceTabletRows(points, heights, tw, gw, pad);
     return points;
+  }
+
+  function balanceTabletRows(points, heights, tw, gw, pad) {
+    var n = points.length;
+    if (n < 2 || !(gw > 0)) return;
+    var lo = pad;
+    var hi = Math.max(lo, gw - tw - pad);
+    var limit = 0.42;
+    function bandOf(x) {
+      var cx = x + tw / 2;
+      return Math.min(4, Math.max(0, Math.floor((cx / gw) * 5)));
+    }
+    function worstCover(i, x) {
+      var worst = 0;
+      var ay = points[i].y;
+      var ah = heights[i];
+      var j;
+      for (j = 0; j < n; j++) {
+        if (j === i) continue;
+        var ox = Math.min(x + tw, points[j].x + tw) - Math.max(x, points[j].x);
+        var oy = Math.min(ay + ah, points[j].y + heights[j]) - Math.max(ay, points[j].y);
+        if (ox <= 2 || oy <= 2) continue;
+        var cover = (ox * oy) / Math.min(tw * ah, tw * heights[j]);
+        if (cover > worst) worst = cover;
+      }
+      return worst;
+    }
+    var step;
+    for (step = 0; step < 48; step++) {
+      var counts = [0, 0, 0, 0, 0];
+      var i;
+      for (i = 0; i < n; i++) counts[bandOf(points[i].x)]++;
+      var full = 0;
+      var empty = 0;
+      var b;
+      for (b = 1; b < 5; b++) {
+        if (counts[b] > counts[full]) full = b;
+        if (counts[b] < counts[empty]) empty = b;
+      }
+      if (counts[full] - counts[empty] <= 3) break;
+      var moved = false;
+      var skipped = {};
+      var guard;
+      for (guard = 0; guard < n && !moved; guard++) {
+        var bestI = -1;
+        var bestCover = -1;
+        for (i = 0; i < n; i++) {
+          if (skipped[i] || bandOf(points[i].x) !== full) continue;
+          var here = worstCover(i, points[i].x);
+          if (here > bestCover) {
+            bestCover = here;
+            bestI = i;
+          }
+        }
+        if (bestI < 0) break;
+        var destL = (gw * empty) / 5;
+        var destR = (gw * (empty + 1)) / 5;
+        var mid = (destL + destR) / 2 - tw / 2;
+        var cands = [mid, destL - tw * 0.15, destR - tw * 0.85, (destL + mid) / 2, (destR + mid) / 2];
+        var bestX = null;
+        var bestC = Infinity;
+        var c;
+        for (c = 0; c < cands.length; c++) {
+          var x = cands[c];
+          if (x < lo) x = lo;
+          if (x > hi) x = hi;
+          if (bandOf(x) !== empty) continue;
+          var cover = worstCover(bestI, x);
+          if (cover > Math.max(limit, bestCover)) continue;
+          if (cover < bestC) {
+            bestC = cover;
+            bestX = x;
+          }
+        }
+        if (bestX == null) {
+          skipped[bestI] = 1;
+          continue;
+        }
+        points[bestI].x = bestX;
+        moved = true;
+      }
+      if (!moved) break;
+    }
   }
 
   function evenVertical(points, heights, minY, gh, pad, tw, gw, rng) {
@@ -961,7 +1047,7 @@
     /* Desktop Table (no tag) is gathered with the tagged cluster, not this
        full-page scatter. Phone and tablet keep the scatter. */
     var freshDesk = resetSpread && !phoneSlider() && !tabletSlider();
-    var points = resetSpread && !freshDesk ? spreadPoints(items, gw, gh, tw, pad, minY) : null;
+    var points = resetSpread && !freshDesk ? spreadPoints(items, gw, gh, tw, pad, minY, tabletSlider()) : null;
     if (points) {
       var bottom = minY;
       items.forEach(function (tile, i) {
