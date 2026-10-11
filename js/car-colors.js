@@ -58,6 +58,24 @@
     pageBackground("");
   }
 
+  /* The fill follows the selected dot: accurate hex in Accurate, real-world hex in Real world. */
+  function syncFillToMode() {
+    if (!pageFill) return;
+    var hex = "";
+    var i;
+    for (i = 0; i < CARS.length; i++) {
+      if (String(CARS[i].i) === String(pageFill.i)) {
+        hex = activeHex(CARS[i]);
+        break;
+      }
+    }
+    if (!hex) return;
+    spillGen += 1;
+    removeSpills();
+    pageFill.hex = hex;
+    pageBackground(hex);
+  }
+
   var SPILL_SOLID = 0.15;
 
   function spillEase(p) {
@@ -1061,6 +1079,7 @@
       syncButtons();
       if (stage.querySelector(".cc-dot")) paintDots();
       else render();
+      syncFillToMode();
     });
   });
 
