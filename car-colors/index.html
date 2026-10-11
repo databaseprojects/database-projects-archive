@@ -15,7 +15,7 @@
   <script>
   try { if (localStorage.getItem("ccTagsOpen") === "1") document.documentElement.classList.add("cc-tags-open"); } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/car-colors.css?v=20261011c">
+  <link rel="stylesheet" href="../css/car-colors.css?v=20261011g">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 </head>
 <body>
@@ -57,8 +57,9 @@
       </div>
     </div>
     <span class="cc-tone" role="group" aria-label="Colour reading">
-      <button type="button" class="cc-icon" data-cc-tone="accurate" aria-pressed="true" aria-label="Accurate colour" title="Accurate colour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 3.5h8L20 12l-4 8.5H8L4 12z"/></svg></button>
-      <button type="button" class="cc-icon" data-cc-tone="real" aria-pressed="false" aria-label="Real-world colour" title="Real-world colour"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="currentColor"/></svg></button>
+      <button type="button" class="cc-swatch" data-cc-tone="accurate" aria-pressed="true" aria-label="Accurate"><span class="cc-swatch-chip" style="background:#30b3d5"></span><span class="cc-tip">Accurate</span></button>
+      <button type="button" class="cc-switch" aria-pressed="false" aria-label="Colour reading"><span class="cc-switch-knob"></span></button>
+      <button type="button" class="cc-swatch" data-cc-tone="real" aria-pressed="false" aria-label="Real world"><span class="cc-swatch-chip" style="background:#1f8099"></span><span class="cc-tip">Real world</span></button>
     </span>
     <span class="cc-zoom">
       <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
@@ -74,6 +75,6 @@
 
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/car-colors.js?v=20261011d"></script>
+  <script src="../js/car-colors.js?v=20261011g"></script>
 </body>
 </html>
