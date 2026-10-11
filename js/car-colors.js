@@ -1,5 +1,5 @@
 /* Car colours are read from the published sheet on each visit. No colour list lives in this file.
-   The size slider and antigravity follow Found Photographs. */
+   The size slider follows Found Photographs. */
 (function () {
   var COL_KEY = "ccZoomCols";
   var TONE_KEY = "ccRealWorld";
@@ -12,9 +12,6 @@
   var SMALL = 14;
   var PHONE_SMALL = 22;
   var HYST = 0.72;
-  var DRAG_THRESH = 5;
-  var AG_SPEED_MIN = 12;
-  var AG_SPEED_MAX = 58;
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
   var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
@@ -29,20 +26,11 @@
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll("[data-cc-mode]");
   var mode = "hue";
-  var agOn = false;
-  var agPrev = "hue";
   var sizeN = DEF;
   var phone = false;
   var draggingSlider = false;
   var zVal = null;
-  var agRaf = 0;
-  var agBodies = [];
-  var agRunning = false;
-  var agLastTs = 0;
-  var itemDrag = null;
-  var skipDotClick = false;
   var spillGen = 0;
-  var zTop = 30;
 
   function pageBackground(hex) {
     var bg = hex || "";
@@ -203,12 +191,12 @@
     return Math.round(BIG + (small - BIG) * t);
   }
 
-  /* Map dots are about 40% smaller than the slider size. Hue and antigravity stay on dotPx. */
+  /* Map dots are about 40% smaller than the slider size. Hue stays on dotPx. */
   var MAP_DOT = 0.6;
 
   function viewPx() {
     var px = dotPx();
-    if (mode === "map" && !agOn) return Math.max(1, Math.round(px * MAP_DOT));
+    if (mode === "map") return Math.max(1, Math.round(px * MAP_DOT));
     return px;
   }
 
@@ -902,7 +890,7 @@
 
   function syncButtons() {
     buttons.forEach(function (button) {
-      var on = !agOn && button.getAttribute("data-cc-mode") === mode;
+      var on = button.getAttribute("data-cc-mode") === mode;
       button.classList.toggle("cc-icon-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
@@ -919,31 +907,8 @@
       var on = (button.getAttribute("data-cc-tone") === "real") === !!realOn;
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
-    var ag = document.querySelector(".cc-ag");
-    if (ag) {
-      ag.classList.toggle("cc-ag-on", agOn);
-      ag.setAttribute("aria-pressed", agOn ? "true" : "false");
-    }
-    document.body.classList.toggle("cc-under-menu", agOn);
-    if (agOn) {
-      var nav = document.querySelector(".bk-nav");
-      if (nav) document.documentElement.style.setProperty("--cc-nav-h", nav.offsetHeight + "px");
-    }
   }
 
-  function agLimits(field, w, h) {
-    var rect = field.getBoundingClientRect();
-    var root = document.documentElement.getBoundingClientRect();
-    var viewW = root.width || document.documentElement.clientWidth || window.innerWidth || 0;
-    var viewH = window.innerHeight || 0;
-    var minX = -rect.left;
-    var minY = -rect.top;
-    var maxX = viewW - rect.left - w;
-    var maxY = viewH - rect.top - h;
-    if (!(maxX > minX)) maxX = minX;
-    if (!(maxY > minY)) maxY = minY;
-    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
-  }
 
   function pick(v, current) {
     var ends = sliderEnds();
@@ -966,192 +931,6 @@
     return pick(ends.min + t * (ends.max - ends.min), zVal != null ? zVal : sizeN);
   }
 
-  function stopAg() {
-    agRunning = false;
-    if (agRaf) cancelAnimationFrame(agRaf);
-    agRaf = 0;
-    agBodies = [];
-    agLastTs = 0;
-  }
-
-  function agSurface(px, count, gw) {
-    var area = count * px * px * 1.8;
-    var h = Math.ceil(area / Math.max(gw, 1));
-    var vh = window.innerHeight || 700;
-    return Math.max(Math.floor(vh * 0.78), h, Math.ceil(px * 3));
-  }
-
-  function paintBody(b) {
-    b.el.style.setProperty("--cc-x", b.x.toFixed(1) + "px");
-    b.el.style.setProperty("--cc-y", b.y.toFixed(1) + "px");
-  }
-
-  function randSpeed() {
-    var s = AG_SPEED_MIN + Math.random() * (AG_SPEED_MAX - AG_SPEED_MIN);
-    var a = Math.random() * Math.PI * 2;
-    return { vx: Math.cos(a) * s, vy: Math.sin(a) * s };
-  }
-
-  function bodyFor(el) {
-    for (var i = 0; i < agBodies.length; i++) {
-      if (agBodies[i].el === el) return agBodies[i];
-    }
-    return null;
-  }
-
-  function resizeAg(px) {
-    agBodies.forEach(function (b) {
-      if (Math.abs(b.w - px) < 0.5) return;
-      b.x += (b.w - px) / 2;
-      b.y += (b.h - px) / 2;
-      b.w = px;
-      b.h = px;
-      paintBody(b);
-    });
-  }
-
-  function clampBodies() {
-    var field = stage.querySelector(".cc-ag-field");
-    if (!field) return;
-    agBodies.forEach(function (b) {
-      var lim = agLimits(field, b.w, b.h);
-      if (b.x < lim.minX) b.x = lim.minX;
-      else if (b.x > lim.maxX) b.x = lim.maxX;
-      if (b.y < lim.minY) b.y = lim.minY;
-      else if (b.y > lim.maxY) b.y = lim.maxY;
-      paintBody(b);
-    });
-  }
-
-  function tickAg(ts) {
-    if (!agRunning) return;
-    if (!agLastTs) agLastTs = ts;
-    var dt = Math.min(0.05, (ts - agLastTs) / 1000);
-    agLastTs = ts;
-    var field = stage.querySelector(".cc-ag-field");
-    if (!agOn || !field) {
-      stopAg();
-      return;
-    }
-    for (var i = 0; i < agBodies.length; i++) {
-      var b = agBodies[i];
-      if (!b || !b.el || b.held) continue;
-      if (b.driftAt != null && ts < b.driftAt) continue;
-      var ramp = 1;
-      if (b.easeMs > 1 && b.driftAt != null) {
-        var eu = (ts - b.driftAt) / b.easeMs;
-        if (eu < 1) {
-          if (eu < 0) eu = 0;
-          ramp = eu * eu * (3 - 2 * eu);
-        }
-      }
-      if (b.tvx != null && b.tvy != null) {
-        b.vx = b.tvx * ramp;
-        b.vy = b.tvy * ramp;
-      }
-      b.x += b.vx * dt;
-      b.y += b.vy * dt;
-      var lim = agLimits(field, b.w, b.h);
-      if (b.x < lim.minX) {
-        b.x = lim.minX;
-        b.vx = Math.abs(b.vx);
-        if (b.tvx != null) b.tvx = Math.abs(b.tvx);
-      } else if (b.x > lim.maxX) {
-        b.x = lim.maxX;
-        b.vx = -Math.abs(b.vx);
-        if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
-      }
-      if (b.y < lim.minY) {
-        b.y = lim.minY;
-        b.vy = Math.abs(b.vy);
-        if (b.tvy != null) b.tvy = Math.abs(b.tvy);
-      } else if (b.y > lim.maxY) {
-        b.y = lim.maxY;
-        b.vy = -Math.abs(b.vy);
-        if (b.tvy != null) b.tvy = -Math.abs(b.tvy);
-      }
-      paintBody(b);
-    }
-    agRaf = requestAnimationFrame(tickAg);
-  }
-
-  function enterAg() {
-    if (agOn) return;
-    agPrev = mode;
-    var stageRect = stage.getBoundingClientRect();
-    var nodes = Array.prototype.slice.call(stage.querySelectorAll(".cc-dot"));
-    var px = dotPx();
-    var prevH = stage.offsetHeight;
-    var gw = stage.clientWidth || 800;
-    var gh = Math.max(prevH, agSurface(px, nodes.length, gw));
-    var field = document.createElement("div");
-    field.className = "cc-ag-field";
-    field.style.setProperty("--cc-ag-h", Math.ceil(gh) + "px");
-    field.style.height = Math.ceil(gh) + "px";
-    var now = performance.now();
-    var bodies = [];
-    var seeds = nodes.map(function (el) {
-      var r = el.getBoundingClientRect();
-      return {
-        el: el,
-        cx: r.left + r.width / 2 - stageRect.left,
-        cy: r.top + r.height / 2 - stageRect.top,
-        w: r.width
-      };
-    });
-    stage.style.setProperty("--cc-dot", px + "px");
-    seeds.forEach(function (s, i) {
-      var el = s.el;
-      (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
-        if (an.id === "cc-flow") an.cancel();
-      });
-      el.style.transform = "";
-      el.style.removeProperty("left");
-      el.style.removeProperty("top");
-      el.style.removeProperty("grid-row");
-      el.style.removeProperty("grid-column");
-      var x = s.cx - px / 2;
-      var y = s.cy - px / 2;
-      el.style.setProperty("--cc-x", x.toFixed(1) + "px");
-      el.style.setProperty("--cc-y", y.toFixed(1) + "px");
-      el.style.setProperty("--cc-z", String(1 + (i % 24)));
-      field.appendChild(el);
-      if (s.w > 0 && Math.abs(s.w - px) > 0.5) {
-        var grown = el.animate(
-          [
-            { transform: "scale(" + (s.w / px).toFixed(4) + ")" },
-            { transform: "none" }
-          ],
-          { duration: 480, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
-        );
-        grown.id = "cc-flow";
-      }
-      var vel = randSpeed();
-      bodies.push({
-        el: el,
-        x: x,
-        y: y,
-        w: px,
-        h: px,
-        vx: 0,
-        vy: 0,
-        tvx: vel.vx * 0.85,
-        tvy: vel.vy * 0.85,
-        held: false,
-        driftAt: now + Math.random() * 1400,
-        easeMs: 560 + Math.random() * 1640
-      });
-    });
-    clear(stage);
-    stage.appendChild(field);
-    void field.offsetWidth;
-    agBodies = bodies;
-    agOn = true;
-    agRunning = true;
-    agLastTs = 0;
-    syncButtons();
-    agRaf = requestAnimationFrame(tickAg);
-  }
 
   function snapshotDots() {
     var map = new Map();
@@ -1196,17 +975,6 @@
     });
   }
 
-  function leaveAg(next, before) {
-    if (!before) before = snapshotDots();
-    stopAg();
-    agOn = false;
-    itemDrag = null;
-    mode = next || agPrev || "hue";
-    if (mode === "map") mapFlight = before;
-    syncButtons();
-    render();
-    if (mode !== "map") slideInto(before);
-  }
 
   function applySize(n) {
     n = clampSlider(n);
@@ -1215,10 +983,6 @@
     var px = viewPx();
     applyMetrics();
     fillSlider(n);
-    if (agOn) {
-      if (Math.abs(prevPx - px) > 0.5) resizeAg(px);
-      return;
-    }
     if (stage.querySelector(".cc-dot")) {
       if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
       return;
@@ -1232,12 +996,6 @@
       if (draggingSlider) return;
       var next = button.getAttribute("data-cc-mode");
       if (next === "map") city = "Vancouver";
-      if (agOn) {
-        var held = snapshotDots();
-        useModeSize(next);
-        leaveAg(next, held);
-        return;
-      }
       if (next === mode) return;
       var before = snapshotDots();
       mode = next;
@@ -1312,12 +1070,7 @@
       clearPageColour();
       if (draggingSlider) return;
       var name = button.getAttribute("data-cc-city");
-      if (name === city && !agOn) return;
-      if (agOn) {
-        city = name;
-        leaveAg(agPrev || "hue");
-        return;
-      }
+      if (name === city) return;
       var before = snapshotDots();
       city = name;
       syncButtons();
@@ -1328,133 +1081,16 @@
 
   document.addEventListener("click", function (e) {
     if (draggingSlider) return;
-    if (skipDotClick) {
-      skipDotClick = false;
-      return;
-    }
     var dotEl = e.target.closest && e.target.closest(".cc-dot");
     if (dotEl && dotEl.dataset.hex) {
       spillFrom(dotEl);
       return;
     }
-    if (e.target.closest && (e.target.closest("[data-cc-mode]") || e.target.closest(".cc-city") || e.target.closest(".cc-ag") || e.target.closest(".cc-zslider"))) {
+    if (e.target.closest && (e.target.closest("[data-cc-mode]") || e.target.closest(".cc-city") || e.target.closest(".cc-zslider"))) {
       clearPageColour();
     }
-    var ag = e.target.closest && e.target.closest(".cc-ag");
-    if (!ag) return;
-    e.preventDefault();
-    if (agOn) leaveAg(agPrev);
-    else enterAg();
   });
 
-  document.addEventListener("pointerdown", function (e) {
-    if (!agOn || draggingSlider) return;
-    if (e.button != null && e.button !== 0) return;
-    if (e.target.closest && e.target.closest(".cc-controls")) return;
-    var el = e.target.closest && e.target.closest(".cc-dot");
-    if (!el) return;
-    var body = bodyFor(el);
-    if (!body) return;
-    zTop += 1;
-    el.style.setProperty("--cc-z", String(zTop));
-    body.held = true;
-    body.vx = 0;
-    body.vy = 0;
-    body.tvx = 0;
-    body.tvy = 0;
-    itemDrag = {
-      el: el,
-      pid: e.pointerId,
-      x0: e.clientX,
-      y0: e.clientY,
-      nx0: body.x,
-      ny0: body.y,
-      moved: false,
-      samples: [{ x: e.clientX, y: e.clientY, t: performance.now() }]
-    };
-    try { el.setPointerCapture(e.pointerId); } catch (err) {}
-  });
-
-  document.addEventListener("pointermove", function (e) {
-    if (!itemDrag || itemDrag.pid !== e.pointerId) return;
-    var dx = e.clientX - itemDrag.x0;
-    var dy = e.clientY - itemDrag.y0;
-    if (!itemDrag.moved) {
-      if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
-      itemDrag.moved = true;
-      itemDrag.el.classList.add("cc-dragging");
-    }
-    e.preventDefault();
-    var body = bodyFor(itemDrag.el);
-    if (!body) return;
-    body.x = itemDrag.nx0 + dx;
-    body.y = itemDrag.ny0 + dy;
-    body.held = true;
-    body.driftAt = 0;
-    body.easeMs = 1;
-    paintBody(body);
-    var now = performance.now();
-    itemDrag.samples.push({ x: e.clientX, y: e.clientY, t: now });
-    while (itemDrag.samples.length > 12 || (itemDrag.samples.length > 2 && now - itemDrag.samples[0].t > 120)) {
-      itemDrag.samples.shift();
-    }
-  });
-
-  function endDrag(e) {
-    if (!itemDrag || (e.pointerId != null && itemDrag.pid !== e.pointerId)) return;
-    var d = itemDrag;
-    itemDrag = null;
-    if (d.moved) skipDotClick = true;
-    d.el.classList.remove("cc-dragging");
-    var body = bodyFor(d.el);
-    if (!body) return;
-    body.held = false;
-    body.x = parseFloat(d.el.style.getPropertyValue("--cc-x")) || body.x;
-    body.y = parseFloat(d.el.style.getPropertyValue("--cc-y")) || body.y;
-    if (!d.moved) {
-      body.vx = 0;
-      body.vy = 0;
-      body.tvx = 0;
-      body.tvy = 0;
-      return;
-    }
-    var samples = d.samples || [];
-    var tvx = 0;
-    var tvy = 0;
-    var nowU = performance.now();
-    var lastS = samples.length ? samples[samples.length - 1] : null;
-    if (lastS && nowU - lastS.t < 120 && samples.length >= 2) {
-      var a = samples[0];
-      var b = samples[samples.length - 1];
-      var dt = (b.t - a.t) / 1000;
-      if (dt > 0.008) {
-        tvx = (b.x - a.x) / dt;
-        tvy = (b.y - a.y) / dt;
-      }
-    }
-    var tmag = Math.sqrt(tvx * tvx + tvy * tvy);
-    var THROW_MAX = 160;
-    if (tmag > THROW_MAX) {
-      tvx = (tvx / tmag) * THROW_MAX;
-      tvy = (tvy / tmag) * THROW_MAX;
-    }
-    body.driftAt = 0;
-    body.easeMs = 1;
-    if (tmag < 1) {
-      body.vx = 0;
-      body.vy = 0;
-      body.tvx = 0;
-      body.tvy = 0;
-    } else {
-      body.vx = tvx;
-      body.vy = tvy;
-      body.tvx = tvx;
-      body.tvy = tvy;
-    }
-  }
-
-  document.addEventListener("pointerup", endDrag);
-  document.addEventListener("pointercancel", endDrag);
 
   function isSlider(t) {
     return t && t.classList && t.classList.contains("cc-zslider");
@@ -1519,14 +1155,9 @@
       if (nowPhone !== phone) {
         phone = nowPhone;
         applySize(nowPhone ? 4 : storedCols());
-        if (agOn) syncButtons();
         return;
       }
-      if (agOn) {
-        syncButtons();
-        clampBodies();
-      }
-      else if (mode !== "family") render();
+      if (mode !== "family") render();
     }, 80);
   });
 })();
