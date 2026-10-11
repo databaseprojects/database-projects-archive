@@ -858,9 +858,12 @@
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    var tone = document.querySelector(".cc-tone");
+    if (tone) tone.classList.toggle("cc-real", !!realOn);
+    var toneSwitch = document.querySelector(".cc-switch");
+    if (toneSwitch) toneSwitch.setAttribute("aria-pressed", realOn ? "true" : "false");
     document.querySelectorAll("[data-cc-tone]").forEach(function (button) {
       var on = (button.getAttribute("data-cc-tone") === "real") === !!realOn;
-      button.classList.toggle("cc-icon-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
     var ag = document.querySelector(".cc-ag");
@@ -1166,12 +1169,12 @@
     });
   });
 
-  document.querySelectorAll("[data-cc-tone]").forEach(function (button) {
+  document.querySelectorAll("[data-cc-tone], .cc-switch").forEach(function (button) {
     button.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       clearPageColour();
-      var next = button.getAttribute("data-cc-tone") === "real";
+      var next = button.classList.contains("cc-switch") ? !realOn : button.getAttribute("data-cc-tone") === "real";
       if (next === realOn) return;
       realOn = next;
       try { localStorage.setItem(TONE_KEY, realOn ? "1" : "0"); } catch (err) {}
