@@ -28,13 +28,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
   margin: 0 0 0.35rem;
   padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
-  background: transparent;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  appearance: none;
   color: #111;
   line-height: 0;
   cursor: pointer;
@@ -42,7 +42,9 @@
 
 .cc-tags-toggle:hover,
 .cc-tags-toggle:focus-visible {
-  border-color: #000;
+  background: none;
+  border: 0;
+  box-shadow: none;
 }
 
 .cc-tags-toggle svg {
