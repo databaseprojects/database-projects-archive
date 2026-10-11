@@ -5,6 +5,9 @@
   var TONE_KEY = "ccRealWorld";
   var ROWS_KEY = "ccSheetRows";
   var SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv";
+  /* Map privacy. 'block' (default) rounds lat/lon to 3 decimals (~100 m).
+     Flip to 'exact' to use the sheet coordinates as recorded. */
+  var LOCATION_PRECISION = "block";
   var MIN = 6;
   var MAX = 20;
   var DEF = 6;
@@ -282,6 +285,20 @@
     return fallback;
   }
 
+  function parseCoord(raw) {
+    if (raw == null || raw === "") return null;
+    var n = parseFloat(String(raw).trim());
+    return isFinite(n) ? n : null;
+  }
+
+  function applyLocationPrecision(lat, lng) {
+    if (LOCATION_PRECISION === "exact") return { lat: lat, lng: lng };
+    return {
+      lat: Math.round(lat * 1000) / 1000,
+      lng: Math.round(lng * 1000) / 1000
+    };
+  }
+
   function rowsFromCsv(text) {
     var rows = parseCsv(text);
     if (!rows.length) return [];
@@ -289,6 +306,8 @@
     var iDate = headerIndex(head, ["date"], 1);
     var iTime = headerIndex(head, ["time (local pt)", "time"], 2);
     var iAcc = headerIndex(head, ["accurate hex"], 3);
+    var iLat = headerIndex(head, ["latitude (optional, from photo exif)", "latitude"], 8);
+    var iLng = headerIndex(head, ["longitude (optional)", "longitude"], 9);
     var iReal = headerIndex(head, ["real world hex"], 10);
     var out = [];
     var r;
@@ -299,11 +318,19 @@
       if (!accurate && !real) continue;
       if (!accurate) accurate = real;
       if (!real) real = accurate;
+      var lat = parseCoord(cols[iLat]);
+      var lng = parseCoord(cols[iLng]);
+      if (lat == null || lng == null) {
+        lat = null;
+        lng = null;
+      }
       out.push({
         accurate: accurate,
         real: real,
         date: String(cols[iDate] || "").trim(),
-        time: String(cols[iTime] || "").trim()
+        time: String(cols[iTime] || "").trim(),
+        lat: lat,
+        lng: lng
       });
     }
     return out;
@@ -320,6 +347,10 @@
       if (!accurate) accurate = real;
       if (!real) real = accurate;
       var shown = realOn && real ? real : accurate;
+      var lat = typeof row.lat === "number" && isFinite(row.lat) ? row.lat : null;
+      var lng = typeof row.lng === "number" && isFinite(row.lng) ? row.lng : null;
+      var loc = null;
+      if (lat != null && lng != null) loc = applyLocationPrecision(lat, lng);
       out.push({
         i: out.length,
         family: "",
@@ -330,6 +361,8 @@
         metallic: false,
         date: String(row.date || "").trim(),
         time: String(row.time || "").trim(),
+        lat: loc ? loc.lat : null,
+        lng: loc ? loc.lng : null,
         region: REGIONS[out.length % REGIONS.length],
         city: "Vancouver"
       });
@@ -746,8 +779,19 @@
 
   function assignStreetDots(field) {
     var dots = field.querySelectorAll(".cc-dot");
-    var pts = streetLngLats(dots.length);
-    Array.prototype.forEach.call(dots, function (el, i) {
+    var needMock = [];
+    Array.prototype.forEach.call(dots, function (el) {
+      var car = CARS[+el.dataset.i];
+      if (car && car.lat != null && car.lng != null) {
+        el.dataset.lng = String(car.lng);
+        el.dataset.lat = String(car.lat);
+        el.style.visibility = "hidden";
+        return;
+      }
+      needMock.push(el);
+    });
+    var pts = streetLngLats(needMock.length);
+    needMock.forEach(function (el, i) {
       if (!pts[i]) return;
       el.dataset.lng = String(pts[i][0]);
       el.dataset.lat = String(pts[i][1]);
