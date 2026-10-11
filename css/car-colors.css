@@ -8,7 +8,7 @@
   gap: 0.75rem 1rem;
   margin: 0.2rem 0 1.5rem;
   position: relative;
-  padding-right: 78px;
+  padding-right: 112px;
 }
 
 .cc-tone {
@@ -23,27 +23,38 @@
 .cc-swatch,
 .cc-switch {
   position: relative;
-  display: block;
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  background: #fff;
+  border: 0;
+  background: none;
+  color: #111;
   cursor: pointer;
   box-sizing: border-box;
 }
 
 .cc-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+}
+
+.cc-swatch-icon {
+  display: block;
   width: 14px;
   height: 14px;
+  flex: 0 0 14px;
 }
 
 .cc-swatch-chip {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
 }
 
-.cc-swatch[aria-pressed="true"] {
+.cc-swatch[aria-pressed="true"] .cc-swatch-chip {
   border-color: #000;
 }
 
@@ -78,8 +89,11 @@
 }
 
 .cc-switch {
+  display: block;
   width: 28px;
   height: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background: #fff;
 }
 
 .cc-switch-knob {
