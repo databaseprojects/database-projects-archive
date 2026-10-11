@@ -53,11 +53,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: auto;
+  height: auto;
   padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  appearance: none;
   line-height: 0;
   vertical-align: middle;
 }
@@ -65,7 +68,10 @@
 .vsf-tags-toggle:hover,
 .vsf-tags-toggle:focus-visible {
   text-decoration: none;
-  border-color: #000;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .vsf-tags-toggle svg {

@@ -16,25 +16,87 @@
 .info-piece {
   position: absolute;
   display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 0;
+  pointer-events: none;
+  appearance: none;
   animation: info-drift linear infinite;
+}
+
+.info-folder {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .info-piece svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1.2px rgba(0, 0, 0, 0.16));
 }
 
-.info-piece-1 { left: 6%; top: 72%; width: 46px; animation-duration: 54s; animation-delay: -8s; }
-.info-piece-2 { left: 18%; top: 110%; width: 34px; animation-duration: 46s; animation-delay: -20s; }
-.info-piece-3 { left: 31%; top: 88%; width: 52px; animation-duration: 62s; animation-delay: -4s; }
-.info-piece-4 { left: 44%; top: 120%; width: 28px; animation-duration: 40s; animation-delay: -16s; }
-.info-piece-5 { left: 57%; top: 78%; width: 40px; animation-duration: 58s; animation-delay: -30s; }
-.info-piece-6 { left: 68%; top: 104%; width: 36px; animation-duration: 50s; animation-delay: -12s; }
-.info-piece-7 { left: 80%; top: 92%; width: 48px; animation-duration: 66s; animation-delay: -24s; }
-.info-piece-8 { left: 90%; top: 70%; width: 30px; animation-duration: 44s; animation-delay: -6s; }
-.info-piece-9 { left: 12%; top: 130%; width: 38px; animation-duration: 72s; animation-delay: -36s; }
-.info-piece-10 { left: 74%; top: 140%; width: 44px; animation-duration: 60s; animation-delay: -18s; }
+.info-piece-1 { left: 6%; top: 72%; width: 46px; height: 34.5px; aspect-ratio: 64 / 48; animation-duration: 54s; animation-delay: -8s; }
+.info-piece-2 { left: 18%; top: 110%; width: 34px; height: 39.67px; aspect-ratio: 48 / 56; animation-duration: 46s; animation-delay: -20s; }
+.info-piece-3 { left: 31%; top: 88%; width: 52px; height: 32.5px; aspect-ratio: 64 / 40; animation-duration: 62s; animation-delay: -4s; }
+.info-piece-4 { left: 44%; top: 120%; width: 28px; height: 28px; aspect-ratio: 1; animation-duration: 40s; animation-delay: -16s; }
+.info-piece-5 { left: 57%; top: 78%; width: 40px; height: 30px; aspect-ratio: 64 / 48; animation-duration: 58s; animation-delay: -30s; }
+.info-piece-6 { left: 68%; top: 104%; width: 36px; height: 42px; aspect-ratio: 48 / 56; animation-duration: 50s; animation-delay: -12s; }
+.info-piece-7 { left: 80%; top: 92%; width: 48px; height: 30px; aspect-ratio: 64 / 40; animation-duration: 66s; animation-delay: -24s; }
+.info-piece-8 { left: 90%; top: 70%; width: 30px; height: 30px; aspect-ratio: 1; animation-duration: 44s; animation-delay: -6s; }
+.info-piece-9 { left: 12%; top: 130%; width: 38px; height: 28.5px; aspect-ratio: 64 / 48; animation-duration: 72s; animation-delay: -36s; }
+.info-piece-10 { left: 74%; top: 140%; width: 44px; height: 51.33px; aspect-ratio: 48 / 56; animation-duration: 60s; animation-delay: -18s; }
+.info-piece-11 { left: 3%; top: 98%; width: 26px; height: 34.67px; aspect-ratio: 36 / 48; animation-duration: 48s; animation-delay: -10s; }
+.info-piece-12 { left: 22%; top: 158%; width: 44px; height: 31.43px; aspect-ratio: 56 / 40; animation-duration: 64s; animation-delay: -28s; }
+.info-piece-13 { left: 38%; top: 86%; width: 50px; height: 28.13px; aspect-ratio: 64 / 36; animation-duration: 52s; animation-delay: -14s; }
+.info-piece-14 { left: 52%; top: 148%; width: 46px; height: 25.88px; aspect-ratio: 64 / 36; animation-duration: 70s; animation-delay: -40s; }
+.info-piece-15 { left: 8%; top: 124%; width: 30px; height: 39px; aspect-ratio: 40 / 52; animation-duration: 56s; animation-delay: -22s; }
+.info-piece-16 { left: 63%; top: 76%; width: 40px; height: 33.85px; aspect-ratio: 52 / 44; animation-duration: 61s; animation-delay: -9s; }
+.info-piece-17 { left: 84%; top: 118%; width: 48px; height: 27px; aspect-ratio: 64 / 36; animation-duration: 47s; animation-delay: -33s; }
+.info-piece-18 { left: 15%; top: 168%; width: 46px; height: 35.78px; aspect-ratio: 72 / 56; animation-duration: 68s; animation-delay: -17s; }
+.info-piece-19 { left: 71%; top: 156%; width: 36px; height: 30px; aspect-ratio: 48 / 40; animation-duration: 43s; animation-delay: -5s; }
+.info-piece-20 { left: 28%; top: 94%; width: 54px; height: 23.63px; aspect-ratio: 64 / 28; animation-duration: 59s; animation-delay: -26s; }
+.info-piece-21 { left: 47%; top: 132%; width: 42px; height: 27px; aspect-ratio: 56 / 36; animation-duration: 51s; animation-delay: -11s; }
+.info-piece-22 { left: 93%; top: 84%; width: 16px; height: 32px; aspect-ratio: 24 / 48; animation-duration: 45s; animation-delay: -19s; }
+.info-piece-23 { left: 2%; top: 146%; width: 10px; height: 46.67px; aspect-ratio: 12 / 56; animation-duration: 63s; animation-delay: -31s; }
+.info-piece-24 { left: 88%; top: 164%; width: 24px; height: 32px; aspect-ratio: 36 / 48; animation-duration: 57s; animation-delay: -7s; }
+
+.info-shoot {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 16px;
+  height: 20px;
+  margin: 0;
+  pointer-events: none;
+  color: inherit;
+  animation: info-shoot 1.7s ease-out forwards;
+}
+
+.info-shoot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.14));
+}
+
+@keyframes info-shoot {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.8; }
+  42% { transform: translate(calc(var(--dx) * 0.5), calc(var(--dy) * 1.08)) rotate(calc(var(--rot) * 0.55)); opacity: 0.75; }
+  100% { transform: translate(var(--dx), calc(var(--dy) * 0.2)) rotate(var(--rot)); opacity: 0; }
+}
 
 @keyframes info-drift {
   from { transform: translate3d(0, 12vh, 0); }
@@ -69,24 +131,3 @@ body.info-page .sheet {
   margin: 0;
 }
 
-.info-stop {
-  display: block;
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: #3a3a3a;
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-  cursor: pointer;
-  flex: 0 0 18px;
-  clip-path: polygon(29.3% 0, 70.7% 0, 100% 29.3%, 100% 70.7%, 70.7% 100%, 29.3% 100%, 0 70.7%, 0 29.3%);
-}
-
-.info-stop:hover,
-.info-stop[aria-pressed="true"] {
-  background: #111;
-}
