@@ -778,23 +778,11 @@
   }
 
   function assignStreetDots(field) {
-    var dots = field.querySelectorAll(".cc-dot");
-    var needMock = [];
-    Array.prototype.forEach.call(dots, function (el) {
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var car = CARS[+el.dataset.i];
-      if (car && car.lat != null && car.lng != null) {
-        el.dataset.lng = String(car.lng);
-        el.dataset.lat = String(car.lat);
-        el.style.visibility = "hidden";
-        return;
-      }
-      needMock.push(el);
-    });
-    var pts = streetLngLats(needMock.length);
-    needMock.forEach(function (el, i) {
-      if (!pts[i]) return;
-      el.dataset.lng = String(pts[i][0]);
-      el.dataset.lat = String(pts[i][1]);
+      if (!car || car.lat == null || car.lng == null) return;
+      el.dataset.lng = String(car.lng);
+      el.dataset.lat = String(car.lat);
       el.style.visibility = "hidden";
     });
   }
@@ -863,7 +851,10 @@
     credit.textContent = "© OpenStreetMap";
     field.appendChild(credit);
     var rng = mulberry32(0x5A11);
-    shuffle(carsIn("Vancouver"), rng).forEach(function (car) {
+    var mapped = carsIn("Vancouver").filter(function (car) {
+      return car.lat != null && car.lng != null;
+    });
+    shuffle(mapped, rng).forEach(function (car) {
       field.appendChild(dot(car));
     });
     stage.appendChild(field);
