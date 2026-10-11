@@ -162,11 +162,11 @@
     return n;
   }
 
-  /* Left is larger. Hue and Scattered open there; Map opens at the small end. */
+  /* Left is larger. Hue opens there; Map opens at the small end. */
   function modeSize(next) {
     var ends = sliderEnds();
     if (next === "map") return ends.max;
-    if (next === "hue" || next === "scatter") return ends.min;
+    if (next === "hue") return ends.min;
     return null;
   }
 
@@ -410,90 +410,6 @@
     return copy;
   }
 
-  function screenBox() {
-    var doc = document.documentElement;
-    return {
-      width: Math.max(160, doc.getBoundingClientRect().width || doc.clientWidth || window.innerWidth || 800),
-      height: Math.max(360, doc.clientHeight || window.innerHeight || 800)
-    };
-  }
-
-  function renderScatter(list, seed) {
-    clear(stage);
-    document.body.classList.add("cc-screen");
-    var box = screenBox();
-    var width = box.width;
-    var height = box.height;
-    var rng = mulberry32(seed == null ? 0xC0105 : seed);
-    var order = shuffle(list || carsIn(city), rng);
-    var size = dotPx();
-    var minD = size + Math.max(8, Math.round(size * 0.28));
-    var placed = [];
-
-    function fits(x, y, limit) {
-      if (x < 0 || y < 0 || x > width - size || y > limit - size) return false;
-      for (var i = 0; i < placed.length; i++) {
-        var dx = placed[i].x - x;
-        var dy = placed[i].y - y;
-        if (dx * dx + dy * dy < minD * minD) return false;
-      }
-      return true;
-    }
-
-    order.forEach(function (car) {
-      var found = null;
-      var n;
-      for (n = 0; n < 240; n++) {
-        var x = rng() * (width - size);
-        var y = rng() * (height - size);
-        if (fits(x, y, height)) {
-          found = { x: x, y: y };
-          break;
-        }
-      }
-      if (!found) {
-        var step = minD;
-        var grow;
-        scan: for (grow = 0; grow < 40 && !found; grow++) {
-          if (grow > 0) height += step;
-          var yScan;
-          for (yScan = 0; yScan <= height - size; yScan += step) {
-            var xScan;
-            for (xScan = 0; xScan <= width - size; xScan += step) {
-              var jx = Math.min(width - size, Math.max(0, xScan + (rng() - 0.5) * 6));
-              var jy = Math.min(height - size, Math.max(0, yScan + (rng() - 0.5) * 6));
-              if (fits(jx, jy, height)) {
-                found = { x: jx, y: jy };
-                break scan;
-              }
-            }
-          }
-        }
-      }
-      placed.push({ car: car, x: found.x, y: found.y });
-    });
-
-    var field = document.createElement("div");
-    field.className = "cc-scatter";
-    field.style.width = width + "px";
-    field.style.height = height + "px";
-    placed.forEach(function (item) {
-      var el = dot(item.car);
-      el.style.left = item.x + "px";
-      el.style.top = item.y + "px";
-      field.appendChild(el);
-    });
-    stage.appendChild(field);
-  }
-
-  function fitScatter() {
-    var field = stage.querySelector(".cc-scatter");
-    if (!field) return;
-    var box = screenBox();
-    field.style.width = box.width + "px";
-    field.style.height = box.height + "px";
-  }
-
   function growFromCenter(prevPx, px) {
     var shift = (prevPx - px) / 2;
     if (!(Math.abs(shift) > 0.01)) return;
@@ -504,7 +420,6 @@
       el.style.left = x.toFixed(3) + "px";
       el.style.top = y.toFixed(3) + "px";
     });
-    if (stage.querySelector(".cc-scatter")) fitScatter();
   }
 
   function regionColumns(width) {
@@ -602,8 +517,28 @@
   var MAP_NORTH = 49.35;
   var MAP_SOUTH = 49.2;
   var ccBasemap = null;
+  var mapFadeTimer = 0;
+
+  function cancelMapFade() {
+    if (!mapFadeTimer) return;
+    window.clearTimeout(mapFadeTimer);
+    mapFadeTimer = 0;
+  }
+
+  function revealMap(field) {
+    cancelMapFade();
+    if (!field || !field.isConnected || field.classList.contains("cc-map-in")) return;
+    projectStreetDots(field);
+    field.classList.add("cc-map-in");
+  }
+
+  function armMapFade(field) {
+    cancelMapFade();
+    mapFadeTimer = window.setTimeout(function () { revealMap(field); }, 1500);
+  }
 
   function destroyBasemap() {
+    cancelMapFade();
     if (!ccBasemap) return;
     ccBasemap.remove();
     ccBasemap = null;
@@ -641,7 +576,11 @@
     el.className = "cc-map-tiles";
     el.setAttribute("aria-hidden", "true");
     field.insertBefore(el, field.firstChild);
-    if (!window.maplibregl) return;
+    armMapFade(field);
+    if (!window.maplibregl) {
+      revealMap(field);
+      return;
+    }
     var token = {};
     el._ccToken = token;
     loadPositron().then(function (style) {
@@ -667,10 +606,17 @@
         map.resize();
         map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
         place();
+        function whenTiles() {
+          if (el._ccToken !== token) return;
+          if (map.areTilesLoaded && !map.areTilesLoaded()) return;
+          revealMap(field);
+        }
+        whenTiles();
+        map.on("idle", whenTiles);
       });
       map.on("move", place);
       map.on("resize", place);
-    });
+    }).catch(function () { revealMap(field); });
   }
 
   /* Approximate Vancouver arterials, [lng, lat]. Mock positions on real streets. */
@@ -821,11 +767,9 @@
 
   function render() {
     applyMetrics();
-    document.body.classList.toggle("cc-screen", mode === "scatter");
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
-    else if (mode === "hue") renderHue();
-    else renderScatter();
+    else renderHue();
   }
 
   function sliderEl() {
@@ -1018,7 +962,6 @@
 
   function enterAg() {
     if (agOn) return;
-    document.body.classList.remove("cc-screen");
     agPrev = mode;
     var stageRect = stage.getBoundingClientRect();
     var nodes = Array.prototype.slice.call(stage.querySelectorAll(".cc-dot"));
@@ -1227,19 +1170,15 @@
       clearPageColour();
       if (draggingSlider) return;
       var name = button.getAttribute("data-cc-city");
+      if (name === city && !agOn) return;
       if (agOn) {
         city = name;
-        useModeSize("scatter");
-        leaveAg("scatter");
+        leaveAg(agPrev || "hue");
         return;
       }
-      if (name === city && mode === "scatter") return;
       var before = snapshotDots();
-      var enteringScatter = mode !== "scatter";
       city = name;
-      mode = "scatter";
       syncButtons();
-      if (enteringScatter) useModeSize("scatter");
       render();
       slideInto(before);
     });
