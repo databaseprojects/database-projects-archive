@@ -3,6 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+  window.__ccSheet = fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv", { cache: "no-store" }).then(function (res) {
+    if (!res.ok) throw new Error("sheet");
+    return res.text();
+  });
+  </script>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Car Colours — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
@@ -68,6 +74,6 @@
 
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/car-colors.js?v=20261011c"></script>
+  <script src="../js/car-colors.js?v=20261011d"></script>
 </body>
 </html>

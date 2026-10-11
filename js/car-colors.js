@@ -3,6 +3,7 @@
 (function () {
   var COL_KEY = "ccZoomCols";
   var TONE_KEY = "ccRealWorld";
+  var ROWS_KEY = "ccSheetRows";
   var SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv";
   var MIN = 6;
   var MAX = 20;
@@ -284,7 +285,7 @@
     return fallback;
   }
 
-  function carsFromCsv(text) {
+  function rowsFromCsv(text) {
     var rows = parseCsv(text);
     if (!rows.length) return [];
     var head = rows[0];
@@ -301,6 +302,26 @@
       if (!accurate && !real) continue;
       if (!accurate) accurate = real;
       if (!real) real = accurate;
+      out.push({
+        accurate: accurate,
+        real: real,
+        date: String(cols[iDate] || "").trim(),
+        time: String(cols[iTime] || "").trim()
+      });
+    }
+    return out;
+  }
+
+  function carsFromRows(rows) {
+    var out = [];
+    var r;
+    for (r = 0; r < rows.length; r++) {
+      var row = rows[r] || {};
+      var accurate = normHex(row.accurate);
+      var real = normHex(row.real);
+      if (!accurate && !real) continue;
+      if (!accurate) accurate = real;
+      if (!real) real = accurate;
       var shown = realOn && real ? real : accurate;
       out.push({
         i: out.length,
@@ -310,8 +331,8 @@
         hex: shown,
         hue: hueOf(shown),
         metallic: false,
-        date: String(cols[iDate] || "").trim(),
-        time: String(cols[iTime] || "").trim(),
+        date: String(row.date || "").trim(),
+        time: String(row.time || "").trim(),
         region: REGIONS[out.length % REGIONS.length],
         city: "Vancouver"
       });
@@ -319,14 +340,52 @@
     return out;
   }
 
-  function loadSheet() {
+  function readCachedRows() {
+    try {
+      var raw = localStorage.getItem(ROWS_KEY);
+      if (!raw) return null;
+      var rows = JSON.parse(raw);
+      return Array.isArray(rows) ? rows : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCachedRows(rows) {
+    try { localStorage.setItem(ROWS_KEY, JSON.stringify(rows)); } catch (e) {}
+  }
+
+  function sheetText() {
+    var pending = window.__ccSheet;
+    if (pending && typeof pending.then === "function") {
+      window.__ccSheet = null;
+      return pending;
+    }
     return fetch(SHEET_CSV, { cache: "no-store" }).then(function (res) {
       if (!res.ok) throw new Error("sheet");
       return res.text();
-    }).then(function (text) {
-      CARS = carsFromCsv(text);
+    });
+  }
+
+  function loadSheet() {
+    var cached = readCachedRows();
+    var had = !!(cached && cached.length);
+    var cachedSig = JSON.stringify(cached);
+    if (had) {
+      CARS = carsFromRows(cached);
+      render();
+    }
+    return sheetText().then(function (text) {
+      var rows = rowsFromCsv(text);
+      if (JSON.stringify(rows) === cachedSig) return;
+      writeCachedRows(rows);
+      CARS = carsFromRows(rows);
       render();
     }).catch(function () {
+      if (had) {
+        try { console.warn("Car Colours sheet did not load. Showing the last saved colours."); } catch (e) {}
+        return;
+      }
       CARS = [];
       try { console.warn("Car Colours sheet did not load. Showing the page without dots."); } catch (e) {}
       render();
