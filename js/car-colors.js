@@ -577,6 +577,7 @@
   var MAP_SOUTH = 49.2;
   var ccBasemap = null;
   var mapFadeTimer = 0;
+  var mapFlight = null;
 
   function cancelMapFade() {
     if (!mapFadeTimer) return;
@@ -588,6 +589,7 @@
     cancelMapFade();
     if (!field || !field.isConnected || field.classList.contains("cc-map-in")) return;
     projectStreetDots(field);
+    releaseMapFlight(field);
     field.classList.add("cc-map-in");
   }
 
@@ -762,10 +764,47 @@
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       if (!el.dataset.lng) return;
       var p = ccBasemap.project([+el.dataset.lng, +el.dataset.lat]);
-      el.style.left = (p.x - size / 2).toFixed(1) + "px";
-      el.style.top = (p.y - size / 2).toFixed(1) + "px";
+      var left = (p.x - size / 2).toFixed(1) + "px";
+      var top = (p.y - size / 2).toFixed(1) + "px";
+      if (mapFlight) {
+        el.dataset.mx = left;
+        el.dataset.my = top;
+        return;
+      }
+      el.style.left = left;
+      el.style.top = top;
       el.style.visibility = "visible";
     });
+    if (mapFlight && field.classList.contains("cc-map-in")) releaseMapFlight(field);
+  }
+
+  function parkMapDots(field) {
+    if (!mapFlight) return;
+    var box = field.getBoundingClientRect();
+    var size = dotPx();
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      var a = mapFlight.get(el.dataset.i);
+      if (!a) return;
+      el.style.left = (a.left + a.width / 2 - box.left - size / 2).toFixed(1) + "px";
+      el.style.top = (a.top + a.height / 2 - box.top - size / 2).toFixed(1) + "px";
+      el.style.visibility = "visible";
+    });
+  }
+
+  function releaseMapFlight(field) {
+    if (!mapFlight || !field) return;
+    var from = mapFlight;
+    var ready = false;
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      if (!el.dataset.mx) return;
+      ready = true;
+      el.style.left = el.dataset.mx;
+      el.style.top = el.dataset.my;
+      el.style.visibility = "visible";
+    });
+    if (!ready) return;
+    mapFlight = null;
+    slideInto(from);
   }
 
   function renderMap() {
@@ -785,6 +824,7 @@
     });
     stage.appendChild(field);
     assignStreetDots(field);
+    parkMapDots(field);
     mountBasemap(field);
   }
 
@@ -826,6 +866,7 @@
 
   function render() {
     applyMetrics();
+    if (mode !== "map") mapFlight = null;
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
     else renderHue();
@@ -1125,9 +1166,10 @@
     agOn = false;
     itemDrag = null;
     mode = next || agPrev || "hue";
+    if (mode === "map") mapFlight = before;
     syncButtons();
     render();
-    slideInto(before);
+    if (mode !== "map") slideInto(before);
   }
 
   function applySize(n) {
@@ -1162,10 +1204,11 @@
       if (next === mode) return;
       var before = snapshotDots();
       mode = next;
+      if (next === "map") mapFlight = before;
       syncButtons();
       useModeSize(next);
       render();
-      slideInto(before);
+      if (next !== "map") slideInto(before);
     });
   });
 
