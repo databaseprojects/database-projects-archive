@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Car Colours — databaseprojects</title>
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/car-colors.css">
+  <link rel="stylesheet" href="../css/site.css?v=20261011a">
+  <script>
+  try { if (localStorage.getItem("ccTagsOpen") === "1") document.documentElement.classList.add("cc-tags-open"); } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="../css/car-colors.css?v=20261011a">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 </head>
 <body>
   <div class="sheet">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colors</a><a href="../info/">INFO</a></nav>
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colours</a><a href="../info/">INFO</a></nav>
 
 <main>
   <div class="cc-about">
@@ -23,11 +26,11 @@
         <div class="cc-about-body">
           <section class="cc-about-block">
             <h2>Project</h2>
-            <p>Each circle is a stand-in car colour for this mockup. There are no photographs on this page. The record keeps the colour, and whether the paint is metallic or flat.</p>
+            <p>Each circle is one recorded car colour. There are no photographs on this page.</p>
           </section>
           <section class="cc-about-block">
             <h2>Collection</h2>
-            <p>These are placeholder colours in a Vancouver car palette. A written collection method is not on this page yet.</p>
+            <p>The colours are read from the collection sheet when the page opens. A written collection method is not on this page yet.</p>
           </section>
           <section class="cc-about-block">
             <h2>Tools</h2>
@@ -39,12 +42,18 @@
     </div>
   </div>
   <div class="cc-controls">
-    <div class="cc-cities" role="group" aria-label="City">
-      <button type="button" class="cc-city cc-on" data-cc-city="Vancouver" aria-pressed="true">Vancouver</button>
-      <button type="button" class="cc-city" data-cc-city="Toronto" aria-pressed="false">Toronto</button>
-      <button type="button" class="cc-city" data-cc-city="Seattle" aria-pressed="false">Seattle</button>
-      <button type="button" class="cc-city" data-cc-city="Los Angeles" aria-pressed="false">Los Angeles</button>
+    <div class="cc-tagfold">
+      <button type="button" class="cc-tags-toggle" id="cc-tags-toggle" aria-expanded="false" aria-controls="cc-cities" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="cc-tagdrop" id="cc-tagdrop">
+        <div class="cc-cities" id="cc-cities" role="group" aria-label="City">
+          <button type="button" class="cc-city cc-on" data-cc-city="Vancouver" aria-pressed="true">Vancouver</button>
+        </div>
+      </div>
     </div>
+    <span class="cc-tone" role="group" aria-label="Colour reading">
+      <button type="button" class="cc-icon" data-cc-tone="accurate" aria-pressed="true" aria-label="Accurate colour" title="Accurate colour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 3.5h8L20 12l-4 8.5H8L4 12z"/></svg></button>
+      <button type="button" class="cc-icon" data-cc-tone="real" aria-pressed="false" aria-label="Real-world colour" title="Real-world colour"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="currentColor"/></svg></button>
+    </span>
     <span class="cc-zoom">
       <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
       <button type="button" class="cc-ag" aria-label="Antigravity" title="Antigravity" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="19" rx="7" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="9.5" r="5.2" fill="currentColor"/></svg></button>
@@ -60,6 +69,6 @@
 
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/car-colors.js"></script>
+  <script src="../js/car-colors.js?v=20261011a"></script>
 </body>
 </html>

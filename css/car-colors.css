@@ -3,10 +3,89 @@
 .cc-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem 1rem;
   margin: 0.2rem 0 1.5rem;
+  position: relative;
+  padding-right: 64px;
+}
+
+.cc-tone {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cc-tagfold {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cc-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 0.35rem;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #111;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.cc-tags-toggle:hover,
+.cc-tags-toggle:focus-visible {
+  border-color: #000;
+}
+
+.cc-tags-toggle svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+
+html.cc-tags-open .cc-tags-toggle svg {
+  transform: rotate(180deg);
+}
+
+.cc-tagdrop {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+html.cc-tags-motion .cc-tagdrop {
+  transition: grid-template-rows 0.22s ease;
+}
+
+html.cc-tags-open .cc-tagdrop {
+  grid-template-rows: 1fr;
+}
+
+.cc-tagdrop .cc-cities {
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.cc-tags-open .cc-tagdrop .cc-cities {
+  --cc-tag-rows: 4;
+  max-height: calc(0.45em + var(--cc-tag-rows) * (1.4em + 0.5em + 2px) + (var(--cc-tag-rows) - 1) * 7px + 2px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 0.35em;
+}
+
+@media (max-width: 767px) {
+  html.cc-tags-open .cc-tagdrop .cc-cities {
+    --cc-tag-rows: 8;
+  }
 }
 
 .cc-modes,
@@ -151,6 +230,42 @@ body.cc-under-menu .cc-ag-field {
   border: 0;
   box-shadow: none;
   flex: 0 0 var(--cc-dot, 40px);
+  transition: background-color 0.45s ease;
+}
+
+.cc-pop {
+  position: fixed;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background: #fff;
+  color: #111;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cc-pop[hidden] {
+  display: none;
+}
+
+.cc-pop-chip {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  box-sizing: border-box;
+}
+
+.cc-pop-copy {
+  white-space: pre-line;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
 }
 
 .cc-label {

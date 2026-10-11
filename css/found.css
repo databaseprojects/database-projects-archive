@@ -73,6 +73,36 @@ body.fp-under-menu .fp-grid[data-fp-layout="antigravity"] {
   outline-offset: 3px;
 }
 
+.fp-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.fp-tags-toggle:hover,
+.fp-tags-toggle:focus-visible {
+  text-decoration: none;
+  border-color: #000;
+}
+
+.fp-tags-toggle svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+
+html.fp-tags-open .fp-tags-toggle svg {
+  transform: rotate(180deg);
+}
+
 .fp-tagdrop {
   display: grid;
   grid-template-rows: 0fr;
