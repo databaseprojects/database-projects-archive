@@ -49,6 +49,36 @@
   outline-offset: 3px;
 }
 
+.vsf-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.vsf-tags-toggle:hover,
+.vsf-tags-toggle:focus-visible {
+  text-decoration: none;
+  border-color: #000;
+}
+
+.vsf-tags-toggle svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+
+html.vsf-tags-open .vsf-tags-toggle svg {
+  transform: rotate(180deg);
+}
+
 .vsf-tagdrop {
   display: grid;
   grid-template-rows: 0fr;

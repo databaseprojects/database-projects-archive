@@ -4,21 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <title>Convenience Store Colors — databaseprojects</title>
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/convenient-store-colors.css">
+  <title>Convenience Store Colours — databaseprojects</title>
+  <link rel="stylesheet" href="../css/site.css?v=20261011a">
+  <script>
+  try { if (localStorage.getItem("cscTagsOpen") === "1") document.documentElement.classList.add("csc-tags-open"); } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="../css/convenient-store-colors.css?v=20261011a">
 </head>
 <body>
   <div class="sheet">
     <div class="csc-banner">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/">Car Colours</a><a href="../convenient-store-colors/" class="active" aria-current="page">Convenience Store Colors</a><a href="../info/">INFO</a></nav>
-    <h1 class="record-name">Convenience Store Colors</h1>
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/">Car Colours</a><a href="../convenient-store-colors/" class="active" aria-current="page">Convenience Store Colours</a><a href="../info/">INFO</a></nav>
+    <h1 class="record-name">Convenience Store Colours</h1>
     <div class="csc-controls">
     <div class="csc-rows">
-      <div class="csc-group" role="group" aria-label="Location">
-        <button type="button" class="csc-opt" data-csc-city="vancouver" aria-pressed="false">Vancouver</button>
-        <button type="button" class="csc-opt" data-csc-city="seattle" aria-pressed="false">Seattle</button>
-        <button type="button" class="csc-opt" data-csc-city="toronto" aria-pressed="false">Toronto</button>
+      <div class="csc-tagfold">
+        <button type="button" class="csc-tags-toggle" id="csc-tags-toggle" aria-expanded="false" aria-controls="csc-cities" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="csc-tagdrop" id="csc-tagdrop">
+          <div class="csc-group" id="csc-cities" role="group" aria-label="Location">
+            <button type="button" class="csc-opt" data-csc-city="vancouver" aria-pressed="false">Vancouver</button>
+          </div>
+        </div>
       </div>
       <div class="csc-top" hidden>
         <div class="csc-group csc-stores" role="group" aria-label="Store"></div>
@@ -116,6 +122,6 @@
 </main>
 
   </div>
-  <script src="../js/convenient-store-colors.js"></script>
+  <script src="../js/convenient-store-colors.js?v=20261011a"></script>
 </body>
 </html>

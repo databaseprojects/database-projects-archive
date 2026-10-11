@@ -45,30 +45,6 @@
         ["sunoco", "Sunoco"]
       ],
       categories: ["Chocolate", "Candy"]
-    },
-    seattle: {
-      stores: [
-        ["circle-k", "Circle K"],
-        ["7-eleven", "7-Eleven"],
-        ["ampm", "ampm"],
-        ["chevron-extramile", "Chevron ExtraMile"],
-        ["shell", "Shell"],
-        ["plaid-pantry", "Plaid Pantry"],
-        ["76", "76"]
-      ],
-      categories: ["Chocolate", "Candy"]
-    },
-    toronto: {
-      stores: [
-        ["circle-k", "Circle K"],
-        ["7-eleven", "7-Eleven"],
-        ["hasty-market", "Hasty Market"],
-        ["quickie", "Quickie"],
-        ["petro-canada", "Petro-Canada"],
-        ["esso", "Esso"],
-        ["shell-select", "Shell Select"]
-      ],
-      categories: ["Chocolate", "Candy"]
     }
   };
   if (!board) return;
@@ -1208,4 +1184,28 @@
   setPressed("[data-csc-city]", "data-csc-city", city);
   setPressed("[data-csc-store]", "data-csc-store", store);
   apply();
+})();
+
+(function () {
+  var KEY = "cscTagsOpen";
+  var root = document.documentElement;
+  function sync() {
+    var open = root.classList.contains("csc-tags-open");
+    var btn = document.getElementById("csc-tags-toggle");
+    var drop = document.getElementById("csc-tagdrop");
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+  sync();
+  var btn = document.getElementById("csc-tags-toggle");
+  if (!btn) return;
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var open = !root.classList.contains("csc-tags-open");
+    root.classList.add("csc-tags-motion");
+    root.classList.toggle("csc-tags-open", open);
+    try { localStorage.setItem(KEY, open ? "1" : "0"); } catch (err) {}
+    sync();
+  });
 })();

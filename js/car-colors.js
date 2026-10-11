@@ -1,8 +1,9 @@
-/* Mock car colours for this preview. Each dot is a placeholder swatch; there are no image files.
-   metallic is kept on the record even though the dot shows colour alone.
+/* Car colours are read from the published sheet on each visit. No colour list lives in this file.
    The size slider and antigravity follow Found Photographs. */
 (function () {
   var COL_KEY = "ccZoomCols";
+  var TONE_KEY = "ccRealWorld";
+  var SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv";
   var MIN = 6;
   var MAX = 20;
   var DEF = 6;
@@ -14,95 +15,11 @@
   var AG_SPEED_MIN = 12;
   var AG_SPEED_MAX = 58;
   var REGIONS = ["Kitsilano", "Mount Pleasant", "Commercial Drive", "Gastown", "Dunbar", "Strathcona"];
-  /* City choices stay hidden until Region is open. Vancouver keeps the neighbourhoods above. */
-  var CITIES = ["Vancouver", "Toronto", "Seattle", "Los Angeles"];
-  var CITY_REGIONS = {
-    Vancouver: REGIONS,
-    Toronto: ["Kensington", "Leslieville", "The Annex", "Parkdale"],
-    Seattle: ["Capitol Hill", "Ballard", "Fremont", "Queen Anne"],
-    "Los Angeles": ["Silver Lake", "Venice", "Echo Park", "Los Feliz"]
-  };
+  var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
-
-  /* About fifty mock car colours. Placeholder swatches only, not photographed cars. */
-  var PAINTS = [
-    ["black", "#0C0C0E", null, false],
-    ["black", "#141416", null, true],
-    ["black", "#1A1C1F", null, false],
-    ["black", "#222426", null, true],
-    ["black", "#2A2C30", null, false],
-    ["black", "#101214", null, true],
-    ["black", "#181A1C", null, false],
-    ["black", "#303236", null, true],
-    ["black", "#0E1012", null, false],
-    ["black", "#26282C", null, true],
-    ["black", "#16181A", null, false],
-    ["black", "#3A3C40", null, true],
-    ["grey", "#3E4248", null, false],
-    ["grey", "#4A4E54", null, true],
-    ["grey", "#555A60", null, false],
-    ["grey", "#5C6168", null, true],
-    ["grey", "#6E747C", null, false],
-    ["grey", "#7A8088", null, true],
-    ["grey", "#848A92", null, false],
-    ["grey", "#8E949A", null, true],
-    ["grey", "#9AA0A6", null, false],
-    ["grey", "#A8AEB4", null, true],
-    ["grey", "#B0B6BC", null, false],
-    ["grey", "#C5C9CE", null, true],
-    ["grey", "#C8CCD0", null, false],
-    ["grey", "#D4D8DC", null, true],
-    ["grey", "#DCDFE2", null, false],
-    ["grey", "#E2E4E6", null, true],
-    ["grey", "#EEF0F2", null, false],
-    ["grey", "#F4F5F6", null, true],
-    ["blue", "#5E84A0", 206, false],
-    ["blue", "#6E90A8", 207, true],
-    ["blue", "#7A9BB5", 205, false],
-    ["blue", "#8EADC4", 206, true],
-    ["blue", "#9BB4C6", 204, false],
-    ["blue", "#A3BDD0", 205, true],
-    ["blue", "#A8C0D4", 203, false],
-    ["blue", "#B7C9D6", 204, true],
-    ["blue", "#C5D4E0", 202, false],
-    ["blue", "#D0DCE6", 203, true],
-    ["red", "#6A2828", 2, false],
-    ["red", "#7A3032", 4, true],
-    ["red", "#8C3A36", 6, false],
-    ["red", "#A34A42", 8, true],
-    ["green", "#2F4A3C", 152, false],
-    ["green", "#3E5C48", 148, true],
-    ["green", "#5A7A62", 140, false],
-    ["teal", "#2A5552", 176, true],
-    ["teal", "#3E6E6A", 174, false],
-    ["teal", "#5A8A84", 172, true]
-  ];
-
-  var CARS = PAINTS.map(function (row, i) {
-    return {
-      i: i,
-      family: row[0],
-      hex: row[1],
-      hue: row[2],
-      metallic: row[3],
-      region: REGIONS[i % REGIONS.length],
-      city: "Vancouver"
-    };
-  });
-
-  /* This pass keeps four Vancouver colours. The other city tags stay; they have no samples yet. */
-  var OTHER_CITIES = [];
-  OTHER_CITIES.forEach(function (row, n) {
-    CARS.push({
-      i: PAINTS.length + n,
-      family: row[2],
-      hex: row[3],
-      hue: row[4],
-      metallic: row[5],
-      region: row[1],
-      city: row[0]
-    });
-  });
+  var CARS = [];
+  var realOn = false;
+  try { realOn = localStorage.getItem(TONE_KEY) === "1"; } catch (e) {}
 
   function carsIn(name) {
     return CARS.filter(function (car) { return car.city === name; });
@@ -295,33 +212,175 @@
   }
 
   function lightness(hex) {
-    var n = parseInt(hex.slice(1), 16);
+    var n = parseInt(String(hex || "").replace("#", ""), 16);
+    if (!isFinite(n)) return 0;
     var r = (n >> 16) & 255;
     var g = (n >> 8) & 255;
     var b = n & 255;
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   }
 
+  function hueOf(hex) {
+    var n = parseInt(String(hex || "").replace("#", ""), 16);
+    if (!isFinite(n)) return null;
+    var r = ((n >> 16) & 255) / 255;
+    var g = ((n >> 8) & 255) / 255;
+    var b = (n & 255) / 255;
+    var max = Math.max(r, g, b);
+    var min = Math.min(r, g, b);
+    if (max - min < 0.06) return null;
+    var h;
+    var d = max - min;
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h = Math.round(h * 60);
+    if (h < 0) h += 360;
+    return h;
+  }
+
+  function normHex(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    if (s.charAt(0) !== "#") s = "#" + s;
+    if (/^#[0-9a-fA-F]{3}$/.test(s)) {
+      s = "#" + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2) + s.charAt(3) + s.charAt(3);
+    }
+    if (!/^#[0-9a-fA-F]{6}$/.test(s)) return "";
+    return s.toUpperCase();
+  }
+
+  function parseCsv(text) {
+    var rows = [];
+    var row = [];
+    var cell = "";
+    var q = false;
+    var i;
+    for (i = 0; i < text.length; i++) {
+      var c = text.charAt(i);
+      if (q) {
+        if (c === '"') {
+          if (text.charAt(i + 1) === '"') { cell += '"'; i += 1; }
+          else q = false;
+        } else cell += c;
+      } else if (c === '"') q = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (c !== "\r") cell += c;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+
+  function headerIndex(headers, names, fallback) {
+    var i;
+    var n;
+    for (i = 0; i < headers.length; i++) {
+      var h = String(headers[i] || "").trim().toLowerCase();
+      for (n = 0; n < names.length; n++) {
+        if (h === names[n]) return i;
+      }
+    }
+    return fallback;
+  }
+
+  function carsFromCsv(text) {
+    var rows = parseCsv(text);
+    if (!rows.length) return [];
+    var head = rows[0];
+    var iDate = headerIndex(head, ["date"], 1);
+    var iTime = headerIndex(head, ["time (local pt)", "time"], 2);
+    var iAcc = headerIndex(head, ["accurate hex"], 3);
+    var iReal = headerIndex(head, ["real world hex"], 10);
+    var out = [];
+    var r;
+    for (r = 1; r < rows.length; r++) {
+      var cols = rows[r];
+      var accurate = normHex(cols[iAcc]);
+      var real = normHex(cols[iReal]);
+      if (!accurate && !real) continue;
+      if (!accurate) accurate = real;
+      if (!real) real = accurate;
+      var shown = realOn && real ? real : accurate;
+      out.push({
+        i: out.length,
+        family: "",
+        accurate: accurate,
+        real: real,
+        hex: shown,
+        hue: hueOf(shown),
+        metallic: false,
+        date: String(cols[iDate] || "").trim(),
+        time: String(cols[iTime] || "").trim(),
+        region: REGIONS[out.length % REGIONS.length],
+        city: "Vancouver"
+      });
+    }
+    return out;
+  }
+
+  function loadSheet() {
+    return fetch(SHEET_CSV, { cache: "no-store" }).then(function (res) {
+      if (!res.ok) throw new Error("sheet");
+      return res.text();
+    }).then(function (text) {
+      CARS = carsFromCsv(text);
+      render();
+    }).catch(function () {
+      CARS = [];
+      try { console.warn("Car Colours sheet did not load. Showing the page without dots."); } catch (e) {}
+      render();
+    });
+  }
+
+  function activeHex(car) {
+    if (realOn && car.real) return car.real;
+    return car.accurate || car.hex;
+  }
+
   function labelFor(car) {
-    var finish = car.metallic ? "metallic" : "flat";
-    return car.family + ", " + finish + ", " + car.region;
+    var when = [car.date, car.time].filter(Boolean).join(" ");
+    var hex = activeHex(car);
+    return when ? when + ", " + hex : hex;
   }
 
   function dot(car) {
     var el = document.createElement("span");
+    var hex = activeHex(car);
     el.className = "cc-dot";
-    el.style.background = car.hex;
-    el.title = labelFor(car);
+    el.style.background = hex;
     el.setAttribute("role", "img");
     el.setAttribute("aria-label", labelFor(car));
-    el.dataset.family = car.family;
+    el.dataset.family = car.family || "";
     el.dataset.metallic = car.metallic ? "metallic" : "flat";
-    el.dataset.region = car.region;
-    el.dataset.hex = car.hex;
+    el.dataset.region = car.region || "";
+    el.dataset.hex = hex;
+    el.dataset.accurate = car.accurate || "";
+    el.dataset.real = car.real || "";
+    el.dataset.date = car.date || "";
+    el.dataset.time = car.time || "";
     el.dataset.i = String(car.i);
     if (car.hue == null) el.dataset.hue = "";
     else el.dataset.hue = String(car.hue);
     return el;
+  }
+
+  function paintDots() {
+    var nodes = document.querySelectorAll(".cc-dot");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var car = CARS[+el.dataset.i];
+      if (!car) continue;
+      var hex = activeHex(car);
+      car.hex = hex;
+      car.hue = hueOf(hex);
+      el.style.background = hex;
+      el.dataset.hex = hex;
+      el.setAttribute("aria-label", labelFor(car));
+      if (car.hue == null) el.dataset.hue = "";
+      else el.dataset.hue = String(car.hue);
+    }
   }
 
   function clear(node) {
@@ -796,6 +855,11 @@
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    document.querySelectorAll("[data-cc-tone]").forEach(function (button) {
+      var on = (button.getAttribute("data-cc-tone") === "real") === !!realOn;
+      button.classList.toggle("cc-icon-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
     var ag = document.querySelector(".cc-ag");
     if (ag) {
       ag.classList.toggle("cc-ag-on", agOn);
@@ -1100,6 +1164,64 @@
     });
   });
 
+  document.querySelectorAll("[data-cc-tone]").forEach(function (button) {
+    button.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      clearPageColour();
+      var next = button.getAttribute("data-cc-tone") === "real";
+      if (next === realOn) return;
+      realOn = next;
+      try { localStorage.setItem(TONE_KEY, realOn ? "1" : "0"); } catch (err) {}
+      syncButtons();
+      if (stage.querySelector(".cc-dot")) paintDots();
+      else render();
+    });
+  });
+
+  var pop = document.createElement("div");
+  pop.className = "cc-pop";
+  pop.hidden = true;
+  pop.innerHTML = '<span class="cc-pop-chip" aria-hidden="true"></span><span class="cc-pop-copy"></span>';
+  document.body.appendChild(pop);
+
+  function showPop(el) {
+    var acc = el.dataset.accurate || "";
+    var real = el.dataset.real || "";
+    if (!acc && !real) return;
+    var when = [el.dataset.date, el.dataset.time].filter(Boolean).join(" ");
+    var lines = [];
+    if (acc) lines.push(acc);
+    if (real && real !== acc) lines.push(real);
+    if (when) lines.push(when);
+    pop.querySelector(".cc-pop-chip").style.background = acc || real;
+    pop.querySelector(".cc-pop-copy").textContent = lines.join("\n");
+    pop.hidden = false;
+    var rect = el.getBoundingClientRect();
+    var width = 148;
+    var left = rect.right + 8;
+    var top = rect.top + rect.height / 2 - 18;
+    if (left + width > window.innerWidth - 8) left = Math.max(8, rect.left - width - 8);
+    if (top < 8) top = 8;
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+  }
+
+  document.addEventListener("pointerover", function (e) {
+    var el = e.target.closest && e.target.closest(".cc-dot");
+    if (el) showPop(el);
+  });
+  document.addEventListener("pointerout", function (e) {
+    var el = e.target.closest && e.target.closest(".cc-dot");
+    if (!el) return;
+    var next = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".cc-dot");
+    if (next !== el) pop.hidden = true;
+  });
+  document.addEventListener("pointerdown", function (e) {
+    var el = e.target.closest && e.target.closest(".cc-dot");
+    if (el) showPop(el);
+  });
+
   document.querySelectorAll(".cc-city").forEach(function (button) {
     button.addEventListener("click", function () {
       clearPageColour();
@@ -1305,6 +1427,7 @@
   phone = phoneSlider();
   applySize(modeSize(mode));
   syncButtons();
+  loadSheet();
 
   var resizeTimer = 0;
   window.addEventListener("resize", function () {
@@ -1369,5 +1492,29 @@
     if (e.target !== panel || e.propertyName !== "grid-template-rows") return;
     window.clearTimeout(hideTimer);
     finishClose();
+  });
+})();
+
+(function () {
+  var KEY = "ccTagsOpen";
+  var root = document.documentElement;
+  function sync() {
+    var open = root.classList.contains("cc-tags-open");
+    var btn = document.getElementById("cc-tags-toggle");
+    var drop = document.getElementById("cc-tagdrop");
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+  sync();
+  var btn = document.getElementById("cc-tags-toggle");
+  if (!btn) return;
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var open = !root.classList.contains("cc-tags-open");
+    root.classList.add("cc-tags-motion");
+    root.classList.toggle("cc-tags-open", open);
+    try { localStorage.setItem(KEY, open ? "1" : "0"); } catch (err) {}
+    sync();
   });
 })();
