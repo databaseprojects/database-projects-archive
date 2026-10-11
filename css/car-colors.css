@@ -1,4 +1,4 @@
-/* Car Colours. Four quiet views of sample dots, plus the Found Photographs size slider and antigravity. */
+/* Car Colours. Quiet views of sample dots, plus the Found Photographs size slider. */
 
 .cc-controls {
   display: flex;
@@ -109,6 +109,10 @@
 .cc-tagfold {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.cc-tools {
+  display: contents;
 }
 
 .cc-tags-toggle {
@@ -259,25 +263,6 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
   min-height: 8rem;
 }
 
-/* Antigravity dots paint over the index nav and the controls bar. */
-body.cc-under-menu .bk-nav {
-  position: relative;
-  z-index: 1;
-  background: transparent;
-}
-
-body.cc-under-menu .cc-controls {
-  position: sticky;
-  top: var(--cc-nav-h, 48px);
-  z-index: 40;
-  background: transparent;
-}
-
-body.cc-under-menu .cc-ag-field {
-  z-index: 60;
-  pointer-events: none;
-}
-
 .sheet {
   position: relative;
   z-index: 1;
@@ -374,11 +359,6 @@ body.cc-under-menu .cc-ag-field {
   display: flex;
   flex-wrap: wrap;
   gap: var(--cc-gap, 14px);
-}
-
-body.cc-under-menu .cc-about.cc-open {
-  position: relative;
-  z-index: 70;
 }
 
 .cc-regions {
@@ -549,82 +529,6 @@ html.cc-paged .cc-zslider::-moz-range-thumb {
   transform: scale(1.22);
 }
 
-.cc-ag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
-  background: transparent;
-  color: #111;
-  cursor: pointer;
-  user-select: none;
-  flex-shrink: 0;
-  opacity: 0.9;
-  transition: opacity 0.15s ease, transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-
-.cc-ag:hover {
-  opacity: 1;
-  border-color: #000;
-  background: transparent;
-}
-
-.cc-ag:active {
-  transform: scale(0.92);
-}
-
-.cc-ag.cc-ag-on {
-  opacity: 1;
-  background: #111;
-  border-color: #111;
-  color: #fff;
-}
-
-.cc-ag svg {
-  display: block;
-  width: 18px;
-  height: 18px;
-  pointer-events: none;
-}
-
-.cc-ag:focus-visible {
-  outline: 1px solid #000;
-  outline-offset: 2px;
-}
-
-.cc-ag-field {
-  position: relative;
-  width: 100%;
-  height: var(--cc-ag-h, 78vh);
-  min-height: var(--cc-ag-h, 78vh);
-  overflow: visible;
-}
-
-.cc-ag-field .cc-dot {
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin: 0;
-  cursor: grab;
-  touch-action: none;
-  translate: var(--cc-x, 0px) var(--cc-y, 0px);
-  z-index: var(--cc-z, 1);
-  box-shadow: none;
-  pointer-events: auto;
-  will-change: translate;
-}
-
-.cc-ag-field .cc-dot.cc-dragging {
-  cursor: grabbing;
-  z-index: 100000;
-  box-shadow: none;
-}
-
 html.cc-sizing {
   overflow-anchor: none;
   cursor: grabbing;
@@ -634,16 +538,64 @@ html.cc-sizing .cc-dot {
   pointer-events: none;
 }
 
-@media (max-width: 590px) {
-  .cc-zoom {
+@media (max-width: 767px) {
+  .cc-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    column-gap: 0.6rem;
+    row-gap: 0.35rem;
+    padding-right: 0;
+  }
+
+  .cc-tagfold {
+    display: contents;
+  }
+
+  .cc-tags-toggle {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+  }
+
+  .cc-tagdrop {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .cc-tools {
+    display: flex;
+    grid-column: 2;
+    grid-row: 1;
     flex-wrap: wrap;
-    max-width: 100%;
-    margin-left: auto;
+    align-items: center;
     justify-content: flex-end;
+    gap: 0.4rem 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .cc-tone {
+    position: static;
+    flex: 0 0 auto;
+  }
+
+  .cc-zoom {
+    flex: 1 1 172px;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: min(100%, 172px);
+    max-width: min(100%, max-content);
+    margin-left: 0;
   }
 
   .cc-zslider {
-    max-width: 100%;
+    flex: 1 1 auto;
+    width: 150px;
+    min-width: 96px;
+    max-width: 150px;
   }
 }
 
