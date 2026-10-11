@@ -1,0 +1,185 @@
+/* Keyword Scraping: collapsible keyword tags and newspaper-cutout strips. */
+
+.ks-tagfold {
+  margin: 0 0 1.2rem;
+}
+
+.ks-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 0.35rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  appearance: none;
+  color: #111;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.ks-tags-toggle:hover,
+.ks-tags-toggle:focus-visible {
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.ks-tags-toggle svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+
+html.ks-tags-open .ks-tags-toggle svg {
+  transform: rotate(180deg);
+}
+
+.ks-tagdrop {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+html.ks-tags-motion .ks-tagdrop {
+  transition: grid-template-rows 0.22s ease;
+}
+
+html.ks-tags-open .ks-tagdrop {
+  grid-template-rows: 1fr;
+}
+
+.ks-tagdrop .ks-tags {
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.ks-tags-open .ks-tagdrop .ks-tags {
+  --ks-tag-rows: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 0;
+  max-height: calc(0.45em + var(--ks-tag-rows) * (1.4em + 0.5em + 2px) + (var(--ks-tag-rows) - 1) * 7px + 2px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 0.35em;
+}
+
+@media (max-width: 767px) {
+  html.ks-tags-open .ks-tagdrop .ks-tags {
+    --ks-tag-rows: 8;
+  }
+}
+
+.ks-tag {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0 0.5em 0 0;
+  padding: 0.25em 0.75em;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ks-tag:hover {
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ks-tag.ks-on {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.ks-tag:focus-visible,
+.ks-cut:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
+.ks-group {
+  margin: 0 0 1.45rem;
+}
+
+.ks-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.ks-cut {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  transform: translateX(var(--x, 0px)) rotate(var(--r, 0deg));
+  transform-origin: left center;
+  cursor: pointer;
+}
+
+.ks-cut img {
+  display: block;
+  width: var(--ks-w);
+  max-width: calc(100vw - 3rem);
+  height: auto;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+}
+
+.ks-cap {
+  margin: 0.4rem 0 0;
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+
+.ks-cap a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ks-cap a:hover {
+  text-decoration: underline;
+}
+
+.ks-pop {
+  position: fixed;
+  z-index: 80;
+  margin: 0;
+  padding: 6px 8px;
+  max-width: 190px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background: #fff;
+  color: #111;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ks-pop[hidden] {
+  display: none;
+}
+
+.ks-pop-copy {
+  white-space: pre-line;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+}
