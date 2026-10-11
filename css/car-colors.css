@@ -8,7 +8,7 @@
   gap: 0.75rem 1rem;
   margin: 0.2rem 0 1.5rem;
   position: relative;
-  padding-right: 112px;
+  padding-right: 72px;
 }
 
 .cc-tone {
@@ -33,9 +33,8 @@
 }
 
 .cc-swatch {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
+  display: block;
+  width: 14px;
   height: 14px;
 }
 
@@ -43,19 +42,10 @@
   display: block;
   width: 14px;
   height: 14px;
-  flex: 0 0 14px;
 }
 
-.cc-swatch-chip {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  box-sizing: border-box;
-}
-
-.cc-swatch[aria-pressed="true"] .cc-swatch-chip {
-  border-color: #000;
+.cc-swatch[aria-pressed="false"] {
+  opacity: 0.45;
 }
 
 .cc-tip {
