@@ -309,7 +309,9 @@
 
   function syncPlaceholders() {
     var top = document.querySelector(".csc-top");
+    var stores = document.querySelector(".csc-stores");
     if (top) top.hidden = !city;
+    if (stores) stores.hidden = !city;
     if (board) board.classList.toggle("csc-live", !!city);
     Array.prototype.forEach.call(document.querySelectorAll("[data-csc-store]"), function (button) {
       button.classList.toggle("csc-placeholder", !storeHasSamples(button.getAttribute("data-csc-store")));
