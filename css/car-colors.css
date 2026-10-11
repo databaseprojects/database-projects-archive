@@ -400,12 +400,6 @@ body.cc-under-menu .cc-about.cc-open {
   position: relative;
   width: 100%;
   background: none;
-  opacity: 0;
-}
-
-.cc-map.cc-map-in {
-  opacity: 1;
-  transition: opacity 0.4s ease;
 }
 
 .cc-map-tiles {
@@ -418,6 +412,12 @@ body.cc-under-menu .cc-about.cc-open {
   overflow: hidden;
   pointer-events: none;
   background: #e4e2dc;
+  opacity: 0;
+}
+
+.cc-map.cc-map-in .cc-map-tiles {
+  opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
 .cc-map-tiles .maplibregl-map,
