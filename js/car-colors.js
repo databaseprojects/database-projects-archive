@@ -19,8 +19,8 @@
   var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
   var CARS = [];
-  var realOn = false;
-  try { realOn = localStorage.getItem(TONE_KEY) === "1"; } catch (e) {}
+  /* Open on Real world. A saved reading is ignored so an older choice cannot override this. */
+  var realOn = true;
 
   function carsIn(name) {
     return CARS.filter(function (car) { return car.city === name; });
@@ -203,12 +203,21 @@
     return Math.round(BIG + (small - BIG) * t);
   }
 
+  /* Map dots are about 40% smaller than the slider size. Hue and antigravity stay on dotPx. */
+  var MAP_DOT = 0.6;
+
+  function viewPx() {
+    var px = dotPx();
+    if (mode === "map" && !agOn) return Math.max(1, Math.round(px * MAP_DOT));
+    return px;
+  }
+
   function gapPx() {
-    return Math.max(8, Math.round(dotPx() * 0.4));
+    return Math.max(8, Math.round(viewPx() * 0.4));
   }
 
   function applyMetrics() {
-    stage.style.setProperty("--cc-dot", dotPx() + "px");
+    stage.style.setProperty("--cc-dot", viewPx() + "px");
     stage.style.setProperty("--cc-gap", gapPx() + "px");
   }
 
@@ -760,7 +769,7 @@
 
   function projectStreetDots(field) {
     if (!ccBasemap || !field) return;
-    var size = dotPx();
+    var size = viewPx();
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       if (!el.dataset.lng) return;
       var p = ccBasemap.project([+el.dataset.lng, +el.dataset.lat]);
@@ -781,13 +790,16 @@
   function parkMapDots(field) {
     if (!mapFlight) return;
     var box = field.getBoundingClientRect();
-    var size = dotPx();
+    var size = viewPx();
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var a = mapFlight.get(el.dataset.i);
       if (!a) return;
       el.style.left = (a.left + a.width / 2 - box.left - size / 2).toFixed(1) + "px";
       el.style.top = (a.top + a.height / 2 - box.top - size / 2).toFixed(1) + "px";
       el.style.visibility = "visible";
+      if (a.width > 0 && size > 0 && Math.abs(a.width - size) > 0.5) {
+        el.style.transform = "scale(" + (a.width / size).toFixed(4) + ")";
+      }
     });
   }
 
@@ -1080,26 +1092,45 @@
     var bodies = [];
     var seeds = nodes.map(function (el) {
       var r = el.getBoundingClientRect();
-      return { el: el, x: r.left - stageRect.left, y: r.top - stageRect.top };
+      return {
+        el: el,
+        cx: r.left + r.width / 2 - stageRect.left,
+        cy: r.top + r.height / 2 - stageRect.top,
+        w: r.width
+      };
     });
+    stage.style.setProperty("--cc-dot", px + "px");
     seeds.forEach(function (s, i) {
       var el = s.el;
       (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
         if (an.id === "cc-flow") an.cancel();
       });
+      el.style.transform = "";
       el.style.removeProperty("left");
       el.style.removeProperty("top");
       el.style.removeProperty("grid-row");
       el.style.removeProperty("grid-column");
-      el.style.setProperty("--cc-x", s.x.toFixed(1) + "px");
-      el.style.setProperty("--cc-y", s.y.toFixed(1) + "px");
+      var x = s.cx - px / 2;
+      var y = s.cy - px / 2;
+      el.style.setProperty("--cc-x", x.toFixed(1) + "px");
+      el.style.setProperty("--cc-y", y.toFixed(1) + "px");
       el.style.setProperty("--cc-z", String(1 + (i % 24)));
       field.appendChild(el);
+      if (s.w > 0 && Math.abs(s.w - px) > 0.5) {
+        var grown = el.animate(
+          [
+            { transform: "scale(" + (s.w / px).toFixed(4) + ")" },
+            { transform: "none" }
+          ],
+          { duration: 480, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
+        );
+        grown.id = "cc-flow";
+      }
       var vel = randSpeed();
       bodies.push({
         el: el,
-        x: s.x,
-        y: s.y,
+        x: x,
+        y: y,
         w: px,
         h: px,
         vx: 0,
@@ -1143,15 +1174,20 @@
       (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
         if (an.id === "cc-flow") an.cancel();
       });
+      el.style.transform = "";
       var b = el.getBoundingClientRect();
-      if (!b.width) return;
+      var layout = el.offsetWidth || b.width;
+      if (!layout) return;
       var dx = a.left + a.width / 2 - (b.left + b.width / 2);
       var dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      var scale = a.width / layout;
+      if (!isFinite(scale) || scale <= 0) scale = 1;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(scale - 1) < 0.04) return;
+      var mid = scale + (1 - scale) * 0.82;
       var anim = el.animate(
         [
-          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)" },
-          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px)", offset: 0.82 },
+          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")" },
+          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px) scale(" + mid.toFixed(4) + ")", offset: 0.82 },
           { transform: "none" }
         ],
         { duration: 480, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
@@ -1160,8 +1196,8 @@
     });
   }
 
-  function leaveAg(next) {
-    var before = snapshotDots();
+  function leaveAg(next, before) {
+    if (!before) before = snapshotDots();
     stopAg();
     agOn = false;
     itemDrag = null;
@@ -1174,9 +1210,9 @@
 
   function applySize(n) {
     n = clampSlider(n);
-    var prevPx = dotPx();
+    var prevPx = viewPx();
     sizeN = n;
-    var px = dotPx();
+    var px = viewPx();
     applyMetrics();
     fillSlider(n);
     if (agOn) {
@@ -1197,8 +1233,9 @@
       var next = button.getAttribute("data-cc-mode");
       if (next === "map") city = "Vancouver";
       if (agOn) {
+        var held = snapshotDots();
         useModeSize(next);
-        leaveAg(next);
+        leaveAg(next, held);
         return;
       }
       if (next === mode) return;
