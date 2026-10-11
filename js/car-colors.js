@@ -34,6 +34,7 @@
   var draggingSlider = false;
   var zVal = null;
   var spillGen = 0;
+  var pageFill = null;
 
   function pageBackground(hex) {
     var bg = hex || "";
@@ -52,6 +53,7 @@
 
   function clearPageColour() {
     spillGen += 1;
+    pageFill = null;
     removeSpills();
     pageBackground("");
   }
@@ -82,10 +84,16 @@
   function spillFrom(dotEl) {
     var hex = dotEl.dataset.hex;
     if (!hex) return;
+    var id = dotEl.dataset.i;
+    if (pageFill && pageFill.i === id) {
+      clearPageColour();
+      return;
+    }
     var rect = dotEl.getBoundingClientRect();
     if (!(rect.width > 0)) return;
     spillGen += 1;
     var gen = spillGen;
+    pageFill = { i: id, hex: hex };
     removeSpills();
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
@@ -1046,7 +1054,6 @@
     button.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      clearPageColour();
       var next = button.classList.contains("cc-switch") ? !realOn : button.getAttribute("data-cc-tone") === "real";
       if (next === realOn) return;
       realOn = next;
