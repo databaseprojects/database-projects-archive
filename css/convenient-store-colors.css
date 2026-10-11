@@ -46,13 +46,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
   margin: 0 0 0.35rem;
   padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
-  background: transparent;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  appearance: none;
   color: #111;
   line-height: 0;
   cursor: pointer;
@@ -60,7 +60,10 @@ body {
 
 .csc-tags-toggle:hover,
 .csc-tags-toggle:focus-visible {
-  border-color: #000;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  outline: none;
 }
 
 .csc-tags-toggle svg {
@@ -87,9 +90,27 @@ html.csc-tags-open .csc-tagdrop {
   grid-template-rows: 1fr;
 }
 
+.csc-tagstack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.csc-tags-open .csc-tagstack {
+  overflow: visible;
+}
+
 .csc-tagdrop .csc-group {
   min-height: 0;
   overflow: hidden;
+}
+
+.csc-stores[hidden],
+.csc-cats[hidden] {
+  display: none !important;
 }
 
 html.csc-tags-open .csc-tagdrop .csc-group {
@@ -235,10 +256,6 @@ html.csc-tags-open .csc-tagdrop .csc-group {
   gap: 0.5em;
   min-width: 0;
   max-width: 100%;
-}
-
-.csc-cats[hidden] {
-  display: none !important;
 }
 
 .csc-opt.csc-placeholder:not(.csc-on),

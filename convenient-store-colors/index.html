@@ -9,7 +9,7 @@
   <script>
   try { if (localStorage.getItem("cscTagsOpen") === "1") document.documentElement.classList.add("csc-tags-open"); } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/convenient-store-colors.css?v=20261011a">
+  <link rel="stylesheet" href="../css/convenient-store-colors.css?v=20261011e">
 </head>
 <body>
   <div class="sheet">
@@ -19,15 +19,18 @@
     <div class="csc-controls">
     <div class="csc-rows">
       <div class="csc-tagfold">
-        <button type="button" class="csc-tags-toggle" id="csc-tags-toggle" aria-expanded="false" aria-controls="csc-cities" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button type="button" class="csc-tags-toggle" id="csc-tags-toggle" aria-expanded="false" aria-controls="csc-tagdrop" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="csc-tagdrop" id="csc-tagdrop">
-          <div class="csc-group" id="csc-cities" role="group" aria-label="Location">
-            <button type="button" class="csc-opt" data-csc-city="vancouver" aria-pressed="false">Vancouver</button>
+          <div class="csc-tagstack">
+            <div class="csc-group" id="csc-cities" role="group" aria-label="Location">
+              <button type="button" class="csc-opt" data-csc-city="vancouver" aria-pressed="false">Vancouver</button>
+            </div>
+            <div class="csc-group csc-stores" role="group" aria-label="Store" hidden></div>
+            <div class="csc-group csc-cats" role="group" aria-label="Category" hidden></div>
           </div>
         </div>
       </div>
       <div class="csc-top" hidden>
-        <div class="csc-group csc-stores" role="group" aria-label="Store"></div>
         <div class="csc-facets" hidden>
           <div class="csc-facet" data-csc-facet-group="packaging" role="group" aria-label="Packaging"></div>
         </div>
@@ -39,7 +42,6 @@
           <button type="button" class="csc-opt" data-csc-moon="2" aria-pressed="false" title="Secondary colours" hidden>2</button>
         </span>
       </div>
-      <div class="csc-group csc-cats" role="group" aria-label="Category" hidden></div>
       </div>
     </div>
     </div>
@@ -122,6 +124,6 @@
 </main>
 
   </div>
-  <script src="../js/convenient-store-colors.js?v=20261011a"></script>
+  <script src="../js/convenient-store-colors.js?v=20261011e"></script>
 </body>
 </html>
