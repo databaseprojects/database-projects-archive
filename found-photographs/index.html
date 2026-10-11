@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Found Photographs — databaseprojects</title>
-  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/site.css?v=20261011a">
   <script>
   try {
     var savedTags = localStorage.getItem("fpTagsOpen");
@@ -32,11 +32,11 @@
     if (savedTags === "1" || (savedTags !== "0" && tagsPhone)) document.documentElement.classList.add("fp-tags-open");
   } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/found.css?v=20261009b">
+  <link rel="stylesheet" href="../css/found.css?v=20261011a">
 </head>
 <body>
   <div class="sheet">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/" class="active" aria-current="page">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colors</a><a href="../info/">INFO</a></nav>
+    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/" class="active" aria-current="page">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colours</a><a href="../info/">INFO</a></nav>
     
 <main>
   <div class="fp-bar">
@@ -70,7 +70,7 @@
       </div>
     </div>
     <div class="fp-tagfold">
-      <button type="button" class="fp-tags-toggle" id="fp-tags-toggle" aria-expanded="false" aria-controls="fp-tags">tags</button>
+      <button type="button" class="fp-tags-toggle" id="fp-tags-toggle" aria-expanded="false" aria-controls="fp-tags" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="fp-tagdrop" id="fp-tagdrop">
         <span class="fp-tags" id="fp-tags" role="group" aria-label="Tags"></span>
       </div>
@@ -82,6 +82,6 @@
 </main>
 
   </div>
-  <script src="../js/found.js?v=20261010d" defer></script>
+  <script src="../js/found.js?v=20261011a" defer></script>
 </body>
 </html>

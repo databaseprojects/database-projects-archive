@@ -38,6 +38,74 @@ body {
   z-index: 30;
 }
 
+.csc-tagfold {
+  flex: 1 1 100%;
+}
+
+.csc-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 0.35rem;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  color: #111;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.csc-tags-toggle:hover,
+.csc-tags-toggle:focus-visible {
+  border-color: #000;
+}
+
+.csc-tags-toggle svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+
+html.csc-tags-open .csc-tags-toggle svg {
+  transform: rotate(180deg);
+}
+
+.csc-tagdrop {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+html.csc-tags-motion .csc-tagdrop {
+  transition: grid-template-rows 0.22s ease;
+}
+
+html.csc-tags-open .csc-tagdrop {
+  grid-template-rows: 1fr;
+}
+
+.csc-tagdrop .csc-group {
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.csc-tags-open .csc-tagdrop .csc-group {
+  --csc-tag-rows: 4;
+  max-height: calc(0.45em + var(--csc-tag-rows) * (1.4em + 0.5em + 2px) + (var(--csc-tag-rows) - 1) * 7px + 2px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 0.35em;
+}
+
+@media (max-width: 767px) {
+  html.csc-tags-open .csc-tagdrop .csc-group {
+    --csc-tag-rows: 8;
+  }
+}
+
 .csc-rows {
   display: flex;
   flex-direction: column;

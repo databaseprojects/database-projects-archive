@@ -1,6 +1,6 @@
-/* Info page only. A quiet network sits behind the text. */
+/* Info page only. Quiet archival marks drift behind the text. */
 
-.info-net {
+.info-archive {
   position: fixed;
   left: 0;
   top: 0;
@@ -9,7 +9,48 @@
   z-index: 0;
   margin: 0;
   pointer-events: none;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.22);
+}
+
+.info-piece {
+  position: absolute;
   display: block;
+  animation: info-drift linear infinite;
+}
+
+.info-piece svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.info-piece-1 { left: 6%; top: 72%; width: 46px; animation-duration: 54s; animation-delay: -8s; }
+.info-piece-2 { left: 18%; top: 110%; width: 34px; animation-duration: 46s; animation-delay: -20s; }
+.info-piece-3 { left: 31%; top: 88%; width: 52px; animation-duration: 62s; animation-delay: -4s; }
+.info-piece-4 { left: 44%; top: 120%; width: 28px; animation-duration: 40s; animation-delay: -16s; }
+.info-piece-5 { left: 57%; top: 78%; width: 40px; animation-duration: 58s; animation-delay: -30s; }
+.info-piece-6 { left: 68%; top: 104%; width: 36px; animation-duration: 50s; animation-delay: -12s; }
+.info-piece-7 { left: 80%; top: 92%; width: 48px; animation-duration: 66s; animation-delay: -24s; }
+.info-piece-8 { left: 90%; top: 70%; width: 30px; animation-duration: 44s; animation-delay: -6s; }
+.info-piece-9 { left: 12%; top: 130%; width: 38px; animation-duration: 72s; animation-delay: -36s; }
+.info-piece-10 { left: 74%; top: 140%; width: 44px; animation-duration: 60s; animation-delay: -18s; }
+
+@keyframes info-drift {
+  from { transform: translate3d(0, 12vh, 0); }
+  to { transform: translate3d(0, -130vh, 0); }
+}
+
+body.info-paused .info-piece {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-piece {
+    animation: none;
+    top: auto;
+    bottom: 8%;
+  }
 }
 
 body.info-page .sheet {

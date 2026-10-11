@@ -228,6 +228,19 @@
     return false;
   }
 
+  /* A saved spread with no angle at all is the straight pose left behind
+     when landing used to record a missing tilt as zero. */
+  function arrangementHasTilt() {
+    var map = loadPos();
+    var k;
+    for (k in map) {
+      if (!Object.prototype.hasOwnProperty.call(map, k)) continue;
+      var rec = map[k];
+      if (rec && typeof rec.r === "number" && rec.r !== 0) return true;
+    }
+    return false;
+  }
+
   function clampSc(s) {
     s = +s;
     if (!(s > 0)) return 1;
@@ -1473,10 +1486,9 @@
           var base = parseFloat(tile.style.getPropertyValue("--fp-rot"));
           if (!isFinite(base)) base = parseFloat(tile.getAttribute("data-fp-tilt"));
           if (!isFinite(base)) base = 0;
-          rot = base;
           rot0 = base;
-          /* A small, slow rock. Each photo keeps its own swing and timing. */
-          var amp = 0.7 + Math.random() * 0.9;
+          /* A degree or two, slow, each photo on its own phase and speed. */
+          var amp = 1 + Math.random() * 1;
           var skew = 0.75 + Math.random() * 0.25;
           if (Math.random() < 0.5) {
             spinHi = amp;
@@ -1486,9 +1498,12 @@
             spinHi = amp * skew;
           }
           spinLim = amp;
-          var leg = 9 + Math.random() * 8;
+          var leg = 7 + Math.random() * 9;
           spin = (Math.random() < 0.5 ? -1 : 1) * (((spinHi + spinLo) / 2) / leg);
-          tile.style.setProperty("--fp-rot", base.toFixed(2) + "deg");
+          rot = base + (Math.random() * 2 - 1) * amp;
+          if (rot > base + spinHi) rot = base + spinHi;
+          if (rot < base - spinLo) rot = base - spinLo;
+          tile.style.setProperty("--fp-rot", rot.toFixed(2) + "deg");
         }
       }
       var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
@@ -1602,6 +1617,20 @@
           continue;
         }
         if (b.held) continue;
+        if (b.spin) {
+          b.rot += b.spin * dt;
+          var origin = isFinite(b.rot0) ? b.rot0 : 0;
+          var hi = b.spinHi > 0 ? b.spinHi : (b.spinLim || 2);
+          var lo = b.spinLo > 0 ? b.spinLo : hi;
+          if (b.rot > origin + hi) {
+            b.rot = origin + hi;
+            b.spin = -Math.abs(b.spin);
+          } else if (b.rot < origin - lo) {
+            b.rot = origin - lo;
+            b.spin = Math.abs(b.spin);
+          }
+          b.tile.style.setProperty("--fp-rot", b.rot.toFixed(2) + "deg");
+        }
         if (b.driftAt != null && ts < b.driftAt) continue;
         var th2 = tileHeight(b.tile, b.w);
         if (Math.abs(th2 - b.h) > 2) b.h = th2;
@@ -1641,20 +1670,6 @@
         }
         b.tile.style.setProperty("--fp-nx", b.x.toFixed(1) + "px");
         b.tile.style.setProperty("--fp-ny", b.y.toFixed(1) + "px");
-        if (b.spin) {
-          b.rot += b.spin * dt;
-          var origin = isFinite(b.rot0) ? b.rot0 : 0;
-          var hi = b.spinHi > 0 ? b.spinHi : (b.spinLim || 8);
-          var lo = b.spinLo > 0 ? b.spinLo : hi;
-          if (b.rot > origin + hi) {
-            b.rot = origin + hi;
-            b.spin = -Math.abs(b.spin);
-          } else if (b.rot < origin - lo) {
-            b.rot = origin - lo;
-            b.spin = Math.abs(b.spin);
-          }
-          b.tile.style.setProperty("--fp-rot", b.rot.toFixed(2) + "deg");
-        }
       }
       agRaf = requestAnimationFrame(agTick);
     };
@@ -2036,14 +2051,24 @@
 
   function landAsTable(g) {
     var items = tiles();
+    var usedTilt = {};
     items.forEach(function (tile) {
       tile.removeAttribute("data-fp-drop-dur");
       tile.style.setProperty("transition", "none", "important");
+      var keptStraight = tile.getAttribute("data-fp-straight") === "1";
       var rot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
       if (!isFinite(rot)) rot = 0;
+      /* A zero here used to be stored as "straight" and then reused, so
+         Table came back flat. Only a print that was put down straight stays flat. */
+      if (keptStraight) {
+        tile.setAttribute("data-fp-tilt", "0");
+        tile.style.setProperty("--fp-rot", "0deg");
+        return;
+      }
+      if (rot === 0) rot = freshTilt(usedTilt);
+      tile.removeAttribute("data-fp-straight");
       tile.setAttribute("data-fp-tilt", String(rot));
-      if (rot === 0) tile.setAttribute("data-fp-straight", "1");
-      else tile.removeAttribute("data-fp-straight");
+      tile.style.setProperty("--fp-rot", rot.toFixed(1) + "deg");
     });
     g.setAttribute("data-fp-layout", "table");
     g.style.removeProperty("--fp-ag-h");
@@ -2053,7 +2078,6 @@
     /* Keep the pose. Only a print that overlaps the bar eases down under it. */
     var bar = document.querySelector(".fp-bar");
     var limit = bar ? bar.getBoundingClientRect().bottom + 1 : 0;
-    var BASE_MS = 420;
     var plans = [];
     var stayed = [];
     items.forEach(function (tile) {
@@ -2084,11 +2108,12 @@
       persist(tile);
     });
     plans.forEach(function (plan) {
-      var dur = Math.round(BASE_MS * 0.75 * (0.7 + Math.random() * 0.7));
+      /* Short ease-in, then a clean stop. Landing depth stays varied. */
+      var dur = Math.round(110 + Math.random() * 70);
       plan.tile.setAttribute("data-fp-drop-dur", String(dur));
       holdGlide(plan.tile, plan.from, {
         dur: dur,
-        easing: "linear"
+        easing: "cubic-bezier(0.55, 0, 1, 1)"
       });
     });
     requestAnimationFrame(function () {
@@ -2145,8 +2170,9 @@
           g.setAttribute("data-fp-layout", mode);
           clearAntigravity(g);
           reuseTable = hasTableArrangement();
+          var keepTilt = reuseTable && arrangementHasTilt();
           applyScatter(g, false, !reuseTable);
-          if (reuseTable) {
+          if (keepTilt) {
             tiles().forEach(function (tile) {
               var raw = tile.getAttribute("data-fp-tilt");
               var rot = parseFloat(raw);
@@ -2154,6 +2180,9 @@
               var text = raw.indexOf(".") === -1 ? rot.toFixed(1) : String(rot);
               tile.style.setProperty("--fp-rot", text + "deg");
             });
+          } else if (reuseTable) {
+            assignTableSkew();
+            tiles().forEach(persist);
           } else {
             assignTableSkew();
             if (!phoneSlider() && !tabletSlider() && window.fpLayoutCluster) {
