@@ -118,7 +118,8 @@
 .cc-tags-toggle {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 0.2rem;
   margin: 0 0 0.35rem;
   padding: 0;
   border: 0;
@@ -127,8 +128,17 @@
   box-shadow: none;
   appearance: none;
   color: #111;
-  line-height: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
   cursor: pointer;
+}
+
+.cc-tags-name {
+  white-space: nowrap;
 }
 
 .cc-tags-toggle:hover,
@@ -193,6 +203,7 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
 
 .cc-cities {
   margin: 0;
+  row-gap: 7px;
 }
 
 .cc-icons {
