@@ -15,7 +15,7 @@
   <script>
   try { if (localStorage.getItem("ccTagsOpen") === "1") document.documentElement.classList.add("cc-tags-open"); } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/car-colors.css?v=20261011l">
+  <link rel="stylesheet" href="../css/car-colors.css?v=20261012a">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 </head>
 <body>
@@ -62,6 +62,7 @@
       <span class="cc-icons" role="group" aria-label="View">
         <button type="button" class="cc-icon cc-icon-on" data-cc-mode="hue" aria-pressed="true" aria-label="Hue" title="Hue"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16c1.2-5 3.4-7 7-7s5.8 2 7 7"/><path d="M8 19h8"/></svg></button>
         <button type="button" class="cc-icon" data-cc-mode="map" aria-pressed="false" aria-label="Map" title="Map"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+        <button type="button" class="cc-icon" data-cc-mode="cluster" aria-pressed="false" aria-label="Cluster" title="Cluster"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9.2" r="3"/><circle cx="15.6" cy="8.6" r="2.15"/><circle cx="14.2" cy="15.2" r="2.7"/><circle cx="8.2" cy="15.4" r="1.7"/></svg></button>
       </span>
     </span>
     <span class="cc-tone cc-real" role="group" aria-label="Colour reading">
@@ -76,6 +77,6 @@
 
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/car-colors.js?v=20261012d"></script>
+  <script src="../js/car-colors.js?v=20261012e"></script>
 </body>
 </html>
