@@ -535,9 +535,7 @@
   }
 
   function labelFor(car) {
-    var when = [car.date, car.time].filter(Boolean).join(" ");
-    var hex = activeHex(car);
-    return when ? when + ", " + hex : hex;
+    return activeHex(car);
   }
 
   function dot(car) {
@@ -553,8 +551,6 @@
     el.dataset.hex = hex;
     el.dataset.accurate = car.accurate || "";
     el.dataset.real = car.real || "";
-    el.dataset.date = car.date || "";
-    el.dataset.time = car.time || "";
     el.dataset.i = String(car.i);
     if (car.hue == null) el.dataset.hue = "";
     else el.dataset.hue = String(car.hue);
@@ -1172,11 +1168,9 @@
     var acc = el.dataset.accurate || "";
     var real = el.dataset.real || "";
     if (!acc && !real) return;
-    var when = [el.dataset.date, el.dataset.time].filter(Boolean).join(" ");
     var lines = [];
     if (acc) lines.push(acc);
     if (real && real !== acc) lines.push(real);
-    if (when) lines.push(when);
     pop.querySelector(".cc-pop-chip").style.background = acc || real;
     pop.querySelector(".cc-pop-copy").textContent = lines.join("\n");
     pop.hidden = false;
