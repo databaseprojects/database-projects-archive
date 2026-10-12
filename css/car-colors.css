@@ -302,7 +302,7 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
   box-sizing: border-box;
   border-radius: 50%;
   border: 0;
-  box-shadow: none;
+  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.05);
   flex: 0 0 var(--cc-dot, 40px);
   transition: background-color 0.45s ease;
 }
@@ -421,7 +421,6 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
 .cc-map .cc-dot {
   position: absolute;
   z-index: 1;
-  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.15);
 }
 
 .cc-gather {
