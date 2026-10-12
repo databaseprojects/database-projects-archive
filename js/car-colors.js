@@ -230,17 +230,19 @@
     return Math.round(BIG + (small - BIG) * t);
   }
 
-  /* Map dots are about 40% smaller than the slider size. Hue stays on dotPx.
-     Phones halve that map size again. Desktop and tablet do not. */
+  /* Map dots are about 40% smaller than the slider size, then halved on every screen.
+     Phones halve once more. Map dots never go under 3px. Hue stays on dotPx. */
   var MAP_DOT = 0.6;
   var PHONE_MAP_DOT = 0.5;
+  var MAP_HALF = 0.5;
+  var MAP_MIN = 3;
 
   function viewPx() {
     var px = dotPx();
     if (mode !== "map") return px;
     var mapPx = Math.max(1, Math.round(px * MAP_DOT));
-    if (phoneSlider()) return Math.max(1, mapPx * PHONE_MAP_DOT);
-    return mapPx;
+    if (phoneSlider()) mapPx = mapPx * PHONE_MAP_DOT;
+    return Math.max(MAP_MIN, mapPx * MAP_HALF);
   }
 
   function gapPx() {
@@ -891,9 +893,9 @@
     });
   }
 
-  /* A few passes in screen pixels. Only overlapping dots move, and only enough to open the gap. */
+  /* A few passes in screen pixels. Dots may overlap down to about 0.75 of a diameter. */
   var RELAX_ITERS = 12;
-  var RELAX_GAP = 1;
+  var RELAX_SPAN = 0.75;
 
   function relaxScreen(points, minDist) {
     var n = points.length;
@@ -905,7 +907,7 @@
       points[i].y += Math.sin(ang) * 0.2;
     }
     for (iter = 0; iter < RELAX_ITERS; iter++) {
-      target = iter < RELAX_ITERS - 2 ? minDist + 0.6 : minDist;
+      target = minDist;
       overlapped = false;
       for (a = 0; a < n; a++) {
         for (b = a + 1; b < n; b++) {
@@ -937,7 +939,7 @@
   function projectStreetDots(field) {
     if (!ccBasemap || !field) return;
     var size = viewPx();
-    var minDist = size + RELAX_GAP;
+    var minDist = size * RELAX_SPAN;
     var nodes = [];
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var plot = plotLL[el.dataset.i];
