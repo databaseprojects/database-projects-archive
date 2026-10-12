@@ -5,9 +5,19 @@
   var TONE_KEY = "ccRealWorld";
   var ROWS_KEY = "ccSheetRows";
   var SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv";
-  /* Map privacy. 'block' (default) rounds lat/lon to 3 decimals (~100 m).
-     Flip to 'exact' to use the sheet coordinates as recorded. */
-  var LOCATION_PRECISION = "block";
+  /* Neighbourhood clumps. Sheet coordinates stay in memory and are never written on the page.
+     A cell is about 700 m. One to three scans sit 300–400 m from the cell centre.
+     Busier cells ease toward each scan, and every dot stays at least 100 m away. */
+  var CELL_M = 700;
+  var FEW_MAX = 3;
+  var WIDE_JITTER_MIN_M = 300;
+  var WIDE_JITTER_MAX_M = 400;
+  var BLUR_FLOOR_M = 100;
+  var DENSE_COUNT = 12;
+  var GRID_LAT = 49.25;
+  var M_PER_DEG_LAT = 111320;
+  var M_PER_DEG_LNG = M_PER_DEG_LAT * Math.cos(GRID_LAT * Math.PI / 180);
+  var plotLL = {};
   var MIN = 6;
   var MAX = 20;
   var DEF = 6;
@@ -317,12 +327,84 @@
     return isFinite(n) ? n : null;
   }
 
-  function applyLocationPrecision(lat, lng) {
-    if (LOCATION_PRECISION === "exact") return { lat: lat, lng: lng };
+  function toXY(lat, lng) {
+    return { x: lng * M_PER_DEG_LNG, y: lat * M_PER_DEG_LAT };
+  }
+
+  function toLL(x, y) {
+    return { lng: x / M_PER_DEG_LNG, lat: y / M_PER_DEG_LAT };
+  }
+
+  function cellOf(lat, lng) {
+    var p = toXY(lat, lng);
     return {
-      lat: Math.round(lat * 1000) / 1000,
-      lng: Math.round(lng * 1000) / 1000
+      cx: Math.floor(p.x / CELL_M),
+      cy: Math.floor(p.y / CELL_M)
     };
+  }
+
+  function cellCentre(cell) {
+    return {
+      x: (cell.cx + 0.5) * CELL_M,
+      y: (cell.cy + 0.5) * CELL_M
+    };
+  }
+
+  function clumpSeed(car) {
+    var s = 2166136261;
+    var str = [car.date, car.time, car.lat, car.lng, car.i].join("|");
+    var i;
+    for (i = 0; i < str.length; i++) {
+      s ^= str.charCodeAt(i);
+      s = Math.imul(s, 16777619);
+    }
+    return s >>> 0;
+  }
+
+  function clumpT(count) {
+    if (count <= FEW_MAX) return 0;
+    return Math.min(1, (count - FEW_MAX) / (DENSE_COUNT - FEW_MAX));
+  }
+
+  /* Display positions only. car.lat and car.lng stay off the dots. */
+  function placeNeighbourhoods(cars) {
+    var groups = {};
+    var i;
+    plotLL = {};
+    for (i = 0; i < cars.length; i++) {
+      var car = cars[i];
+      if (car.lat == null || car.lng == null) continue;
+      var cell = cellOf(car.lat, car.lng);
+      var key = cell.cx + ":" + cell.cy;
+      if (!groups[key]) groups[key] = { cell: cell, cars: [] };
+      groups[key].cars.push(car);
+    }
+    Object.keys(groups).forEach(function (key) {
+      var group = groups[key];
+      var centre = cellCentre(group.cell);
+      var t = clumpT(group.cars.length);
+      group.cars.forEach(function (car) {
+        var rng = mulberry32(clumpSeed(car));
+        var wide = WIDE_JITTER_MIN_M + (WIDE_JITTER_MAX_M - WIDE_JITTER_MIN_M) * rng();
+        var mag = wide + (BLUR_FLOOR_M - wide) * t;
+        var ang = rng() * Math.PI * 2;
+        var truth = toXY(car.lat, car.lng);
+        var anchorX = centre.x + (truth.x - centre.x) * t;
+        var anchorY = centre.y + (truth.y - centre.y) * t;
+        var x = anchorX + Math.cos(ang) * mag;
+        var y = anchorY + Math.sin(ang) * mag;
+        var dx = x - truth.x;
+        var dy = y - truth.y;
+        var dist = Math.hypot(dx, dy);
+        if (dist < BLUR_FLOOR_M) {
+          var push = dist > 0.5 ? Math.atan2(dy, dx) : ang;
+          x = truth.x + Math.cos(push) * BLUR_FLOOR_M;
+          y = truth.y + Math.sin(push) * BLUR_FLOOR_M;
+        }
+        var ll = toLL(x, y);
+        plotLL[car.i] = { lat: ll.lat, lng: ll.lng };
+      });
+    });
   }
 
   function rowsFromCsv(text) {
@@ -375,8 +457,6 @@
       var shown = realOn && real ? real : accurate;
       var lat = typeof row.lat === "number" && isFinite(row.lat) ? row.lat : null;
       var lng = typeof row.lng === "number" && isFinite(row.lng) ? row.lng : null;
-      var loc = null;
-      if (lat != null && lng != null) loc = applyLocationPrecision(lat, lng);
       out.push({
         i: out.length,
         family: "",
@@ -387,12 +467,13 @@
         metallic: false,
         date: String(row.date || "").trim(),
         time: String(row.time || "").trim(),
-        lat: loc ? loc.lat : null,
-        lng: loc ? loc.lng : null,
+        lat: lat,
+        lng: lng,
         region: REGIONS[out.length % REGIONS.length],
         city: "Vancouver"
       });
     }
+    placeNeighbourhoods(out);
     return out;
   }
 
@@ -805,10 +886,7 @@
 
   function assignStreetDots(field) {
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
-      var car = CARS[+el.dataset.i];
-      if (!car || car.lat == null || car.lng == null) return;
-      el.dataset.lng = String(car.lng);
-      el.dataset.lat = String(car.lat);
+      if (!plotLL[el.dataset.i]) return;
       el.style.visibility = "hidden";
     });
   }
@@ -817,8 +895,9 @@
     if (!ccBasemap || !field) return;
     var size = viewPx();
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
-      if (!el.dataset.lng) return;
-      var p = ccBasemap.project([+el.dataset.lng, +el.dataset.lat]);
+      var plot = plotLL[el.dataset.i];
+      if (!plot) return;
+      var p = ccBasemap.project([plot.lng, plot.lat]);
       var left = (p.x - size / 2).toFixed(1) + "px";
       var top = (p.y - size / 2).toFixed(1) + "px";
       if (mapFlight) {
