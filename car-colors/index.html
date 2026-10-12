@@ -15,7 +15,7 @@
   <script>
   try { if (localStorage.getItem("ccTagsOpen") === "1") document.documentElement.classList.add("cc-tags-open"); } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/car-colors.css?v=20261012c">
+  <link rel="stylesheet" href="../css/car-colors.css?v=20261012d">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 </head>
 <body>
@@ -49,11 +49,9 @@
   </div>
   <div class="cc-controls">
     <div class="cc-tagfold">
-      <button type="button" class="cc-tags-toggle" id="cc-tags-toggle" aria-expanded="false" aria-controls="cc-cities" aria-label="Tags" title="Tags"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button type="button" class="cc-tags-toggle" id="cc-tags-toggle" aria-expanded="false" aria-controls="cc-areas" aria-label="Vancouver" title="Vancouver"><span class="cc-tags-name">Vancouver</span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="cc-tagdrop" id="cc-tagdrop">
-        <div class="cc-cities" id="cc-cities" role="group" aria-label="City">
-          <button type="button" class="cc-city cc-on" data-cc-city="Vancouver" aria-pressed="true">Vancouver</button>
-        </div>
+        <div class="cc-cities" id="cc-areas" role="group" aria-label="Neighbourhood"></div>
       </div>
     </div>
     <div class="cc-tools">
@@ -77,6 +75,6 @@
 
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/car-colors.js?v=20261012e"></script>
+  <script src="../js/car-colors.js?v=20261012f"></script>
 </body>
 </html>

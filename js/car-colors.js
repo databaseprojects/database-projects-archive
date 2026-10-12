@@ -17,11 +17,79 @@
   var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
   var CARS = [];
+  /* Empty means every scan. Names in the list are the neighbourhoods currently on. */
+  var areaPick = [];
+  var AREAS = [];
   /* Open on Real world. A saved reading is ignored so an older choice cannot override this. */
   var realOn = true;
 
   function carsIn(name) {
     return CARS.filter(function (car) { return car.city === name; });
+  }
+
+  function pointInRing(x, y, ring) {
+    var inside = false;
+    var n = ring.length;
+    var j = n - 1;
+    var i;
+    for (i = 0; i < n; i++) {
+      var xi = ring[i][0];
+      var yi = ring[i][1];
+      var xj = ring[j][0];
+      var yj = ring[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / ((yj - yi) || 1e-15) + xi) inside = !inside;
+      j = i;
+    }
+    return inside;
+  }
+
+  function areaAt(lat, lng) {
+    if (lat == null || lng == null || !AREAS.length) return "";
+    var i, p, h;
+    for (i = 0; i < AREAS.length; i++) {
+      var polys = AREAS[i].polys;
+      for (p = 0; p < polys.length; p++) {
+        var rings = polys[p];
+        if (!rings.length || !pointInRing(lng, lat, rings[0])) continue;
+        var hole = false;
+        for (h = 1; h < rings.length; h++) {
+          if (pointInRing(lng, lat, rings[h])) { hole = true; break; }
+        }
+        if (!hole) return AREAS[i].name;
+      }
+    }
+    return "";
+  }
+
+  function shownCars() {
+    var list = carsIn(city);
+    if (!areaPick.length) return list;
+    var on = {};
+    var i;
+    for (i = 0; i < areaPick.length; i++) on[areaPick[i]] = 1;
+    return list.filter(function (car) { return car.area && on[car.area]; });
+  }
+
+  function areasInUse() {
+    var seen = {};
+    var names = [];
+    carsIn(city).forEach(function (car) {
+      if (!car.area || seen[car.area]) return;
+      seen[car.area] = 1;
+      names.push(car.area);
+    });
+    names.sort(function (a, b) { return a < b ? -1 : a > b ? 1 : 0; });
+    return names;
+  }
+
+  function allChosen() {
+    var names = areasInUse();
+    if (!names.length) return false;
+    var i;
+    for (i = 0; i < names.length; i++) {
+      if (areaPick.indexOf(names[i]) < 0) return false;
+    }
+    return true;
   }
 
   var stage = document.getElementById("cc-stage");
@@ -371,6 +439,7 @@
       var shown = realOn && real ? real : accurate;
       var lat = typeof row.lat === "number" && isFinite(row.lat) ? row.lat : null;
       var lng = typeof row.lng === "number" && isFinite(row.lng) ? row.lng : null;
+      var area = areaAt(lat, lng);
       out.push({
         i: out.length,
         family: "",
@@ -383,7 +452,8 @@
         time: String(row.time || "").trim(),
         lat: lat,
         lng: lng,
-        region: REGIONS[out.length % REGIONS.length],
+        area: area,
+        region: area,
         city: "Vancouver"
       });
     }
@@ -423,6 +493,7 @@
     var cachedSig = JSON.stringify(cached);
     if (had) {
       CARS = carsFromRows(cached);
+      paintAreaTabs();
       render();
     }
     return sheetText().then(function (text) {
@@ -430,6 +501,7 @@
       if (JSON.stringify(rows) === cachedSig) return;
       writeCachedRows(rows);
       CARS = carsFromRows(rows);
+      paintAreaTabs();
       render();
     }).catch(function () {
       if (had) {
@@ -871,7 +943,7 @@
     credit.textContent = "© OpenStreetMap";
     field.appendChild(credit);
     var rng = mulberry32(0x5A11);
-    var mapped = carsIn("Vancouver").filter(function (car) {
+    var mapped = shownCars().filter(function (car) {
       return car.lat != null && car.lng != null;
     });
     shuffle(mapped, rng).forEach(function (car) {
@@ -902,7 +974,7 @@
     var gap = gapPx();
     var size = dotPx();
     var cols = Math.max(1, Math.floor((width + gap) / (size + gap)));
-    var sorted = carsIn(city).slice().sort(hueOrder);
+    var sorted = shownCars().slice().sort(hueOrder);
     var wrap = document.createElement("div");
     wrap.className = "cc-hue";
     wrap.style.gridTemplateColumns = "repeat(" + cols + ", " + size + "px)";
@@ -938,7 +1010,7 @@
     var controls = document.querySelector(".cc-controls");
     var below = controls ? window.innerHeight - controls.getBoundingClientRect().bottom - 28 : Math.round(window.innerHeight * 0.7);
     if (below < 360) below = 360;
-    var cars = carsIn(city).slice().sort(function (a, b) { return a.i - b.i; });
+    var cars = shownCars().slice().sort(function (a, b) { return a.i - b.i; });
     var n = cars.length;
     var golden = Math.PI * (3 - Math.sqrt(5));
     var rx = Math.max(size, (width - size) * 0.46);
@@ -1015,10 +1087,12 @@
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
     document.querySelectorAll(".cc-city").forEach(function (button) {
+      if (button.hasAttribute("data-cc-area") || button.hasAttribute("data-cc-all")) return;
       var on = button.getAttribute("data-cc-city") === city;
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    syncAreaButtons();
     var tone = document.querySelector(".cc-tone");
     if (tone) tone.classList.toggle("cc-real", !!realOn);
     var toneSwitch = document.querySelector(".cc-switch");
@@ -1263,9 +1337,150 @@
     applySize(k);
   });
 
+  function syncAreaButtons() {
+    var every = allChosen();
+    document.querySelectorAll("[data-cc-all]").forEach(function (button) {
+      button.classList.toggle("cc-on", every);
+      button.setAttribute("aria-pressed", every ? "true" : "false");
+    });
+    document.querySelectorAll("[data-cc-area]").forEach(function (button) {
+      var on = areaPick.indexOf(button.getAttribute("data-cc-area")) >= 0;
+      button.classList.toggle("cc-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function paintAreaTabs() {
+    var box = document.getElementById("cc-areas");
+    if (!box || !AREAS.length || !CARS.length) return;
+    var names = areasInUse();
+    box.textContent = "";
+    var all = document.createElement("button");
+    all.type = "button";
+    all.className = "cc-city";
+    all.setAttribute("data-cc-all", "1");
+    all.textContent = "All";
+    box.appendChild(all);
+    names.forEach(function (name) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "cc-city";
+      b.setAttribute("data-cc-area", name);
+      b.textContent = name;
+      box.appendChild(b);
+    });
+    syncAreaButtons();
+  }
+
+  function stampAreas() {
+    var i;
+    for (i = 0; i < CARS.length; i++) {
+      var area = areaAt(CARS[i].lat, CARS[i].lng);
+      CARS[i].area = area;
+      CARS[i].region = area;
+    }
+    var live = {};
+    areasInUse().forEach(function (n) { live[n] = 1; });
+    areaPick = areaPick.filter(function (n) { return live[n]; });
+  }
+
+  function replaceMapDots() {
+    var field = stage.querySelector(".cc-map");
+    if (!field) return false;
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      el.remove();
+    });
+    var rng = mulberry32(0x5A11);
+    var mapped = shownCars().filter(function (car) {
+      return car.lat != null && car.lng != null;
+    });
+    shuffle(mapped, rng).forEach(function (car) {
+      field.appendChild(dot(car));
+    });
+    if (mapFlight) {
+      assignStreetDots(field);
+      parkMapDots(field);
+      if (ccBasemap) projectStreetDots(field);
+    } else if (ccBasemap) {
+      projectStreetDots(field);
+    } else {
+      assignStreetDots(field);
+    }
+    return true;
+  }
+
+  function applyAreaFilter() {
+    syncAreaButtons();
+    clearPageColour();
+    var before = snapshotDots();
+    if (mode === "map" && replaceMapDots()) {
+      if (!mapFlight) slideInto(before);
+      return;
+    }
+    render();
+    if (mode !== "map") slideInto(before);
+  }
+
+  function settleCluster() {
+    if (mode !== "cluster") return;
+    window.setTimeout(function () {
+      if (mode !== "cluster") return;
+      var before = snapshotDots();
+      render();
+      slideInto(before);
+    }, 240);
+  }
+
+  function loadAreas() {
+    return fetch("vancouver-areas.geojson?v=20261012f").then(function (res) {
+      if (!res.ok) throw new Error("areas");
+      return res.json();
+    }).then(function (geo) {
+      AREAS = [];
+      (geo.features || []).forEach(function (f) {
+        var name = f.properties && f.properties.name;
+        var g = f.geometry;
+        if (!name || !g) return;
+        var polys = g.type === "Polygon" ? [g.coordinates] : (g.type === "MultiPolygon" ? g.coordinates : []);
+        if (!polys.length) return;
+        AREAS.push({ name: name, polys: polys });
+      });
+      stampAreas();
+      paintAreaTabs();
+    }).catch(function () {});
+  }
+
+  var areasBox = document.getElementById("cc-areas");
+  if (areasBox) {
+    areasBox.addEventListener("click", function (e) {
+      var button = e.target.closest && e.target.closest("button");
+      if (!button || !areasBox.contains(button)) return;
+      if (draggingSlider) return;
+      if (button.hasAttribute("data-cc-all")) {
+        areaPick = allChosen() ? [] : areasInUse().slice();
+      } else {
+        var name = button.getAttribute("data-cc-area");
+        if (!name) return;
+        var at = areaPick.indexOf(name);
+        if (at >= 0) areaPick.splice(at, 1);
+        else areaPick.push(name);
+      }
+      applyAreaFilter();
+    });
+  }
+
+  window.__ccTagsClick = function () {
+    if (areaPick.length) {
+      areaPick = [];
+      applyAreaFilter();
+    }
+    settleCluster();
+  };
+
   phone = phoneSlider();
   applySize(modeSize(mode));
   syncButtons();
+  loadAreas();
   loadSheet();
 
   var resizeTimer = 0;
@@ -1350,5 +1565,6 @@
     root.classList.toggle("cc-tags-open", open);
     try { localStorage.setItem(KEY, open ? "1" : "0"); } catch (err) {}
     sync();
+    if (window.__ccTagsClick) window.__ccTagsClick(open);
   });
 })();
