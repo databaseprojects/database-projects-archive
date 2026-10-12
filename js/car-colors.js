@@ -178,11 +178,11 @@
     return n;
   }
 
-  /* Left is larger. Hue opens there; Map opens at the small end. */
+  /* Left is larger. Hue and Cluster open there; Map opens at the small end. */
   function modeSize(next) {
     var ends = sliderEnds();
     if (next === "map") return ends.max;
-    if (next === "hue") return ends.min;
+    if (next === "hue" || next === "cluster") return ends.min;
     return null;
   }
 
@@ -919,11 +919,76 @@
     stage.appendChild(wrap);
   }
 
+  function clusterSeed(car) {
+    var s = 2166136261;
+    var str = [car.i, car.accurate, car.real].join("|");
+    var i;
+    for (i = 0; i < str.length; i++) {
+      s ^= str.charCodeAt(i);
+      s = Math.imul(s, 16777619);
+    }
+    return s >>> 0;
+  }
+
+  /* One loose cloud, centred in the area under the controls. The seed keeps each dot put. */
+  function renderCluster() {
+    clear(stage);
+    var width = Math.max(280, stage.clientWidth);
+    var size = viewPx();
+    var controls = document.querySelector(".cc-controls");
+    var below = controls ? window.innerHeight - controls.getBoundingClientRect().bottom - 28 : Math.round(window.innerHeight * 0.7);
+    if (below < 360) below = 360;
+    var cars = carsIn(city).slice().sort(function (a, b) { return a.i - b.i; });
+    var n = cars.length;
+    var golden = Math.PI * (3 - Math.sqrt(5));
+    var rx = Math.max(size, (width - size) * 0.46);
+    var ry = Math.max(size, (below - size) * 0.42);
+    var pts = cars.map(function (car, i) {
+      var rng = mulberry32(clusterSeed(car) ^ (i * 0x9E3779B1));
+      var base = n <= 1 ? 0 : Math.sqrt((i + 0.35) / n);
+      var ang = i * golden + (rng() - 0.5) * 0.45;
+      var rad = 0.9 + rng() * 0.2;
+      var jAng = rng() * Math.PI * 2;
+      var jMag = rng() * size * 0.28;
+      return {
+        car: car,
+        x: Math.cos(ang) * base * rx * rad + Math.cos(jAng) * jMag,
+        y: Math.sin(ang) * base * ry * rad + Math.sin(jAng) * jMag
+      };
+    });
+    var sx = 0;
+    var sy = 0;
+    pts.forEach(function (p) { sx += p.x; sy += p.y; });
+    var cx = pts.length ? sx / pts.length : 0;
+    var cy = pts.length ? sy / pts.length : 0;
+    var reachX = 1;
+    var reachY = 1;
+    pts.forEach(function (p) {
+      reachX = Math.max(reachX, Math.abs(p.x - cx));
+      reachY = Math.max(reachY, Math.abs(p.y - cy));
+    });
+    var fit = Math.min((width - size) / (2 * reachX), (below - size) / (2 * reachY));
+    if (!(fit > 0) || !isFinite(fit)) fit = 1;
+    var field = document.createElement("div");
+    field.className = "cc-gather";
+    field.style.height = below + "px";
+    pts.forEach(function (p) {
+      var el = dot(p.car);
+      var left = width / 2 + (p.x - cx) * fit - size / 2;
+      var top = below / 2 + (p.y - cy) * fit - size / 2;
+      el.style.left = left.toFixed(1) + "px";
+      el.style.top = top.toFixed(1) + "px";
+      field.appendChild(el);
+    });
+    stage.appendChild(field);
+  }
+
   function render() {
     applyMetrics();
     if (mode !== "map") mapFlight = null;
     if (mode === "region") renderRegion();
     else if (mode === "map") renderMap();
+    else if (mode === "cluster") renderCluster();
     else renderHue();
   }
 
