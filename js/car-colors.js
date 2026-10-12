@@ -230,13 +230,17 @@
     return Math.round(BIG + (small - BIG) * t);
   }
 
-  /* Map dots are about 40% smaller than the slider size. Hue stays on dotPx. */
+  /* Map dots are about 40% smaller than the slider size. Hue stays on dotPx.
+     Phones halve that map size again. Desktop and tablet do not. */
   var MAP_DOT = 0.6;
+  var PHONE_MAP_DOT = 0.5;
 
   function viewPx() {
     var px = dotPx();
-    if (mode === "map") return Math.max(1, Math.round(px * MAP_DOT));
-    return px;
+    if (mode !== "map") return px;
+    var mapPx = Math.max(1, Math.round(px * MAP_DOT));
+    if (phoneSlider()) return Math.max(1, mapPx * PHONE_MAP_DOT);
+    return mapPx;
   }
 
   function gapPx() {
@@ -887,23 +891,72 @@
     });
   }
 
+  /* A few passes in screen pixels. Only overlapping dots move, and only enough to open the gap. */
+  var RELAX_ITERS = 12;
+  var RELAX_GAP = 1;
+
+  function relaxScreen(points, minDist) {
+    var n = points.length;
+    var i, iter, a, b, dx, dy, dist, push, ux, uy, ang, target, overlapped;
+    if (n < 2 || !(minDist > 0)) return;
+    for (i = 0; i < n; i++) {
+      ang = i * 2.399963;
+      points[i].x += Math.cos(ang) * 0.2;
+      points[i].y += Math.sin(ang) * 0.2;
+    }
+    for (iter = 0; iter < RELAX_ITERS; iter++) {
+      target = iter < RELAX_ITERS - 2 ? minDist + 0.6 : minDist;
+      overlapped = false;
+      for (a = 0; a < n; a++) {
+        for (b = a + 1; b < n; b++) {
+          dx = points[b].x - points[a].x;
+          dy = points[b].y - points[a].y;
+          dist = Math.hypot(dx, dy);
+          if (dist >= minDist) continue;
+          overlapped = true;
+          if (dist < 0.01) {
+            ang = (a + 1) * 2.399963 + b;
+            ux = Math.cos(ang);
+            uy = Math.sin(ang);
+            push = target / 2;
+          } else {
+            push = (target - dist) / 2;
+            ux = dx / dist;
+            uy = dy / dist;
+          }
+          points[a].x -= ux * push;
+          points[a].y -= uy * push;
+          points[b].x += ux * push;
+          points[b].y += uy * push;
+        }
+      }
+      if (!overlapped) return;
+    }
+  }
+
   function projectStreetDots(field) {
     if (!ccBasemap || !field) return;
     var size = viewPx();
+    var minDist = size + RELAX_GAP;
+    var nodes = [];
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var plot = plotLL[el.dataset.i];
       if (!plot) return;
       var p = ccBasemap.project([plot.lng, plot.lat]);
-      var left = (p.x - size / 2).toFixed(1) + "px";
-      var top = (p.y - size / 2).toFixed(1) + "px";
+      nodes.push({ el: el, x: p.x, y: p.y, hx: p.x, hy: p.y });
+    });
+    relaxScreen(nodes, minDist);
+    nodes.forEach(function (node) {
+      var left = (node.x - size / 2).toFixed(1) + "px";
+      var top = (node.y - size / 2).toFixed(1) + "px";
       if (mapFlight) {
-        el.dataset.mx = left;
-        el.dataset.my = top;
+        node.el.dataset.mx = left;
+        node.el.dataset.my = top;
         return;
       }
-      el.style.left = left;
-      el.style.top = top;
-      el.style.visibility = "visible";
+      node.el.style.left = left;
+      node.el.style.top = top;
+      node.el.style.visibility = "visible";
     });
     if (mapFlight && field.classList.contains("cc-map-in")) releaseMapFlight(field);
   }
@@ -1120,7 +1173,11 @@
     applyMetrics();
     fillSlider(n);
     if (stage.querySelector(".cc-dot")) {
-      if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
+      if (mode === "map") {
+        var mapField = stage.querySelector(".cc-map");
+        if (mapField && ccBasemap) projectStreetDots(mapField);
+        else if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
+      } else if (Math.abs(prevPx - px) > 0.5) growFromCenter(prevPx, px);
       return;
     }
     render();
