@@ -421,6 +421,7 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
 .cc-map .cc-dot {
   position: absolute;
   z-index: 1;
+  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.15);
 }
 
 .cc-gather {
