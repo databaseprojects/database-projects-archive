@@ -82,16 +82,6 @@
     return names;
   }
 
-  function allChosen() {
-    var names = areasInUse();
-    if (!names.length) return false;
-    var i;
-    for (i = 0; i < names.length; i++) {
-      if (areaPick.indexOf(names[i]) < 0) return false;
-    }
-    return true;
-  }
-
   var stage = document.getElementById("cc-stage");
   var buttons = document.querySelectorAll("[data-cc-mode]");
   var mode = "hue";
@@ -1087,7 +1077,7 @@
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
     document.querySelectorAll(".cc-city").forEach(function (button) {
-      if (button.hasAttribute("data-cc-area") || button.hasAttribute("data-cc-all")) return;
+      if (button.hasAttribute("data-cc-area")) return;
       var on = button.getAttribute("data-cc-city") === city;
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
@@ -1338,11 +1328,6 @@
   });
 
   function syncAreaButtons() {
-    var every = allChosen();
-    document.querySelectorAll("[data-cc-all]").forEach(function (button) {
-      button.classList.toggle("cc-on", every);
-      button.setAttribute("aria-pressed", every ? "true" : "false");
-    });
     document.querySelectorAll("[data-cc-area]").forEach(function (button) {
       var on = areaPick.indexOf(button.getAttribute("data-cc-area")) >= 0;
       button.classList.toggle("cc-on", on);
@@ -1355,12 +1340,6 @@
     if (!box || !AREAS.length || !CARS.length) return;
     var names = areasInUse();
     box.textContent = "";
-    var all = document.createElement("button");
-    all.type = "button";
-    all.className = "cc-city";
-    all.setAttribute("data-cc-all", "1");
-    all.textContent = "All";
-    box.appendChild(all);
     names.forEach(function (name) {
       var b = document.createElement("button");
       b.type = "button";
@@ -1432,7 +1411,7 @@
   }
 
   function loadAreas() {
-    return fetch("vancouver-areas.geojson?v=20261012f").then(function (res) {
+    return fetch("vancouver-areas.geojson?v=20261012g").then(function (res) {
       if (!res.ok) throw new Error("areas");
       return res.json();
     }).then(function (geo) {
@@ -1456,15 +1435,11 @@
       var button = e.target.closest && e.target.closest("button");
       if (!button || !areasBox.contains(button)) return;
       if (draggingSlider) return;
-      if (button.hasAttribute("data-cc-all")) {
-        areaPick = allChosen() ? [] : areasInUse().slice();
-      } else {
-        var name = button.getAttribute("data-cc-area");
-        if (!name) return;
-        var at = areaPick.indexOf(name);
-        if (at >= 0) areaPick.splice(at, 1);
-        else areaPick.push(name);
-      }
+      var name = button.getAttribute("data-cc-area");
+      if (!name) return;
+      var at = areaPick.indexOf(name);
+      if (at >= 0) areaPick.splice(at, 1);
+      else areaPick.push(name);
       applyAreaFilter();
     });
   }
