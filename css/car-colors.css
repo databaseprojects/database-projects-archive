@@ -423,6 +423,15 @@ html.cc-tags-open .cc-tagdrop .cc-cities {
   z-index: 1;
 }
 
+.cc-gather {
+  position: relative;
+  width: 100%;
+}
+
+.cc-gather .cc-dot {
+  position: absolute;
+}
+
 .cc-map-spot {
   position: absolute;
   z-index: 1;
