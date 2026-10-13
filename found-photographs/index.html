@@ -3,20 +3,32 @@
 <head>
   <meta charset="utf-8">
   <script>
-  window.fpTagsReady = fetch("photo-tags.json?v=20261009b").then(function (res) {
+  window.FP_V = "20261013d";
+  window.fpReadSaved = function () {
+    var layout = "row";
+    var cols = 6;
+    try {
+      layout = localStorage.getItem("fpLayout") || "row";
+      cols = parseInt(localStorage.getItem("fpZoomCols"), 10);
+    } catch (e) {}
+    if (layout === "float") layout = "antigravity";
+    if (layout !== "row" && layout !== "table" && layout !== "antigravity") layout = "row";
+    cols = Math.round(+cols);
+    if (!(cols >= 6 && cols <= 20)) cols = 6;
+    return { layout: layout, cols: cols };
+  };
+  window.fpTagsReady = fetch("photo-tags.json?v=" + window.FP_V).then(function (res) {
     if (!res.ok) throw new Error("tags");
     return res.json();
   }).catch(function () { return null; });
+  document.write('<link rel="stylesheet" href="../css/found.css?v=' + window.FP_V + '">');
   </script>
   <script>
   (function () {
     try {
-      var mode = localStorage.getItem("fpLayout") || "row";
-      if (mode === "float") mode = "antigravity";
-      var cols = parseInt(localStorage.getItem("fpZoomCols"), 10);
-      var scatter = mode === "table" || mode === "antigravity";
-      var colsChanged = cols >= 6 && cols <= 20 && cols !== 6;
-      if (!scatter && !colsChanged) return;
+      var saved = window.fpReadSaved();
+      var scatter = saved.layout === "table" || saved.layout === "antigravity";
+      if (!scatter && saved.cols === 6) return;
       document.documentElement.style.visibility = "hidden";
     } catch (e) {}
   })();
@@ -32,7 +44,6 @@
     if (savedTags === "1" || (savedTags !== "0" && tagsPhone)) document.documentElement.classList.add("fp-tags-open");
   } catch (e) {}
   </script>
-  <link rel="stylesheet" href="../css/found.css?v=20261011e">
 </head>
 <body>
   <div class="sheet">
@@ -82,6 +93,6 @@
 </main>
 
   </div>
-  <script src="../js/found.js?v=20261011a" defer></script>
+  <script>document.write('<script src="../js/found.js?v=' + window.FP_V + '" defer><\/script>');</script>
 </body>
 </html>

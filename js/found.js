@@ -1,4 +1,4 @@
-/* Found Photographs: column size, row / table / floating layouts, hover, flip, lightbox. */
+/* Found Photographs: column size, row / table / antigravity layouts, hover, flip, lightbox. */
 (function () {
   var COL_KEY = "fpZoomCols";
   var LAYOUT_KEY = "fpLayout";
@@ -102,6 +102,7 @@
   }
 
   function storedCols() {
+    if (window.fpReadSaved) return window.fpReadSaved().cols;
     var n = DEF;
     try {
       n = parseInt(localStorage.getItem(COL_KEY), 10);
@@ -117,11 +118,12 @@
 
   function normalizeLayout(v) {
     if (v === "table") return "table";
-    if (v === "antigravity" || v === "float") return "antigravity";
+    if (v === "antigravity") return "antigravity";
     return "row";
   }
 
   function layoutMode() {
+    if (window.fpReadSaved) return window.fpReadSaved().layout;
     var v = "row";
     try {
       v = localStorage.getItem(LAYOUT_KEY) || "row";
@@ -3937,7 +3939,7 @@
     mount(data);
   };
   if (!window.fpTagsReady) {
-    window.fpTagsReady = fetch("photo-tags.json?v=20261009b").then(function (res) {
+    window.fpTagsReady = fetch("photo-tags.json?v=" + window.FP_V).then(function (res) {
       if (!res.ok) throw new Error("tags");
       return res.json();
     }).catch(function () { return null; });
