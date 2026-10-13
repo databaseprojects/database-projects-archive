@@ -845,17 +845,14 @@
 
   function cityOverlayData() {
     var holes = [];
-    var lines = [];
     outlineCities().forEach(function (name) {
       (CITY_LINES[name] || []).forEach(function (ring) {
-        lines.push(ring);
         holes.push(holeRing(ring));
       });
     });
     var world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
     return {
-      mask: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [world].concat(holes) } },
-      line: { type: "Feature", properties: {}, geometry: { type: "MultiLineString", coordinates: lines } }
+      mask: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [world].concat(holes) } }
     };
   }
 
@@ -872,26 +869,17 @@
     if (!ccBasemap || !ccBasemap.isStyleLoaded || !ccBasemap.isStyleLoaded()) return;
     if (!Object.keys(CITY_LINES).length) return;
     var data = cityOverlayData();
-    if (!data.line.geometry.coordinates.length) return;
+    if (data.mask.geometry.coordinates.length < 2) return;
     if (!ccBasemap.getSource("cc-city-mask")) {
       ccBasemap.addSource("cc-city-mask", { type: "geojson", data: data.mask });
-      ccBasemap.addSource("cc-city-line", { type: "geojson", data: data.line });
       ccBasemap.addLayer({
         id: "cc-city-mask",
         type: "fill",
         source: "cc-city-mask",
         paint: { "fill-color": "#ffffff", "fill-opacity": maskOpacityFor(ccBasemap.getZoom()) }
       });
-      ccBasemap.addLayer({
-        id: "cc-city-line",
-        type: "line",
-        source: "cc-city-line",
-        layout: { "line-cap": "round", "line-join": "round" },
-        paint: { "line-color": "#111111", "line-width": 1.5 }
-      });
     } else {
       ccBasemap.getSource("cc-city-mask").setData(data.mask);
-      ccBasemap.getSource("cc-city-line").setData(data.line);
       ccBasemap.setPaintProperty("cc-city-mask", "fill-opacity", maskOpacityFor(ccBasemap.getZoom()));
     }
     if (!fit) return;
