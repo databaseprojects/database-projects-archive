@@ -283,12 +283,30 @@
   var MAP_HALF = 0.5;
   var MAP_MIN = 3;
 
-  function viewPx() {
+  function mapBasePx() {
     var px = dotPx();
-    if (mode !== "map") return px;
     var mapPx = Math.max(1, Math.round(px * MAP_DOT));
     if (phoneSlider()) mapPx = mapPx * PHONE_MAP_DOT;
     return Math.max(MAP_MIN, mapPx * MAP_HALF);
+  }
+
+  /* Zoom grows dots slower than the map: base * sqrt(scale). Never under the
+     unzoomed map size, and never past the Hue dot size. */
+  function mapZoomScale() {
+    if (!ccBasemap || mapBaseZoom == null) return 1;
+    var scale = Math.pow(2, ccBasemap.getZoom() - mapBaseZoom);
+    if (!(scale > 0) || !isFinite(scale)) return 1;
+    return scale;
+  }
+
+  function viewPx() {
+    var px = dotPx();
+    if (mode !== "map") return px;
+    var base = mapBasePx();
+    var grown = base * Math.sqrt(mapZoomScale());
+    if (grown < base) grown = base;
+    if (grown > BIG) grown = BIG;
+    return Math.round(grown * 100) / 100;
   }
 
   function gapPx() {
@@ -684,6 +702,9 @@
   var MAP_NORTH = 49.35;
   var MAP_SOUTH = 49.2;
   var ccBasemap = null;
+  var mapBaseZoom = null;
+  var mapZoomTarget = null;
+  var mapZoomLock = 0;
   var mapFadeTimer = 0;
   var mapFlight = null;
 
@@ -708,6 +729,8 @@
 
   function destroyBasemap() {
     cancelMapFade();
+    mapBaseZoom = null;
+    mapZoomTarget = null;
     if (!ccBasemap) return;
     ccBasemap.remove();
     ccBasemap = null;
@@ -759,12 +782,18 @@
         style: JSON.parse(JSON.stringify(style)),
         bounds: [[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]],
         fitBoundsOptions: { padding: 0, animate: false },
-        interactive: false,
+        interactive: true,
         attributionControl: false,
+        dragRotate: false,
+        pitchWithRotate: false,
+        touchPitch: false,
         fadeDuration: 0,
         preserveDrawingBuffer: true,
         failIfMajorPerformanceCaveat: false
       });
+      if (map.touchZoomRotate) map.touchZoomRotate.disableRotation();
+      if (map.dragRotate) map.dragRotate.disable();
+      if (map.keyboard) map.keyboard.disable();
       ccBasemap = map;
       function place() {
         if (el._ccToken !== token) return;
@@ -774,6 +803,7 @@
         if (el._ccToken !== token) return;
         map.resize();
         map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
+        mapBaseZoom = map.getZoom();
         place();
         function whenTiles() {
           if (el._ccToken !== token) return;
@@ -785,6 +815,9 @@
       });
       map.on("move", place);
       map.on("resize", place);
+      map.on("moveend", function () {
+        if (!mapZoomLock) mapZoomTarget = null;
+      });
     }).catch(function () { revealMap(field); });
   }
 
@@ -871,6 +904,7 @@
   function projectStreetDots(field) {
     if (!ccBasemap || !field) return;
     var size = viewPx();
+    stage.style.setProperty("--cc-dot", size + "px");
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var car = mapCar(el);
       if (!car) return;
@@ -882,6 +916,7 @@
         el.dataset.my = top;
         return;
       }
+      el.style.transform = "";
       el.style.left = left;
       el.style.top = top;
       el.style.visibility = "visible";
@@ -921,16 +956,78 @@
     slideInto(from);
   }
 
-  function renderMap() {
-    clear(stage);
+  function mapFrame() {
     var width = Math.max(280, stage.clientWidth);
     var height = Math.max(640, Math.round(width * 100 / 120));
+    return { width: width, height: height };
+  }
+
+  function reflowMapFrame() {
+    var field = stage.querySelector(".cc-map");
+    if (!field) {
+      render();
+      return;
+    }
+    var box = mapFrame();
+    field.style.height = box.height + "px";
+    applyMetrics();
+    if (ccBasemap) {
+      ccBasemap.resize();
+      projectStreetDots(field);
+    }
+  }
+
+  function stepMapZoom(dir) {
+    if (!ccBasemap) return;
+    var current = mapZoomTarget == null ? ccBasemap.getZoom() : mapZoomTarget;
+    var next = current + dir;
+    var minZ = ccBasemap.getMinZoom();
+    var maxZ = ccBasemap.getMaxZoom();
+    if (next < minZ) next = minZ;
+    if (next > maxZ) next = maxZ;
+    mapZoomTarget = next;
+    mapZoomLock += 1;
+    if (ccBasemap.easeTo) ccBasemap.easeTo({ zoom: next, duration: 200 });
+    else ccBasemap.setZoom(next);
+    mapZoomLock -= 1;
+  }
+
+  function renderMap() {
+    clear(stage);
+    var box = mapFrame();
     var field = document.createElement("div");
     field.className = "cc-map";
-    field.style.height = height + "px";
+    field.style.height = box.height + "px";
+    var zoom = document.createElement("div");
+    zoom.className = "cc-map-zoom";
+    zoom.setAttribute("role", "group");
+    zoom.setAttribute("aria-label", "Map zoom");
+    var zin = document.createElement("button");
+    zin.type = "button";
+    zin.className = "cc-map-zoom-btn";
+    zin.setAttribute("aria-label", "Zoom in");
+    zin.textContent = "+";
+    var zout = document.createElement("button");
+    zout.type = "button";
+    zout.className = "cc-map-zoom-btn";
+    zout.setAttribute("aria-label", "Zoom out");
+    zout.textContent = "−";
+    zoom.appendChild(zin);
+    zoom.appendChild(zout);
+    zin.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      stepMapZoom(1);
+    });
+    zout.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      stepMapZoom(-1);
+    });
     var credit = document.createElement("p");
     credit.className = "cc-map-credit";
     credit.textContent = "© OpenStreetMap";
+    field.appendChild(zoom);
     field.appendChild(credit);
     var rng = mulberry32(0x5A11);
     var mapped = shownCars().filter(function (car) {
@@ -1246,8 +1343,37 @@
     var next = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".cc-dot");
     if (next !== el) pop.hidden = true;
   });
+  function dotUnder(x, y) {
+    if (mode !== "map") return null;
+    var field = stage.querySelector(".cc-map");
+    if (!field) return null;
+    var best = null;
+    var bestD = Infinity;
+    Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var cx = r.left + r.width / 2;
+      var cy = r.top + r.height / 2;
+      var d = Math.hypot(x - cx, y - cy);
+      if (d <= r.width / 2 + 1 && d < bestD) {
+        best = el;
+        bestD = d;
+      }
+    });
+    return best;
+  }
+
+  document.addEventListener("pointermove", function (e) {
+    if (mode !== "map" || e.pointerType === "touch") return;
+    var el = dotUnder(e.clientX, e.clientY);
+    if (el) showPop(el);
+    else if (!pop.hidden) pop.hidden = true;
+  });
+
   document.addEventListener("pointerdown", function (e) {
+    if (e.target.closest && e.target.closest(".cc-map-zoom")) return;
     var el = e.target.closest && e.target.closest(".cc-dot");
+    if (!el && mode === "map") el = dotUnder(e.clientX, e.clientY);
     if (el) showPop(el);
   });
 
@@ -1267,7 +1393,9 @@
 
   document.addEventListener("click", function (e) {
     if (draggingSlider) return;
+    if (e.target.closest && e.target.closest(".cc-map-zoom")) return;
     var dotEl = e.target.closest && e.target.closest(".cc-dot");
+    if (!dotEl && mode === "map") dotEl = dotUnder(e.clientX, e.clientY);
     if (dotEl && dotEl.dataset.hex) {
       spillFrom(dotEl);
       return;
@@ -1459,19 +1587,29 @@
   loadSheet();
 
   var resizeTimer = 0;
-  window.addEventListener("resize", function () {
+  function reflowViewport() {
+    if (draggingSlider) return;
+    var nowPhone = phoneSlider();
+    if (nowPhone !== phone) {
+      phone = nowPhone;
+      var n = mode === "map" ? modeSize("map") : (nowPhone ? 4 : storedCols());
+      sizeN = clampSlider(n);
+      applyMetrics();
+      fillSlider(sizeN);
+    }
+    if (mode === "map") {
+      reflowMapFrame();
+      return;
+    }
+    if (mode !== "family") render();
+  }
+  function scheduleReflow() {
     if (draggingSlider) return;
     window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(function () {
-      var nowPhone = phoneSlider();
-      if (nowPhone !== phone) {
-        phone = nowPhone;
-        applySize(nowPhone ? 4 : storedCols());
-        return;
-      }
-      if (mode !== "family") render();
-    }, 80);
-  });
+    resizeTimer = window.setTimeout(reflowViewport, 150);
+  }
+  window.addEventListener("resize", scheduleReflow);
+  window.addEventListener("orientationchange", scheduleReflow);
 })();
 
 (function () {
