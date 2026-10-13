@@ -246,7 +246,7 @@
   }
 
   function phoneSlider() {
-    return window.matchMedia("(max-width: 767px)").matches;
+    return Shared.isPhone();
   }
 
   function sliderEnds() {
@@ -255,10 +255,7 @@
 
   function clampSlider(n) {
     var ends = sliderEnds();
-    n = Math.round(+n);
-    if (n < ends.min) return ends.min;
-    if (n > ends.max) return ends.max;
-    return n;
+    return Shared.clampRange(n, ends.min, ends.max);
   }
 
   /* Left is larger. Hue and Cluster open there; Map opens at the small end. */
@@ -282,8 +279,7 @@
     try {
       n = parseInt(localStorage.getItem(COL_KEY), 10);
     } catch (e) {}
-    n = Math.round(+n);
-    return n >= MIN && n <= MAX ? n : DEF;
+    return Shared.clampCount(n, MIN, MAX, DEF);
   }
 
   function saveCols(n) {
@@ -1564,7 +1560,7 @@
     if (!isSlider(e.target)) return;
     clearPageColour();
     draggingSlider = true;
-    document.documentElement.classList.add("cc-sizing");
+    Shared.lockScroll({ className: "cc-sizing", overflow: false });
     var n = valueFromClientX(e.target, e.clientX);
     if (n !== sizeN) {
       zVal = n;
@@ -1588,7 +1584,7 @@
     var n = zVal != null ? zVal : sizeN;
     zVal = null;
     draggingSlider = false;
-    document.documentElement.classList.remove("cc-sizing");
+    Shared.unlockScroll({ oy: document.documentElement.style.overflowY }, { className: "cc-sizing", overflow: false });
     applySize(n);
     if (!phoneSlider()) saveCols(n);
   }

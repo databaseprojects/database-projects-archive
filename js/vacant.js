@@ -43,12 +43,11 @@
   }
 
   function clampCols(n) {
-    n = Math.round(+n);
-    return n >= MIN && n <= MAX ? n : DEF;
+    return Shared.clampCount(n, MIN, MAX, DEF);
   }
 
   function phoneSlider() {
-    return window.matchMedia("(max-width: 767px)").matches;
+    return Shared.isPhone();
   }
 
   function sliderEnds() {
@@ -57,10 +56,7 @@
 
   function clampSlider(n) {
     var ends = sliderEnds();
-    n = Math.round(+n);
-    if (n < ends.min) return ends.min;
-    if (n > ends.max) return ends.max;
-    return n;
+    return Shared.clampRange(n, ends.min, ends.max);
   }
 
   function cols() {
@@ -90,24 +86,7 @@
   }
 
   function hiSrc(src, px) {
-    if (!src) return src;
-    var mm = src.match(/\/w\/(\d+)\//);
-    if (mm) {
-      var freight = Math.min(2000, Math.max(+mm[1], px || 1600));
-      return src.replace(/\/w\/\d+\//, "/w/" + freight + "/");
-    }
-    var tm = src.match(/\/image\/upload\/([^/]+)\//);
-    if (!tm) return src;
-    var trans = tm[1];
-    var wm = trans.match(/w_(\d+)/);
-    if (!wm || trans.indexOf("f_auto") === -1 || trans.indexOf("q_auto") === -1) return src;
-    var have = +wm[1];
-    var ask = Math.round(+px || have);
-    if (!(ask > 0)) ask = have;
-    var need = Math.min(2000, Math.max(have, ask));
-    if (need === have) return src;
-    var next = trans.replace(/w_\d+/, "w_" + need).replace(/h_\d+/, "h_" + need);
-    return src.replace("/image/upload/" + trans + "/", "/image/upload/" + next + "/");
+    return Shared.imageSrc(src, px);
   }
 
   function setCount(shown, total) {
@@ -706,35 +685,34 @@
 
   function lockScroll() {
     if (zLock) return;
-    var h = document.documentElement;
     var g = grid();
-    zLock = {
-      oy: h.style.overflowY,
-      mh: g ? g.style.minHeight : "",
-      ac: g ? g.style.alignContent : "",
-      rows: g ? g.style.gridAutoRows : ""
-    };
-    h.classList.add("vsf-sizing");
-    h.style.overflowY = window.innerWidth - h.clientWidth > 0 ? "scroll" : "hidden";
-    if (g) {
-      g.style.minHeight = g.offsetHeight + "px";
-      /* The locked height would otherwise stretch the row tracks, so the photos
-         shrink while each row stays where it was. Pack the rows to the new size. */
-      g.style.alignContent = "start";
-      g.style.gridAutoRows = "max-content";
-    }
+    zLock = Shared.lockScroll({
+      className: "vsf-sizing",
+      grid: g,
+      pack: function (el) {
+        if (!el) return;
+        el.style.minHeight = el.offsetHeight + "px";
+        /* The locked height would otherwise stretch the row tracks, so the photos
+           shrink while each row stays where it was. Pack the rows to the new size. */
+        el.style.alignContent = "start";
+        el.style.gridAutoRows = "max-content";
+      }
+    });
   }
 
   function unlockScroll() {
     if (!zLock) return;
-    document.documentElement.classList.remove("vsf-sizing");
-    document.documentElement.style.overflowY = zLock.oy;
     var g = grid();
-    if (g) {
-      g.style.minHeight = zLock.mh;
-      g.style.alignContent = zLock.ac;
-      g.style.gridAutoRows = zLock.rows;
-    }
+    Shared.unlockScroll(zLock, {
+      className: "vsf-sizing",
+      grid: g,
+      unpack: function (el, lock) {
+        if (!el) return;
+        el.style.minHeight = lock.mh;
+        el.style.alignContent = lock.ac;
+        el.style.gridAutoRows = lock.rows;
+      }
+    });
     zLock = null;
   }
 
