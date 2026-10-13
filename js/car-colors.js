@@ -17,9 +17,11 @@
   var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
   var CARS = [];
-  /* Empty means every scan. Names in the list are the neighbourhoods currently on. */
-  var areaPick = [];
+  /* Neighbourhood names keyed by city. Picks under different cities stay on together. */
+  var areaPick = {};
   var AREAS = [];
+  /* Outer ring for each city, from that city's own boundary. Neighbourhoods do not shrink it. */
+  var CITY_LINES = {};
   /* Open on Real world. A saved reading is ignored so an older choice cannot override this. */
   var realOn = true;
 
@@ -61,13 +63,35 @@
     return "";
   }
 
-  function shownCars() {
-    var list = carsIn(city);
-    if (!areaPick.length) return list;
-    var on = {};
+  function cityPicks(name) {
+    var list = areaPick[name || city];
+    return list ? list.slice() : [];
+  }
+
+  function setCityPicks(name, list) {
+    if (list && list.length) areaPick[name] = list.slice();
+    else delete areaPick[name];
+  }
+
+  function anyPicks() {
+    var keys = Object.keys(areaPick);
     var i;
-    for (i = 0; i < areaPick.length; i++) on[areaPick[i]] = 1;
-    return list.filter(function (car) { return car.area && on[car.area]; });
+    for (i = 0; i < keys.length; i++) {
+      if (areaPick[keys[i]] && areaPick[keys[i]].length) return true;
+    }
+    return false;
+  }
+
+  function shownCars() {
+    if (!anyPicks()) return carsIn(city);
+    return CARS.filter(function (car) {
+      var list = areaPick[car.city] || [];
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i] === car.area) return true;
+      }
+      return false;
+    });
   }
 
   function areasInUse() {
@@ -112,6 +136,7 @@
     pageFill = null;
     removeSpills();
     pageBackground("");
+    if (pop) pop.hidden = true;
   }
 
   /* The fill follows the selected dot: accurate hex in Accurate, real-world hex in Real world. */
@@ -159,7 +184,7 @@
     var hex = dotEl.dataset.hex;
     if (!hex) return;
     var id = dotEl.dataset.i;
-    if (pageFill && pageFill.i === id) {
+    if (pageFill && String(pageFill.i) === String(id)) {
       clearPageColour();
       return;
     }
@@ -763,6 +788,125 @@
     return positronStyle;
   }
 
+  function rememberBoundary(name, boundary) {
+    var rings = [];
+    if (!name || !boundary) return;
+    if (boundary.type === "Polygon" && boundary.coordinates && boundary.coordinates[0]) {
+      rings.push(boundary.coordinates[0]);
+    } else if (boundary.type === "MultiPolygon") {
+      (boundary.coordinates || []).forEach(function (poly) {
+        if (poly && poly[0]) rings.push(poly[0]);
+      });
+    }
+    if (rings.length) CITY_LINES[name] = rings;
+  }
+
+  function outlineCities() {
+    var names = [];
+    Object.keys(CITY_LINES).forEach(function (name) {
+      if (areaPick[name] && areaPick[name].length) names.push(name);
+    });
+    if (!names.length && CITY_LINES[city]) names.push(city);
+    return names;
+  }
+
+  function ringArea(ring) {
+    var a = 0;
+    var i;
+    for (i = 0; i < ring.length - 1; i++) {
+      a += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+    }
+    return a / 2;
+  }
+
+  function holeRing(ring) {
+    if (ringArea(ring) > 0) return ring.slice().reverse();
+    return ring.slice();
+  }
+
+  function boundsOfCities(names) {
+    var west = Infinity;
+    var south = Infinity;
+    var east = -Infinity;
+    var north = -Infinity;
+    names.forEach(function (name) {
+      (CITY_LINES[name] || []).forEach(function (ring) {
+        ring.forEach(function (p) {
+          if (p[0] < west) west = p[0];
+          if (p[0] > east) east = p[0];
+          if (p[1] < south) south = p[1];
+          if (p[1] > north) north = p[1];
+        });
+      });
+    });
+    if (!isFinite(west)) return null;
+    return [[west, south], [east, north]];
+  }
+
+  function cityOverlayData() {
+    var holes = [];
+    var lines = [];
+    outlineCities().forEach(function (name) {
+      (CITY_LINES[name] || []).forEach(function (ring) {
+        lines.push(ring);
+        holes.push(holeRing(ring));
+      });
+    });
+    var world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
+    return {
+      mask: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [world].concat(holes) } },
+      line: { type: "Feature", properties: {}, geometry: { type: "MultiLineString", coordinates: lines } }
+    };
+  }
+
+  function maskOpacityFor(z) {
+    var o = 0.26 + (13 - z) * 0.18;
+    if (o < 0.1) o = 0.1;
+    if (o > 0.86) o = 0.86;
+    return Math.round(o * 100) / 100;
+  }
+
+  var cityFitKey = "";
+
+  function syncCityOverlay(fit) {
+    if (!ccBasemap || !ccBasemap.isStyleLoaded || !ccBasemap.isStyleLoaded()) return;
+    if (!Object.keys(CITY_LINES).length) return;
+    var data = cityOverlayData();
+    if (!data.line.geometry.coordinates.length) return;
+    if (!ccBasemap.getSource("cc-city-mask")) {
+      ccBasemap.addSource("cc-city-mask", { type: "geojson", data: data.mask });
+      ccBasemap.addSource("cc-city-line", { type: "geojson", data: data.line });
+      ccBasemap.addLayer({
+        id: "cc-city-mask",
+        type: "fill",
+        source: "cc-city-mask",
+        paint: { "fill-color": "#ffffff", "fill-opacity": maskOpacityFor(ccBasemap.getZoom()) }
+      });
+      ccBasemap.addLayer({
+        id: "cc-city-line",
+        type: "line",
+        source: "cc-city-line",
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": "#111111", "line-width": 1.5 }
+      });
+    } else {
+      ccBasemap.getSource("cc-city-mask").setData(data.mask);
+      ccBasemap.getSource("cc-city-line").setData(data.line);
+      ccBasemap.setPaintProperty("cc-city-mask", "fill-opacity", maskOpacityFor(ccBasemap.getZoom()));
+    }
+    if (!fit) return;
+    var key = outlineCities().slice().sort().join("|");
+    if (!key || key === cityFitKey) return;
+    var box = boundsOfCities(outlineCities());
+    if (!box) return;
+    cityFitKey = key;
+    mapZoomLock += 1;
+    ccBasemap.fitBounds(box, { padding: 36, animate: false, duration: 0 });
+    mapZoomLock -= 1;
+    mapBaseZoom = ccBasemap.getZoom();
+    mapZoomTarget = null;
+  }
+
   function mountBasemap(field) {
     var el = document.createElement("div");
     el.className = "cc-map-tiles";
@@ -802,7 +946,8 @@
       map.on("load", function () {
         if (el._ccToken !== token) return;
         map.resize();
-        map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
+        if (Object.keys(CITY_LINES).length) syncCityOverlay(true);
+        else map.fitBounds([[MAP_WEST, MAP_SOUTH], [MAP_EAST, MAP_NORTH]], { padding: 0, animate: false });
         mapBaseZoom = map.getZoom();
         place();
         function whenTiles() {
@@ -813,7 +958,15 @@
         whenTiles();
         map.on("idle", whenTiles);
       });
-      map.on("move", place);
+      map.on("move", function () {
+        place();
+        if (pressMoved && pop && !pop.hidden) pop.hidden = true;
+      });
+      map.on("zoom", function () {
+        if (map.getLayer && map.getLayer("cc-city-mask")) {
+          map.setPaintProperty("cc-city-mask", "fill-opacity", maskOpacityFor(map.getZoom()));
+        }
+      });
       map.on("resize", place);
       map.on("moveend", function () {
         if (!mapZoomLock) mapZoomTarget = null;
@@ -1265,6 +1418,12 @@
     applyMetrics();
     fillSlider(n);
     if (stage.querySelector(".cc-dot")) {
+      if (mode === "hue") {
+        var beforeHue = snapshotDots();
+        render();
+        slideInto(beforeHue);
+        return;
+      }
       if (mode === "map") {
         var mapField = stage.querySelector(".cc-map");
         if (mapField && ccBasemap) projectStreetDots(mapField);
@@ -1343,27 +1502,28 @@
     var next = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".cc-dot");
     if (next !== el) pop.hidden = true;
   });
+  var pressX = 0;
+  var pressY = 0;
+  var pressMoved = false;
+
   function dotUnder(x, y) {
     if (mode !== "map") return null;
     var field = stage.querySelector(".cc-map");
     if (!field) return null;
-    var best = null;
-    var bestD = Infinity;
+    var hits = [];
     Array.prototype.forEach.call(field.querySelectorAll(".cc-dot"), function (el) {
       var r = el.getBoundingClientRect();
       if (!r.width) return;
       var cx = r.left + r.width / 2;
       var cy = r.top + r.height / 2;
       var d = Math.hypot(x - cx, y - cy);
-      if (d <= r.width / 2 + 1 && d < bestD) {
-        best = el;
-        bestD = d;
-      }
+      if (d <= r.width / 2 + 1) hits.push(el);
     });
-    return best;
+    return hits.length ? hits[hits.length - 1] : null;
   }
 
   document.addEventListener("pointermove", function (e) {
+    if (Math.hypot(e.clientX - pressX, e.clientY - pressY) > 8) pressMoved = true;
     if (mode !== "map" || e.pointerType === "touch") return;
     var el = dotUnder(e.clientX, e.clientY);
     if (el) showPop(el);
@@ -1371,10 +1531,14 @@
   });
 
   document.addEventListener("pointerdown", function (e) {
+    pressX = e.clientX;
+    pressY = e.clientY;
+    pressMoved = false;
     if (e.target.closest && e.target.closest(".cc-map-zoom")) return;
     var el = e.target.closest && e.target.closest(".cc-dot");
-    if (!el && mode === "map") el = dotUnder(e.clientX, e.clientY);
+    if (!el && mode === "map" && e.target.closest && e.target.closest(".cc-map")) el = dotUnder(e.clientX, e.clientY);
     if (el) showPop(el);
+    else if (pop) pop.hidden = true;
   });
 
   document.querySelectorAll(".cc-city").forEach(function (button) {
@@ -1392,17 +1556,15 @@
   });
 
   document.addEventListener("click", function (e) {
-    if (draggingSlider) return;
+    if (draggingSlider || pressMoved) return;
     if (e.target.closest && e.target.closest(".cc-map-zoom")) return;
     var dotEl = e.target.closest && e.target.closest(".cc-dot");
-    if (!dotEl && mode === "map") dotEl = dotUnder(e.clientX, e.clientY);
+    if (!dotEl && mode === "map" && e.target.closest && e.target.closest(".cc-map")) dotEl = dotUnder(e.clientX, e.clientY);
     if (dotEl && dotEl.dataset.hex) {
       spillFrom(dotEl);
       return;
     }
-    if (e.target.closest && (e.target.closest("[data-cc-mode]") || e.target.closest(".cc-city") || e.target.closest(".cc-zslider"))) {
-      clearPageColour();
-    }
+    clearPageColour();
   });
 
 
@@ -1457,7 +1619,7 @@
 
   function syncAreaButtons() {
     document.querySelectorAll("[data-cc-area]").forEach(function (button) {
-      var on = areaPick.indexOf(button.getAttribute("data-cc-area")) >= 0;
+      var on = cityPicks(city).indexOf(button.getAttribute("data-cc-area")) >= 0;
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
@@ -1488,7 +1650,7 @@
     }
     var live = {};
     areasInUse().forEach(function (n) { live[n] = 1; });
-    areaPick = areaPick.filter(function (n) { return live[n]; });
+    setCityPicks(city, cityPicks(city).filter(function (n) { return live[n]; }));
   }
 
   function replaceMapDots() {
@@ -1521,6 +1683,7 @@
     clearPageColour();
     var before = snapshotDots();
     if (mode === "map" && replaceMapDots()) {
+      syncCityOverlay(true);
       if (!mapFlight) slideInto(before);
       return;
     }
@@ -1539,10 +1702,11 @@
   }
 
   function loadAreas() {
-    return fetch("vancouver-areas.geojson?v=20261012g").then(function (res) {
+    return fetch("vancouver-areas.geojson?v=20261013b").then(function (res) {
       if (!res.ok) throw new Error("areas");
       return res.json();
     }).then(function (geo) {
+      if (geo.city) rememberBoundary(geo.city, geo.boundary);
       AREAS = [];
       (geo.features || []).forEach(function (f) {
         var name = f.properties && f.properties.name;
@@ -1554,6 +1718,7 @@
       });
       stampAreas();
       paintAreaTabs();
+      if (mode === "map") syncCityOverlay(true);
     }).catch(function () {});
   }
 
@@ -1565,16 +1730,18 @@
       if (draggingSlider) return;
       var name = button.getAttribute("data-cc-area");
       if (!name) return;
-      var at = areaPick.indexOf(name);
-      if (at >= 0) areaPick.splice(at, 1);
-      else areaPick.push(name);
+      var list = cityPicks(city);
+      var at = list.indexOf(name);
+      if (at >= 0) list.splice(at, 1);
+      else list.push(name);
+      setCityPicks(city, list);
       applyAreaFilter();
     });
   }
 
   window.__ccTagsClick = function () {
-    if (areaPick.length) {
-      areaPick = [];
+    if (anyPicks()) {
+      areaPick = {};
       applyAreaFilter();
     }
     settleCluster();
