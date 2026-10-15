@@ -140,27 +140,40 @@
     blob(px + jx, py + jy, amp * 0.42, 3.05);
   }
 
-  /* Desktop source: wider, and the rim of the blob falls off to nothing. */
-  function blobSoft(px, py, amp, rad) {
+  /* Desktop splat: a round Gaussian with a blurred rim.
+     The second centre is half as far off as before, so the wake
+     stays a little directional and reads less like a hard V.
+     mass is the old kernel's total kick, so the strength stays put. */
+  function blobSoft(px, py, amp, sigma, mass) {
     var cx = px / CELL;
     var cy = py / CELL;
-    var x0 = Math.max(0, Math.floor(cx - rad - 1));
-    var x1 = Math.min(cols - 1, Math.ceil(cx + rad + 1));
-    var y0 = Math.max(0, Math.floor(cy - rad - 1));
-    var y1 = Math.min(rows - 1, Math.ceil(cy + rad + 1));
+    var reach = sigma * 3.2;
+    var inv = 1 / (2 * sigma * sigma);
+    var x0 = Math.max(0, Math.floor(cx - reach));
+    var x1 = Math.min(cols - 1, Math.ceil(cx + reach));
+    var y0 = Math.max(0, Math.floor(cy - reach));
+    var y1 = Math.min(rows - 1, Math.ceil(cy + reach));
     var y;
     var x;
+    function weight(x, y) {
+      var dx = x - cx;
+      var dy = y - cy;
+      var warp = (hash(x + 2, y + 5) - 0.5) * 0.4;
+      var r = Math.sqrt(dx * dx + dy * dy) + warp;
+      if (r < 0) r = 0;
+      if (r > reach) return 0;
+      return Math.exp(-(r * r) * inv);
+    }
+    var raw = 0;
+    for (y = y0; y <= y1; y++) {
+      for (x = x0; x <= x1; x++) raw += weight(x, y);
+    }
+    if (!(raw > 0)) return;
+    var gain = amp * mass / raw;
     for (y = y0; y <= y1; y++) {
       for (x = x0; x <= x1; x++) {
-        var dx = x - cx;
-        var dy = y - cy;
-        var warp = (hash(x + 2, y + 5) - 0.5) * 0.85;
-        var r = Math.sqrt(dx * dx + dy * dy) + warp;
-        var u = r / rad;
-        if (u >= 1) continue;
-        var s = 1 - u;
-        var k = s * s * (3 - 2 * s);
-        k = k * k * amp;
+        var k = weight(x, y) * gain;
+        if (!k) continue;
         var i = y * cols + x;
         curr[i] += k;
         prev[i] += k;
@@ -169,10 +182,10 @@
   }
 
   function injectSoft(px, py, amp) {
-    blobSoft(px, py, amp, 4.6);
-    var jx = (hash(Math.round(px), Math.round(py)) - 0.5) * CELL * 2.4;
-    var jy = (hash(Math.round(py) + 9, Math.round(px) + 4) - 0.5) * CELL * 1.8;
-    blobSoft(px + jx, py + jy, amp * 0.42, 6.4);
+    blobSoft(px, py, amp, 2.55, 11.4);
+    var jx = (hash(Math.round(px), Math.round(py)) - 0.5) * CELL * 1.2;
+    var jy = (hash(Math.round(py) + 9, Math.round(px) + 4) - 0.5) * CELL * 0.9;
+    blobSoft(px + jx, py + jy, amp * 0.42, 3.4, 22.06);
   }
 
   function desktopPointer() {
@@ -310,8 +323,13 @@
           px = x + gx * 16;
           py = y + gy * 16;
           rad = DOT_R * (1 + ht * 0.9);
-          if (rad < 0.55) rad = 0.55;
           if (rad > 3.4) rad = 3.4;
+          /* Faintest desktop dots keep about 38% of a resting dot. Touch stays at 0.55. */
+          if (desktopPointer()) {
+            if (rad < DOT_R * 0.62) rad = DOT_R * 0.62;
+          } else if (rad < 0.55) {
+            rad = 0.55;
+          }
         }
         ctx.beginPath();
         ctx.arc(px, py, rad, 0, Math.PI * 2);
