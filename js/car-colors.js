@@ -22,7 +22,11 @@
   var areaPick = {};
   var cityOn = {};
   var AREAS = [];
-  /* Outer ring for each city, from that city's own boundary. Neighbourhoods do not shrink it. */
+  /* Standing rule: every selectable area, city or neighbourhood, draws the same
+     subtle white mask outside its own boundary when selected on Map.
+     A city with no neighbourhood picks uses that city's ring. Neighbourhood
+     picks use those neighbourhood exteriors. With nothing selected, the
+     current city's ring stays. */
   var CITY_LINES = {};
   /* Open on Real world. A saved reading is ignored so an older choice cannot override this. */
   var realOn = true;
@@ -813,8 +817,21 @@
 
   function outlineCities() {
     var names = [];
-    Object.keys(CITY_LINES).forEach(function (name) {
-      if (cityOn[name] || (areaPick[name] && areaPick[name].length)) names.push(name);
+    var seen = {};
+    function add(name) {
+      if (!name || seen[name] || !(CITY_LINES[name] && CITY_LINES[name].length)) return;
+      seen[name] = 1;
+      names.push(name);
+    }
+    Object.keys(cityOn).forEach(function (name) {
+      if (!cityOn[name]) return;
+      var picks = areaPick[name] || [];
+      if (!picks.length) add(name);
+      else picks.forEach(add);
+    });
+    Object.keys(areaPick).forEach(function (name) {
+      if (cityOn[name]) return;
+      (areaPick[name] || []).forEach(add);
     });
     if (!names.length && CITY_LINES[city]) names.push(city);
     return names;
@@ -1705,7 +1722,6 @@
       if (!res.ok) throw new Error("areas");
       return res.json();
     }).then(function (geo) {
-      if (geo.city) rememberBoundary(geo.city, geo.boundary);
       AREAS = [];
       (geo.features || []).forEach(function (f) {
         var name = f.properties && f.properties.name;
@@ -1714,7 +1730,9 @@
         var polys = g.type === "Polygon" ? [g.coordinates] : (g.type === "MultiPolygon" ? g.coordinates : []);
         if (!polys.length) return;
         AREAS.push({ name: name, polys: polys });
+        rememberBoundary(name, g);
       });
+      if (geo.city) rememberBoundary(geo.city, geo.boundary);
       stampAreas();
       paintAreaTabs();
       if (mode === "map") syncCityOverlay(true);
