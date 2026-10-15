@@ -891,13 +891,30 @@
   }
 
   var cityFitKey = "";
+  var maskWait = false;
+
+  function waitMask() {
+    if (maskWait || !ccBasemap || !ccBasemap.once) return;
+    maskWait = true;
+    ccBasemap.once("idle", function () {
+      maskWait = false;
+      syncCityOverlay(true);
+    });
+  }
 
   function syncCityOverlay(fit) {
-    if (!ccBasemap || !ccBasemap.isStyleLoaded || !ccBasemap.isStyleLoaded()) return;
+    if (!ccBasemap) return;
+    var ready = !!(ccBasemap.isStyleLoaded && ccBasemap.isStyleLoaded());
+    var source = null;
+    try { source = ccBasemap.getSource("cc-city-mask"); } catch (err) { source = null; }
+    if (!ready && !source) {
+      if (fit) waitMask();
+      return;
+    }
     if (!Object.keys(CITY_LINES).length) return;
     var data = cityOverlayData();
     if (data.mask.geometry.coordinates.length < 2) return;
-    if (!ccBasemap.getSource("cc-city-mask")) {
+    if (!source) {
       ccBasemap.addSource("cc-city-mask", { type: "geojson", data: data.mask });
       ccBasemap.addLayer({
         id: "cc-city-mask",
@@ -906,10 +923,14 @@
         paint: { "fill-color": "#ffffff", "fill-opacity": maskOpacityFor(ccBasemap.getZoom()) }
       });
     } else {
-      ccBasemap.getSource("cc-city-mask").setData(data.mask);
-      ccBasemap.setPaintProperty("cc-city-mask", "fill-opacity", maskOpacityFor(ccBasemap.getZoom()));
+      source.setData(data.mask);
+      if (ready) ccBasemap.setPaintProperty("cc-city-mask", "fill-opacity", maskOpacityFor(ccBasemap.getZoom()));
     }
     if (!fit) return;
+    if (!ready) {
+      waitMask();
+      return;
+    }
     var key = outlineCities().slice().sort().join("|");
     if (!key || key === cityFitKey) return;
     var box = boundsOfCities(outlineCities());
