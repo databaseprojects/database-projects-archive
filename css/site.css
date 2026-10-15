@@ -284,11 +284,9 @@ body.home-page .home-list a {
   bottom: calc(100% + 6px);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .home-float a:hover .home-float-label,
-  .home-float a:focus-visible .home-float-label {
-    display: block;
-  }
+.home-fine .home-float a:hover .home-float-label,
+.home-fine .home-float a:focus-visible .home-float-label {
+  display: block;
 }
 
 @media (max-width: 767px) {

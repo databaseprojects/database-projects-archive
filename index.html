@@ -14,6 +14,7 @@
     var fine = window.matchMedia && window.matchMedia("(pointer: fine)");
     var hover = window.matchMedia && window.matchMedia("(hover: hover)");
     if (!fine || !fine.matches || !hover || !hover.matches) return;
+    document.documentElement.classList.add("home-fine");
     var canvas = document.createElement("canvas");
     canvas.className = "info-field";
     canvas.id = "info-field";
