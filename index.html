@@ -5,14 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <title>databaseprojects</title>
-  <link rel="stylesheet" href="css/site.css?v=20261011a">
+  <link rel="stylesheet" href="css/site.css?v=20261015k">
+  <link rel="stylesheet" href="css/info.css?v=20261015i">
 </head>
-<body>
+<body class="home-page">
+  <script>
+  (function () {
+    var fine = window.matchMedia && window.matchMedia("(pointer: fine)");
+    var hover = window.matchMedia && window.matchMedia("(hover: hover)");
+    if (!fine || !fine.matches || !hover || !hover.matches) return;
+    document.documentElement.classList.add("home-fine");
+    var canvas = document.createElement("canvas");
+    canvas.className = "info-field";
+    canvas.id = "info-field";
+    canvas.setAttribute("aria-hidden", "true");
+    document.body.insertBefore(canvas, document.body.firstChild);
+    var s = document.createElement("script");
+    s.src = "js/info.js?v=20261015i";
+    document.body.appendChild(s);
+  })();
+  </script>
+  <div class="home-float" id="home-float"></div>
   <div class="sheet">
     <nav class="bk-nav" aria-label="Index"><a href="./" class="active" aria-current="page">Home</a><a href="vacant-storefronts/">Vacant</a><a href="broken/" hidden>Broken</a><a href="found-photographs/">Found Photographs</a><a href="restricted-area/" hidden>Restricted Area</a><a href="dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="front-entrance-statues/" hidden>Front Entrance Statues</a><a href="car-colours/">Car Colours</a><a href="convenient-store-colors/">Convenience Store Colours</a><!-- hidden: <a href="keyword-scraping/">Keyword Scraping</a> --><a href="info/">INFO</a></nav>
     
 <main>
   <h1 class="home-name">databaseprojects</h1>
+  <p class="home-blurb">Database Projects is a set of conceptual photo series collecting everyday scenarios, objects, and situations, like car colours, bricks, and empty storefronts. Each one is shown as a series, counted and filed, so the pattern becomes the picture.</p>
   <p class="home-intro">A quiet index of photographs and records. The filing line above is the way through.</p>
   <ul class="home-list">
     <li><a href="vacant-storefronts/">Vacant</a></li>
@@ -23,6 +42,6 @@
 </main>
 
   </div>
-
+  <script src="js/home-float.js?v=20261015k"></script>
 </body>
 </html>
