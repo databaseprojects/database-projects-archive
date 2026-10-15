@@ -34,7 +34,15 @@
     kind: "",
     sx: 0,
     sy: 0,
-    lag: false
+    lag: false,
+    pdx: 0,
+    pdy: 0,
+    turn: 0,
+    ringN: 0,
+    ringWait: 0,
+    ringArmed: false,
+    ringX: 0,
+    ringY: 0
   };
 
   function hash(x, y) {
@@ -208,11 +216,16 @@
     }
   }
 
-  /* Fine pointer: the source lags the cursor and puts in less energy. */
+  /* Fine pointer: a short trail, speed and turns push harder, and a stop leaves rings. */
   function pokeFine() {
+    var now = performance.now();
     if (!aim.has) {
       ambient();
       return;
+    }
+    if (now - aim.lastEvt < 50) {
+      aim.ringN = 0;
+      aim.ringArmed = false;
     }
     if (!aim.lag) {
       aim.sx = aim.x;
@@ -221,17 +234,45 @@
       aim.ly = aim.y;
       aim.lag = true;
     }
-    aim.sx += (aim.x - aim.sx) * 0.16;
-    aim.sy += (aim.y - aim.sy) * 0.16;
+    aim.sx += (aim.x - aim.sx) * 0.55;
+    aim.sy += (aim.y - aim.sy) * 0.55;
+    if (aim.turn) {
+      aim.sx += (aim.x - aim.sx) * 0.5;
+      aim.sy += (aim.y - aim.sy) * 0.5;
+    }
     var moved = Math.hypot(aim.sx - aim.lx, aim.sy - aim.ly) > 0.5;
-    var live = aim.has && (performance.now() - aim.lastEvt) < 700;
+    var live = (now - aim.lastEvt) < 360;
     if (aim.tap || (moved && live)) {
       var t = clamp(aim.smooth / 1.8, 0, 1);
-      var amp = aim.tap ? Math.max(0.34, 0.16 + t * 0.55) : (0.055 + t * 0.58);
+      var amp = aim.tap ? Math.max(0.42, 0.2 + t * 0.85) : (0.08 + t * 1.0);
+      if (aim.turn) {
+        amp *= 1 + 0.5 * Math.min(aim.turn, 1.6);
+        aim.turn = 0;
+      }
       injectSoft(aim.sx, aim.sy, amp);
       aim.lx = aim.sx;
       aim.ly = aim.sy;
       aim.tap = 0;
+      return;
+    }
+    if (aim.turn) aim.turn = 0;
+    if (!aim.ringArmed && (now - aim.lastEvt) > 80) {
+      aim.ringArmed = true;
+      aim.ringN = 3;
+      aim.ringWait = 0;
+      aim.ringX = aim.x;
+      aim.ringY = aim.y;
+    }
+    if (aim.ringN) {
+      if (aim.ringWait > 0) {
+        aim.ringWait -= 1;
+      } else {
+        var k = 3 - aim.ringN;
+        var pulse = [0.36, -0.23, 0.14];
+        injectSoft(aim.ringX, aim.ringY, pulse[k]);
+        aim.ringN -= 1;
+        aim.ringWait = 9;
+      }
       return;
     }
     ambient();
@@ -377,11 +418,27 @@
 
   function point(e) {
     var now = performance.now();
-    var dist = Math.hypot(e.clientX - aim.x, e.clientY - aim.y);
+    var ndx = e.clientX - aim.x;
+    var ndy = e.clientY - aim.y;
+    var dist = Math.hypot(ndx, ndy);
     var dt = now - aim.lastEvt;
+    var desk = e.pointerType !== "touch" && fine && fine.matches;
     if (aim.has && dt > 6) {
       var inst = dist / dt;
-      aim.smooth += (inst - aim.smooth) * 0.5;
+      aim.smooth += (inst - aim.smooth) * (desk ? 0.78 : 0.5);
+    }
+    if (desk && aim.has && dt > 6) {
+      var prevL = Math.hypot(aim.pdx, aim.pdy);
+      if (prevL > 5 && dist > 5) {
+        var dot = (aim.pdx * ndx + aim.pdy * ndy) / (prevL * dist);
+        if (dot < 0.25) aim.turn = Math.max(aim.turn, 1 - dot);
+      }
+      aim.pdx = ndx;
+      aim.pdy = ndy;
+    }
+    if (desk && dist > 2) {
+      aim.ringN = 0;
+      aim.ringArmed = false;
     }
     if (!aim.has) {
       aim.lx = e.clientX;
