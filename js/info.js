@@ -20,7 +20,6 @@
   var h = 1;
   var raf = 0;
   var running = false;
-  var fall = null;
   var last = 0;
   var ambientAt = 0;
   var aim = {
@@ -442,81 +441,6 @@
     }
   }
 
-  /* Leaving the page: the dots drop off the bottom, then the link follows. */
-  function gatherDots() {
-    var dots = [];
-    var y;
-    var x;
-    var still = reduce && reduce.matches;
-    for (y = DOT * 0.5; y < h; y += DOT) {
-      for (x = DOT * 0.5; x < w; x += DOT) {
-        var px = x;
-        var py = y;
-        var rad = DOT_R;
-        if (!still) {
-          var fx = x / CELL;
-          var fy = y / CELL;
-          var ht = sample(fx, fy);
-          var gx = sample(fx + 0.85, fy) - sample(fx - 0.85, fy);
-          var gy = sample(fx, fy + 0.85) - sample(fx, fy - 0.85);
-          var push = desktopPointer() ? 26 : 16;
-          px = x + gx * push;
-          py = y + gy * push;
-          rad = DOT_R * (1 + ht * 0.9);
-          if (rad > 3.4) rad = 3.4;
-          if (desktopPointer()) {
-            if (rad < DOT_R * 0.62) rad = DOT_R * 0.62;
-          } else if (rad < 0.55) {
-            rad = 0.55;
-          }
-        }
-        dots.push({
-          x: px,
-          y: py,
-          rad: rad,
-          delay: ((x / Math.max(w, 1)) * 140)
-        });
-      }
-    }
-    return dots;
-  }
-
-  function drawFall(now) {
-    var t = now - fall.t0;
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = INK;
-    var i;
-    for (i = 0; i < fall.dots.length; i++) {
-      var d = fall.dots[i];
-      var dt = (t - d.delay) / 1000;
-      if (dt < 0) dt = 0;
-      var py = d.y + 4200 * dt * dt;
-      if (py > h + d.rad + 8) continue;
-      ctx.beginPath();
-      ctx.arc(d.x, py, d.rad, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function fallFrame() {
-    if (!fall) return;
-    var now = performance.now();
-    drawFall(now);
-    if (now - fall.t0 < 720) window.setTimeout(fallFrame, 32);
-    else location.href = fall.href;
-  }
-
-  function leave(href) {
-    if (fall) return;
-    if (reduce && reduce.matches) {
-      location.href = href;
-      return;
-    }
-    stop();
-    fall = { href: href, t0: performance.now(), dots: gatherDots() };
-    fallFrame();
-  }
-
   function draw() {
     if (!(reduce && reduce.matches)) step();
     drawDots(reduce && reduce.matches);
@@ -614,21 +538,4 @@
       start();
     });
   }
-  document.addEventListener("click", function (e) {
-    if (fall) {
-      e.preventDefault();
-      return;
-    }
-    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    var a = e.target && e.target.closest ? e.target.closest("a") : null;
-    if (!a || !a.href || a.target && a.target !== "_self" || a.hasAttribute("download")) return;
-    var url;
-    try { url = new URL(a.href, location.href); }
-    catch (err) { return; }
-    if (url.protocol !== "http:" && url.protocol !== "https:") return;
-    if (url.origin !== location.origin) return;
-    if (url.pathname === location.pathname && url.search === location.search) return;
-    e.preventDefault();
-    leave(url.href);
-  }, true);
 })();
