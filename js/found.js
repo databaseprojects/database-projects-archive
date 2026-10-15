@@ -37,7 +37,14 @@ var FP_TIME = {
   TILE_LEAVE: 600,
   RESIZE: 150,
   FOLD: 280,
-  ABOUT_CLOSE: 480
+  ABOUT_CLOSE: 480,
+  /* Throw back onto the table: each print leaves on its own clock. */
+  TOSS_DUR_MIN: 340,
+  TOSS_DUR_SPAN: 160,
+  TOSS_DELAY_MAX: 120,
+  TOSS_LAUNCH: 16,
+  TOSS_LAUNCH_SPAN: 18,
+  TOSS_SIDE: 28
 };
 
 (function () {
@@ -144,6 +151,16 @@ var FP_TIME = {
       n = parseInt(localStorage.getItem(COL_KEY), 10);
     } catch (e) {}
     return clampCols(n || DEF);
+  }
+
+  function savedCols() {
+    try {
+      var raw = localStorage.getItem(COL_KEY);
+      if (raw == null || raw === "") return null;
+      var n = Math.round(+raw);
+      if (n >= MIN && n <= MAX) return n;
+    } catch (e) {}
+    return null;
   }
 
   function saveCols(n) {
@@ -1507,8 +1524,9 @@ var FP_TIME = {
           var base = parseFloat(tile.style.getPropertyValue("--fp-rot"));
           if (!isFinite(base)) base = parseFloat(tile.getAttribute("data-fp-tilt"));
           if (!isFinite(base)) base = 0;
+          /* Start on the angle already on screen. The wobble grows from there. */
           rot0 = base;
-          /* A degree or two, slow, each photo on its own phase and speed. */
+          rot = base;
           var amp = 1 + Math.random() * 1;
           var skew = 0.75 + Math.random() * 0.25;
           if (Math.random() < 0.5) {
@@ -1521,10 +1539,6 @@ var FP_TIME = {
           spinLim = amp;
           var leg = 7 + Math.random() * 9;
           spin = (Math.random() < 0.5 ? -1 : 1) * (((spinHi + spinLo) / 2) / leg);
-          rot = base + (Math.random() * 2 - 1) * amp;
-          if (rot > base + spinHi) rot = base + spinHi;
-          if (rot < base - spinLo) rot = base - spinLo;
-          tile.style.setProperty("--fp-rot", rot.toFixed(2) + "deg");
         }
       }
       var prevSc = parseFloat(tile.style.getPropertyValue("--fp-sc"));
@@ -1831,7 +1845,7 @@ var FP_TIME = {
     if (owned && owned.timer) clearTimeout(owned.timer);
     if (owned && owned.onEnd) tile.removeEventListener("transitionend", owned.onEnd);
     (tile.getAnimations ? tile.getAnimations() : []).forEach(function (a) {
-      if (a.id === "fp-flow") a.cancel();
+      if (a.id === "fp-flow" || a.id === "fp-toss") a.cancel();
       else if (a.id === "fp-tag" && !tile.classList.contains("fp-tag-leave")) a.cancel();
     });
     if (owned) clearGlide(tile);
@@ -1879,6 +1893,65 @@ var FP_TIME = {
         token.timer = setTimeout(finish, delay + dur + FP_TIME.GLIDE_PAD);
       });
     });
+    return token;
+  }
+
+  /* A straight slide on one ease-in reads as a drop. Leave upward or outward,
+     arc across the bar, and let a small spin settle on the final angle. */
+  function tossAcrossLine(tile, from) {
+    var delta = glideDelta(tile, from, false);
+    if (!delta) return null;
+    var dx = delta.dx;
+    var dy = delta.dy;
+    var finalRot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+    if (!isFinite(finalRot)) finalRot = 0;
+    var spin = (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 12);
+    var up = FP_TIME.TOSS_LAUNCH + Math.random() * FP_TIME.TOSS_LAUNCH_SPAN;
+    var side = (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * FP_TIME.TOSS_SIDE);
+    if (Math.abs(dx) > 8) side = (dx < 0 ? -1 : 1) * Math.abs(side);
+    var dur = Math.round(FP_TIME.TOSS_DUR_MIN + Math.random() * FP_TIME.TOSS_DUR_SPAN);
+    var delay = Math.round(Math.random() * FP_TIME.TOSS_DELAY_MAX);
+    var rotText = finalRot.toFixed(2) + "deg";
+    var token = {};
+    tile._fpGlide = token;
+    tile.style.setProperty("transition", "none", "important");
+    tile.style.translate = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
+    var anim = tile.animate([
+      { translate: dx.toFixed(1) + "px " + dy.toFixed(1) + "px", rotate: rotText, offset: 0 },
+      {
+        translate: (dx + side * 0.45).toFixed(1) + "px " + (dy - up).toFixed(1) + "px",
+        rotate: (finalRot + spin * 0.55).toFixed(2) + "deg",
+        offset: 0.28,
+        easing: "cubic-bezier(0.16, 0.84, 0.32, 1)"
+      },
+      {
+        translate: (dx * 0.22 + side).toFixed(1) + "px " + (dy * 0.4).toFixed(1) + "px",
+        rotate: (finalRot + spin).toFixed(2) + "deg",
+        offset: 0.62
+      },
+      {
+        translate: "0px 0px",
+        rotate: rotText,
+        offset: 1,
+        easing: "cubic-bezier(0.55, 0, 1, 1)"
+      }
+    ], {
+      duration: dur,
+      delay: delay,
+      easing: "linear",
+      fill: "both"
+    });
+    anim.id = "fp-toss";
+    var finish = function () {
+      if (tile._fpGlide !== token) return;
+      tile._fpGlide = null;
+      if (token.timer) clearTimeout(token.timer);
+      anim.cancel();
+      clearGlide(tile);
+    };
+    token.onEnd = finish;
+    anim.onfinish = finish;
+    token.timer = setTimeout(finish, delay + dur + FP_TIME.GLIDE_PAD);
     return token;
   }
 
@@ -1972,10 +2045,8 @@ var FP_TIME = {
   function layoutSliderDefault(mode) {
     var ends = sliderEnds();
     if (mode === "table") {
-      /* Phone Table is one step under the 3-across maximum, so 4 across. */
-      if (phoneSlider()) return ends.min + 1;
-      if (tabletSlider()) return ends.min;
-      return ends.min + (ends.max - ends.min) * 0.5;
+      /* Four stops in from the small-photo end. A saved size replaces this. */
+      return ends.max - 4;
     }
     /* Phone Row is the large end (3 across). Tablet Row matches tablet Table at 4. */
     if (phoneSlider() || tabletSlider()) return ends.min;
@@ -2129,13 +2200,10 @@ var FP_TIME = {
       persist(tile);
     });
     plans.forEach(function (plan) {
-      /* Short ease-in, then a clean stop. Landing depth stays varied. */
-      var dur = Math.round(110 + Math.random() * 70);
+      /* Arc across the bar and stop cleanly. Landing depth stays varied. */
+      var dur = Math.round(FP_TIME.TOSS_DUR_MIN + Math.random() * FP_TIME.TOSS_DUR_SPAN);
       plan.tile.setAttribute("data-fp-drop-dur", String(dur));
-      holdGlide(plan.tile, plan.from, {
-        dur: dur,
-        easing: "cubic-bezier(0.55, 0, 1, 1)"
-      });
+      tossAcrossLine(plan.tile, plan.from);
     });
     requestAnimationFrame(function () {
       items.forEach(function (tile) {
@@ -2795,7 +2863,9 @@ var FP_TIME = {
       if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
     });
     setCount();
-    setCols(phoneSlider() ? 3 : colsForThisScreen(storedCols()), false);
+    var startCols = phoneSlider() ? 3 : colsForThisScreen(storedCols());
+    if (!phoneSlider() && layoutMode() === "table" && savedCols() == null) startCols = clampSlider(layoutSliderDefault("table"));
+    setCols(startCols, false);
     setLayout(layoutMode(), false);
     settleArrival();
   } finally {
@@ -2821,12 +2891,18 @@ var FP_TIME = {
     if (lay) {
       e.preventDefault();
       var nextLay = lay.getAttribute("data-fp-lay") || "row";
-      if ((nextLay === "table" || nextLay === "row") && layoutMode() !== "antigravity") {
+      if (nextLay === "row" && layoutMode() !== "antigravity") {
         var want = clampSlider(layoutSliderDefault(nextLay));
         var gNow = grid();
         var already = layoutMode() === nextLay && gNow && gNow.getAttribute("data-fp-layout") === nextLay;
         if (already) setCols(want, true);
         else pendingCols = want;
+      } else if (nextLay === "table" && layoutMode() !== "antigravity" && savedCols() == null) {
+        var wantTable = clampSlider(layoutSliderDefault("table"));
+        var gTable = grid();
+        var tableOn = layoutMode() === "table" && gTable && gTable.getAttribute("data-fp-layout") === "table";
+        if (tableOn) setCols(wantTable, true);
+        else pendingCols = wantTable;
       }
       setLayout(nextLay, true);
       return;
