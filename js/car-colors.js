@@ -17,8 +17,10 @@
   var CITY_REGIONS = { Vancouver: REGIONS };
   var city = "Vancouver";
   var CARS = [];
-  /* Neighbourhood names keyed by city. Picks under different cities stay on together. */
+  /* Neighbourhood names keyed by city. Picks under different cities stay on together.
+     A city tag with an empty list means every scan in that city. */
   var areaPick = {};
+  var cityOn = {};
   var AREAS = [];
   /* Outer ring for each city, from that city's own boundary. Neighbourhoods do not shrink it. */
   var CITY_LINES = {};
@@ -82,10 +84,22 @@
     return false;
   }
 
+  function cityChosen() {
+    var keys = Object.keys(cityOn);
+    var i;
+    for (i = 0; i < keys.length; i++) {
+      if (cityOn[keys[i]]) return true;
+    }
+    return false;
+  }
+
   function shownCars() {
-    if (!anyPicks()) return carsIn(city);
+    if (!cityChosen() && !anyPicks()) return carsIn(city);
     return CARS.filter(function (car) {
       var list = areaPick[car.city] || [];
+      var whole = !!cityOn[car.city];
+      if (!whole && !list.length) return false;
+      if (!list.length) return true;
       var i;
       for (i = 0; i < list.length; i++) {
         if (list[i] === car.area) return true;
@@ -800,7 +814,7 @@
   function outlineCities() {
     var names = [];
     Object.keys(CITY_LINES).forEach(function (name) {
-      if (areaPick[name] && areaPick[name].length) names.push(name);
+      if (cityOn[name] || (areaPick[name] && areaPick[name].length)) names.push(name);
     });
     if (!names.length && CITY_LINES[city]) names.push(city);
     return names;
@@ -1311,11 +1325,12 @@
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
     document.querySelectorAll(".cc-city").forEach(function (button) {
-      if (button.hasAttribute("data-cc-area")) return;
+      if (button.hasAttribute("data-cc-area") || button.id === "cc-city-vancouver") return;
       var on = button.getAttribute("data-cc-city") === city;
       button.classList.toggle("cc-on", on);
       button.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    syncCityTag(false);
     syncAreaButtons();
     var tone = document.querySelector(".cc-tone");
     if (tone) tone.classList.toggle("cc-real", !!realOn);
@@ -1686,7 +1701,7 @@
   }
 
   function loadAreas() {
-    return fetch("vancouver-areas.geojson?v=20261013b").then(function (res) {
+    return fetch("vancouver-areas.geojson?v=20261015c").then(function (res) {
       if (!res.ok) throw new Error("areas");
       return res.json();
     }).then(function (geo) {
@@ -1706,12 +1721,47 @@
     }).catch(function () {});
   }
 
+  function syncCityTag(animate) {
+    var button = document.getElementById("cc-city-vancouver");
+    var on = !!cityOn.Vancouver;
+    if (button) {
+      button.classList.toggle("cc-on", on);
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    var root = document.documentElement;
+    if (animate) root.classList.add("cc-tags-motion");
+    root.classList.toggle("cc-tags-open", on);
+    var drop = document.getElementById("cc-tagdrop");
+    if (drop) drop.setAttribute("aria-hidden", on ? "false" : "true");
+  }
+
+  function setVancouverOn(on) {
+    if (on) cityOn.Vancouver = true;
+    else {
+      delete cityOn.Vancouver;
+      setCityPicks("Vancouver", []);
+    }
+    syncCityTag(true);
+    applyAreaFilter();
+    settleCluster();
+  }
+
+  var vanBtn = document.getElementById("cc-city-vancouver");
+  if (vanBtn) {
+    vanBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (draggingSlider) return;
+      setVancouverOn(!cityOn.Vancouver);
+    });
+  }
+
   var areasBox = document.getElementById("cc-areas");
   if (areasBox) {
     areasBox.addEventListener("click", function (e) {
       var button = e.target.closest && e.target.closest("button");
       if (!button || !areasBox.contains(button)) return;
-      if (draggingSlider) return;
+      if (draggingSlider || !cityOn[city]) return;
       var name = button.getAttribute("data-cc-area");
       if (!name) return;
       var list = cityPicks(city);
@@ -1724,10 +1774,6 @@
   }
 
   window.__ccTagsClick = function () {
-    if (anyPicks()) {
-      areaPick = {};
-      applyAreaFilter();
-    }
     settleCluster();
   };
 
