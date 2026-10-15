@@ -2,77 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Car Colours</title>
   <script>
-  window.__ccSheet = fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vR1RdPX8eQULP_-BojCy1Sxchnj9CNrxUyp1X_674m5Bo6Fa2pecJ2kE4R1pMMAk3B184GqpJ6LhSUF/pub?gid=415065047&single=true&output=csv", { cache: "no-store" }).then(function (res) {
-    if (!res.ok) throw new Error("sheet");
-    return res.text();
-  });
+    location.replace("../car-colours/" + location.search + location.hash);
   </script>
-  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <title>Car Colours — databaseprojects</title>
-  <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/car-colors.css?v=20261015c">
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
+  <meta http-equiv="refresh" content="0; url=../car-colours/">
+  <link rel="canonical" href="../car-colours/">
 </head>
 <body>
-  <div class="sheet">
-    <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant-storefronts/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colors/" class="active" aria-current="page">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colours</a><a href="../keyword-scraping/">Keyword Scraping</a><a href="../info/">INFO</a></nav>
-
-<main>
-  <div class="cc-about">
-    <h1 class="record-name">
-      <button type="button" class="cc-about-toggle" id="cc-about-toggle" aria-expanded="false" aria-controls="cc-about-panel">Car Colours</button>
-    </h1>
-    <div class="cc-about-panel" id="cc-about-panel" hidden aria-hidden="true">
-      <div class="cc-about-clip">
-        <div class="cc-about-body">
-          <section class="cc-about-block">
-            <h2>Project</h2>
-            <p>Car Colours is an ongoing archive of the colours of the city's parked cars. Each car's paint is scanned and becomes a dot, so the streets turn into a palette you can wander through on a map, sort by hue, or see as one drifting cloud.</p>
-          </section>
-          <section class="cc-about-block">
-            <h2>Collection</h2>
-            <p>A growing set of real car colours gathered on walks around Vancouver neighbourhoods.</p>
-          </section>
-          <section class="cc-about-block">
-            <h2>Tools</h2>
-            <p>Colour sensor, camera, GPS</p>
-          </section>
-          <div class="cc-about-video"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="cc-controls">
-    <div class="cc-tagfold">
-      <button type="button" class="cc-city" id="cc-city-vancouver" data-cc-city="Vancouver" aria-pressed="false" aria-controls="cc-areas">Vancouver</button>
-      <div class="cc-tagdrop" id="cc-tagdrop" aria-hidden="true">
-        <div class="cc-cities" id="cc-areas" role="group" aria-label="Neighbourhood"></div>
-      </div>
-    </div>
-    <div class="cc-tools">
-    <span class="cc-zoom">
-      <input class="cc-zslider" type="range" min="6" max="20" step="any" value="6" aria-label="Dot size" title="Size (6 – 20) — left is larger">
-      <span class="cc-icons" role="group" aria-label="View">
-        <button type="button" class="cc-icon cc-icon-on" data-cc-mode="hue" aria-pressed="true" aria-label="Hue" title="Hue"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16c1.2-5 3.4-7 7-7s5.8 2 7 7"/><path d="M8 19h8"/></svg></button>
-        <button type="button" class="cc-icon" data-cc-mode="map" aria-pressed="false" aria-label="Map" title="Map"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
-        <button type="button" class="cc-icon" data-cc-mode="cluster" aria-pressed="false" aria-label="Cluster" title="Cluster"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9.2" r="3"/><circle cx="15.6" cy="8.6" r="2.15"/><circle cx="14.2" cy="15.2" r="2.7"/><circle cx="8.2" cy="15.4" r="1.7"/></svg></button>
-      </span>
-    </span>
-    <span class="cc-tone cc-real" role="group" aria-label="Colour reading">
-      <button type="button" class="cc-swatch" data-cc-tone="accurate" aria-pressed="false" aria-label="Accurate"><svg class="cc-swatch-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2s5.2 5.4 5.2 9.2a5.2 5.2 0 0 1-10.4 0c0-3.8 5.2-9.2 5.2-9.2z"/></svg><span class="cc-tip">Accurate</span></button>
-      <button type="button" class="cc-switch" aria-pressed="true" aria-label="Colour reading"><span class="cc-switch-knob"></span></button>
-      <button type="button" class="cc-swatch" data-cc-tone="real" aria-pressed="true" aria-label="Real world"><svg class="cc-swatch-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 3.2v2.2M12 18.6V21M3.2 12h2.2M18.6 12H21M5.8 5.8l1.6 1.6M16.6 16.6l1.6 1.6M18.2 5.8l-1.6 1.6M7.4 16.6l-1.6 1.6"/></svg><span class="cc-tip">Real world</span></button>
-    </span>
-    </div>
-  </div>
-  <div class="cc-stage" id="cc-stage"></div>
-</main>
-
-  </div>
-  <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-  <script src="../js/shared.js?v=20261013e"></script>
-  <script src="../js/car-colors.js?v=20261015c"></script>
+  <p><a href="../car-colours/">Car Colours</a></p>
 </body>
 </html>
