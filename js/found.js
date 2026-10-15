@@ -1901,17 +1901,29 @@ var FP_TIME = {
     return token;
   }
 
-  /* One throw onto the spot already chosen: leave, touch, slide to rest.
-     Friction slows it the whole way. Spin eases out on the slide. */
+  /* One throw onto the spot already chosen. Pickup and flight keep the
+     angle already on screen. At impact the print starts to turn, and the
+     slide carries the arrival speed, coasting a little longer on friction
+     until both the skid and the spin settle. */
   function tossAcrossLine(tile, from) {
     var delta = glideDelta(tile, from, false);
     if (!delta) return null;
     var dx = delta.dx;
     var dy = delta.dy;
-    var finalRot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
-    if (!isFinite(finalRot)) finalRot = 0;
-    var rotText = tile.style.getPropertyValue("--fp-rot") || "0deg";
-    var spin = (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 12);
+    var flightRot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+    if (!isFinite(flightRot)) flightRot = 0;
+    var flightText = flightRot.toFixed(2) + "deg";
+    var spin = 0;
+    if (tile.getAttribute("data-fp-straight") !== "1") {
+      var mag = 6 + Math.random() * 12;
+      var dir = Math.random() < 0.5 ? -1 : 1;
+      if (Math.abs(flightRot + dir * mag) > 18) dir = -dir;
+      spin = dir * mag;
+    }
+    var finalRot = flightRot + spin;
+    if (finalRot > 18) finalRot = 18;
+    if (finalRot < -18) finalRot = -18;
+    var finalText = finalRot.toFixed(2) + "deg";
     var up = FP_TIME.TOSS_LAUNCH + Math.random() * FP_TIME.TOSS_LAUNCH_SPAN;
     var side = (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * FP_TIME.TOSS_SIDE);
     if (Math.abs(dx) > 8) side = (dx < 0 ? -1 : 1) * Math.abs(side);
@@ -1962,36 +1974,72 @@ var FP_TIME = {
     for (i = 1; i <= n; i++) {
       if (away < 0 ? samples[i].y < samples[apex].y : samples[i].y > samples[apex].y) apex = i;
     }
-    /* Settle the spin from the top of the throw through the slide, not in a final snap. */
-    var touch = apex;
-    if (touch > n - 4) touch = Math.max(0, n - 8);
-    var frames = [];
-    for (i = 0; i <= n; i++) {
-      var keep = 1;
-      if (i > touch) {
-        var su = (i - touch) / (n - touch);
-        keep = 1 - su * su * (3 - 2 * su);
+    /* Impact is the first point on the way down that has reached the table.
+       The throw up to here keeps the old clock. */
+    var band = Math.max(8, Math.abs(samples[apex].y) * 0.22);
+    var hit = n;
+    for (i = apex + 1; i <= n; i++) {
+      if (Math.abs(samples[i].y) <= band) {
+        hit = i;
+        break;
       }
+    }
+    if (hit > n - 3) hit = Math.max(apex + 1, n - 6);
+    if (hit < 2) hit = 2;
+    var uHit = hit / n;
+    var distHit = (1 - (1 - uHit) * (1 - uHit)) * total;
+    var remain = Math.max(0, total - distHit);
+    var flightMs = uHit * dur;
+    /* Exponential friction. Matched to the arrival speed, the skid runs
+       about 1.6× the old tail and the last step is a fraction of a pixel. */
+    var friction = 3.2;
+    var shape = friction / (1 - Math.exp(-friction));
+    var arrival = 2 * (1 - uHit) * total / dur;
+    var slideMs = remain > 1 && arrival > 0.02 ? (remain * shape / arrival) : (dur - flightMs);
+    var oldSlide = Math.max(0, dur - flightMs);
+    if (slideMs < oldSlide * 1.2) slideMs = oldSlide * 1.2;
+    var totalMs = Math.round(flightMs + slideMs);
+    if (totalMs < dur) totalMs = dur;
+    slideMs = totalMs - flightMs;
+    var slideN = 18;
+    var frames = [];
+    for (i = 0; i <= hit; i++) {
       frames.push({
         translate: samples[i].x.toFixed(1) + "px " + samples[i].y.toFixed(1) + "px",
-        rotate: (finalRot + spin * keep).toFixed(2) + "deg",
-        offset: i / n
+        rotate: flightText,
+        offset: (i / n) * dur / totalMs
       });
     }
     frames[0].translate = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
-    frames[0].rotate = (finalRot + spin).toFixed(2) + "deg";
-    frames[n].translate = "0px 0px";
-    frames[n].rotate = rotText;
+    frames[0].rotate = flightText;
+    for (i = 1; i <= slideN; i++) {
+      var p = i / slideN;
+      var q = (1 - Math.exp(-friction * p)) / (1 - Math.exp(-friction));
+      var pos = atLen(distHit + remain * q);
+      var ang = flightRot + (finalRot - flightRot) * q;
+      frames.push({
+        translate: pos.x.toFixed(1) + "px " + pos.y.toFixed(1) + "px",
+        rotate: ang.toFixed(2) + "deg",
+        offset: (flightMs + p * slideMs) / totalMs
+      });
+    }
+    frames[frames.length - 1].translate = "0px 0px";
+    frames[frames.length - 1].rotate = finalText;
+    frames[frames.length - 1].offset = 1;
     var token = {};
     tile._fpGlide = token;
     tile.style.setProperty("transition", "none", "important");
     var anim = tile.animate(frames, {
-      duration: dur,
+      duration: totalMs,
       delay: delay,
       easing: "linear",
       fill: "both"
     });
     anim.id = "fp-toss";
+    tile.style.setProperty("--fp-rot", finalText);
+    tile.setAttribute("data-fp-tilt", String(Math.round(finalRot * 100) / 100));
+    if (spin !== 0) tile.removeAttribute("data-fp-straight");
+    persist(tile);
     var finish = function () {
       if (tile._fpGlide !== token) return;
       tile._fpGlide = null;
@@ -2001,7 +2049,7 @@ var FP_TIME = {
     };
     token.onEnd = finish;
     anim.onfinish = finish;
-    token.timer = setTimeout(finish, delay + dur + FP_TIME.GLIDE_PAD);
+    token.timer = setTimeout(finish, delay + totalMs + FP_TIME.GLIDE_PAD);
     return token;
   }
 
@@ -2193,24 +2241,9 @@ var FP_TIME = {
 
   function landAsTable(g) {
     var items = tiles();
-    var usedTilt = {};
     items.forEach(function (tile) {
       tile.removeAttribute("data-fp-drop-dur");
       tile.style.setProperty("transition", "none", "important");
-      var keptStraight = tile.getAttribute("data-fp-straight") === "1";
-      var rot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
-      if (!isFinite(rot)) rot = 0;
-      /* A zero here used to be stored as "straight" and then reused, so
-         Table came back flat. Only a print that was put down straight stays flat. */
-      if (keptStraight) {
-        tile.setAttribute("data-fp-tilt", "0");
-        tile.style.setProperty("--fp-rot", "0deg");
-        return;
-      }
-      if (rot === 0) rot = freshTilt(usedTilt);
-      tile.removeAttribute("data-fp-straight");
-      tile.setAttribute("data-fp-tilt", String(rot));
-      tile.style.setProperty("--fp-rot", rot.toFixed(1) + "deg");
     });
     g.setAttribute("data-fp-layout", "table");
     g.style.removeProperty("--fp-ag-h");
@@ -2245,6 +2278,32 @@ var FP_TIME = {
     varyDropLandings(plans, stayed);
     plans.forEach(function (plan) {
       plan.tile.style.setProperty("--fp-ny", (plan.ny + plan.overlap + plan.extra).toFixed(1) + "px");
+    });
+    /* Prints that stay put keep the old tilt. A thrown print keeps the
+       angle on screen until it hits, then the toss turns it. */
+    var usedTilt = {};
+    items.forEach(function (tile) {
+      var thrown = false;
+      var pi;
+      for (pi = 0; pi < plans.length; pi++) {
+        if (plans[pi].tile === tile) {
+          thrown = true;
+          break;
+        }
+      }
+      if (thrown) return;
+      var keptStraight = tile.getAttribute("data-fp-straight") === "1";
+      var rot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
+      if (!isFinite(rot)) rot = 0;
+      if (keptStraight) {
+        tile.setAttribute("data-fp-tilt", "0");
+        tile.style.setProperty("--fp-rot", "0deg");
+        return;
+      }
+      if (rot === 0) rot = freshTilt(usedTilt);
+      tile.removeAttribute("data-fp-straight");
+      tile.setAttribute("data-fp-tilt", String(rot));
+      tile.style.setProperty("--fp-rot", rot.toFixed(1) + "deg");
     });
     items.forEach(function (tile) {
       persist(tile);
