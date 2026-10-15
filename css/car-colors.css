@@ -115,6 +115,10 @@
   display: contents;
 }
 
+#cc-city-vancouver {
+  margin: 0 0 0.15rem;
+}
+
 .cc-tags-toggle {
   display: inline-flex;
   align-items: center;
@@ -614,6 +618,7 @@ html.cc-sizing .cc-dot {
     display: contents;
   }
 
+  #cc-city-vancouver,
   .cc-tags-toggle {
     grid-column: 1;
     grid-row: 1;
