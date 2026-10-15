@@ -12,10 +12,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Car Colours — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <script>
-  try { if (localStorage.getItem("ccTagsOpen") === "1") document.documentElement.classList.add("cc-tags-open"); } catch (e) {}
-  </script>
-  <link rel="stylesheet" href="../css/car-colors.css?v=20261013c">
+  <link rel="stylesheet" href="../css/car-colors.css?v=20261015c">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 </head>
 <body>
@@ -49,8 +46,8 @@
   </div>
   <div class="cc-controls">
     <div class="cc-tagfold">
-      <button type="button" class="cc-tags-toggle" id="cc-tags-toggle" aria-expanded="false" aria-controls="cc-areas" aria-label="Vancouver" title="Vancouver"><span class="cc-tags-name">Vancouver</span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-      <div class="cc-tagdrop" id="cc-tagdrop">
+      <button type="button" class="cc-city" id="cc-city-vancouver" data-cc-city="Vancouver" aria-pressed="false" aria-controls="cc-areas">Vancouver</button>
+      <div class="cc-tagdrop" id="cc-tagdrop" aria-hidden="true">
         <div class="cc-cities" id="cc-areas" role="group" aria-label="Neighbourhood"></div>
       </div>
     </div>
@@ -76,6 +73,6 @@
   </div>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
   <script src="../js/shared.js?v=20261013e"></script>
-  <script src="../js/car-colors.js?v=20261013e"></script>
+  <script src="../js/car-colors.js?v=20261015c"></script>
 </body>
 </html>
