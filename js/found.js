@@ -1681,24 +1681,29 @@ var FP_TIME = {
           b.vx = b.tvx * ramp;
           b.vy = b.tvy * ramp;
         }
+        var x0 = b.x;
+        var y0 = b.y;
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         var maxXb = Math.max(pad, W - b.w - pad);
         var maxYb = Math.max(minY, H - b.h - pad);
-        if (b.x < pad) {
+        /* Off the board already: keep that spot and drift. A hit from inside still bounces. */
+        var wasInX = x0 >= pad && x0 <= maxXb;
+        var wasInY = y0 >= minY && y0 <= maxYb;
+        if (wasInX && b.x < pad) {
           b.x = pad;
           b.vx = Math.abs(b.vx);
           if (b.tvx != null) b.tvx = Math.abs(b.tvx);
-        } else if (b.x > maxXb) {
+        } else if (wasInX && b.x > maxXb) {
           b.x = maxXb;
           b.vx = -Math.abs(b.vx);
           if (b.tvx != null) b.tvx = -Math.abs(b.tvx);
         }
-        if (b.y < minY) {
+        if (wasInY && b.y < minY) {
           b.y = minY;
           b.vy = Math.abs(b.vy);
           if (b.tvy != null) b.tvy = Math.abs(b.tvy);
-        } else if (b.y > maxYb) {
+        } else if (wasInY && b.y > maxYb) {
           b.y = maxYb;
           b.vy = -Math.abs(b.vy);
           if (b.tvy != null) b.tvy = -Math.abs(b.tvy);
@@ -1896,8 +1901,8 @@ var FP_TIME = {
     return token;
   }
 
-  /* A straight slide on one ease-in reads as a drop. Leave upward or outward,
-     arc across the bar, and let a small spin settle on the final angle. */
+  /* One throw onto the spot already chosen: leave, touch, slide to rest.
+     Friction slows it the whole way. Spin eases out on the slide. */
   function tossAcrossLine(tile, from) {
     var delta = glideDelta(tile, from, false);
     if (!delta) return null;
@@ -1905,37 +1910,82 @@ var FP_TIME = {
     var dy = delta.dy;
     var finalRot = parseFloat(tile.style.getPropertyValue("--fp-rot"));
     if (!isFinite(finalRot)) finalRot = 0;
+    var rotText = tile.style.getPropertyValue("--fp-rot") || "0deg";
     var spin = (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 12);
     var up = FP_TIME.TOSS_LAUNCH + Math.random() * FP_TIME.TOSS_LAUNCH_SPAN;
     var side = (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * FP_TIME.TOSS_SIDE);
     if (Math.abs(dx) > 8) side = (dx < 0 ? -1 : 1) * Math.abs(side);
     var dur = Math.round(FP_TIME.TOSS_DUR_MIN + Math.random() * FP_TIME.TOSS_DUR_SPAN);
     var delay = Math.round(Math.random() * FP_TIME.TOSS_DELAY_MAX);
-    var rotText = finalRot.toFixed(2) + "deg";
+    var away = dy <= 0 ? -1 : 1;
+    var peak = dy + away * up;
+    var sL = 0.2;
+    function yAt(s) {
+      if (s <= sL) return dy + away * up * Math.sin(Math.PI * 0.5 * s / sL);
+      var v = (s - sL) / (1 - sL);
+      var sm = v * v * (3 - 2 * v);
+      return peak + (0 - peak) * sm;
+    }
+    function xAt(s) {
+      return dx * (1 - s) + side * Math.sin(Math.PI * s) * (1 - s);
+    }
+    var steps = 160;
+    var pts = [];
+    var lens = [0];
+    var i;
+    for (i = 0; i <= steps; i++) {
+      pts.push({ x: xAt(i / steps), y: yAt(i / steps) });
+      if (i) lens.push(lens[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    }
+    var total = lens[steps] || 1;
+    function atLen(dist) {
+      var k;
+      for (k = 1; k <= steps; k++) {
+        if (lens[k] >= dist) {
+          var span = lens[k] - lens[k - 1];
+          var f = span > 0.0001 ? (dist - lens[k - 1]) / span : 1;
+          return {
+            x: pts[k - 1].x + (pts[k].x - pts[k - 1].x) * f,
+            y: pts[k - 1].y + (pts[k].y - pts[k - 1].y) * f
+          };
+        }
+      }
+      return { x: 0, y: 0 };
+    }
+    var n = 40;
+    var samples = [];
+    for (i = 0; i <= n; i++) {
+      var u = i / n;
+      samples.push(atLen((1 - (1 - u) * (1 - u)) * total));
+    }
+    var apex = 0;
+    for (i = 1; i <= n; i++) {
+      if (away < 0 ? samples[i].y < samples[apex].y : samples[i].y > samples[apex].y) apex = i;
+    }
+    /* Settle the spin from the top of the throw through the slide, not in a final snap. */
+    var touch = apex;
+    if (touch > n - 4) touch = Math.max(0, n - 8);
+    var frames = [];
+    for (i = 0; i <= n; i++) {
+      var keep = 1;
+      if (i > touch) {
+        var su = (i - touch) / (n - touch);
+        keep = 1 - su * su * (3 - 2 * su);
+      }
+      frames.push({
+        translate: samples[i].x.toFixed(1) + "px " + samples[i].y.toFixed(1) + "px",
+        rotate: (finalRot + spin * keep).toFixed(2) + "deg",
+        offset: i / n
+      });
+    }
+    frames[0].translate = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
+    frames[0].rotate = (finalRot + spin).toFixed(2) + "deg";
+    frames[n].translate = "0px 0px";
+    frames[n].rotate = rotText;
     var token = {};
     tile._fpGlide = token;
     tile.style.setProperty("transition", "none", "important");
-    tile.style.translate = dx.toFixed(1) + "px " + dy.toFixed(1) + "px";
-    var anim = tile.animate([
-      { translate: dx.toFixed(1) + "px " + dy.toFixed(1) + "px", rotate: rotText, offset: 0 },
-      {
-        translate: (dx + side * 0.45).toFixed(1) + "px " + (dy - up).toFixed(1) + "px",
-        rotate: (finalRot + spin * 0.55).toFixed(2) + "deg",
-        offset: 0.28,
-        easing: "cubic-bezier(0.16, 0.84, 0.32, 1)"
-      },
-      {
-        translate: (dx * 0.22 + side).toFixed(1) + "px " + (dy * 0.4).toFixed(1) + "px",
-        rotate: (finalRot + spin).toFixed(2) + "deg",
-        offset: 0.62
-      },
-      {
-        translate: "0px 0px",
-        rotate: rotText,
-        offset: 1,
-        easing: "cubic-bezier(0.55, 0, 1, 1)"
-      }
-    ], {
+    var anim = tile.animate(frames, {
       duration: dur,
       delay: delay,
       easing: "linear",
@@ -2199,8 +2249,9 @@ var FP_TIME = {
     items.forEach(function (tile) {
       persist(tile);
     });
+    /* Spots and table height are final before the throw. Nothing seats them again. */
+    fitTableHeight(g);
     plans.forEach(function (plan) {
-      /* Arc across the bar and stop cleanly. Landing depth stays varied. */
       var dur = Math.round(FP_TIME.TOSS_DUR_MIN + Math.random() * FP_TIME.TOSS_DUR_SPAN);
       plan.tile.setAttribute("data-fp-drop-dur", String(dur));
       tossAcrossLine(plan.tile, plan.from);
@@ -2214,7 +2265,6 @@ var FP_TIME = {
         tile.style.removeProperty("transition");
       });
     });
-    fitTableHeight(g);
   }
 
   function setLayout(mode, animate) {
