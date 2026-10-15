@@ -10,6 +10,8 @@ GitHub Pages builds from `cursor/archive-portfolio-b69f`, not from main. After a
 
 Layout width must not change when a scrollbar appears; use the shared gutter rule and avoid 100vw for full-width layers.
 
+On the Car Colours map, every selectable area (a city or a neighbourhood) draws the same subtle white mask outside its own boundary when it is selected, the way Vancouver does.
+
 The index is a small Courier filing line: uppercase, tracked out, with a black rule. Two records are open on this slice.
 
 - [Home](./) — title, a short note, and the index

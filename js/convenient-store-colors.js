@@ -324,6 +324,68 @@
     });
   }
 
+  function sameName(a, b) {
+    return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+  }
+
+  function controlNamed(selector, attr, name) {
+    var nodes = document.querySelectorAll(selector);
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      var value = nodes[i].getAttribute(attr) || "";
+      var label = (nodes[i].textContent || "").trim();
+      if (sameName(value, name) || sameName(label, name)) return value;
+    }
+    return "";
+  }
+
+  /* A query or a city/store/category hash is an explicit view. It replaces the fresh-load default. */
+  function openingFromUrl() {
+    var params;
+    try { params = new URLSearchParams(location.search); }
+    catch (e) { params = null; }
+    if (!params) return false;
+    var hash = "";
+    try { hash = decodeURIComponent((location.hash || "").replace(/^#/, "")); }
+    catch (err) { hash = (location.hash || "").replace(/^#/, ""); }
+    var bits = hash ? hash.split("/") : [];
+    var hashCity = bits.length ? controlNamed("[data-csc-city]", "data-csc-city", bits[0]) : "";
+    var named = params.has("city") || params.has("store") || params.has("cat") || params.has("category") || params.has("categories") || !!hashCity;
+    if (!named) return false;
+    var cityName = params.has("city") ? (params.get("city") || "") : (hashCity ? bits[0] : "");
+    city = controlNamed("[data-csc-city]", "data-csc-city", cityName);
+    ensureLists();
+    var storeName = params.has("store") ? (params.get("store") || "") : (hashCity && bits.length > 1 ? bits[1] : "");
+    store = storeName ? controlNamed("[data-csc-store]", "data-csc-store", storeName) : "";
+    catOn = {};
+    var rawCats = [];
+    if (params.has("cat") || params.has("category") || params.has("categories")) {
+      params.getAll("cat").concat(params.getAll("category")).forEach(function (raw) {
+        String(raw || "").split(",").forEach(function (part) { rawCats.push(part); });
+      });
+      if (params.has("categories")) String(params.get("categories") || "").split(",").forEach(function (part) { rawCats.push(part); });
+    } else if (hashCity && bits.length > 2) {
+      bits.slice(2).join("/").split(",").forEach(function (part) { rawCats.push(part); });
+    }
+    rawCats.forEach(function (name) {
+      var actual = controlNamed("[data-csc-category]", "data-csc-category", name);
+      if (actual) catOn[actual] = true;
+    });
+    return true;
+  }
+
+  function applyOpening() {
+    if (openingFromUrl()) return;
+    city = controlNamed("[data-csc-city]", "data-csc-city", "Vancouver");
+    ensureLists();
+    store = controlNamed("[data-csc-store]", "data-csc-store", "Circle K");
+    catOn = {};
+    ["Chocolate", "Candy"].forEach(function (name) {
+      var actual = controlNamed("[data-csc-category]", "data-csc-category", name);
+      if (actual) catOn[actual] = true;
+    });
+  }
+
   function apply(animate) {
     ensureLists();
     setPressed("[data-csc-store]", "data-csc-store", store);
@@ -1018,6 +1080,7 @@
   });
 
   var spillGen = 0;
+  var pageFill = null;
   var SPILL_SOLID = 0.15;
 
   function pageBackground(hex) {
@@ -1036,6 +1099,7 @@
 
   function clearPageColour() {
     spillGen += 1;
+    pageFill = null;
     removeSpills();
     pageBackground("");
   }
@@ -1064,10 +1128,15 @@
   function spillFrom(dotEl) {
     var hex = dotEl.getAttribute("data-main");
     if (!hex) return;
+    if (pageFill && pageFill.el === dotEl) {
+      clearPageColour();
+      return;
+    }
     var rect = dotEl.getBoundingClientRect();
     if (!(rect.width > 0)) return;
     spillGen += 1;
     var gen = spillGen;
+    pageFill = { el: dotEl, hex: hex };
     removeSpills();
     if (motion.matches) {
       pageBackground(hex);
@@ -1183,6 +1252,7 @@
 
   applyMetrics();
   syncMoons();
+  applyOpening();
   setPressed("[data-csc-city]", "data-csc-city", city);
   setPressed("[data-csc-store]", "data-csc-store", store);
   apply();
