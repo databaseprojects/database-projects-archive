@@ -42,7 +42,8 @@
     ringWait: 0,
     ringArmed: false,
     ringX: 0,
-    ringY: 0
+    ringY: 0,
+    driven: 0
   };
 
   function hash(x, y) {
@@ -196,6 +197,62 @@
     blobSoft(px + jx, py + jy, amp * 0.42, 3.4, 22.06);
   }
 
+  /* Moving fine pointer: a round shock front, wider than the old splat,
+     with a crisp crest and a softer wake inside. Speed scales the reach. */
+  function injectShock(px, py, amp, t) {
+    var cx = px / CELL;
+    var cy = py / CELL;
+    var span = 0.92 + t * 0.22;
+    var rFront = 9.2 * span;
+    var thin = 1.28;
+    var wakeS = 6.8;
+    var reach = rFront + thin * 3.2;
+    var wave = Math.sqrt(0.10 + t * 0.12);
+    var x0 = Math.max(0, Math.floor(cx - reach));
+    var x1 = Math.min(cols - 1, Math.ceil(cx + reach));
+    var y0 = Math.max(0, Math.floor(cy - reach));
+    var y1 = Math.min(rows - 1, Math.ceil(cy + reach));
+    var y;
+    var x;
+    function shape(x, y) {
+      var dx = x - cx;
+      var dy = y - cy;
+      var warp = (hash(x + 2, y + 5) - 0.5) * 0.22;
+      var r = Math.sqrt(dx * dx + dy * dy) + warp;
+      if (r < 0) r = 0;
+      var df = r - rFront;
+      var front = Math.exp(-(df * df) / (2 * thin * thin));
+      var wake = Math.exp(-(r * r) / (2 * wakeS * wakeS));
+      return {
+        r: r,
+        s: front - wake * 0.2,
+        slope: front * (-df / (thin * thin)) - wake * 0.2 * (-r / (wakeS * wakeS))
+      };
+    }
+    var peak = 0;
+    for (y = y0; y <= y1; y++) {
+      for (x = x0; x <= x1; x++) {
+        var sh = shape(x, y);
+        if (sh.r > reach) continue;
+        var a = sh.s < 0 ? -sh.s : sh.s;
+        if (a > peak) peak = a;
+      }
+    }
+    if (!(peak > 0)) return;
+    var gain = amp * 0.145 / peak;
+    for (y = y0; y <= y1; y++) {
+      for (x = x0; x <= x1; x++) {
+        var sh = shape(x, y);
+        if (sh.r > reach || !sh.s) continue;
+        var i = y * cols + x;
+        var h = sh.s * gain;
+        var v = -wave * sh.slope * gain * 1.1;
+        curr[i] += h;
+        prev[i] += h - v;
+      }
+    }
+  }
+
   function desktopPointer() {
     return aim.kind !== "touch" && fine && fine.matches;
   }
@@ -244,12 +301,13 @@
     var live = (now - aim.lastEvt) < 360;
     if (aim.tap || (moved && live)) {
       var t = clamp(aim.smooth / 1.8, 0, 1);
-      var amp = aim.tap ? Math.max(0.42, 0.2 + t * 0.85) : (0.08 + t * 1.0);
+      var amp = aim.tap ? Math.max(0.5, 0.24 + t * 1.05) : (0.18 + t * 1.0);
       if (aim.turn) {
         amp *= 1 + 0.5 * Math.min(aim.turn, 1.6);
         aim.turn = 0;
       }
-      injectSoft(aim.sx, aim.sy, amp);
+      injectShock(aim.sx, aim.sy, amp, t);
+      aim.driven = now + 1400;
       aim.lx = aim.sx;
       aim.ly = aim.sy;
       aim.tap = 0;
@@ -270,6 +328,7 @@
         var k = 3 - aim.ringN;
         var pulse = [0.36, -0.23, 0.14];
         injectSoft(aim.ringX, aim.ringY, pulse[k]);
+        aim.driven = now + 1400;
         aim.ringN -= 1;
         aim.ringWait = 9;
       }
@@ -309,9 +368,11 @@
 
   function step() {
     poke();
-    var c2 = drive();
-    var gamma = 0.03;
-    var rest = 0.012;
+    var driven = desktopPointer() && performance.now() < aim.driven;
+    var pace = clamp(aim.smooth / 1.8, 0, 1);
+    var c2 = driven ? (0.10 + pace * 0.12) : drive();
+    var gamma = driven ? 0.02 : 0.03;
+    var rest = driven ? 0.008 : 0.012;
     var y;
     var x;
     for (y = 0; y < rows; y++) {
@@ -361,8 +422,9 @@
           var ht = sample(fx, fy);
           var gx = sample(fx + 0.85, fy) - sample(fx - 0.85, fy);
           var gy = sample(fx, fy + 0.85) - sample(fx, fy - 0.85);
-          px = x + gx * 16;
-          py = y + gy * 16;
+          var push = desktopPointer() ? 26 : 16;
+          px = x + gx * push;
+          py = y + gy * push;
           rad = DOT_R * (1 + ht * 0.9);
           if (rad > 3.4) rad = 3.4;
           /* Faintest desktop dots keep about 38% of a resting dot. Touch stays at 0.55. */
