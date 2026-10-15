@@ -5,6 +5,7 @@
   var ctx = canvas.getContext("2d", { alpha: true });
   if (!ctx) return;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+  var fine = window.matchMedia && window.matchMedia("(pointer: fine)");
   var CELL = 34;
   var DOT = 18;
   var DOT_R = 1.65;
@@ -29,7 +30,11 @@
     smooth: 0,
     has: false,
     tap: 0,
-    lastEvt: 0
+    lastEvt: 0,
+    kind: "",
+    sx: 0,
+    sy: 0,
+    lag: false
   };
 
   function hash(x, y) {
@@ -135,12 +140,95 @@
     blob(px + jx, py + jy, amp * 0.42, 3.05);
   }
 
+  /* Desktop source: wider, and the rim of the blob falls off to nothing. */
+  function blobSoft(px, py, amp, rad) {
+    var cx = px / CELL;
+    var cy = py / CELL;
+    var x0 = Math.max(0, Math.floor(cx - rad - 1));
+    var x1 = Math.min(cols - 1, Math.ceil(cx + rad + 1));
+    var y0 = Math.max(0, Math.floor(cy - rad - 1));
+    var y1 = Math.min(rows - 1, Math.ceil(cy + rad + 1));
+    var y;
+    var x;
+    for (y = y0; y <= y1; y++) {
+      for (x = x0; x <= x1; x++) {
+        var dx = x - cx;
+        var dy = y - cy;
+        var warp = (hash(x + 2, y + 5) - 0.5) * 0.85;
+        var r = Math.sqrt(dx * dx + dy * dy) + warp;
+        var u = r / rad;
+        if (u >= 1) continue;
+        var s = 1 - u;
+        var k = s * s * (3 - 2 * s);
+        k = k * k * amp;
+        var i = y * cols + x;
+        curr[i] += k;
+        prev[i] += k;
+      }
+    }
+  }
+
+  function injectSoft(px, py, amp) {
+    blobSoft(px, py, amp, 4.6);
+    var jx = (hash(Math.round(px), Math.round(py)) - 0.5) * CELL * 2.4;
+    var jy = (hash(Math.round(py) + 9, Math.round(px) + 4) - 0.5) * CELL * 1.8;
+    blobSoft(px + jx, py + jy, amp * 0.42, 6.4);
+  }
+
+  function desktopPointer() {
+    return aim.kind !== "touch" && fine && fine.matches;
+  }
+
   function drive() {
     var t = clamp(aim.smooth / 1.8, 0, 1);
     return 0.08 + t * 0.12;
   }
 
+  function ambient() {
+    aim.smooth *= 0.94;
+    var now = performance.now();
+    var idle = !aim.has || (now - aim.lastEvt) > 640;
+    if (idle && now > ambientAt) {
+      ambientAt = now + 680 + Math.random() * 820;
+      inject(Math.random() * w, Math.random() * h, 0.26 + Math.random() * 0.28);
+      inject(Math.random() * w, Math.random() * h, 0.14 + Math.random() * 0.16);
+    }
+  }
+
+  /* Fine pointer: the source lags the cursor and puts in less energy. */
+  function pokeFine() {
+    if (!aim.has) {
+      ambient();
+      return;
+    }
+    if (!aim.lag) {
+      aim.sx = aim.x;
+      aim.sy = aim.y;
+      aim.lx = aim.x;
+      aim.ly = aim.y;
+      aim.lag = true;
+    }
+    aim.sx += (aim.x - aim.sx) * 0.16;
+    aim.sy += (aim.y - aim.sy) * 0.16;
+    var moved = Math.hypot(aim.sx - aim.lx, aim.sy - aim.ly) > 0.5;
+    var live = aim.has && (performance.now() - aim.lastEvt) < 700;
+    if (aim.tap || (moved && live)) {
+      var t = clamp(aim.smooth / 1.8, 0, 1);
+      var amp = aim.tap ? Math.max(0.34, 0.16 + t * 0.55) : (0.055 + t * 0.58);
+      injectSoft(aim.sx, aim.sy, amp);
+      aim.lx = aim.sx;
+      aim.ly = aim.sy;
+      aim.tap = 0;
+      return;
+    }
+    ambient();
+  }
+
   function poke() {
+    if (desktopPointer()) {
+      pokeFine();
+      return;
+    }
     var moved = Math.hypot(aim.x - aim.lx, aim.y - aim.ly) > 0.6;
     var live = aim.has && (performance.now() - aim.lastEvt) < 90;
     if (aim.tap || (moved && live)) {
@@ -162,14 +250,7 @@
       aim.tap = 0;
       return;
     }
-    aim.smooth *= 0.94;
-    var now = performance.now();
-    var idle = !aim.has || (now - aim.lastEvt) > 640;
-    if (idle && now > ambientAt) {
-      ambientAt = now + 680 + Math.random() * 820;
-      inject(Math.random() * w, Math.random() * h, 0.26 + Math.random() * 0.28);
-      inject(Math.random() * w, Math.random() * h, 0.14 + Math.random() * 0.16);
-    }
+    ambient();
   }
 
   function step() {
@@ -185,7 +266,17 @@
         var i = row + x;
         var u = curr[i];
         var lap = (at(curr, x - 1, y) + at(curr, x + 1, y) + at(curr, x, y - 1) + at(curr, x, y + 1) - 4 * u) * vary[i];
-        next[i] = (2 - gamma) * u - (1 - gamma) * prev[i] + c2 * lap - rest * u;
+        var g = gamma;
+        if (fine && fine.matches) {
+          var rim = x;
+          if (y < rim) rim = y;
+          var xr = cols - 1 - x;
+          var yr = rows - 1 - y;
+          if (xr < rim) rim = xr;
+          if (yr < rim) rim = yr;
+          if (rim < 5) g = gamma + (5 - rim) * 0.03;
+        }
+        next[i] = (2 - g) * u - (1 - g) * prev[i] + c2 * lap - rest * u;
       }
     }
     var swap = prev;
@@ -280,6 +371,7 @@
     }
     aim.x = e.clientX;
     aim.y = e.clientY;
+    aim.kind = e.pointerType || "";
     aim.has = true;
     aim.lastEvt = now;
   }
