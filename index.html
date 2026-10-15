@@ -11,16 +11,13 @@
 <body class="home-page">
   <script>
   (function () {
-    var fine = window.matchMedia && window.matchMedia("(pointer: fine)");
-    var hover = window.matchMedia && window.matchMedia("(hover: hover)");
-    if (!fine || !fine.matches || !hover || !hover.matches) return;
     var canvas = document.createElement("canvas");
     canvas.className = "info-field";
     canvas.id = "info-field";
     canvas.setAttribute("aria-hidden", "true");
     document.body.insertBefore(canvas, document.body.firstChild);
     var s = document.createElement("script");
-    s.src = "js/info.js?v=20261015i";
+    s.src = "js/info.js?v=20261015m";
     document.body.appendChild(s);
   })();
   </script>
