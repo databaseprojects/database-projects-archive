@@ -176,6 +176,144 @@ body {
   letter-spacing: 0.04em;
 }
 
+.home-blurb {
+  margin: 0 0 0.9rem;
+  max-width: 40em;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+}
+
+/* Home: the Info dot field sits behind drifting examples, and the filing line stays on top. */
+body.home-page .sheet {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+body.home-page .bk-nav {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  pointer-events: none;
+}
+
+body.home-page .home-name,
+body.home-page .home-blurb,
+body.home-page .home-intro {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  pointer-events: auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+body.home-page .bk-nav a,
+body.home-page .home-list a {
+  pointer-events: auto;
+  background: #fff;
+}
+
+.home-float {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  margin: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.home-float a {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  display: block;
+  pointer-events: auto;
+  text-decoration: none;
+  animation: home-drift var(--dur, 40s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+.home-float img {
+  display: block;
+  width: 72px;
+  height: auto;
+  max-height: 96px;
+}
+
+.home-swatch {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.home-swatch.is-pale {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.home-float-label {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0.2em 0.45em;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.55);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.home-float a.label-up .home-float-label {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-float a:hover .home-float-label,
+  .home-float a:focus-visible .home-float-label {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-float img {
+    width: 46px;
+    max-height: 62px;
+  }
+
+  .home-swatch {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@keyframes home-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--dx), var(--dy), 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-float a {
+    animation: none;
+  }
+}
+
 .home-list {
   list-style: none;
   margin: 2.4rem 0 4rem;
