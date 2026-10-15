@@ -2465,6 +2465,68 @@ var FP_TIME = {
     runGlides(listGlide, { dur: 520, id: "fp-flow" });
   }
 
+  function activeFilterTags() {
+    var raw = document.documentElement.getAttribute("data-fp-filter");
+    if (!raw) return null;
+    return raw.split("\u001f");
+  }
+
+  function tileHasTags(tile, tags) {
+    var owned = tile._fpTags || [];
+    var i;
+    for (i = 0; i < tags.length; i++) {
+      if (owned.indexOf(tags[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  /* A tag already gathered matches into one cluster. Shuffle only swaps
+     seats inside that cluster, and swaps the other prints among the seats
+     they already hold under it. */
+  function shuffleTaggedTable(tags) {
+    var list = tiles();
+    if (list.length < 2) return;
+    var matches = [];
+    var rest = [];
+    list.forEach(function (tile) {
+      if (tileHasTags(tile, tags)) matches.push(tile);
+      else rest.push(tile);
+    });
+    var before = new Map();
+    matches.forEach(function (tile) {
+      if (tile.hidden || tile.classList.contains("fp-tag-leave")) return;
+      var r = tile.getBoundingClientRect();
+      if (r.width) before.set(tile, r);
+    });
+    list.forEach(dropMotion);
+    function swapSeats(group) {
+      if (group.length < 2) return;
+      var slots = group.map(function (tile) {
+        return {
+          x: parseFloat(tile.style.getPropertyValue("--fp-nx")) || 0,
+          y: parseFloat(tile.style.getPropertyValue("--fp-ny")) || 0
+        };
+      });
+      var perm = derange(group.length);
+      group.forEach(function (tile, k) {
+        var dest = slots[perm[k]];
+        tile.style.setProperty("--fp-nx", dest.x.toFixed(1) + "px");
+        tile.style.setProperty("--fp-ny", dest.y.toFixed(1) + "px");
+      });
+    }
+    swapSeats(matches);
+    swapSeats(rest);
+    var g = grid();
+    fitTableHeight(g);
+    if (g) void g.offsetWidth;
+    var listGlide = [];
+    matches.forEach(function (tile) {
+      var from = before.get(tile);
+      if (from) listGlide.push({ tile: tile, from: from });
+    });
+    runGlides(listGlide, { dur: 520, id: "fp-flow" });
+  }
+
   function shuffle() {
     if (draggingSlider || itemDrag) return;
     var g = grid();
@@ -2476,7 +2538,9 @@ var FP_TIME = {
       return;
     }
     if (isTable()) {
-      shuffleTableSpread();
+      var tags = activeFilterTags();
+      if (tags) shuffleTaggedTable(tags);
+      else shuffleTableSpread();
       return;
     }
     for (var i = items.length - 1; i > 0; i--) {
