@@ -189,16 +189,40 @@
   stroke-linecap: round;
 }
 
-.sh-run {
+.sh-hill polyline {
+  stroke-width: var(--sh-stroke, 0.3px);
+}
+
+.sh-lb polyline {
   stroke-width: 1.15;
 }
 
+.sh-hill polyline.sh-contour {
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: var(--sh-contour, 0.17px);
+}
+
+.sh-lb polyline.sh-contour {
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: 0.65;
+}
+
+.sh-lb line {
+  fill: none;
+  stroke-width: 1.15;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
 .sh-hill polyline.sh-easy,
-.sh-lb polyline.sh-easy { stroke: #1b7a32; }
+.sh-lb polyline.sh-easy,
+.sh-lb line.sh-easy { stroke: #1b7a32; }
 .sh-hill polyline.sh-intermediate,
-.sh-lb polyline.sh-intermediate { stroke: #1a4f9c; }
+.sh-lb polyline.sh-intermediate,
+.sh-lb line.sh-intermediate { stroke: #1a4f9c; }
 .sh-hill polyline.sh-advanced,
-.sh-lb polyline.sh-advanced { stroke: #111; }
+.sh-lb polyline.sh-advanced,
+.sh-lb line.sh-advanced { stroke: #111; }
 .sh-hill polyline.sh-unrated,
 .sh-lb polyline.sh-unrated { stroke: #8a8a8a; }
 
@@ -231,7 +255,6 @@
 
 .sh-hill .sh-lift,
 .sh-lb .sh-lift {
-  stroke-width: 1.15;
   stroke-dasharray: 4 3;
 }
 
