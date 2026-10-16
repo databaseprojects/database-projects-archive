@@ -201,45 +201,41 @@
     return shift;
   }
 
-  function contourPieces(points, shift) {
-    var s = shift.s == null ? 1 : shift.s;
-    var dx = shift.dx || 0;
-    var dy = shift.dy || 0;
-    var pieces = [];
-    var cmd = [];
-    function flush() {
-      if (cmd.length >= 2) pieces.push(cmd.join(" "));
-      cmd = [];
-    }
-    (points || "").trim().split(/\s+/).forEach(function (pair) {
-      if (!pair) return;
-      var xy = pair.split(",");
-      var x = parseFloat(xy[0]) * s + dx;
-      var y = parseFloat(xy[1]) * s + dy;
-      var clip = shift.clip == null ? DRAW : shift.clip;
-      if (y > clip || x < -30 || x > SQUARE + 30 || y < -30) {
-        flush();
-        return;
-      }
-      cmd.push(x.toFixed(1) + "," + y.toFixed(1));
-    });
-    flush();
-    return pieces;
-  }
+  var clipSerial = 0;
 
   function paintContours(svg, lines, shift) {
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
     if (old) old.parentNode.removeChild(old);
+    var oldClip = svg.querySelector("clipPath.sh-frame");
+    if (oldClip && oldClip.parentNode) oldClip.parentNode.removeChild(oldClip);
+    var defs = svg.querySelector("defs");
+    if (!defs) {
+      defs = document.createElementNS(NS, "defs");
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    var id = "sh-frame-" + (++clipSerial);
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", id);
+    clip.setAttribute("class", "sh-frame");
+    var rect = document.createElementNS(NS, "rect");
+    var frame = shift.clip == null ? SQUARE : shift.clip;
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", String(SQUARE));
+    rect.setAttribute("height", String(frame));
+    clip.appendChild(rect);
+    defs.appendChild(clip);
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
+    g.setAttribute("clip-path", "url(#" + id + ")");
     (lines || []).forEach(function (pts) {
-      contourPieces(pts, shift).forEach(function (points) {
-        var line = document.createElementNS(NS, "polyline");
-        line.setAttribute("class", "sh-contour");
-        line.setAttribute("points", points);
-        g.appendChild(line);
-      });
+      var mapped = mapPoints(pts, shift);
+      if (mapped.split(/\s+/).length < 2) return;
+      var line = document.createElementNS(NS, "polyline");
+      line.setAttribute("class", "sh-contour");
+      line.setAttribute("points", mapped);
+      g.appendChild(line);
     });
     svg.insertBefore(g, svg.firstChild);
   }
@@ -254,7 +250,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261016i").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261016w").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -712,7 +708,7 @@
       fetch("alberta-names.json?v=20261016i").then(function (res) {
         return res.ok ? res.json() : {};
       }).catch(function () { return {}; }),
-      fetch("contours/alberta-index.json?v=20261016i").then(function (res) {
+      fetch("contours/alberta-index.json?v=20261016w").then(function (res) {
         return res.ok ? res.json() : { hills: {} };
       }).catch(function () { return { hills: {} }; })
     ]).then(function (pair) {
@@ -1715,7 +1711,7 @@
     fetch("names.json?v=20261016f").then(function (res) {
       return res.ok ? res.json() : {};
     }).catch(function () { return {}; }),
-    fetch("contours/index.json?v=20261016g").then(function (res) {
+    fetch("contours/index.json?v=20261016w").then(function (res) {
       return res.ok ? res.json() : { hills: {} };
     }).catch(function () { return { hills: {} }; })
   ]).then(function (pair) {
