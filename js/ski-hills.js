@@ -5,6 +5,9 @@
   var tags = document.querySelector(".sh-tags");
   var hills = [];
   var region = "bc";
+  var SQUARE = 1000;
+  var BAND = 120;
+  var DRAW = SQUARE - BAND;
 
   function slugFromHash() {
     return decodeURIComponent((location.hash || "").replace(/^#/, "")).trim();
@@ -68,7 +71,9 @@
     card.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>" +
       '<span class="sh-hill-name"></span>';
     card.querySelector(".sh-hill-name").textContent = hill.name || "Unnamed hill";
-    card._shift = centerArt(card.querySelector("svg"));
+    var svg = card.querySelector("svg");
+    card._shift = fitArt(svg);
+    writeCaption(svg, hill);
     card._hill = hill;
     hill.el = card;
     grid.appendChild(card);
@@ -95,23 +100,55 @@
     return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
   }
 
-  function shiftPoints(points, dx, dy) {
+  function mapPoints(points, shift) {
+    var s = shift.s == null ? 1 : shift.s;
+    var dx = shift.dx || 0;
+    var dy = shift.dy || 0;
     return (points || "").trim().split(/\s+/).map(function (pair) {
       var xy = pair.split(",");
-      return (parseFloat(xy[0]) + dx).toFixed(1) + "," + (parseFloat(xy[1]) + dy).toFixed(1);
+      return (parseFloat(xy[0]) * s + dx).toFixed(1) + "," + (parseFloat(xy[1]) * s + dy).toFixed(1);
     }).join(" ");
   }
 
-  function centerArt(svg) {
+  function fitArt(svg) {
     var box = boundsOf(svg);
-    if (!box) return { dx: 0, dy: 0 };
-    var dx = 500 - (box.minX + box.maxX) / 2;
-    var dy = 500 - (box.minY + box.maxY) / 2;
-    if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) return { dx: 0, dy: 0 };
+    var pad = 40;
+    if (!box) return { s: 1, dx: 0, dy: 0 };
+    var bw = Math.max(box.maxX - box.minX, 1);
+    var bh = Math.max(box.maxY - box.minY, 1);
+    var s = Math.min((SQUARE - pad * 2) / bw, (DRAW - pad * 2) / bh);
+    var dx = SQUARE / 2 - ((box.minX + box.maxX) / 2) * s;
+    var dy = pad + (DRAW - pad * 2) / 2 - ((box.minY + box.maxY) / 2) * s;
+    var shift = { s: s, dx: dx, dy: dy };
     Array.prototype.forEach.call(svg.querySelectorAll("polyline.sh-run, polyline.sh-lift"), function (node) {
-      node.setAttribute("points", shiftPoints(node.getAttribute("points"), dx, dy));
+      node.setAttribute("points", mapPoints(node.getAttribute("points"), shift));
     });
-    return { dx: dx, dy: dy };
+    return shift;
+  }
+
+  function contourPieces(points, shift) {
+    var s = shift.s == null ? 1 : shift.s;
+    var dx = shift.dx || 0;
+    var dy = shift.dy || 0;
+    var pieces = [];
+    var cmd = [];
+    function flush() {
+      if (cmd.length >= 2) pieces.push(cmd.join(" "));
+      cmd = [];
+    }
+    (points || "").trim().split(/\s+/).forEach(function (pair) {
+      if (!pair) return;
+      var xy = pair.split(",");
+      var x = parseFloat(xy[0]) * s + dx;
+      var y = parseFloat(xy[1]) * s + dy;
+      if (y > DRAW || x < -30 || x > SQUARE + 30 || y < -30) {
+        flush();
+        return;
+      }
+      cmd.push(x.toFixed(1) + "," + y.toFixed(1));
+    });
+    flush();
+    return pieces;
   }
 
   function paintContours(svg, lines, shift) {
@@ -121,10 +158,12 @@
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
     (lines || []).forEach(function (pts) {
-      var line = document.createElementNS(NS, "polyline");
-      line.setAttribute("class", "sh-contour");
-      line.setAttribute("points", shiftPoints(pts, shift.dx, shift.dy));
-      g.appendChild(line);
+      contourPieces(pts, shift).forEach(function (points) {
+        var line = document.createElementNS(NS, "polyline");
+        line.setAttribute("class", "sh-contour");
+        line.setAttribute("points", points);
+        g.appendChild(line);
+      });
     });
     svg.insertBefore(g, svg.firstChild);
   }
@@ -162,7 +201,7 @@
     if (w < 2) return;
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
     var maxH = window.innerHeight * 0.88;
-    var gw = Math.min(maxW, maxH * (1000 / 1080));
+    var gw = Math.min(maxW, maxH);
     if (gw < 1) return;
     var scale = w / gw;
     g.style.setProperty("--sh-stroke", (1.15 * scale).toFixed(3) + "px");
@@ -216,20 +255,21 @@
     return { green: green, blue: blue, black: black };
   }
 
-  function textWidth(text, size) {
+  function textWidth(text, size, bold) {
     var canvas = textWidth.canvas || (textWidth.canvas = document.createElement("canvas"));
     var ctx = canvas.getContext("2d");
-    ctx.font = size + "px 'Courier New', Courier, monospace";
+    ctx.font = (bold ? "700 " : "") + size + "px 'Courier New', Courier, monospace";
     return ctx.measureText(text).width;
   }
 
-  function textPart(str, size) {
+  function textPart(str, size, bold) {
     var text = document.createElementNS(NS, "text");
     text.setAttribute("fill", "#111");
     text.setAttribute("font-family", "Courier New, Courier, monospace");
     text.setAttribute("font-size", String(size));
+    if (bold) text.setAttribute("font-weight", "700");
     text.textContent = str;
-    return { node: text, w: textWidth(str, size) };
+    return { node: text, w: textWidth(str, size, bold) };
   }
 
   function keyPart(cls, count, size) {
@@ -262,7 +302,7 @@
     var built = [];
     while (size >= 12) {
       built = parts.map(function (part) {
-        return part.key ? keyPart(part.key, part.n, size) : textPart(part.text, size);
+        return part.key ? keyPart(part.key, part.n, size) : textPart(part.text, size, part.bold);
       });
       var total = built.reduce(function (sum, part) { return sum + part.w; }, 0);
       var minGaps = Math.max(parts.length - 1, 0) * 14;
@@ -321,7 +361,7 @@
   function writeCaption(svg, hill) {
     var cap = document.createElementNS(NS, "g");
     cap.setAttribute("class", "sh-caption");
-    var nameRow = [{ text: hill.name || "Unnamed hill" }];
+    var nameRow = [{ text: hill.name || "Unnamed hill", bold: true }];
     var loc = locationText(hill);
     var gps = gpsText(hill);
     if (loc) nameRow.push({ text: loc });
@@ -336,16 +376,12 @@
     }
     if (typeof hill.drop === "number") elev.push({ text: "Drop " + hill.drop + " m" });
     if (typeof hill.base === "number") elev.push({ text: "Base " + hill.base + " m" });
-    var y = 1034;
-    if (keys.length || elev.length) {
-      layoutEnds(cap, y, keys, elev, 18);
-      y += 36;
-    }
-    layoutRow(cap, y, nameRow, 20);
+    var yName = DRAW + 78;
+    if (keys.length || elev.length) layoutEnds(cap, DRAW + 40, keys, elev, 18);
+    layoutRow(cap, yName, nameRow, 20);
     svg.appendChild(cap);
-    var height = Math.ceil(y + 34);
-    svg.setAttribute("viewBox", "0 0 1000 " + height);
-    return height;
+    svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
+    return SQUARE;
   }
 
   function hideLb() {
@@ -399,12 +435,11 @@
     loadContour(card);
     var big = src.cloneNode(true);
     big.removeAttribute("aria-hidden");
-    var poster = writeCaption(big, card._hill || { name: name ? name.textContent : "" });
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
     var maxH = window.innerHeight * 0.88;
-    var scale = Math.min(maxW / 1000, maxH / poster);
-    big.style.width = (1000 * scale).toFixed(1) + "px";
-    big.style.height = (poster * scale).toFixed(1) + "px";
+    var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
+    big.style.width = (SQUARE * scale).toFixed(1) + "px";
+    big.style.height = (SQUARE * scale).toFixed(1) + "px";
     lb.appendChild(big);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
