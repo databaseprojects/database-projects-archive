@@ -508,10 +508,10 @@
       if (counts.black) keys.push({ key: "sh-advanced", n: counts.black });
       if (keys.length) top.push({ label: "RUNS", keys: keys });
     }
+    if (hill.type && TYPES[hill.type]) top.push({ label: "TYPE", text: TYPES[hill.type] });
     if (typeof hill.drop === "number") top.push({ label: "DROP", text: hill.drop + " m" });
     if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
     var bottom = [{ label: "NAME", text: hill.name || "Unnamed hill" }];
-    if (hill.type && TYPES[hill.type]) bottom.push({ label: "TYPE", text: TYPES[hill.type] });
     var loc = locationText(hill);
     var gps = gpsText(hill);
     if (loc) bottom.push({ label: "REGION", text: loc });
