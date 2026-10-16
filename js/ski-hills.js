@@ -242,7 +242,7 @@
     line.setAttribute("x2", len.toFixed(1));
     line.setAttribute("y1", mid);
     line.setAttribute("y2", mid);
-    var gap = size * 0.4;
+    var gap = size * 0.55;
     var text = document.createElementNS(NS, "text");
     text.setAttribute("x", (len + gap).toFixed(1));
     text.setAttribute("y", "0");
@@ -279,29 +279,69 @@
     });
   }
 
+  function groupWidth(parts, gap) {
+    return parts.reduce(function (sum, part) { return sum + part.w; }, 0) + Math.max(parts.length - 1, 0) * gap;
+  }
+
+  function layoutEnds(svg, y, leftDesc, rightDesc, startSize) {
+    var pad = 36;
+    var inner = 1000 - pad * 2;
+    var size = startSize;
+    var left = [];
+    var right = [];
+    var gap = 22;
+    function build(desc, sz) {
+      return desc.map(function (part) {
+        return part.key ? keyPart(part.key, part.n, sz) : textPart(part.text, sz);
+      });
+    }
+    while (size >= 12) {
+      left = build(leftDesc, size);
+      right = build(rightDesc, size);
+      gap = Math.max(16, size * 0.9);
+      var used = groupWidth(left, gap) + groupWidth(right, gap);
+      var between = left.length && right.length ? gap * 2 : 0;
+      if (used + between <= inner || size === 12) break;
+      size -= 1;
+    }
+    var x = pad;
+    left.forEach(function (part) {
+      part.node.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
+      svg.appendChild(part.node);
+      x += part.w + gap;
+    });
+    var rx = 1000 - pad - groupWidth(right, gap);
+    right.forEach(function (part) {
+      part.node.setAttribute("transform", "translate(" + rx.toFixed(1) + " " + y.toFixed(1) + ")");
+      svg.appendChild(part.node);
+      rx += part.w + gap;
+    });
+  }
+
   function writeCaption(svg, hill) {
     var cap = document.createElementNS(NS, "g");
     cap.setAttribute("class", "sh-caption");
-    var row1 = [{ text: hill.name || "Unnamed hill" }];
+    var nameRow = [{ text: hill.name || "Unnamed hill" }];
     var loc = locationText(hill);
     var gps = gpsText(hill);
-    if (loc) row1.push({ text: loc });
-    if (gps) row1.push({ text: gps });
-    var row2 = [];
+    if (loc) nameRow.push({ text: loc });
+    if (gps) nameRow.push({ text: gps });
+    var keys = [];
+    var elev = [];
     var counts = diffCounts(hill);
     if (counts) {
-      if (counts.green) row2.push({ key: "sh-easy", n: counts.green });
-      if (counts.blue) row2.push({ key: "sh-intermediate", n: counts.blue });
-      if (counts.black) row2.push({ key: "sh-advanced", n: counts.black });
+      if (counts.green) keys.push({ key: "sh-easy", n: counts.green });
+      if (counts.blue) keys.push({ key: "sh-intermediate", n: counts.blue });
+      if (counts.black) keys.push({ key: "sh-advanced", n: counts.black });
     }
-    if (typeof hill.drop === "number") row2.push({ text: "Drop " + hill.drop + " m" });
-    if (typeof hill.base === "number") row2.push({ text: "Base " + hill.base + " m" });
+    if (typeof hill.drop === "number") elev.push({ text: "Drop " + hill.drop + " m" });
+    if (typeof hill.base === "number") elev.push({ text: "Base " + hill.base + " m" });
     var y = 1034;
-    layoutRow(cap, y, row1, 20);
-    if (row2.length) {
+    if (keys.length || elev.length) {
+      layoutEnds(cap, y, keys, elev, 18);
       y += 36;
-      layoutRow(cap, y, row2, 18);
     }
+    layoutRow(cap, y, nameRow, 20);
     svg.appendChild(cap);
     var height = Math.ceil(y + 34);
     svg.setAttribute("viewBox", "0 0 1000 " + height);
