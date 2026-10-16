@@ -69,6 +69,7 @@ var FP_TIME = {
   var draggingSlider = false;
   var zVal = null;
   var pendingCols = null;
+  var lazyIo = null;
 
   function grid() {
     return document.querySelector(".fp-grid");
@@ -427,6 +428,11 @@ var FP_TIME = {
       return;
     }
     imgs.forEach(function (img) {
+      /* Unloaded tiles keep their box and must not hold the page open. */
+      if (!img.getAttribute("src")) {
+        note(false);
+        return;
+      }
       var late = !(img.naturalWidth > 0);
       var onDone = function () {
         if (img._fpSettled) return;
@@ -443,21 +449,47 @@ var FP_TIME = {
     setTimeout(finish, FP_TIME.IMAGE_GIVE_UP);
   }
 
-  function wakeImages() {
-    var g = grid();
-    if (!g) return;
-    Array.prototype.forEach.call(g.querySelectorAll("img"), function (img) {
-      var src = img.getAttribute("src");
-      if (!src) return;
-      img.decoding = "sync";
-      img.loading = "eager";
-      var redo = function () {
-        if (img.naturalWidth > 0) return;
-        img.src = src;
-      };
-      if (img.decode) img.decode().then(function () {}).catch(redo);
-      else if (img.complete) redo();
+  /* One viewport beyond the screen, matching the observer margin. */
+  function photoInReach(tile) {
+    var r = tile.getBoundingClientRect();
+    if (!(r.width > 0 || r.height > 0)) return false;
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var vw = window.innerWidth || document.documentElement.clientWidth || 800;
+    return r.bottom >= -vh && r.top <= vh + vh && r.right >= -vw && r.left <= vw + vw;
+  }
+
+  function assignPhoto(tile) {
+    var img = imgOf(tile);
+    if (!img || img.getAttribute("src")) return;
+    var url = tile.getAttribute("data-front") || "";
+    if (!url) return;
+    img.decoding = "async";
+    img.src = url;
+  }
+
+  function armLazy() {
+    var pending = [];
+    tiles().forEach(function (tile) {
+      var img = imgOf(tile);
+      if (!img || img.getAttribute("src")) return;
+      if (photoInReach(tile)) assignPhoto(tile);
+      else pending.push(tile);
     });
+    if (!pending.length) return;
+    if (!window.IntersectionObserver) {
+      pending.forEach(assignPhoto);
+      return;
+    }
+    if (!lazyIo) {
+      lazyIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          assignPhoto(entry.target);
+          lazyIo.unobserve(entry.target);
+        });
+      }, { root: null, rootMargin: "100% 0px", threshold: 0 });
+    }
+    pending.forEach(function (tile) { lazyIo.observe(tile); });
   }
 
   function setCount() {
@@ -2418,6 +2450,7 @@ var FP_TIME = {
       var tagOn = document.documentElement.hasAttribute("data-fp-filter");
       if (window.fpGallery.tagLayout && from !== "antigravity" && (!reuseTable || tagOn)) window.fpGallery.tagLayout();
       if (mode === "table") fitTableHeight(g);
+      armLazy();
     };
     if (animate && mode !== "antigravity" && from !== "antigravity") flow(apply, { step: 20, total: 480, dur: 480 });
     else apply();
@@ -2586,6 +2619,8 @@ var FP_TIME = {
     runGlides(listGlide, { dur: 520, id: "fp-flow" });
   }
 
+  /* Every print is in this list, loaded or not. Lazy loading only fetches
+     whatever the new arrangement puts near the screen. */
   function shuffle() {
     if (draggingSlider || itemDrag) return;
     var g = grid();
@@ -2594,12 +2629,14 @@ var FP_TIME = {
     if (items.length < 2) return;
     if (isAg()) {
       reseedAgShuffle(g);
+      armLazy();
       return;
     }
     if (isTable()) {
       var tags = activeFilterTags();
       if (tags) shuffleTaggedTable(tags);
       else shuffleTableSpread();
+      armLazy();
       return;
     }
     for (var i = items.length - 1; i > 0; i--) {
@@ -2613,6 +2650,7 @@ var FP_TIME = {
         g.appendChild(tile);
       });
     }, { step: 18, total: 420, dur: 420 });
+    armLazy();
   }
 
   function onEnter(e) {
@@ -3026,10 +3064,6 @@ var FP_TIME = {
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
-  wakeImages();
-  window.addEventListener("load", wakeImages);
-  window.addEventListener("pageshow", wakeImages);
-
   try {
     tiles().forEach(function (tile) {
       syncAspect(tile);
@@ -3040,6 +3074,7 @@ var FP_TIME = {
     if (!phoneSlider() && layoutMode() === "table" && savedCols() == null) startCols = clampSlider(layoutSliderDefault("table"));
     setCols(startCols, false);
     setLayout(layoutMode(), false);
+    armLazy();
     settleArrival();
   } finally {
     document.documentElement.style.visibility = "";
