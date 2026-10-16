@@ -20,7 +20,33 @@
 .sh-zoom {
   display: inline-flex;
   align-items: center;
+  gap: 0.7rem;
   margin-left: auto;
+}
+
+.sh-find {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 9.5rem;
+  margin: 0;
+  padding: 0.22em 0.55em;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.sh-find::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.sh-find:focus {
+  outline: 1px solid #000;
+  outline-offset: 2px;
 }
 
 .sh-zslider {
@@ -166,8 +192,14 @@
     margin-left: 0;
   }
 
+  .sh-find {
+    flex: 0 0 8.2rem;
+    width: 8.2rem;
+  }
+
   .sh-zslider {
-    width: 100%;
+    flex: 1 1 auto;
+    width: auto;
     max-width: 100%;
   }
 }
