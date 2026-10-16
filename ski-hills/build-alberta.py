@@ -156,9 +156,10 @@ def use_buckets(uses):
 
 
 def hill_type(name, activities, has_lifts, downhill_m, nordic_m, backcountry_m):
-    """Downhill needs lifts and downhill runs. Backcountry is skitour/backcountry,
-    or no lifts and no resort name with other non-nordic runs. Cross-country is
-    nordic runs only. Mixed hills take the longer run total.
+    """Downhill or cross-country only. Nordic-only hills are cross-country.
+    Mixed hills take the longer run total. A result that would have been
+    backcountry is cross-country when the nordic length is strictly longer
+    than the downhill length and the skitour length, and downhill otherwise.
     """
     acts = set(activities or [])
     down, nordic, back = float(downhill_m or 0), float(nordic_m or 0), float(backcountry_m or 0)
@@ -187,13 +188,20 @@ def hill_type(name, activities, has_lifts, downhill_m, nordic_m, backcountry_m):
             eligible["backcountry"] = max(eligible.get("backcountry", 0), down + back)
     if not eligible:
         if down > 0 and (has_lifts or resort):
-            return "downhill"
-        if nordic > 0:
-            return "cross-country"
-        return "backcountry" if not has_lifts else "downhill"
-    if len(eligible) == 1:
-        return next(iter(eligible))
-    return max(eligible, key=lambda key: eligible[key])
+            kind = "downhill"
+        elif nordic > 0:
+            kind = "cross-country"
+        else:
+            kind = "backcountry" if not has_lifts else "downhill"
+    elif len(eligible) == 1:
+        kind = next(iter(eligible))
+    else:
+        kind = max(eligible, key=lambda key: eligible[key])
+    if kind != "backcountry":
+        return kind
+    if nordic > down and nordic > back:
+        return "cross-country"
+    return "downhill"
 
 
 def absorb(path, hills, key, keep_diff=False):
