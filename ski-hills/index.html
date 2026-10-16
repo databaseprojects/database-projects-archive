@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261016z">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261017a">
 </head>
 <body>
   <div class="sheet">
@@ -24,14 +24,9 @@
     </span>
   </div>
   <p class="sh-note">Line drawings of ski hills in British Columbia and Alberta. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
-  <p class="sh-legend" aria-label="Run colour">
-    <span><i class="sh-key sh-easy"></i> Novice and easy</span>
-    <span><i class="sh-key sh-intermediate"></i> Intermediate</span>
-    <span><i class="sh-key sh-advanced"></i> Advanced and expert</span>
-    <span><i class="sh-key sh-unrated"></i> Unrated</span>
-  </p>
   <div class="sh-tags" role="group" aria-label="Place">
     <span class="sh-prov">
+      <button type="button" class="sh-tag" data-sh-province="all" aria-pressed="false">All</button>
       <button type="button" class="sh-tag sh-on" data-sh-province="bc" aria-pressed="true">BC</button>
       <button type="button" class="sh-tag" data-sh-province="ab" aria-pressed="false">Alberta</button>
     </span>
@@ -57,6 +52,7 @@
       <button type="button" class="sh-tag" data-sh-type="downhill" aria-pressed="false">Downhill</button>
       <button type="button" class="sh-tag" data-sh-type="cross-country" aria-pressed="false">Cross-country</button>
     </span>
+    <button type="button" class="sh-tag" id="sh-popular-btn" aria-pressed="false">Most popular</button>
   </div>
   <div class="sh-grid" id="sh-grid"></div>
   <p class="sh-credit">© OpenStreetMap contributors, OpenSkiMap.org (ODbL). Contains information licensed under the Open Government Licence – Canada.</p>
@@ -65,6 +61,6 @@
   </div>
   <script src="../js/shared.js?v=20261013e"></script>
   <script src="../js/prints.js?v=20261016y"></script>
-  <script src="../js/ski-hills.js?v=20261016z"></script>
+  <script src="../js/ski-hills.js?v=20261017a"></script>
 </body>
 </html>
