@@ -258,7 +258,7 @@
       card._contourLines = data.lines || [];
       paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE });
       var lb = document.getElementById("sh-lb");
-      if (lb && lb._card === card && lb._shift) paintContours(lb.querySelector("svg"), card._contourLines, lb._shift);
+      if (lb && lb._card === card && lb._shift && lb._svg) paintContours(lb._svg, card._contourLines, lb._shift);
       refreshMockArt(card);
     }).catch(function () {
       card._contourState = "err";
@@ -558,7 +558,10 @@
     var lb = document.getElementById("sh-lb");
     if (!lb || lb._closing) return;
     lb._closing = true;
-    var big = lb.querySelector("svg");
+    var track = lb.querySelector(".sh-track");
+    if (track) track.style.transition = "none";
+    lb.classList.remove("sh-framed");
+    var big = lb._svg;
     var from = lb._from;
     lb.classList.add("sh-lb-closing");
     lb.classList.remove("sh-lb-on");
@@ -623,11 +626,12 @@
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift);
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
-    var maxH = window.innerHeight * 0.88;
+    var maxH = window.innerHeight * 0.88 - 36;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
-    big.style.width = (SQUARE * scale).toFixed(1) + "px";
-    big.style.height = (SQUARE * scale).toFixed(1) + "px";
-    lb.appendChild(big);
+    var px = (SQUARE * scale).toFixed(1) + "px";
+    big.style.width = "100%";
+    big.style.height = "100%";
+    mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     requestAnimationFrame(function () {
@@ -656,7 +660,6 @@
     big.addEventListener("click", function (e) {
       e.stopPropagation();
     });
-    syncMock();
   }
 
   function syncFromHash(scroll) {
@@ -1472,10 +1475,6 @@
   }
 
   window.addEventListener("hashchange", function () { syncFromHash(view !== "map"); });
-  var mockShell = null;
-  var mockSlug = "";
-  var mockMode = "frame";
-
   function printsOn() {
     return !!(window.SH_PRINTS && window.SH_PRINTS.enabled === true);
   }
@@ -1490,108 +1489,12 @@
     return svg;
   }
 
-  function mockHill() {
-    var lb = document.getElementById("sh-lb");
-    if (lb && !lb._closing && lb._card && lb._card._hill) return lb._card._hill;
-    if (view !== "map" || !mapField) return null;
-    if (lastPan) {
-      var named = null;
-      hills.forEach(function (hill) {
-        if (hill.slug === lastPan) named = hill;
-      });
-      if (named) return named;
-    }
-    if (!shBasemap || shBasemap.getZoom() < 8.5) return null;
-    var lngLat = shBasemap.getCenter();
-    var center = shBasemap.project([lngLat.lng, lngLat.lat]);
-    var best = null;
-    var bestD = Infinity;
-    hills.forEach(function (hill) {
-      if (!matches(hill) || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
-      var p = shBasemap.project([hill.lon, hill.lat]);
-      var d = Math.hypot(p.x - center.x, p.y - center.y);
-      if (d < bestD) {
-        bestD = d;
-        best = hill;
-      }
-    });
-    var limit = Math.min(mapField.clientWidth, mapField.clientHeight) * 0.12;
-    if (!best || bestD > limit) return null;
-    return best;
-  }
-
-  function roomSvg() {
-    var holder = document.createElement("div");
-    holder.innerHTML = '<svg class="sh-room" viewBox="0 0 144 108" role="img" aria-label="A 10 by 10 inch print on the wall of a room">' +
-      '<rect width="144" height="78" fill="#f4f3f0"></rect>' +
-      '<rect y="78" width="144" height="30" fill="#e7e2d8"></rect>' +
-      '<rect y="77.2" width="144" height="0.8" fill="#111"></rect>' +
-      '<rect class="sh-room-sofa" x="30" y="50" width="84" height="28" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
-      '<rect x="30" y="50" width="8" height="26" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
-      '<rect x="106" y="50" width="8" height="26" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
-      '<rect x="38" y="56" width="68" height="14" fill="#fff" stroke="#111" stroke-width="0.3"></rect>' +
-      '<g class="sh-room-frame" transform="translate(64.7 14)">' +
-      '<rect width="14.6" height="14.6" fill="#161616"></rect>' +
-      '<rect x="0.55" y="0.55" width="13.5" height="13.5" fill="#f6f3ec"></rect>' +
-      "</g></svg>";
-    return holder.querySelector("svg");
-  }
-
-  function placeMockArt(hill) {
-    if (!mockShell || !hill) return;
-    var frameArt = mockShell.querySelector(".sh-mock-art");
-    var room = mockShell.querySelector(".sh-mock-room");
-    frameArt.innerHTML = "";
-    frameArt.appendChild(mockCardSvg(hill));
-    room.innerHTML = "";
-    var scene = roomSvg();
-    var art = mockCardSvg(hill);
-    art.setAttribute("class", "sh-card sh-room-art");
-    art.setAttribute("x", "2.3");
-    art.setAttribute("y", "2.3");
-    art.setAttribute("width", "10");
-    art.setAttribute("height", "10");
-    scene.querySelector(".sh-room-frame").appendChild(art);
-    room.appendChild(scene);
-    mockSlug = hill.slug;
-  }
-
-  function refreshMockArt(card) {
-    if (!mockShell || mockShell.hidden || !card || card.id !== mockSlug) return;
-    if (card._hill) placeMockArt(card._hill);
-  }
-
-  function syncCart() {
-    var cart = mockShell && mockShell.querySelector(".sh-mock-cart");
-    if (!cart) return;
+  function syncCart(root) {
     var on = printsOn();
-    cart.disabled = !on;
-    cart.textContent = on ? "Add to Cart" : "Prints coming soon";
-  }
-
-  function setMockMode(mode) {
-    mockMode = mode === "room" ? "room" : "frame";
-    if (!mockShell) return;
-    mockShell.dataset.mock = mockMode;
-    Array.prototype.forEach.call(mockShell.querySelectorAll("[data-sh-mock]"), function (btn) {
-      var on = btn.getAttribute("data-sh-mock") === mockMode;
-      btn.classList.toggle("sh-on", on);
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    Array.prototype.forEach.call((root || document).querySelectorAll(".sh-cart"), function (cart) {
+      cart.disabled = !on;
+      cart.textContent = on ? "Add to Cart" : "Prints coming soon";
     });
-  }
-
-  function mockOpen() {
-    return !!(mockShell && mockShell.classList.contains("sh-mock-open"));
-  }
-
-  function setMockOpen(open) {
-    if (!mockShell) return;
-    mockShell.classList.toggle("sh-mock-open", open);
-    var panel = mockShell.querySelector(".sh-mock-panel");
-    if (panel) panel.inert = !open;
-    var tab = mockShell.querySelector(".sh-mock-tab");
-    tab.setAttribute("aria-expanded", open ? "true" : "false");
-    tab.setAttribute("aria-label", open ? "Close mock-up" : "Open mock-up");
   }
 
   function closeProof() {
@@ -1627,63 +1530,102 @@
     document.body.appendChild(proof);
   }
 
-  function ensureMock() {
-    if (mockShell) return mockShell;
-    var shell = document.createElement("aside");
-    shell.className = "sh-mock";
-    shell.dataset.mock = "frame";
-    shell.hidden = true;
-    shell.innerHTML = '<button type="button" class="sh-mock-tab" aria-expanded="false" aria-controls="sh-mock-panel" aria-label="Open mock-up">' +
-      '<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2.5 L4 6 L7.5 9.5"></path></svg></button>' +
-      '<div class="sh-mock-panel" id="sh-mock-panel">' +
-      '<div class="sh-mock-modes" role="group" aria-label="Mock-up">' +
-      '<button type="button" class="sh-tag sh-on" data-sh-mock="frame" aria-pressed="true">Frame</button>' +
-      '<button type="button" class="sh-tag" data-sh-mock="room" aria-pressed="false">Room</button></div>' +
-      '<div class="sh-mock-stage"><div class="sh-mock-wall"><div class="sh-mock-frame"><div class="sh-mock-mat"><div class="sh-mock-art"></div></div></div></div>' +
-      '<div class="sh-mock-room"></div></div>' +
-      '<div class="sh-mock-actions">' +
-      '<button type="button" class="sh-tag sh-mock-preview">Preview</button>' +
-      '<button type="button" class="sh-tag sh-mock-cart" disabled>Prints coming soon</button></div></div>';
-    shell.querySelector(".sh-mock-tab").addEventListener("click", function (e) {
+  function setFramed(lb, on) {
+    if (!lb) return;
+    var track = lb.querySelector(".sh-track");
+    if (track) track.style.transition = "";
+    lb.classList.toggle("sh-framed", !!on);
+    var tab = lb.querySelector(".sh-mock-tab");
+    if (!tab) return;
+    tab.setAttribute("aria-label", on ? "Show the plain print" : "Show the framed print");
+  }
+
+  function linkRow(hill) {
+    var row = document.createElement("p");
+    row.className = "sh-links";
+    var preview = document.createElement("button");
+    preview.type = "button";
+    preview.className = "sh-preview";
+    preview.textContent = "Preview";
+    preview.addEventListener("click", function (e) {
+      e.stopPropagation();
+      openProof(hill);
+    });
+    var cart = document.createElement("button");
+    cart.type = "button";
+    cart.className = "sh-cart";
+    cart.disabled = true;
+    cart.textContent = "Prints coming soon";
+    cart.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (!printsOn()) return;
+      if (window.SH_PRINTS && typeof window.SH_PRINTS.add === "function") window.SH_PRINTS.add(hill);
+    });
+    row.appendChild(preview);
+    row.appendChild(cart);
+    return row;
+  }
+
+  function mountGallery(lb, big, card, px) {
+    var hill = card._hill;
+    lb._svg = big;
+    var stage = document.createElement("div");
+    stage.className = "sh-stage";
+    stage.style.width = px;
+    var track = document.createElement("div");
+    track.className = "sh-track";
+    var plain = document.createElement("div");
+    plain.className = "sh-slide sh-slide-plain";
+    var plainArt = document.createElement("div");
+    plainArt.className = "sh-slide-art";
+    plainArt.style.height = px;
+    plainArt.appendChild(big);
+    plain.appendChild(plainArt);
+    plain.appendChild(linkRow(hill));
+    var framed = document.createElement("div");
+    framed.className = "sh-slide sh-slide-frame";
+    var wall = document.createElement("div");
+    wall.className = "sh-wall";
+    wall.style.height = px;
+    wall.innerHTML = '<div class="sh-hang"><div class="sh-mould"><div class="sh-mat"><div class="sh-frame-art"></div></div></div></div>';
+    framed.appendChild(wall);
+    framed.appendChild(linkRow(hill));
+    track.appendChild(plain);
+    track.appendChild(framed);
+    stage.appendChild(track);
+    var tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = "sh-mock-tab";
+    tab.setAttribute("aria-label", "Show the framed print");
+    tab.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 2.5 L8 6 L4.5 9.5"></path></svg>';
+    tab.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      setMockOpen(!mockOpen());
+      setFramed(lb, !lb.classList.contains("sh-framed"));
     });
-    shell.querySelector(".sh-mock-modes").addEventListener("click", function (e) {
-      var btn = e.target.closest ? e.target.closest("[data-sh-mock]") : null;
-      if (!btn) return;
-      setMockMode(btn.getAttribute("data-sh-mock"));
-    });
-    shell.querySelector(".sh-mock-preview").addEventListener("click", function () {
-      var hill = mockHill();
-      if (hill) openProof(hill);
-    });
-    shell.querySelector(".sh-mock-cart").addEventListener("click", function () {
-      if (!printsOn()) return;
-      var hill = mockHill();
-      if (hill && window.SH_PRINTS && typeof window.SH_PRINTS.add === "function") window.SH_PRINTS.add(hill);
-    });
-    document.body.appendChild(shell);
-    mockShell = shell;
-    shell.querySelector(".sh-mock-panel").inert = true;
-    syncCart();
-    return shell;
+    lb.appendChild(stage);
+    lb.appendChild(tab);
+    refreshMockArt(card);
+    syncCart(lb);
+    stage.addEventListener("click", function (e) { e.stopPropagation(); });
+  }
+
+  function refreshMockArt(card) {
+    var lb = document.getElementById("sh-lb");
+    if (!lb || lb._closing || !card || lb._card !== card || !card._hill) return;
+    var slot = lb.querySelector(".sh-frame-art");
+    if (!slot) return;
+    slot.innerHTML = "";
+    slot.appendChild(mockCardSvg(card._hill));
   }
 
   function syncMock() {
-    var hill = mockHill();
-    var shell = ensureMock();
-    if (!hill) {
-      shell.hidden = true;
-      setMockOpen(false);
+    var lb = document.getElementById("sh-lb");
+    if (!lb || lb._closing) {
       closeProof();
-      mockSlug = "";
       return;
     }
-    shell.hidden = false;
-    syncCart();
-    if (hill.slug !== mockSlug) placeMockArt(hill);
-    if (hill.el) loadContour(hill.el);
+    syncCart(lb);
   }
 
   window.addEventListener("keydown", function (e) {
@@ -1692,12 +1634,13 @@
       e.preventDefault();
       return;
     }
-    if (mockOpen()) {
+    var lb = document.getElementById("sh-lb");
+    if (lb && lb.classList.contains("sh-framed")) {
       e.preventDefault();
-      setMockOpen(false);
+      setFramed(lb, false);
       return;
     }
-    if (document.getElementById("sh-lb")) {
+    if (lb) {
       e.preventDefault();
       closeLb();
     }
