@@ -7,7 +7,9 @@
   var province = "bc";
   var region = "all";
   var kind = "all";
+  var popular = false;
   var query = "";
+  var shownIds = null;
   var watch = null;
   var albertaReady = false;
   var albertaPromise = null;
@@ -23,7 +25,10 @@
   var boundariesPromise = null;
   var mapLibrePromise = null;
   var positronStyle = null;
-  var mapFlight = null;
+  var pinsHeld = false;
+  var pinToken = 0;
+  var maskByKey = {};
+  var boundsByKey = {};
   var placeKey = "";
   var didFit = false;
   var lastPan = "";
@@ -61,6 +66,11 @@
       btn.classList.toggle("sh-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    var pop = document.getElementById("sh-popular-btn");
+    if (pop) {
+      pop.classList.toggle("sh-on", popular);
+      pop.setAttribute("aria-pressed", popular ? "true" : "false");
+    }
   }
 
   function fold(text) {
@@ -68,29 +78,57 @@
   }
 
   function matches(hill) {
-    if ((hill.province || "bc") !== province) return false;
-    if (region !== "all" && hill.region !== region) return false;
+    if (province !== "all" && (hill.province || "bc") !== province) return false;
+    if (province !== "all" && region !== "all" && hill.region !== region) return false;
     if (kind !== "all" && hill.type !== kind) return false;
     if (query && fold(hill.name).indexOf(query) === -1) return false;
     return true;
   }
 
+  function runTotal(hill) {
+    return (hill.runs && hill.runs.length) || 0;
+  }
+
+  function visibleHills() {
+    var list = hills.filter(matches);
+    if (!popular) return list;
+    return list.slice().sort(function (a, b) {
+      return runTotal(b) - runTotal(a) || a._ord - b._ord;
+    }).slice(0, 15);
+  }
+
+  function isShown(hill) {
+    if (!shownIds) return matches(hill);
+    return !!shownIds[hill.id];
+  }
+
   function apply(scroll) {
     var slug = slugFromHash();
+    var list = visibleHills();
+    var on = {};
+    shownIds = on;
+    list.forEach(function (hill) { on[hill.id] = true; });
     var shown = 0;
     var total = 0;
     hills.forEach(function (hill) {
       var card = hill.el;
       if (!card) return;
-      var inProv = (hill.province || "bc") === province;
-      var on = matches(hill);
-      card.hidden = !on;
-      var marked = on && hill.slug === slug;
+      var inProv = province === "all" || (hill.province || "bc") === province;
+      var show = !!on[hill.id];
+      card.hidden = !show;
+      var marked = show && hill.slug === slug;
       card.classList.toggle("sh-on", marked);
       if (inProv) total += 1;
-      if (on) shown += 1;
+      if (show) shown += 1;
       if (marked && scroll && !card.hidden && view !== "map") card.scrollIntoView({ block: "center" });
     });
+    if (popular) {
+      list.forEach(function (hill) { if (hill.el) grid.appendChild(hill.el); });
+    } else {
+      hills.slice().sort(function (a, b) { return a._ord - b._ord; }).forEach(function (hill) {
+        if (hill.el) grid.appendChild(hill.el);
+      });
+    }
     if (count) count.textContent = (query && !shown) ? "No hills match" : (shown + " of " + total);
     if (view === "map") syncMap();
   }
@@ -660,7 +698,7 @@
     writeCaption(big, card._hill);
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift, stackWanted(card._hill));
-    var maxW = Math.min(window.innerWidth * 0.92, 1100);
+    var maxW = Math.min(window.innerWidth * 0.92, 1100) - 52;
     var maxH = window.innerHeight * 0.86 - 88;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
     var px = (SQUARE * scale).toFixed(1) + "px";
@@ -728,6 +766,7 @@
       var row = overrides[hill.id];
       if (row && row.name) hill.name = row.name;
       if (hills.some(function (have) { return have.id === hill.id; })) return;
+      hill._ord = hills.length;
       hills.push(hill);
       draw(hill);
       if (watch && hill.el) watch.observe(hill.el);
@@ -800,7 +839,7 @@
   }
 
   function dotUnder(x, y) {
-    if (!mapField || mapFlight) return null;
+    if (!mapField || pinsHeld) return null;
     var hits = [];
     Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
       if (el.hidden) return;
@@ -811,61 +850,6 @@
       if (Math.hypot(x - cx, y - cy) <= r.width / 2 + 4) hits.push(el);
     });
     return hits.length ? hits[hits.length - 1] : null;
-  }
-
-  function snapshotHills() {
-    var map = new Map();
-    if (!grid) return map;
-    Array.prototype.forEach.call(grid.querySelectorAll(".sh-hill"), function (el) {
-      if (el.hidden) return;
-      var r = el.getBoundingClientRect();
-      if (r.width) map.set(el.id, { left: r.left, top: r.top, width: r.width, height: r.height });
-    });
-    return map;
-  }
-
-  function snapshotDots() {
-    var map = new Map();
-    if (!mapField) return map;
-    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
-      if (el.hidden) return;
-      var r = el.getBoundingClientRect();
-      if (r.width) map.set(el.dataset.slug, { left: r.left, top: r.top, width: r.width, height: r.height });
-    });
-    return map;
-  }
-
-  function slideInto(list, before, keyOf) {
-    if (!before) return;
-    var items = Array.prototype.slice.call(list);
-    var step = Math.min(20, 480 / Math.max(items.length, 1));
-    var k = 0;
-    items.forEach(function (el) {
-      var a = before.get(keyOf(el));
-      if (!a) return;
-      (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
-        if (an.id === "sh-flow") an.cancel();
-      });
-      el.style.transform = "";
-      var b = el.getBoundingClientRect();
-      var layout = el.offsetWidth || b.width;
-      if (!layout) return;
-      var dx = a.left + a.width / 2 - (b.left + b.width / 2);
-      var dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      var scale = a.width / layout;
-      if (!isFinite(scale) || scale <= 0) scale = 1;
-      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(scale - 1) < 0.04) return;
-      var mid = scale + (1 - scale) * 0.82;
-      var anim = el.animate(
-        [
-          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")" },
-          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px) scale(" + mid.toFixed(4) + ")", offset: 0.82 },
-          { transform: "none" }
-        ],
-        { duration: 480, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
-      );
-      anim.id = "sh-flow";
-    });
   }
 
   function ensureMapLibre() {
@@ -892,11 +876,12 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261016n").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261017a").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
       boundaries = data;
+      warmBoundaryCache();
       return data;
     }).catch(function (err) {
       boundariesPromise = null;
@@ -934,10 +919,10 @@
     return positronStyle;
   }
 
-  function selectedRings() {
-    var bag = boundaries && boundaries[province];
+  function ringsFrom(prov, reg) {
+    var bag = boundaries && boundaries[prov];
     if (!bag) return [];
-    var ids = region === "all" ? Object.keys(bag) : [region];
+    var ids = !reg || reg === "all" ? Object.keys(bag) : [reg];
     var rings = [];
     ids.forEach(function (id) {
       (bag[id] || []).forEach(function (ring) {
@@ -945,6 +930,36 @@
       });
     });
     return rings;
+  }
+
+  function selectedRings() {
+    if (!boundaries) return [];
+    if (province === "all") return ringsFrom("bc", "all").concat(ringsFrom("ab", "all"));
+    return ringsFrom(province, region);
+  }
+
+  function placeId() {
+    return province === "all" ? "all|all" : province + "|" + region;
+  }
+
+  function warmBoundaryCache() {
+    if (!boundaries) return;
+    function put(key, rings) {
+      if (!rings.length || maskByKey[key]) return;
+      maskByKey[key] = maskData(rings);
+      boundsByKey[key] = boundsOfRings(rings);
+    }
+    ["bc", "ab"].forEach(function (prov) {
+      var bag = boundaries[prov] || {};
+      var all = [];
+      Object.keys(bag).forEach(function (id) {
+        var rings = bag[id] || [];
+        all = all.concat(rings);
+        put(prov + "|" + id, rings);
+      });
+      put(prov + "|all", all);
+    });
+    put("all|all", ringsFrom("bc", "all").concat(ringsFrom("ab", "all")));
   }
 
   function ringArea(ring) {
@@ -995,8 +1010,9 @@
   }
 
   function openingBounds() {
-    var box = boundsOfRings(selectedRings());
+    var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
+    if (province === "all") return [[-139.1, 48.2], [-109.95, 60.05]];
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
   }
@@ -1012,8 +1028,15 @@
 
   function paintMask() {
     if (!shBasemap || !boundaries) return false;
-    var rings = selectedRings();
-    if (!rings.length) return false;
+    var key = placeId();
+    var data = maskByKey[key];
+    if (!data) {
+      var rings = selectedRings();
+      if (!rings.length) return false;
+      data = maskData(rings);
+      maskByKey[key] = data;
+      if (!boundsByKey[key]) boundsByKey[key] = boundsOfRings(rings);
+    }
     var ready = !!(shBasemap.isStyleLoaded && shBasemap.isStyleLoaded());
     var source = null;
     try { source = shBasemap.getSource("sh-mask"); } catch (err) { source = null; }
@@ -1021,7 +1044,6 @@
       waitMask();
       return false;
     }
-    var data = maskData(rings);
     if (!source) {
       shBasemap.addSource("sh-mask", { type: "geojson", data: data });
       shBasemap.addLayer({
@@ -1039,9 +1061,9 @@
 
   function fitPlace() {
     if (!shBasemap || !boundaries) return;
-    var key = province + "|" + region;
+    var key = placeId();
     if (key === placeKey) return;
-    var box = boundsOfRings(selectedRings());
+    var box = boundsByKey[key] || boundsOfRings(selectedRings());
     if (!box || !paintMask()) return;
     placeKey = key;
     var animate = didFit;
@@ -1087,8 +1109,13 @@
     cancelMapFade();
     if (!mapField || !mapField.isConnected || mapField.classList.contains("sh-map-in")) return;
     projectDots();
-    releaseMapFlight();
     mapField.classList.add("sh-map-in");
+    var token = ++pinToken;
+    window.setTimeout(function () {
+      if (token !== pinToken || view !== "map") return;
+      pinsHeld = false;
+      pinDrop();
+    }, 300);
   }
 
   function armMapFade() {
@@ -1105,6 +1132,7 @@
       el.dataset.slug = hill.slug;
       el.dataset.name = hill.name || "Unnamed hill";
       el.setAttribute("aria-hidden", "true");
+      el.hidden = true;
       mapField.appendChild(el);
       hill.dot = el;
     });
@@ -1117,82 +1145,73 @@
     });
   }
 
+  function pinPlaying(el) {
+    return !!(el.getAnimations && el.getAnimations().some(function (an) {
+      return an.id === "sh-pin" && an.playState !== "finished";
+    }));
+  }
+
   function projectDots() {
     if (!shBasemap || !mapField) return;
     hills.forEach(function (hill) {
       var el = hill.dot;
       if (!el || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
-      if (!matches(hill)) {
+      if (!isShown(hill)) {
         el.hidden = true;
         return;
       }
       var p = shBasemap.project([hill.lon, hill.lat]);
-      var left = (p.x - DOT / 2).toFixed(1) + "px";
-      var top = (p.y - DOT / 2).toFixed(1) + "px";
-      if (mapFlight) {
-        el.dataset.mx = left;
-        el.dataset.my = top;
-        if (!mapFlight.get(hill.slug)) el.hidden = true;
-        return;
-      }
-      if (el.getAnimations && el.getAnimations().some(function (an) { return an.id === "sh-flow" && an.playState !== "finished"; })) return;
-      el.hidden = false;
-      el.style.transform = "";
-      el.style.left = left;
-      el.style.top = top;
-    });
-    if (mapFlight && mapField.classList.contains("sh-map-in")) releaseMapFlight();
-  }
-
-  function parkMapDots() {
-    if (!mapFlight || !mapField) return;
-    var box = mapField.getBoundingClientRect();
-    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
-      var a = mapFlight.get(el.dataset.slug);
-      if (!a) {
+      el.style.left = (p.x - DOT / 2).toFixed(1) + "px";
+      el.style.top = (p.y - DOT / 2).toFixed(1) + "px";
+      if (pinsHeld) {
         el.hidden = true;
         return;
       }
       el.hidden = false;
-      el.style.left = (a.left + a.width / 2 - box.left - DOT / 2).toFixed(1) + "px";
-      el.style.top = (a.top + a.height / 2 - box.top - DOT / 2).toFixed(1) + "px";
-      if (a.width > 0 && Math.abs(a.width - DOT) > 0.5) {
-        el.style.transform = "scale(" + (a.width / DOT).toFixed(4) + ")";
-      }
+      if (pinPlaying(el)) return;
+      el.style.opacity = "";
+      el.style.transform = "";
     });
   }
 
-  function releaseMapFlight() {
-    if (!mapFlight || !mapField) return;
-    var from = mapFlight;
-    var ready = false;
-    var pending = false;
-    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
-      if (!from.get(el.dataset.slug)) return;
-      if (!el.dataset.mx) {
-        if (!el.hidden) pending = true;
-        return;
-      }
-      ready = true;
-      el.hidden = false;
-      el.style.left = el.dataset.mx;
-      el.style.top = el.dataset.my;
-    });
-    if (!ready && pending) return;
-    mapFlight = null;
+  function pinDrop() {
+    if (!mapField) return;
+    var dots = [];
     hills.forEach(function (hill) {
       var el = hill.dot;
-      if (!el || !el.dataset.mx || from.get(hill.slug)) return;
-      if (!matches(hill)) {
-        el.hidden = true;
-        return;
-      }
+      if (!el || !isShown(hill)) return;
       el.hidden = false;
-      el.style.transform = "";
-      el.style.left = el.dataset.mx;
-      el.style.top = el.dataset.my;
+      el.style.opacity = "0";
+      dots.push(el);
     });
-    slideInto(mapField.querySelectorAll(".sh-dot"), from, function (el) { return el.dataset.slug; });
+    var n = dots.length;
+    var span = n > 1 ? Math.min(800, (n - 1) * 28) : 0;
+    dots.forEach(function (el, i) {
+      var delay = n > 1 ? span * i / (n - 1) : 0;
+      var anim = el.animate([
+        { transform: "translateY(-40px)", opacity: 0 },
+        { transform: "translateY(2px)", opacity: 1, offset: 0.84 },
+        { transform: "translateY(0)", opacity: 1 }
+      ], { duration: 350, delay: delay, easing: "cubic-bezier(0.2, 0.8, 0.25, 1)", fill: "both" });
+      anim.id = "sh-pin";
+    });
+  }
+
+  function fadeCards(outward) {
+    if (!grid) return;
+    Array.prototype.forEach.call(grid.querySelectorAll(".sh-hill"), function (card) {
+      if (card.hidden) return;
+      (card.getAnimations ? card.getAnimations() : []).forEach(function (an) {
+        if (an.id === "sh-card") an.cancel();
+      });
+      var anim = card.animate(
+        outward
+          ? [{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(0.84)" }]
+          : [{ opacity: 0, transform: "scale(0.84)" }, { opacity: 1, transform: "none" }],
+        { duration: outward ? 220 : 280, easing: outward ? "ease-in" : "ease-out", fill: "both" }
+      );
+      anim.id = "sh-card";
+    });
   }
 
   function sizeMap() {
@@ -1218,12 +1237,11 @@
   function syncMap() {
     if (view !== "map" || !mapField) return;
     ensureDots();
-    if (mapFlight) parkMapDots();
     projectDots();
     var matched = [];
     hills.forEach(function (hill) {
       if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
-      if (matches(hill)) matched.push(hill);
+      if (isShown(hill)) matched.push(hill);
     });
     var one = query && matched.length === 1 ? matched[0] : null;
     if (!one) {
@@ -1249,7 +1267,7 @@
         syncMock();
         return;
       }
-      placeKey = province + "|" + region;
+      placeKey = placeId();
       didFit = true;
       syncMock();
       return;
@@ -1274,7 +1292,7 @@
     lastPan = "";
     mapAimed = "";
     mapZoomTarget = null;
-    mapFlight = null;
+    pinsHeld = false;
   }
 
   function buildMapField() {
@@ -1405,20 +1423,22 @@
 
   function enterMap() {
     if (view === "map") return;
-    var before = snapshotHills();
     view = "map";
-    mapFlight = before.size ? before : null;
+    pinsHeld = true;
     placeKey = "";
     didFit = false;
     lastPan = "";
     mapAimed = "";
-    if (grid) grid.classList.add("sh-held");
+    fadeCards(true);
     syncMapButton();
     syncMock();
     var token = ++mapToken;
+    window.setTimeout(function () {
+      if (token !== mapToken || view !== "map" || !grid) return;
+      grid.classList.add("sh-held");
+    }, 220);
     buildMapField();
     ensureDots();
-    parkMapDots();
     Promise.all([
       ensureMapLibre(),
       ensureBoundaries().catch(function () { return null; })
@@ -1433,18 +1453,27 @@
 
   function leaveMap(animate) {
     if (view !== "map" && !mapField) return;
-    var before = animate === false ? null : snapshotDots();
+    pinToken += 1;
+    pinsHeld = false;
     view = "grid";
     mapToken += 1;
-    tearDownMap();
-    if (grid) grid.classList.remove("sh-held");
-    syncMapButton();
-    if (before && grid) {
-      void grid.offsetWidth;
-      syncStroke();
-      slideInto(grid.querySelectorAll(".sh-hill"), before, function (el) { return el.id; });
-    }
-    syncMock();
+    var finish = function () {
+      tearDownMap();
+      if (grid) grid.classList.remove("sh-held");
+      syncMapButton();
+      if (animate !== false) fadeCards(false);
+      syncMock();
+    };
+    if (animate !== false && mapField) {
+      Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
+        if (el.hidden) return;
+        el.animate([
+          { transform: "translateY(0)", opacity: 1 },
+          { transform: "translateY(-36px)", opacity: 0 }
+        ], { duration: 200, easing: "ease-in", fill: "forwards" });
+      });
+      window.setTimeout(finish, 180);
+    } else finish();
   }
 
   var mapBtn = document.getElementById("sh-map-btn");
@@ -1467,12 +1496,18 @@
     tags.addEventListener("click", function (e) {
       var btn = e.target.closest ? e.target.closest(".sh-tag") : null;
       if (!btn) return;
+      if (btn.id === "sh-popular-btn") {
+        popular = !popular;
+        setPressed();
+        apply(false);
+        return;
+      }
       var nextProvince = btn.getAttribute("data-sh-province");
       if (nextProvince) {
         province = nextProvince;
         region = "all";
         setPressed();
-        if (province === "ab" && !albertaReady) {
+        if ((province === "ab" || province === "all") && !albertaReady) {
           if (count) count.textContent = "Loading Alberta…";
           ensureAlberta().then(function () {
             apply(false);
@@ -1559,15 +1594,23 @@
     renderCart();
   }
 
-  function addItem(hill, kind, label) {
+  function bumpCart() {
+    Array.prototype.forEach.call(document.querySelectorAll(".sh-cart-n"), function (node) {
+      node.classList.remove("sh-bump");
+      void node.offsetWidth;
+      node.classList.add("sh-bump");
+    });
+  }
+
+  function addHill(hill) {
     if (!hill) return;
     var items = readCart();
-    var key = hill.slug + "|" + kind;
     var found = null;
-    items.forEach(function (item) { if (item.key === key) found = item; });
+    items.forEach(function (item) { if (item.slug === hill.slug) found = item; });
     if (found) found.qty = (found.qty || 1) + 1;
-    else items.push({ key: key, slug: hill.slug, name: hill.name || "Unnamed hill", kind: kind, label: label, qty: 1 });
+    else items.push({ key: hill.slug, slug: hill.slug, name: hill.name || "Unnamed hill", kind: "5x5", label: "5 x 5 in", qty: 1 });
     writeCart(items);
+    bumpCart();
   }
 
   function renderCart() {
@@ -1597,14 +1640,41 @@
       var info = document.createElement("div");
       var name = document.createElement("div");
       name.textContent = item.name + (item.qty > 1 ? " × " + item.qty : "");
-      var kind = document.createElement("div");
-      kind.textContent = item.kind === "digital" ? "Digital" : item.label;
+      var select = document.createElement("select");
+      select.className = "sh-cart-size";
+      select.setAttribute("aria-label", "Size for " + item.name);
+      SIZES.forEach(function (size) {
+        var opt = document.createElement("option");
+        opt.value = size.kind;
+        opt.textContent = size.label + " — Price TBD";
+        select.appendChild(opt);
+      });
+      var digital = document.createElement("option");
+      digital.value = "digital";
+      digital.textContent = "Digital download — " + money(priceFor("digital"));
+      select.appendChild(digital);
+      if (select.querySelector("option[value='" + item.kind + "']")) select.value = item.kind;
+      select.addEventListener("change", function (e) {
+        e.stopPropagation();
+        var next = select.value;
+        var rows = readCart();
+        rows.forEach(function (row) {
+          if (row.key !== item.key) return;
+          row.kind = next;
+          if (next === "digital") row.label = "Digital download";
+          else {
+            var size = SIZES.filter(function (s) { return s.kind === next; })[0];
+            row.label = size ? size.label : next;
+          }
+        });
+        writeCart(rows);
+      });
       var amount = priceFor(item.kind);
       var price = document.createElement("div");
       price.textContent = money(amount);
       if (typeof amount === "number") sum += amount * (item.qty || 1);
       info.appendChild(name);
-      info.appendChild(kind);
+      info.appendChild(select);
       info.appendChild(price);
       var remove = document.createElement("button");
       remove.type = "button";
@@ -1682,82 +1752,45 @@
     track.style.transform = on ? "translateX(-50%)" : "translateX(0)";
   }
 
-  function syncAdd(row) {
-    var add = row.querySelector(".sh-add");
-    if (add) add.disabled = !row.querySelector(".sh-size.sh-on");
+  function mountCartAdd(hill) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sh-cart-add";
+    btn.setAttribute("aria-label", "Add to cart");
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 8H8.2L6 7z"/><path d="M6 7 4.6 4H2"/><circle cx="9" cy="18.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="18.5" r="1.1" fill="currentColor" stroke="none"/><path d="M17.2 5.2h3.6M19 3.4v3.6"/></svg>';
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      addHill(hill);
+    });
+    return btn;
   }
 
-  function mountBuy(hill) {
-    var row = document.createElement("div");
-    row.className = "sh-buy";
-    SIZES.forEach(function (size) {
+  function mountEdges(lb, stage) {
+    function arrow(cls, label, framed) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "sh-tag sh-size";
-      btn.setAttribute("data-size", size.kind);
-      btn.setAttribute("aria-pressed", "false");
-      btn.textContent = size.label;
-      btn.addEventListener("click", function (e) {
+      btn.className = "sh-edge " + cls;
+      btn.setAttribute("aria-label", label);
+      btn.textContent = framed ? "\u2039" : "\u203A";
+      btn.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
         e.stopPropagation();
-        var on = !btn.classList.contains("sh-on");
-        btn.classList.toggle("sh-on", on);
-        btn.setAttribute("aria-pressed", on ? "true" : "false");
-        syncAdd(row);
       });
-      row.appendChild(btn);
-    });
-    var digital = document.createElement("button");
-    digital.type = "button";
-    digital.className = "sh-tag sh-digital";
-    digital.textContent = "Digital download, " + money(priceFor("digital"));
-    digital.addEventListener("click", function (e) {
-      e.stopPropagation();
-      addItem(hill, "digital", "Digital");
-    });
-    row.appendChild(digital);
-    var mock = document.createElement("button");
-    mock.type = "button";
-    mock.className = "sh-tag sh-mock";
-    mock.setAttribute("aria-pressed", "false");
-    mock.textContent = "Mockup";
-    mock.addEventListener("click", function (e) {
-      e.stopPropagation();
-      var lb = document.getElementById("sh-lb");
-      setFramed(lb, !(lb && lb.classList.contains("sh-framed")));
-    });
-    row.appendChild(mock);
-    var add = document.createElement("button");
-    add.type = "button";
-    add.className = "sh-add";
-    add.disabled = true;
-    add.textContent = "Add to cart";
-    add.addEventListener("click", function (e) {
-      e.stopPropagation();
-      var picked = row.querySelectorAll(".sh-size.sh-on");
-      if (!picked.length) return;
-      Array.prototype.forEach.call(picked, function (btn) {
-        var kind = btn.getAttribute("data-size");
-        var size = SIZES.filter(function (s) { return s.kind === kind; })[0];
-        if (!size) return;
-        addItem(hill, size.kind, size.label);
-        btn.classList.remove("sh-on");
-        btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setFramed(lb, framed);
       });
-      syncAdd(row);
-    });
-    row.appendChild(add);
-    var cart = document.createElement("button");
-    cart.type = "button";
-    cart.className = "sh-cart-btn";
-    cart.setAttribute("aria-expanded", "false");
-    cart.setAttribute("aria-controls", "sh-cart-panel");
-    cart.appendChild(document.createTextNode("Cart "));
-    var n = document.createElement("span");
-    n.className = "sh-cart-n";
-    n.textContent = "0";
-    cart.appendChild(n);
-    row.appendChild(cart);
-    return row;
+      return btn;
+    }
+    stage.appendChild(arrow("sh-edge-next", "Show framed print", true));
+    stage.appendChild(arrow("sh-edge-prev", "Show print", false));
+    var coarse = window.matchMedia && window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (coarse) {
+      stage.classList.add("sh-touch-hint");
+      window.setTimeout(function () { stage.classList.remove("sh-touch-hint"); }, 1000);
+    }
   }
 
   function fitFrameArt(lb) {
@@ -1891,12 +1924,15 @@
     track.appendChild(plain);
     track.appendChild(framed);
     stage.appendChild(track);
+    mountEdges(lb, stage);
+    var row = document.createElement("div");
+    row.className = "sh-print-row";
+    row.appendChild(stage);
+    row.appendChild(mountCartAdd(hill));
     var view = document.createElement("div");
     view.className = "sh-view";
-    view.style.width = px;
-    view.appendChild(stage);
+    view.appendChild(row);
     if (hill && hill.stacked) view.appendChild(mountStackButton(hill));
-    view.appendChild(mountBuy(hill));
     lb.appendChild(view);
     bindDrag(lb, stage);
     renderCart();
@@ -1936,7 +1972,13 @@
     else closeLb();
   });
 
+  function onIdle(fn) {
+    if (window.requestIdleCallback) window.requestIdleCallback(fn, { timeout: 1500 });
+    else window.setTimeout(fn, 400);
+  }
+
   ensureCart();
+  onIdle(function () { ensureBoundaries().catch(function () {}); });
 
   Promise.all([
     fetch("hills.json?v=20261016z").then(function (res) {
@@ -1960,6 +2002,7 @@
     setPressed();
     syncFromHash(true);
     requestAnimationFrame(syncStroke);
+    onIdle(function () { ensureAlberta(); });
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
   });
