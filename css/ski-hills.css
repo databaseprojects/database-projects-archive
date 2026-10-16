@@ -592,31 +592,16 @@ html.sh-lb-open .sh-hill .sh-hill-name {
     display: none;
   }
 
-  .sh-mock,
   .sh-proof {
     display: none;
   }
 }
 
-.sh-mock {
-  --sh-mock-w: min(400px, 88vw);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100000;
-  pointer-events: none;
-}
-
-.sh-mock[hidden] {
-  display: none;
-}
-
 .sh-mock-tab {
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 50%;
-  z-index: 2;
+  z-index: 100001;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -630,111 +615,60 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   background: #fff;
   color: #111;
   cursor: pointer;
-  pointer-events: auto;
   appearance: none;
   transform: translateY(-50%);
-  transition: right 0.28s ease;
-}
-
-.sh-mock.sh-mock-open .sh-mock-tab {
-  right: var(--sh-mock-w);
 }
 
 .sh-mock-tab svg {
   display: block;
   width: 12px;
   height: 12px;
-  transition: transform 0.28s ease;
+  background: transparent;
+  transition: transform 0.45s ease;
 }
 
-.sh-mock.sh-mock-open .sh-mock-tab svg {
+.sh-lb.sh-framed .sh-mock-tab svg {
   transform: rotate(180deg);
 }
 
-.sh-mock-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
+.sh-stage {
+  overflow: hidden;
+}
+
+.sh-lb:not(.sh-lb-on) .sh-stage {
+  overflow: visible;
+}
+
+.sh-lb:not(.sh-lb-on) .sh-slide-frame {
+  visibility: hidden;
+}
+
+.sh-track {
   display: flex;
+  width: 200%;
+  transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+.sh-lb.sh-framed .sh-track {
+  transform: translateX(-50%);
+}
+
+.sh-slide {
+  display: flex;
+  flex: 0 0 50%;
   flex-direction: column;
-  width: var(--sh-mock-w);
-  box-sizing: border-box;
-  padding: 1.15rem 1rem 1.25rem;
-  border-left: 1px solid #111;
-  background: #fff;
-  color: #111;
-  pointer-events: auto;
-  overflow: auto;
-  pointer-events: none;
-  transform: translateX(100%);
-  transition: transform 0.28s ease;
-}
-
-.sh-mock.sh-mock-open .sh-mock-panel {
-  pointer-events: auto;
-  transform: none;
-}
-
-.sh-mock-modes,
-.sh-mock-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.sh-mock .sh-tag {
-  margin: 0;
-}
-
-.sh-mock-cart:disabled,
-.sh-mock-cart:disabled:hover {
-  border-color: rgba(0, 0, 0, 0.35);
-  background: transparent;
-  color: rgba(0, 0, 0, 0.55);
-  cursor: default;
-}
-
-.sh-mock-stage {
-  flex: 1 1 auto;
-  min-height: 240px;
-  margin: 0.9rem 0 1rem;
-}
-
-.sh-mock-wall {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  height: 100%;
-  min-height: 240px;
-  padding: 11%;
-  background: #f3f2ef;
+  width: 50%;
 }
 
-.sh-mock[data-mock="room"] .sh-mock-wall {
-  display: none;
-}
-
-.sh-mock-frame {
-  width: min(78%, 280px);
-  aspect-ratio: 1;
-  box-sizing: border-box;
-  padding: 2.4%;
-  background: #1a1a1a;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
-}
-
-.sh-mock-mat {
-  box-sizing: border-box;
+.sh-slide-art,
+.sh-wall {
+  position: relative;
   width: 100%;
-  height: 100%;
-  padding: 12%;
-  background: #f7f4ee;
 }
 
-.sh-mock-art,
-.sh-mock-art .sh-card,
+.sh-slide-art .sh-card,
+.sh-frame-art .sh-card,
 .sh-proof-art .sh-card {
   display: block;
   width: 100%;
@@ -742,26 +676,105 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   background: #fff;
 }
 
-.sh-mock-room {
-  display: none;
-  height: 100%;
-  min-height: 240px;
-  background: #f3f2ef;
+.sh-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: 0.55rem 0 0;
 }
 
-.sh-mock[data-mock="room"] .sh-mock-room {
-  display: block;
+.sh-preview,
+.sh-cart {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
 }
 
-.sh-room {
-  display: block;
-  width: 100%;
-  height: 100%;
+.sh-cart:disabled,
+.sh-cart:disabled:hover {
+  color: rgba(255, 255, 255, 0.42);
+  text-decoration: none;
+  cursor: default;
 }
 
-.sh-mock polyline,
+.sh-wall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(130% 95% at 0% 0%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 56%),
+    linear-gradient(180deg, #f7f6f3 0%, #e6e3dc 100%);
+}
+
+.sh-wall::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+.sh-hang {
+  position: relative;
+  z-index: 1;
+  width: 72%;
+  filter: drop-shadow(9px 16px 14px rgba(0, 0, 0, 0.28));
+}
+
+.sh-mould {
+  box-sizing: border-box;
+  padding: 2.15%;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 36%),
+    linear-gradient(320deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 42%),
+    linear-gradient(160deg, #6a5142 0%, #3c2b22 46%, #241812 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 1px 0 0 rgba(255, 255, 255, 0.16),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4);
+}
+
+.sh-mat {
+  box-sizing: border-box;
+  padding: 10.5%;
+  background: #f4f0e6;
+  box-shadow:
+    inset 0 0 0 1px rgba(70, 52, 36, 0.28),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.75),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.16);
+}
+
+.sh-frame-art {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.sh-frame-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.28),
+    inset 1px 1px 1px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 1px rgba(80, 62, 44, 0.2);
+}
+
 .sh-proof polyline,
-.sh-mock line,
 .sh-proof line {
   fill: none;
   stroke: #111;
@@ -770,43 +783,31 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   vector-effect: non-scaling-stroke;
 }
 
-.sh-mock polyline.sh-run,
-.sh-mock polyline.sh-lift,
 .sh-proof polyline.sh-run,
 .sh-proof polyline.sh-lift {
   stroke-width: 1.15;
 }
 
-.sh-mock polyline.sh-contour,
 .sh-proof polyline.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: 0.65;
 }
 
-.sh-mock polyline.sh-easy,
-.sh-mock line.sh-easy,
 .sh-proof polyline.sh-easy,
 .sh-proof line.sh-easy { stroke: #1b7a32; }
 
-.sh-mock polyline.sh-intermediate,
-.sh-mock line.sh-intermediate,
 .sh-proof polyline.sh-intermediate,
 .sh-proof line.sh-intermediate { stroke: #1a4f9c; }
 
-.sh-mock polyline.sh-advanced,
-.sh-mock line.sh-advanced,
 .sh-proof polyline.sh-advanced,
 .sh-proof line.sh-advanced { stroke: #111; }
 
-.sh-mock polyline.sh-unrated,
 .sh-proof polyline.sh-unrated { stroke: #8a8a8a; }
 
-.sh-mock .sh-lift,
 .sh-proof .sh-lift {
   stroke-dasharray: 4 3;
 }
 
-.sh-mock text,
 .sh-proof text {
   font-family: "Courier New", Courier, monospace;
   fill: #111;
