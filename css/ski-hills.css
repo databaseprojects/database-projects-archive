@@ -180,7 +180,8 @@
   background: transparent;
 }
 
-.sh-hill polyline {
+.sh-hill polyline,
+.sh-lb polyline {
   fill: none;
   stroke: #111;
   vector-effect: non-scaling-stroke;
@@ -192,10 +193,14 @@
   stroke-width: 1.15;
 }
 
-.sh-hill polyline.sh-easy { stroke: #1b7a32; }
-.sh-hill polyline.sh-intermediate { stroke: #1a4f9c; }
-.sh-hill polyline.sh-advanced { stroke: #111; }
-.sh-hill polyline.sh-unrated { stroke: #8a8a8a; }
+.sh-hill polyline.sh-easy,
+.sh-lb polyline.sh-easy { stroke: #1b7a32; }
+.sh-hill polyline.sh-intermediate,
+.sh-lb polyline.sh-intermediate { stroke: #1a4f9c; }
+.sh-hill polyline.sh-advanced,
+.sh-lb polyline.sh-advanced { stroke: #111; }
+.sh-hill polyline.sh-unrated,
+.sh-lb polyline.sh-unrated { stroke: #8a8a8a; }
 
 .sh-legend {
   margin: 0.7rem 0 0;
@@ -224,9 +229,51 @@
 .sh-key.sh-advanced { color: #111; }
 .sh-key.sh-unrated { color: #8a8a8a; }
 
-.sh-lift {
+.sh-hill .sh-lift,
+.sh-lb .sh-lift {
   stroke-width: 1.15;
   stroke-dasharray: 4 3;
+}
+
+.sh-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.82);
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.32s ease;
+  cursor: zoom-out;
+}
+
+.sh-lb.sh-lb-on {
+  opacity: 1;
+}
+
+.sh-lb svg {
+  display: block;
+  background: #fff;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: default;
+}
+
+.sh-lb.sh-lb-closing {
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.sh-lb.sh-lb-closing svg {
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sh-hill-name {
