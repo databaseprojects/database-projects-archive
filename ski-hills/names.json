@@ -1,0 +1,112 @@
+{
+  "090bf339-bc14-42a9-8371-60b69f02ec4f": {
+    "name": "Mount St. Piran",
+    "source": "mountain",
+    "slug": "unnamed-hill"
+  },
+  "1342f9fa-f028-47a8-9136-d17e8b3a6098": {
+    "name": "Hill at 50.98° N, 118.20° W",
+    "source": "gps",
+    "slug": "unnamed-hill-2"
+  },
+  "22c35a98-3041-4127-af7b-9de21865b482": {
+    "name": "Hill at 56.33° N, 120.94° W",
+    "source": "gps",
+    "slug": "unnamed-hill-3"
+  },
+  "2964a82b-8227-496c-8415-359e2c3823d8": {
+    "name": "Tabor Mountain at 53.92° N, 122.44° W",
+    "source": "mountain",
+    "slug": "unnamed-hill-4"
+  },
+  "30515963-bc14-4d06-92a2-c03fb62076b3": {
+    "name": "Hill at 50.49° N, 116.00° W",
+    "source": "gps",
+    "slug": "unnamed-hill-5"
+  },
+  "323e2533-356a-4e3c-ac29-84ba83655d98": {
+    "name": "Mount Buchanan",
+    "source": "mountain",
+    "slug": "unnamed-hill-6"
+  },
+  "46c048df-4a90-4e8a-bf61-454ab49cb714": {
+    "name": "White Queen",
+    "source": "mountain",
+    "slug": "unnamed-hill-7"
+  },
+  "7f17be4c-0f2d-4d84-8e14-8c0b6d22f07f": {
+    "name": "Hill at 54.48° N, 122.68° W",
+    "source": "gps",
+    "slug": "unnamed-hill-8"
+  },
+  "82b77449-8cb7-4062-876c-8e212eb908cf": {
+    "name": "Mount Washington Alpine Resort at 49.74° N, 125.32° W",
+    "source": "mountain",
+    "slug": "unnamed-hill-9"
+  },
+  "8317a6fd-abff-412b-bd62-6bbacdaba579": {
+    "name": "Cranbrook Mountain",
+    "source": "mountain",
+    "slug": "unnamed-hill-10"
+  },
+  "8dfef29d-b065-40a2-be9d-f0031fb54bda": {
+    "name": "Hill at 55.32° N, 123.06° W",
+    "source": "gps",
+    "slug": "unnamed-hill-11"
+  },
+  "910efc7e-5afc-4a21-b8fa-893f1f1ec98a": {
+    "name": "Miette Hill",
+    "source": "mountain",
+    "slug": "unnamed-hill-12"
+  },
+  "acd81d3f-ca46-418c-a679-63e92b229c0c": {
+    "name": "Bruhn Ridge",
+    "source": "mountain",
+    "slug": "unnamed-hill-13"
+  },
+  "b4508387-c9f8-4a92-92bf-a7c784500aa1": {
+    "name": "Hill at 59.84° N, 135.01° W",
+    "source": "gps",
+    "slug": "unnamed-hill-14"
+  },
+  "b51a807d-73b9-4089-9760-ac536717a0f9": {
+    "name": "Hill at 54.06° N, 123.17° W",
+    "source": "gps",
+    "slug": "unnamed-hill-15"
+  },
+  "c4727685-5e62-4db5-8d01-d298e2d70001": {
+    "name": "Log Cabin Cross Country Ski Trails at 59.80° N, 135.02° W",
+    "source": "mountain",
+    "slug": "unnamed-hill-16"
+  },
+  "d25879b1-04bf-4fc6-aaa0-befa1a5031b8": {
+    "name": "Fernie Alpine Resort at 49.48° N, 115.09° W",
+    "source": "mountain",
+    "slug": "unnamed-hill-17"
+  },
+  "d2c2e307-a4e0-42fb-b1f3-a823ccfa8241": {
+    "name": "Hill at 50.50° N, 116.09° W",
+    "source": "gps",
+    "slug": "unnamed-hill-18"
+  },
+  "db81dd81-8508-4b5d-a7a8-8e475a003874": {
+    "name": "Mount Burgess",
+    "source": "mountain",
+    "slug": "unnamed-hill-19"
+  },
+  "e3038660-5ca0-4cdf-87fe-424593e93e6d": {
+    "name": "Watch Peak",
+    "source": "mountain",
+    "slug": "unnamed-hill-20"
+  },
+  "eae3d0ab-e972-470f-a350-548ab621d16b": {
+    "name": "North Star Hill",
+    "source": "mountain",
+    "slug": "unnamed-hill-21"
+  },
+  "fdaf5a2c-a2b5-47fe-a56c-0c55631e6494": {
+    "name": "Fernie Alpine Resort at 49.44° N, 115.07° W",
+    "source": "mountain",
+    "slug": "unnamed-hill-22"
+  }
+}

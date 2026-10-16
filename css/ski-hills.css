@@ -267,6 +267,11 @@
   cursor: default;
 }
 
+.sh-lb text {
+  font-family: "Courier New", Courier, monospace;
+  fill: #111;
+}
+
 .sh-lb.sh-lb-closing {
   opacity: 0;
   transition: opacity 0.28s ease;
