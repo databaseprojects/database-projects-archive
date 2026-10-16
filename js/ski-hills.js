@@ -26,6 +26,7 @@
   var placeKey = "";
   var didFit = false;
   var lastPan = "";
+  var mapAimed = "";
   var mapToken = 0;
   var mapZoomLock = 0;
   var mapZoomTarget = null;
@@ -262,6 +263,7 @@
       paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE });
       var lb = document.getElementById("sh-lb");
       if (lb && lb._card === card && lb._shift) paintContours(lb.querySelector("svg"), card._contourLines, lb._shift);
+      refreshMockArt(card);
     }).catch(function () {
       card._contourState = "err";
     });
@@ -576,7 +578,9 @@
     setTimeout(function () {
       if (lb.parentNode) lb.parentNode.removeChild(lb);
       if (!document.getElementById("sh-lb")) document.documentElement.classList.remove("sh-lb-open");
+      syncMock();
     }, 340);
+    syncMock();
   }
 
   function closeLb() {
@@ -656,6 +660,7 @@
     big.addEventListener("click", function (e) {
       e.stopPropagation();
     });
+    syncMock();
   }
 
   function syncFromHash(scroll) {
@@ -1186,25 +1191,36 @@
       if (matches(hill)) matched.push(hill);
     });
     var one = query && matched.length === 1 ? matched[0] : null;
-    if (!one) lastPan = "";
+    if (!one) {
+      lastPan = "";
+      mapAimed = "";
+    } else {
+      lastPan = one.slug;
+      if (shBasemap && mapAimed !== one.slug) {
+        mapAimed = one.slug;
+        panTo(one);
+      }
+    }
     if (!boundaries) {
       ensureBoundaries().then(function () {
         if (view === "map") syncMap();
       }).catch(function () {});
+      syncMock();
       return;
     }
     paintMask();
     if (one) {
-      if (!shBasemap) return;
+      if (!shBasemap) {
+        syncMock();
+        return;
+      }
       placeKey = province + "|" + region;
       didFit = true;
-      if (lastPan !== one.slug) {
-        lastPan = one.slug;
-        panTo(one);
-      }
+      syncMock();
       return;
     }
     fitPlace();
+    syncMock();
   }
 
   function tearDownMap() {
@@ -1221,6 +1237,7 @@
     placeKey = "";
     didFit = false;
     lastPan = "";
+    mapAimed = "";
     mapZoomTarget = null;
     mapFlight = null;
   }
@@ -1347,6 +1364,7 @@
         }
       });
       map.on("resize", projectDots);
+      map.on("moveend", syncMock);
     }).catch(function () {
       if (field._shToken === token) revealMap();
     });
@@ -1360,8 +1378,10 @@
     placeKey = "";
     didFit = false;
     lastPan = "";
+    mapAimed = "";
     if (grid) grid.classList.add("sh-held");
     syncMapButton();
+    syncMock();
     var token = ++mapToken;
     buildMapField();
     ensureDots();
@@ -1391,6 +1411,7 @@
       syncStroke();
       slideInto(grid.querySelectorAll(".sh-hill"), before, function (el) { return el.id; });
     }
+    syncMock();
   }
 
   var mapBtn = document.getElementById("sh-map-btn");
@@ -1455,8 +1476,232 @@
   }
 
   window.addEventListener("hashchange", function () { syncFromHash(view !== "map"); });
+  var mockShell = null;
+  var mockSlug = "";
+  var mockMode = "frame";
+
+  function printsOn() {
+    return !!(window.SH_PRINTS && window.SH_PRINTS.enabled === true);
+  }
+
+  function mockCardSvg(hill) {
+    var card = hill && hill.el;
+    var svg = drawingSvg(hill);
+    svg.setAttribute("class", "sh-card");
+    var shift = fitArt(svg, DRAW);
+    writeCaption(svg, hill);
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift);
+    return svg;
+  }
+
+  function mockHill() {
+    var lb = document.getElementById("sh-lb");
+    if (lb && !lb._closing && lb._card && lb._card._hill) return lb._card._hill;
+    if (view !== "map" || !mapField) return null;
+    if (lastPan) {
+      var named = null;
+      hills.forEach(function (hill) {
+        if (hill.slug === lastPan) named = hill;
+      });
+      if (named) return named;
+    }
+    if (!shBasemap || shBasemap.getZoom() < 8.5) return null;
+    var lngLat = shBasemap.getCenter();
+    var center = shBasemap.project([lngLat.lng, lngLat.lat]);
+    var best = null;
+    var bestD = Infinity;
+    hills.forEach(function (hill) {
+      if (!matches(hill) || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
+      var p = shBasemap.project([hill.lon, hill.lat]);
+      var d = Math.hypot(p.x - center.x, p.y - center.y);
+      if (d < bestD) {
+        bestD = d;
+        best = hill;
+      }
+    });
+    var limit = Math.min(mapField.clientWidth, mapField.clientHeight) * 0.12;
+    if (!best || bestD > limit) return null;
+    return best;
+  }
+
+  function roomSvg() {
+    var holder = document.createElement("div");
+    holder.innerHTML = '<svg class="sh-room" viewBox="0 0 144 108" role="img" aria-label="A 10 by 10 inch print on the wall of a room">' +
+      '<rect width="144" height="78" fill="#f4f3f0"></rect>' +
+      '<rect y="78" width="144" height="30" fill="#e7e2d8"></rect>' +
+      '<rect y="77.2" width="144" height="0.8" fill="#111"></rect>' +
+      '<rect class="sh-room-sofa" x="30" y="50" width="84" height="28" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
+      '<rect x="30" y="50" width="8" height="26" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
+      '<rect x="106" y="50" width="8" height="26" fill="#fff" stroke="#111" stroke-width="0.4"></rect>' +
+      '<rect x="38" y="56" width="68" height="14" fill="#fff" stroke="#111" stroke-width="0.3"></rect>' +
+      '<g class="sh-room-frame" transform="translate(64.7 14)">' +
+      '<rect width="14.6" height="14.6" fill="#161616"></rect>' +
+      '<rect x="0.55" y="0.55" width="13.5" height="13.5" fill="#f6f3ec"></rect>' +
+      "</g></svg>";
+    return holder.querySelector("svg");
+  }
+
+  function placeMockArt(hill) {
+    if (!mockShell || !hill) return;
+    var frameArt = mockShell.querySelector(".sh-mock-art");
+    var room = mockShell.querySelector(".sh-mock-room");
+    frameArt.innerHTML = "";
+    frameArt.appendChild(mockCardSvg(hill));
+    room.innerHTML = "";
+    var scene = roomSvg();
+    var art = mockCardSvg(hill);
+    art.setAttribute("class", "sh-card sh-room-art");
+    art.setAttribute("x", "2.3");
+    art.setAttribute("y", "2.3");
+    art.setAttribute("width", "10");
+    art.setAttribute("height", "10");
+    scene.querySelector(".sh-room-frame").appendChild(art);
+    room.appendChild(scene);
+    mockSlug = hill.slug;
+  }
+
+  function refreshMockArt(card) {
+    if (!mockShell || mockShell.hidden || !card || card.id !== mockSlug) return;
+    if (card._hill) placeMockArt(card._hill);
+  }
+
+  function syncCart() {
+    var cart = mockShell && mockShell.querySelector(".sh-mock-cart");
+    if (!cart) return;
+    var on = printsOn();
+    cart.disabled = !on;
+    cart.textContent = on ? "Add to Cart" : "Prints coming soon";
+  }
+
+  function setMockMode(mode) {
+    mockMode = mode === "room" ? "room" : "frame";
+    if (!mockShell) return;
+    mockShell.dataset.mock = mockMode;
+    Array.prototype.forEach.call(mockShell.querySelectorAll("[data-sh-mock]"), function (btn) {
+      var on = btn.getAttribute("data-sh-mock") === mockMode;
+      btn.classList.toggle("sh-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function mockOpen() {
+    return !!(mockShell && mockShell.classList.contains("sh-mock-open"));
+  }
+
+  function setMockOpen(open) {
+    if (!mockShell) return;
+    mockShell.classList.toggle("sh-mock-open", open);
+    var panel = mockShell.querySelector(".sh-mock-panel");
+    if (panel) panel.inert = !open;
+    var tab = mockShell.querySelector(".sh-mock-tab");
+    tab.setAttribute("aria-expanded", open ? "true" : "false");
+    tab.setAttribute("aria-label", open ? "Close mock-up" : "Open mock-up");
+  }
+
+  function closeProof() {
+    var proof = document.getElementById("sh-proof");
+    if (!proof) return false;
+    if (proof.parentNode) proof.parentNode.removeChild(proof);
+    return true;
+  }
+
+  function openProof(hill) {
+    closeProof();
+    var proof = document.createElement("div");
+    proof.id = "sh-proof";
+    proof.className = "sh-proof";
+    proof.setAttribute("role", "dialog");
+    proof.setAttribute("aria-modal", "true");
+    proof.setAttribute("aria-label", "Print preview");
+    var sheet = document.createElement("div");
+    sheet.className = "sh-proof-sheet";
+    var art = document.createElement("div");
+    art.className = "sh-proof-art";
+    art.appendChild(mockCardSvg(hill));
+    var credit = document.createElement("p");
+    credit.className = "sh-proof-credit";
+    credit.textContent = "© OpenStreetMap contributors, OpenSkiMap.org (ODbL). Contains information licensed under the Open Government Licence – Canada.";
+    sheet.appendChild(art);
+    sheet.appendChild(credit);
+    proof.appendChild(sheet);
+    proof.addEventListener("click", function (e) {
+      if (e.target === proof) closeProof();
+    });
+    sheet.addEventListener("click", function (e) { e.stopPropagation(); });
+    document.body.appendChild(proof);
+  }
+
+  function ensureMock() {
+    if (mockShell) return mockShell;
+    var shell = document.createElement("aside");
+    shell.className = "sh-mock";
+    shell.dataset.mock = "frame";
+    shell.hidden = true;
+    shell.innerHTML = '<button type="button" class="sh-mock-tab" aria-expanded="false" aria-controls="sh-mock-panel" aria-label="Open mock-up">' +
+      '<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2.5 L4 6 L7.5 9.5"></path></svg></button>' +
+      '<div class="sh-mock-panel" id="sh-mock-panel">' +
+      '<div class="sh-mock-modes" role="group" aria-label="Mock-up">' +
+      '<button type="button" class="sh-tag sh-on" data-sh-mock="frame" aria-pressed="true">Frame</button>' +
+      '<button type="button" class="sh-tag" data-sh-mock="room" aria-pressed="false">Room</button></div>' +
+      '<div class="sh-mock-stage"><div class="sh-mock-wall"><div class="sh-mock-frame"><div class="sh-mock-mat"><div class="sh-mock-art"></div></div></div></div>' +
+      '<div class="sh-mock-room"></div></div>' +
+      '<div class="sh-mock-actions">' +
+      '<button type="button" class="sh-tag sh-mock-preview">Preview</button>' +
+      '<button type="button" class="sh-tag sh-mock-cart" disabled>Prints coming soon</button></div></div>';
+    shell.querySelector(".sh-mock-tab").addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setMockOpen(!mockOpen());
+    });
+    shell.querySelector(".sh-mock-modes").addEventListener("click", function (e) {
+      var btn = e.target.closest ? e.target.closest("[data-sh-mock]") : null;
+      if (!btn) return;
+      setMockMode(btn.getAttribute("data-sh-mock"));
+    });
+    shell.querySelector(".sh-mock-preview").addEventListener("click", function () {
+      var hill = mockHill();
+      if (hill) openProof(hill);
+    });
+    shell.querySelector(".sh-mock-cart").addEventListener("click", function () {
+      if (!printsOn()) return;
+      var hill = mockHill();
+      if (hill && window.SH_PRINTS && typeof window.SH_PRINTS.add === "function") window.SH_PRINTS.add(hill);
+    });
+    document.body.appendChild(shell);
+    mockShell = shell;
+    shell.querySelector(".sh-mock-panel").inert = true;
+    syncCart();
+    return shell;
+  }
+
+  function syncMock() {
+    var hill = mockHill();
+    var shell = ensureMock();
+    if (!hill) {
+      shell.hidden = true;
+      setMockOpen(false);
+      closeProof();
+      mockSlug = "";
+      return;
+    }
+    shell.hidden = false;
+    syncCart();
+    if (hill.slug !== mockSlug) placeMockArt(hill);
+    if (hill.el) loadContour(hill.el);
+  }
+
   window.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && document.getElementById("sh-lb")) {
+    if (e.key !== "Escape") return;
+    if (closeProof()) {
+      e.preventDefault();
+      return;
+    }
+    if (mockOpen()) {
+      e.preventDefault();
+      setMockOpen(false);
+      return;
+    }
+    if (document.getElementById("sh-lb")) {
       e.preventDefault();
       closeLb();
     }
