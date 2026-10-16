@@ -6,6 +6,7 @@
   var hills = [];
   var province = "bc";
   var region = "all";
+  var query = "";
   var watch = null;
   var albertaReady = false;
   var albertaPromise = null;
@@ -35,6 +36,17 @@
     });
   }
 
+  function fold(text) {
+    return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  function matches(hill) {
+    if ((hill.province || "bc") !== province) return false;
+    if (region !== "all" && hill.region !== region) return false;
+    if (query && fold(hill.name).indexOf(query) === -1) return false;
+    return true;
+  }
+
   function apply(scroll) {
     var slug = slugFromHash();
     var shown = 0;
@@ -43,7 +55,7 @@
       var card = hill.el;
       if (!card) return;
       var inProv = (hill.province || "bc") === province;
-      var on = inProv && (region === "all" || hill.region === region);
+      var on = matches(hill);
       card.hidden = !on;
       var marked = on && hill.slug === slug;
       card.classList.toggle("sh-on", marked);
@@ -51,7 +63,7 @@
       if (on) shown += 1;
       if (marked && scroll) card.scrollIntoView({ block: "center" });
     });
-    if (count) count.textContent = shown + " of " + total;
+    if (count) count.textContent = (query && !shown) ? "No hills match" : (shown + " of " + total);
   }
 
   function runClass(d) {
@@ -93,7 +105,7 @@
     writeCaption(svg, hill);
     card._hill = hill;
     hill.el = card;
-    card.hidden = (hill.province || "bc") !== province || (region !== "all" && hill.region !== region);
+    card.hidden = !matches(hill);
     grid.appendChild(card);
   }
 
@@ -549,6 +561,14 @@
       if (count) count.textContent = "The Alberta drawings did not load.";
     });
     return albertaPromise;
+  }
+
+  var find = document.querySelector(".sh-find");
+  if (find) {
+    find.addEventListener("input", function () {
+      query = fold(find.value).trim();
+      apply(false);
+    });
   }
 
   if (tags) {
