@@ -464,6 +464,10 @@ html.fp-fold-hold .fp-grid[data-fp-layout="table"] .fp-tile {
   pointer-events: none;
 }
 
+.fp-tile > img:not([src]) {
+  opacity: 0;
+}
+
 .fp-grid[data-fp-layout="row"] .fp-tile:hover {
   scale: var(--fp-hs, 1.12);
   translate: var(--fp-tx, 0px) var(--fp-ty, 0px);
