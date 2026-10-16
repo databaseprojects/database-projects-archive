@@ -293,6 +293,7 @@ def main():
     parser.add_argument("--src", default="/tmp/ski", help="Directory with runs.geojson and lifts.geojson")
     parser.add_argument("--hills", default="", help="Path to hills.json")
     parser.add_argument("--slug", default="", help="Build one hill, for a check")
+    parser.add_argument("--index", default="", help="Index path. Default contours/index.json")
     args = parser.parse_args()
     root = Path(__file__).resolve().parent
     hills_path = Path(args.hills) if args.hills else root / "hills.json"
@@ -397,7 +398,8 @@ def main():
             flush=True,
         )
     if not args.slug:
-        (out_dir / "index.json").write_text(json.dumps(index, separators=(",", ":")))
+        index_path = Path(args.index) if args.index else out_dir / "index.json"
+        index_path.write_text(json.dumps(index, separators=(",", ":")))
     print("checked", checked, "contoured", len(index["hills"]), "skipped", len(index["skipped"]))
     return 0
 
