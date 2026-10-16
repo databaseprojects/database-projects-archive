@@ -206,6 +206,7 @@
     var scale = w / gw;
     g.style.setProperty("--sh-stroke", (1.15 * scale).toFixed(3) + "px");
     g.style.setProperty("--sh-contour", (0.65 * scale).toFixed(3) + "px");
+    g.style.setProperty("--sh-key", (3.2 * scale).toFixed(3) + "px");
   }
 
   window.shSyncStroke = syncStroke;
