@@ -294,7 +294,6 @@
 
   var TYPES = {
     "downhill": "Downhill",
-    "backcountry": "Backcountry",
     "cross-country": "Cross-country"
   };
 
