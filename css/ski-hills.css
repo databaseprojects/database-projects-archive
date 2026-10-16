@@ -255,6 +255,32 @@
   stroke-width: 0.65;
 }
 
+.sh-hill polyline.sh-contour-shade,
+.sh-lb polyline.sh-contour-shade {
+  fill: none;
+  pointer-events: none;
+}
+
+.sh-hill polyline.sh-contour-shade[data-depth="1"],
+.sh-lb polyline.sh-contour-shade[data-depth="1"] {
+  stroke: rgba(0, 0, 0, 0.14);
+}
+
+.sh-hill polyline.sh-contour-shade[data-depth="2"],
+.sh-lb polyline.sh-contour-shade[data-depth="2"] {
+  stroke: rgba(0, 0, 0, 0.18);
+}
+
+.sh-hill polyline.sh-contour-shade[data-depth="3"],
+.sh-lb polyline.sh-contour-shade[data-depth="3"] {
+  stroke: rgba(0, 0, 0, 0.22);
+}
+
+.sh-hill polyline.sh-contour-shade[data-depth="4"],
+.sh-lb polyline.sh-contour-shade[data-depth="4"] {
+  stroke: rgba(0, 0, 0, 0.26);
+}
+
 .sh-hill line,
 .sh-lb line {
   fill: none;
@@ -604,6 +630,15 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   flex-direction: column;
   align-items: stretch;
   width: min(92vw, 1100px);
+}
+
+.sh-stack-btn {
+  align-self: flex-start;
+  margin: 0.4rem 0 0;
+}
+
+.sh-lb.sh-framed .sh-stack-btn {
+  display: none;
 }
 
 .sh-stage {
