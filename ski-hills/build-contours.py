@@ -2,12 +2,14 @@
 """Build lazy contour files for the Ski Hills drawings.
 
 Reads OpenSkiMap run and lift geometry (the same local GeoJSON used to
-build hills.json) and NRCan's MRDEM-30 digital terrain model. Contours
-are generated with gdal_contour at 20 m, or 50 m where the vertical drop
-is over 1000 m or a 20 m set is too dense. Vertices are projected with
-the same equirectangular transform as the runs in hills.json, rounded to
-0.1 viewBox units. Copernicus GLO-30 is used only when MRDEM has no
-elevation for that window.
+build hills.json) and NRCan's MRDEM-30 digital terrain model. The DEM
+window is the square the card draws after the page centres the runs and
+lifts, plus the gallery frame when that view shows more ground, plus a
+few percent of bleed. The page clips the lines to the frame. Intervals
+stay at the value already published for each hill (20 m, or 50 m).
+Vertices use the same equirectangular transform as the runs in
+hills.json, rounded to 0.1 viewBox units. Copernicus GLO-30 is used only
+when MRDEM has no elevation for that window.
 
 hills.json is not modified.
 
@@ -33,6 +35,12 @@ gdal.SetConfigOption("GDAL_HTTP_MULTIPLEX", "YES")
 MRDEM = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
 PAD = 48
 SIZE = 1000 - PAD * 2
+# Same fit as js/ski-hills.js: 40-unit pad, full square on the card,
+# and the area above the caption in the gallery.
+FRAME_PAD = 40
+SQUARE = 1000
+DRAW = 880
+BLEED = 0.04
 # A 20 m sheet is too dense past this many stored vertices.
 DENSE_POINTS = 14000
 DENSE_LINES = 220
@@ -112,7 +120,74 @@ def projection(lines):
         py = PAD + (maxy - y) / span * SIZE
         return px, py
 
-    return to_px, span, (min(lons), min(lats), max(lons), max(lats))
+    def to_ll(px, py):
+        x = minx + (px - PAD) / SIZE * span
+        y = maxy - (py - PAD) / SIZE * span
+        return x / (111320 * cos), y / 110540
+
+    return to_px, to_ll, span, (min(lons), min(lats), max(lons), max(lats))
+
+
+def parse_stored(strings):
+    lines = []
+    for text in strings:
+        pts = []
+        for pair in (text or "").split():
+            if "," not in pair:
+                continue
+            x, y = pair.split(",")
+            pts.append((float(x), float(y)))
+        if pts:
+            lines.append(pts)
+    return lines
+
+
+def square_frame(point_lines, to_ll):
+    """Lon/lat extent of the centred square card, plus gallery overflow.
+
+    point_lines are the drawing coordinates already stored on the hill,
+    which is the geometry the page centres. The card fits that geometry
+    into the 1000-unit square. The gallery fits it into the area above
+    the caption, which can show more ground, so that rectangle is
+    included too. The drawing does not continue under the caption. A few
+    percent of bleed lets the clip cut the lines at the frame.
+    """
+    xs = []
+    ys = []
+    for line in point_lines:
+        for px, py in line:
+            xs.append(px)
+            ys.append(py)
+    bw = max(max(xs) - min(xs), 1.0)
+    bh = max(max(ys) - min(ys), 1.0)
+    cx = (min(xs) + max(xs)) / 2
+    cy = (min(ys) + max(ys)) / 2
+
+    def cover(limit):
+        scale = min((SQUARE - FRAME_PAD * 2) / bw, (limit - FRAME_PAD * 2) / bh)
+        half_x = (SQUARE / 2) / scale
+        y_mid = FRAME_PAD + (limit - FRAME_PAD * 2) / 2
+        return cx - half_x, cx + half_x, cy - y_mid / scale, cy + (limit - y_mid) / scale
+
+    extents = (cover(SQUARE), cover(DRAW))
+    minpx = min(item[0] for item in extents)
+    maxpx = max(item[1] for item in extents)
+    minpy = min(item[2] for item in extents)
+    maxpy = max(item[3] for item in extents)
+    bleed = max(maxpx - minpx, maxpy - minpy) * BLEED
+    minpx -= bleed
+    maxpx += bleed
+    minpy -= bleed
+    maxpy += bleed
+    corners = (
+        to_ll(minpx, minpy),
+        to_ll(minpx, maxpy),
+        to_ll(maxpx, minpy),
+        to_ll(maxpx, maxpy),
+    )
+    lons = [point[0] for point in corners]
+    lats = [point[1] for point in corners]
+    return (min(lons), min(lats), max(lons), max(lats)), (minpx, minpy, maxpx, maxpy)
 
 
 def draw_lines(lines, to_px):
@@ -152,14 +227,6 @@ def window_3979(forward, minlon, minlat, maxlon, maxlat, margin_m):
         xs.append(x)
         ys.append(y)
     return min(xs) - margin_m, min(ys) - margin_m, max(xs) + margin_m, max(ys) + margin_m
-
-
-def expand_ll(box, meters):
-    minlon, minlat, maxlon, maxlat = box
-    mid = (minlat + maxlat) / 2
-    dlat = meters / 110540
-    dlon = meters / (111320 * max(math.cos(mid * math.pi / 180), 0.2))
-    return minlon - dlon, minlat - dlat, maxlon + dlon, maxlat + dlat
 
 
 def clip_mrdem(dataset, bounds, dest):
@@ -257,7 +324,8 @@ def contour_lines(path, interval, back):
     return lines
 
 
-def store_lines(lines, to_px):
+def store_lines(lines, to_px, window):
+    minpx, minpy, maxpx, maxpy = window
     kept = []
     points = 0
     for line in lines:
@@ -265,7 +333,7 @@ def store_lines(lines, to_px):
         last = None
         for i, (lon, lat) in enumerate(line):
             px, py = to_px(lon, lat)
-            if px < -160 or px > 1160 or py < -160 or py > 1160:
+            if px < minpx or px > maxpx or py < minpy or py > maxpy:
                 if len(cmd) >= 2:
                     kept.append(" ".join(cmd))
                     points += len(cmd)
@@ -314,6 +382,10 @@ def main():
             "runs": [],
             "lifts": [],
             "stored": [run["p"] for run in hill["runs"][:3]],
+            "drawn": [run["p"] for run in hill["runs"]] + [
+                lift if isinstance(lift, str) else (lift.get("p") or "")
+                for lift in (hill.get("lifts") or [])
+            ],
         }
     if not wanted:
         print("no hills", file=sys.stderr)
@@ -330,13 +402,17 @@ def main():
         print("MRDEM did not open", file=sys.stderr)
         return 1
 
+    index_path = Path(args.index) if args.index else out_dir / "index.json"
+    prior = {}
+    if index_path.exists():
+        prior = json.loads(index_path.read_text()).get("hills") or {}
     index = {"source": "NRCan MRDEM-30 DTM", "fallback": "Copernicus GLO-30", "hills": {}, "skipped": []}
     checked = 0
     for oid, hill in wanted.items():
         if not hill["runs"]:
             index["skipped"].append({"slug": hill["slug"], "reason": "no source runs"})
             continue
-        to_px, span, box = projection(hill["runs"])
+        to_px, to_ll, span, _box = projection(hill["runs"])
         drawn = draw_lines(hill["runs"][:3], to_px)
         if drawn != hill["stored"]:
             print("projection mismatch", hill["slug"], file=sys.stderr)
@@ -344,8 +420,9 @@ def main():
             print("drawn", drawn[0][:80] if drawn else None, file=sys.stderr)
             return 1
         checked += 1
-        margin = max(160.0, min(500.0, span * 0.08))
-        wide = expand_ll(box, margin)
+        wide, pixel_window = square_frame(parse_stored(hill["drawn"]), to_ll)
+        if args.slug:
+            print("frame", [round(v, 1) for v in pixel_window], "ll", [round(v, 5) for v in wide], "span", round(span), flush=True)
         bounds = window_3979(forward, *wide, 0)
         tif = Path("/tmp") / f"sh-dem-{hill['slug']}.tif"
         source = "mrdem-30"
@@ -369,7 +446,11 @@ def main():
             if tif.exists():
                 tif.unlink()
             continue
-        interval = 50 if isinstance(hill["drop"], (int, float)) and hill["drop"] > 1000 else 20
+        recorded = prior.get(hill["slug"], {}).get("m")
+        if recorded in (20, 50):
+            interval = recorded
+        else:
+            interval = 50 if isinstance(hill["drop"], (int, float)) and hill["drop"] > 1000 else 20
         try:
             raw = contour_lines(tif, interval, back)
         except RuntimeError as exc:
@@ -378,11 +459,11 @@ def main():
             if tif.exists():
                 tif.unlink()
             continue
-        stored, npts = store_lines(raw, to_px)
-        if interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
+        stored, npts = store_lines(raw, to_px, pixel_window)
+        if recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
             interval = 50
             raw = contour_lines(tif, interval, back)
-            stored, npts = store_lines(raw, to_px)
+            stored, npts = store_lines(raw, to_px, pixel_window)
         if tif.exists():
             tif.unlink()
         if len(stored) < 2:
@@ -398,7 +479,6 @@ def main():
             flush=True,
         )
     if not args.slug:
-        index_path = Path(args.index) if args.index else out_dir / "index.json"
         index_path.write_text(json.dumps(index, separators=(",", ":")))
     print("checked", checked, "contoured", len(index["hills"]), "skipped", len(index["skipped"]))
     return 0
