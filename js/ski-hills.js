@@ -34,9 +34,27 @@
     if (count) count.textContent = shown + " of " + hills.length;
   }
 
+  function runClass(d) {
+    if (d === "novice" || d === "easy") return "sh-run sh-easy";
+    if (d === "intermediate") return "sh-run sh-intermediate";
+    if (d === "advanced" || d === "expert" || d === "freeride" || d === "extreme") return "sh-run sh-advanced";
+    return "sh-run sh-unrated";
+  }
+
+  function runRank(d) {
+    if (d === "novice" || d === "easy") return 1;
+    if (d === "intermediate") return 2;
+    if (d === "advanced" || d === "expert" || d === "freeride" || d === "extreme") return 3;
+    return 0;
+  }
+
   function draw(hill) {
-    var runs = (hill.runs || []).map(function (pts) {
-      return '<polyline class="sh-run" points="' + pts + '"></polyline>';
+    var runs = (hill.runs || []).slice().sort(function (a, b) {
+      return runRank(a && a.d) - runRank(b && b.d);
+    }).map(function (run) {
+      var pts = run && run.p ? run.p : run;
+      if (!pts) return "";
+      return '<polyline class="' + runClass(run && run.d) + '" points="' + pts + '"></polyline>';
     }).join("");
     var lifts = (hill.lifts || []).map(function (pts) {
       return '<polyline class="sh-lift" points="' + pts + '"></polyline>';
@@ -67,11 +85,13 @@
 
   window.addEventListener("hashchange", function () { apply(true); });
 
-  fetch("hills.json?v=20261016b").then(function (res) {
+  fetch("hills.json?v=20261016c").then(function (res) {
     if (!res.ok) throw new Error("hills");
     return res.json();
   }).then(function (data) {
-    hills = data.hills || [];
+    hills = (data.hills || []).filter(function (hill) {
+      return (hill.runs && hill.runs.length) || (hill.lifts && hill.lifts.length);
+    });
     hills.forEach(draw);
     setPressed(region);
     apply(true);

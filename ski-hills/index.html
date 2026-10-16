@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261016b">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261016c">
 </head>
 <body>
   <div class="sheet">
@@ -14,7 +14,13 @@
 
 <main>
   <h1 class="sh-name">Ski Hills</h1>
-  <p class="sh-note">Line drawings of ski hills in British Columbia. Each hill is its own picture, drawn from its runs and lifts.</p>
+  <p class="sh-note">Line drawings of ski hills in British Columbia. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
+  <p class="sh-legend" aria-label="Run colour">
+    <span><i class="sh-key sh-easy"></i> Novice and easy</span>
+    <span><i class="sh-key sh-intermediate"></i> Intermediate</span>
+    <span><i class="sh-key sh-advanced"></i> Advanced and expert</span>
+    <span><i class="sh-key sh-unrated"></i> Unrated</span>
+  </p>
   <div class="sh-tags" role="group" aria-label="Regions">
     <button type="button" class="sh-tag sh-on" data-sh-region="bc" aria-pressed="true">BC</button>
     <div class="sh-sub">
@@ -32,6 +38,6 @@
 </main>
 
   </div>
-  <script src="../js/ski-hills.js?v=20261016b"></script>
+  <script src="../js/ski-hills.js?v=20261016c"></script>
 </body>
 </html>

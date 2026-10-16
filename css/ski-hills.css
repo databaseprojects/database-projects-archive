@@ -106,6 +106,38 @@
   stroke-width: 1.15;
 }
 
+.sh-hill polyline.sh-easy { stroke: #1b7a32; }
+.sh-hill polyline.sh-intermediate { stroke: #1a4f9c; }
+.sh-hill polyline.sh-advanced { stroke: #111; }
+.sh-hill polyline.sh-unrated { stroke: #8a8a8a; }
+
+.sh-legend {
+  margin: 0.7rem 0 0;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+}
+
+.sh-legend span {
+  display: inline-block;
+  margin: 0 1.1em 0.2em 0;
+  white-space: nowrap;
+}
+
+.sh-key {
+  display: inline-block;
+  width: 1.5em;
+  margin-right: 0.4em;
+  border-top: 2px solid currentColor;
+  vertical-align: middle;
+}
+
+.sh-key.sh-easy { color: #1b7a32; }
+.sh-key.sh-intermediate { color: #1a4f9c; }
+.sh-key.sh-advanced { color: #111; }
+.sh-key.sh-unrated { color: #8a8a8a; }
+
 .sh-lift {
   stroke-width: 1.15;
   stroke-dasharray: 4 3;
