@@ -72,6 +72,98 @@
     grid.appendChild(card);
   }
 
+  function hideLb() {
+    var lb = document.getElementById("sh-lb");
+    if (!lb || lb._closing) return;
+    lb._closing = true;
+    var big = lb.querySelector("svg");
+    var from = lb._from;
+    lb.classList.add("sh-lb-closing");
+    lb.classList.remove("sh-lb-on");
+    if (big && from) {
+      var r = big.getBoundingClientRect();
+      if (r.width && r.height && from.w) {
+        var s = Math.min(from.w / r.width, from.h / r.height);
+        var dx = from.x + from.w / 2 - (r.left + r.width / 2);
+        var dy = from.y + from.h / 2 - (r.top + r.height / 2);
+        big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
+      }
+    }
+    setTimeout(function () {
+      if (lb.parentNode) lb.parentNode.removeChild(lb);
+      if (!document.getElementById("sh-lb")) document.documentElement.classList.remove("sh-lb-open");
+    }, 340);
+  }
+
+  function closeLb() {
+    hideLb();
+    if (slugFromHash()) {
+      history.pushState(null, "", location.pathname + location.search);
+      apply(false);
+    }
+  }
+
+  function openLb(card) {
+    if (!card) return;
+    var existing = document.getElementById("sh-lb");
+    if (existing && existing._card === card && !existing._closing) return;
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    var src = card.querySelector("svg");
+    if (!src) return;
+    var thumb = src.getBoundingClientRect();
+    var name = card.querySelector(".sh-hill-name");
+    var lb = document.createElement("div");
+    lb.id = "sh-lb";
+    lb.className = "sh-lb";
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb.setAttribute("aria-label", name ? name.textContent : "Ski hill");
+    lb._card = card;
+    lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
+    var big = src.cloneNode(true);
+    big.removeAttribute("aria-hidden");
+    var side = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.88, 1100);
+    big.style.width = side.toFixed(1) + "px";
+    big.style.height = side.toFixed(1) + "px";
+    lb.appendChild(big);
+    document.body.appendChild(lb);
+    document.documentElement.classList.add("sh-lb-open");
+    requestAnimationFrame(function () {
+      if (lb._closing) return;
+      var r = big.getBoundingClientRect();
+      if (!r.width || !thumb.width) {
+        lb.classList.add("sh-lb-on");
+        return;
+      }
+      var s = Math.min(thumb.width / r.width, thumb.height / r.height);
+      var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
+      var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
+      big.style.transition = "none";
+      big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
+      void big.offsetWidth;
+      big.style.transition = "";
+      requestAnimationFrame(function () {
+        if (lb._closing) return;
+        lb.classList.add("sh-lb-on");
+        big.style.transform = "none";
+      });
+    });
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb) closeLb();
+    });
+    big.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  }
+
+  function syncFromHash(scroll) {
+    apply(scroll);
+    var slug = slugFromHash();
+    var card = slug ? document.getElementById(slug) : null;
+    if (card && card.classList.contains("sh-hill")) openLb(card);
+    else hideLb();
+  }
+
   if (tags) {
     tags.addEventListener("click", function (e) {
       var btn = e.target.closest ? e.target.closest(".sh-tag") : null;
@@ -83,7 +175,23 @@
     });
   }
 
-  window.addEventListener("hashchange", function () { apply(true); });
+  if (grid) {
+    grid.addEventListener("click", function (e) {
+      var card = e.target.closest ? e.target.closest(".sh-hill") : null;
+      if (!card) return;
+      e.preventDefault();
+      if (slugFromHash() === card.id) syncFromHash(true);
+      else location.hash = card.id;
+    });
+  }
+
+  window.addEventListener("hashchange", function () { syncFromHash(true); });
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && document.getElementById("sh-lb")) {
+      e.preventDefault();
+      closeLb();
+    }
+  });
 
   fetch("hills.json?v=20261016d").then(function (res) {
     if (!res.ok) throw new Error("hills");
@@ -94,7 +202,7 @@
     });
     hills.forEach(draw);
     setPressed(region);
-    apply(true);
+    syncFromHash(true);
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
   });
