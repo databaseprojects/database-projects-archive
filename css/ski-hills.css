@@ -104,8 +104,17 @@
   margin-top: 0.9rem;
 }
 
+.sh-prov,
 .sh-sub {
-  margin: 0.55rem 0 0 1.15rem;
+  display: inline;
+}
+
+.sh-sub {
+  margin-left: 0.35rem;
+}
+
+.sh-sub[hidden] {
+  display: none;
 }
 
 .sh-tag {
