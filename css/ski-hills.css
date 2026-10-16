@@ -549,3 +549,15 @@
 .sh-map-tip[hidden] {
   display: none;
 }
+
+@media print {
+  .sh-hill {
+    background: #fff;
+    break-inside: avoid;
+  }
+
+  .sh-hill svg {
+    width: 90%;
+    margin: 5%;
+  }
+}
