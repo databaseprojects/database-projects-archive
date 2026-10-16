@@ -139,6 +139,14 @@
     card.appendChild(name);
     card._shift = fitArt(svg, SQUARE);
     card._hill = hill;
+    card.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "touch") return;
+      card.classList.add("sh-name-on");
+    });
+    card.addEventListener("pointerleave", function (e) {
+      if (e.pointerType === "touch") return;
+      card.classList.remove("sh-name-on");
+    });
     hill.el = card;
     card.hidden = !matches(hill);
     grid.appendChild(card);
