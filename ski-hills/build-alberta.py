@@ -7,8 +7,11 @@ decimal on the 1000-unit drawing. Elevations are OpenSkiMap statistics
 with no runs are omitted. Unnamed hills are labelled from GPS. No town
 or mountain lookups.
 
-Travel Alberta's tourism-region polygons are not published as a boundary
-file, so every hill uses the region Alberta.
+Tourism region comes from ski-hills/cd-regions.json: simplified 2021
+census divisions, not an official Travel Alberta boundary. Division 15
+is Canadian Rockies, 6 is Calgary & Area, 11 is Edmonton & Area,
+7–10 are Alberta Central, 1–5 are Alberta South, and the rest are
+Alberta North.
 
     python3 ski-hills/build-alberta.py --src /tmp/ski
 """
@@ -153,6 +156,52 @@ def absorb(path, hills, key, keep_diff=False):
     return kept
 
 
+REGION_ORDER = [
+    ("canadian-rockies", "Canadian Rockies"),
+    ("alberta-south", "Alberta South"),
+    ("calgary-area", "Calgary & Area"),
+    ("alberta-central", "Alberta Central"),
+    ("edmonton-area", "Edmonton & Area"),
+    ("alberta-north", "Alberta North"),
+]
+
+
+def load_divisions(root):
+    data = json.loads((root / "cd-regions.json").read_text())
+    return data["map"], data["features"]
+
+
+def _inside(lon, lat, rings):
+    hit = False
+    for ring in rings:
+        j = len(ring) - 1
+        for i, p in enumerate(ring):
+            xi, yi = p[0], p[1]
+            xj, yj = ring[j][0], ring[j][1]
+            if (yi > lat) != (yj > lat):
+                xint = (xj - xi) * (lat - yi) / (yj - yi) + xi
+                if lon < xint:
+                    hit = not hit
+            j = i
+    return hit
+
+
+def region_for(lon, lat, mapping, features):
+    if lon is None or lat is None:
+        return "alberta-central"
+    for feat in features:
+        if _inside(lon, lat, feat["rings"]):
+            return mapping.get(feat["id"], "alberta-central")
+    best, dist = None, None
+    for feat in features:
+        for ring in feat["rings"]:
+            for x, y in ring:
+                d = (x - lon) ** 2 + (y - lat) ** 2
+                if dist is None or d < dist:
+                    dist, best = d, feat["id"]
+    return mapping.get(best, "alberta-central")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--src", default="/tmp/ski")
@@ -192,6 +241,7 @@ def main():
     print("lifts", absorb(src / "lifts.geojson", hills, "lifts"), flush=True)
     print("runs", absorb(src / "runs.geojson", hills, "runs", True), flush=True)
 
+    mapping, divisions = load_divisions(root)
     records = []
     names = {}
     omitted_empty = 0
@@ -228,7 +278,7 @@ def main():
             "id": oid,
             "slug": slug,
             "name": label,
-            "region": "alberta",
+            "region": region_for(lon, lat, mapping, divisions),
             "province": "ab",
             "lon": lon,
             "lat": lat,
@@ -242,7 +292,7 @@ def main():
     payload = {
         "attribution": "© OpenStreetMap contributors, OpenSkiMap.org (ODbL)",
         "province": "ab",
-        "regions": [{"id": "alberta", "name": "Alberta"}],
+        "regions": [{"id": rid, "name": name} for rid, name in REGION_ORDER],
         "counts": {
             "hills": len(records),
             "omittedEmpty": omitted_empty,
