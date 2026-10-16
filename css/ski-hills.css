@@ -209,6 +209,7 @@
 }
 
 .sh-hill {
+  position: relative;
   display: block;
   color: inherit;
   text-decoration: none;
@@ -362,7 +363,33 @@
 }
 
 .sh-hill-name {
-  display: none;
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 1px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.sh-hill.sh-name-on .sh-hill-name {
+  opacity: 1;
+}
+
+html.sh-lb-open .sh-hill .sh-hill-name {
+  opacity: 0;
 }
 
 .sh-credit {
@@ -558,5 +585,9 @@
   .sh-hill svg {
     width: 90%;
     margin: 5%;
+  }
+
+  .sh-hill-name {
+    display: none;
   }
 }
