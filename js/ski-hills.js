@@ -320,7 +320,10 @@
       card._contourLines = data.lines || [];
       paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false);
       var lb = document.getElementById("sh-lb");
-      if (lb && lb._card === card && lb._shift && lb._svg) paintContours(lb._svg, card._contourLines, lb._shift, stackWanted(card._hill));
+      if (lb && lb._card === card && lb._shift && lb._svg) {
+        if (stackWanted(card._hill)) applyStack(card._hill);
+        else paintContours(lb._svg, card._contourLines, lb._shift, false);
+      }
       refreshMockArt(card);
     }).catch(function () {
       card._contourState = "err";
@@ -697,7 +700,7 @@
     var shift = fitArt(big, DRAW);
     writeCaption(big, card._hill);
     lb._shift = shift;
-    if (card._contourLines) paintContours(big, card._contourLines, shift, stackWanted(card._hill));
+    if (card._contourLines) paintContours(big, card._contourLines, shift, false);
     var maxW = Math.min(window.innerWidth * 0.92, 1100) - 52;
     var maxH = window.innerHeight * 0.86 - 88;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
@@ -709,7 +712,7 @@
     mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
-    if (stackWanted(card._hill)) requestAnimationFrame(function () { applyStack(card._hill); });
+    if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
     fitFrameArt(lb);
     var r = big.getBoundingClientRect();
@@ -1734,7 +1737,12 @@
     svg.setAttribute("class", "sh-card");
     var shift = fitArt(svg, DRAW);
     writeCaption(svg, hill);
-    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, stackWanted(hill));
+    var raised = stackWanted(hill);
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !hill._frontal);
+    if (raised && hill._frontal) {
+      mountFrontal(svg, hill._frontal);
+      setPlanHidden(svg, true);
+    }
     return svg;
   }
 
@@ -1872,13 +1880,93 @@
     stage.addEventListener("pointercancel", endDrag);
   }
 
+  function setPlanHidden(svg, hidden) {
+    if (!svg) return;
+    Array.prototype.forEach.call(svg.querySelectorAll(".sh-contours, .sh-run, .sh-lift"), function (node) {
+      if (hidden) node.setAttribute("display", "none");
+      else node.removeAttribute("display");
+    });
+  }
+
+  function clearFrontal(svg) {
+    if (!svg) return;
+    var old = svg.querySelector(".sh-frontal");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+  }
+
+  function mountFrontal(svg, markup) {
+    clearFrontal(svg);
+    if (!svg || !markup) return;
+    var doc = new DOMParser().parseFromString(markup, "image/svg+xml");
+    var art = doc.querySelector(".sh-frontal-art");
+    if (!art) return;
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "sh-frontal");
+    var scale = DRAW / SQUARE;
+    var tx = ((1 - scale) * SQUARE) / 2;
+    g.setAttribute("transform", "translate(" + tx.toFixed(2) + " 0) scale(" + scale.toFixed(4) + ")");
+    Array.prototype.forEach.call(art.childNodes, function (node) {
+      if (node.nodeType === 1) g.appendChild(document.importNode(node, true));
+    });
+    var cap = svg.querySelector(".sh-caption");
+    if (cap) svg.insertBefore(g, cap);
+    else svg.appendChild(g);
+  }
+
+  function paintPlan(svg, hill, lines, shift) {
+    clearFrontal(svg);
+    setPlanHidden(svg, false);
+    if (lines && shift) paintContours(svg, lines, shift, false);
+  }
+
+  function paintRaised(svg, hill, lines, shift) {
+    if (lines && shift) paintContours(svg, lines, shift, false);
+    mountFrontal(svg, hill._frontal);
+    setPlanHidden(svg, true);
+  }
+
+  function ensureFrontal(hill, done) {
+    if (!hill || hill._frontal || hill._frontalFailed) {
+      done();
+      return;
+    }
+    if (hill._frontalLoading) {
+      (hill._frontalWait = hill._frontalWait || []).push(done);
+      return;
+    }
+    hill._frontalLoading = true;
+    fetch("frontal/" + hill.slug + ".svg?v=20261017b").then(function (res) {
+      if (!res.ok) throw new Error("frontal");
+      return res.text();
+    }).then(function (text) {
+      if (text.indexOf("sh-frontal-art") < 0) throw new Error("frontal");
+      hill._frontal = text;
+    }).catch(function () {
+      hill._frontalFailed = true;
+    }).then(function () {
+      hill._frontalLoading = false;
+      done();
+      (hill._frontalWait || []).splice(0).forEach(function (fn) { fn(); });
+    });
+  }
+
   function applyStack(hill) {
     var card = hill && hill.el;
     var lb = document.getElementById("sh-lb");
-    if (lb && card && lb._card === card && lb._svg && card._contourLines && lb._shift) {
-      paintContours(lb._svg, card._contourLines, lb._shift, stackWanted(hill));
+    function paint() {
+      var on = stackWanted(hill);
+      if (lb && card && lb._card === card && lb._svg && lb._shift) {
+        if (on && hill._frontal) paintRaised(lb._svg, hill, card._contourLines, lb._shift);
+        else if (on && hill._frontalFailed && card._contourLines) {
+          clearFrontal(lb._svg);
+          setPlanHidden(lb._svg, false);
+          paintContours(lb._svg, card._contourLines, lb._shift, true);
+        } else if (!on) paintPlan(lb._svg, hill, card._contourLines, lb._shift);
+      }
+      if (card) refreshMockArt(card);
     }
-    if (card) refreshMockArt(card);
+    if (stackWanted(hill) && !hill._frontal && !hill._frontalFailed) ensureFrontal(hill, paint);
+    else paint();
   }
 
   function mountStackButton(hill) {
@@ -1981,7 +2069,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
   Promise.all([
-    fetch("hills.json?v=20261016z").then(function (res) {
+    fetch("hills.json?v=20261017b").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
