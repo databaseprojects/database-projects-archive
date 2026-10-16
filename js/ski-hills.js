@@ -12,8 +12,9 @@
   var albertaReady = false;
   var albertaPromise = null;
   var SQUARE = 1000;
+  var MARGIN = 45;
   var BAND = 120;
-  var DRAW = SQUARE - BAND;
+  var DRAW = SQUARE - MARGIN - BAND;
   var view = "grid";
   var pendingFrom = null;
   var mapField = null;
@@ -177,15 +178,21 @@
 
   function fitArt(svg, limitY) {
     var box = boundsOf(svg);
-    var pad = 40;
-    var limit = limitY == null ? DRAW : limitY;
-    if (!box) return { s: 1, dx: 0, dy: 0, clip: limit };
+    var top = MARGIN;
+    var left = MARGIN;
+    var right = SQUARE - MARGIN;
+    var bottom = limitY == null ? DRAW : limitY;
+    if (bottom > SQUARE - MARGIN) bottom = SQUARE - MARGIN;
+    var shift = { s: 1, dx: 0, dy: 0, clip: bottom, top: top, left: left, right: right };
+    if (!box) return shift;
     var bw = Math.max(box.maxX - box.minX, 1);
     var bh = Math.max(box.maxY - box.minY, 1);
-    var s = Math.min((SQUARE - pad * 2) / bw, (limit - pad * 2) / bh);
-    var dx = SQUARE / 2 - ((box.minX + box.maxX) / 2) * s;
-    var dy = pad + (limit - pad * 2) / 2 - ((box.minY + box.maxY) / 2) * s;
-    var shift = { s: s, dx: dx, dy: dy, clip: limit };
+    var s = Math.min((right - left) / bw, (bottom - top) / bh);
+    var dx = (left + right) / 2 - ((box.minX + box.maxX) / 2) * s;
+    var dy = (top + bottom) / 2 - ((box.minY + box.maxY) / 2) * s;
+    shift.s = s;
+    shift.dx = dx;
+    shift.dy = dy;
     Array.prototype.forEach.call(svg.querySelectorAll("polyline.sh-run, polyline.sh-lift"), function (node) {
       node.setAttribute("points", mapPoints(node.getAttribute("points"), shift));
     });
@@ -208,7 +215,10 @@
       var x = parseFloat(xy[0]) * s + dx;
       var y = parseFloat(xy[1]) * s + dy;
       var clip = shift.clip == null ? DRAW : shift.clip;
-      if (y > clip || x < -30 || x > SQUARE + 30 || y < -30) {
+      var top = shift.top == null ? MARGIN : shift.top;
+      var left = shift.left == null ? MARGIN : shift.left;
+      var right = shift.right == null ? SQUARE - MARGIN : shift.right;
+      if (y > clip || y < top || x < left || x > right) {
         flush();
         return;
       }
@@ -251,7 +261,7 @@
     }).then(function (data) {
       card._contourState = "in";
       card._contourLines = data.lines || [];
-      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE });
+      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE - MARGIN, top: MARGIN, left: MARGIN, right: SQUARE - MARGIN });
       var lb = document.getElementById("sh-lb");
       if (lb && lb._card === card && lb._shift) paintContours(lb.querySelector("svg"), card._contourLines, lb._shift);
     }).catch(function () {
@@ -474,6 +484,7 @@
   function placeRow(parent, fields, y, startSize, alignRight) {
     var rowH = BAND / 2;
     var inset = 18;
+    var span = SQUARE - MARGIN * 2;
     var size = startSize;
     var widths = [];
     function measure(sz) {
@@ -485,16 +496,16 @@
     while (size >= 12) {
       widths = measure(size);
       var used = widths.reduce(function (sum, w) { return sum + w; }, 0);
-      if (used <= SQUARE || size === 12) break;
+      if (used <= span || size === 12) break;
       size -= 1;
     }
-    var extra = SQUARE - widths.reduce(function (sum, w) { return sum + w; }, 0);
+    var extra = span - widths.reduce(function (sum, w) { return sum + w; }, 0);
     var lead = 0;
     if (extra > 0) {
       if (alignRight) lead = extra;
       else if (widths.length) widths[0] += extra;
     }
-    var x = lead;
+    var x = MARGIN + lead;
     var valueY = y + rowH - 16;
     fields.forEach(function (field, i) {
       if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
@@ -540,8 +551,8 @@
     var gps = gpsText(hill);
     if (loc) bottom.push({ label: "REGION", text: loc });
     if (gps) bottom.push({ label: "GPS", text: gps });
-    hairline(cap, 0, DRAW, SQUARE, DRAW);
-    hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
+    hairline(cap, MARGIN, DRAW, SQUARE - MARGIN, DRAW);
+    hairline(cap, MARGIN, DRAW + BAND / 2, SQUARE - MARGIN, DRAW + BAND / 2);
     if (top.length) placeRow(cap, top, DRAW, 16, true);
     placeRow(cap, bottom, DRAW + BAND / 2, 20);
     svg.appendChild(cap);
