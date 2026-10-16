@@ -263,25 +263,21 @@
 
 .sh-hill polyline.sh-contour-shade[data-depth="1"],
 .sh-lb polyline.sh-contour-shade[data-depth="1"] {
-  transform: translate(0.55px, 1.5px);
   stroke: rgba(0, 0, 0, 0.14);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="2"],
 .sh-lb polyline.sh-contour-shade[data-depth="2"] {
-  transform: translate(1.1px, 3px);
   stroke: rgba(0, 0, 0, 0.18);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="3"],
 .sh-lb polyline.sh-contour-shade[data-depth="3"] {
-  transform: translate(1.65px, 4.5px);
   stroke: rgba(0, 0, 0, 0.22);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="4"],
 .sh-lb polyline.sh-contour-shade[data-depth="4"] {
-  transform: translate(2.2px, 6px);
   stroke: rgba(0, 0, 0, 0.26);
 }
 

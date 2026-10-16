@@ -234,6 +234,14 @@
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
     g.setAttribute("clip-path", "url(#" + id + ")");
+    var scale = 1;
+    if (stack) {
+      var laid = svg.getBoundingClientRect && svg.getBoundingClientRect().width;
+      if (!(laid > 8) && svg.parentNode && svg.parentNode.getBoundingClientRect) laid = svg.parentNode.getBoundingClientRect().width;
+      scale = (laid > 8 ? laid : SQUARE * 0.8) / SQUARE;
+    }
+    var stepX = 0.6 / scale;
+    var stepY = 1.5 / scale;
     (lines || []).forEach(function (pts) {
       var mapped = mapPoints(pts, shift);
       if (mapped.split(/\s+/).length < 2) return;
@@ -244,6 +252,7 @@
           shade.setAttribute("class", "sh-contour sh-contour-shade");
           shade.setAttribute("data-depth", String(depth));
           shade.setAttribute("points", mapped);
+          shade.setAttribute("transform", "translate(" + (depth * stepX).toFixed(2) + " " + (depth * stepY).toFixed(2) + ")");
           g.appendChild(shade);
         }
       }
@@ -662,6 +671,7 @@
     mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
+    if (stackWanted(card._hill)) requestAnimationFrame(function () { applyStack(card._hill); });
     refreshMockArt(card);
     fitFrameArt(lb);
     var r = big.getBoundingClientRect();
