@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261016h">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261016i">
 </head>
 <body>
   <div class="sheet">
@@ -20,30 +20,38 @@
       <input class="sh-zslider" type="range" min="5" max="20" step="any" value="6" aria-label="Columns / size" title="Columns (5 – 20)">
     </span>
   </div>
-  <p class="sh-note">Line drawings of ski hills in British Columbia. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
+  <p class="sh-note">Line drawings of ski hills in British Columbia and Alberta. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
   <p class="sh-legend" aria-label="Run colour">
     <span><i class="sh-key sh-easy"></i> Novice and easy</span>
     <span><i class="sh-key sh-intermediate"></i> Intermediate</span>
     <span><i class="sh-key sh-advanced"></i> Advanced and expert</span>
     <span><i class="sh-key sh-unrated"></i> Unrated</span>
   </p>
-  <div class="sh-tags" role="group" aria-label="Regions">
-    <button type="button" class="sh-tag sh-on" data-sh-region="bc" aria-pressed="true">BC</button>
-    <div class="sh-sub">
+  <div class="sh-tags" role="group" aria-label="Place">
+    <span class="sh-prov">
+      <button type="button" class="sh-tag sh-on" data-sh-province="bc" aria-pressed="true">BC</button>
+      <button type="button" class="sh-tag" data-sh-province="ab" aria-pressed="false">Alberta</button>
+    </span>
+    <span class="sh-sub" data-sh-for="bc">
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
       <button type="button" class="sh-tag" data-sh-region="vancouver-island" aria-pressed="false">Vancouver Island</button>
       <button type="button" class="sh-tag" data-sh-region="vancouver-coast-and-mountains" aria-pressed="false">Vancouver, Coast and Mountains</button>
       <button type="button" class="sh-tag" data-sh-region="thompson-okanagan" aria-pressed="false">Thompson Okanagan</button>
       <button type="button" class="sh-tag" data-sh-region="kootenay-rockies" aria-pressed="false">Kootenay Rockies</button>
       <button type="button" class="sh-tag" data-sh-region="cariboo-chilcotin-coast" aria-pressed="false">Cariboo Chilcotin Coast</button>
       <button type="button" class="sh-tag" data-sh-region="northern-british-columbia" aria-pressed="false">Northern British Columbia</button>
-    </div>
+    </span>
+    <span class="sh-sub" data-sh-for="ab" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="alberta" aria-pressed="false">Alberta</button>
+    </span>
   </div>
   <div class="sh-grid" id="sh-grid"></div>
-  <p class="sh-credit">© OpenStreetMap contributors, OpenSkiMap.org (ODbL).</p>
+  <p class="sh-credit">© OpenStreetMap contributors, OpenSkiMap.org (ODbL). Contains information licensed under the Open Government Licence – Canada.</p>
 </main>
 
   </div>
   <script src="../js/shared.js?v=20261013e"></script>
-  <script src="../js/ski-hills.js?v=20261016h"></script>
+  <script src="../js/ski-hills.js?v=20261016i"></script>
 </body>
 </html>

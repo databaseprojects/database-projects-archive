@@ -4,7 +4,11 @@
   var count = document.querySelector(".sh-count");
   var tags = document.querySelector(".sh-tags");
   var hills = [];
-  var region = "bc";
+  var province = "bc";
+  var region = "all";
+  var watch = null;
+  var albertaReady = false;
+  var albertaPromise = null;
   var SQUARE = 1000;
   var BAND = 120;
   var DRAW = SQUARE - BAND;
@@ -13,28 +17,41 @@
     return decodeURIComponent((location.hash || "").replace(/^#/, "")).trim();
   }
 
-  function setPressed(id) {
+  function setPressed() {
     if (!tags) return;
-    Array.prototype.forEach.call(tags.querySelectorAll(".sh-tag"), function (btn) {
-      var on = btn.getAttribute("data-sh-region") === id;
+    Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-province]"), function (btn) {
+      var on = btn.getAttribute("data-sh-province") === province;
       btn.classList.toggle("sh-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-for]"), function (group) {
+      var mine = group.getAttribute("data-sh-for") === province;
+      group.hidden = !mine;
+      Array.prototype.forEach.call(group.querySelectorAll("[data-sh-region]"), function (btn) {
+        var on = mine && btn.getAttribute("data-sh-region") === region;
+        btn.classList.toggle("sh-on", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+      });
     });
   }
 
   function apply(scroll) {
     var slug = slugFromHash();
     var shown = 0;
+    var total = 0;
     hills.forEach(function (hill) {
       var card = hill.el;
-      var on = region === "bc" || hill.region === region;
+      if (!card) return;
+      var inProv = (hill.province || "bc") === province;
+      var on = inProv && (region === "all" || hill.region === region);
       card.hidden = !on;
       var marked = on && hill.slug === slug;
       card.classList.toggle("sh-on", marked);
+      if (inProv) total += 1;
       if (on) shown += 1;
       if (marked && scroll) card.scrollIntoView({ block: "center" });
     });
-    if (count) count.textContent = shown + " of " + hills.length;
+    if (count) count.textContent = shown + " of " + total;
   }
 
   function runClass(d) {
@@ -76,6 +93,7 @@
     writeCaption(svg, hill);
     card._hill = hill;
     hill.el = card;
+    card.hidden = (hill.province || "bc") !== province || (region !== "all" && hill.region !== region);
     grid.appendChild(card);
   }
 
@@ -178,7 +196,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261016g").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261016i").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -217,7 +235,8 @@
     "thompson-okanagan": "Thompson Okanagan",
     "kootenay-rockies": "Kootenay Rockies",
     "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast",
-    "northern-british-columbia": "Northern British Columbia"
+    "northern-british-columbia": "Northern British Columbia",
+    "alberta": "Alberta"
   };
 
   function locationText(hill) {
@@ -473,20 +492,89 @@
   }
 
   function syncFromHash(scroll) {
-    apply(scroll);
     var slug = slugFromHash();
+    var known = !slug || hills.some(function (hill) { return hill.slug === slug && hill.el; });
+    if (!known && !albertaReady) {
+      ensureAlberta().then(function () { syncFromHash(scroll); });
+      return;
+    }
+    if (slug) {
+      var match = hills.filter(function (hill) { return hill.slug === slug; })[0];
+      if (match && match.province && match.province !== province) {
+        province = match.province;
+        region = "all";
+        setPressed();
+      }
+    }
+    apply(scroll);
     var card = slug ? document.getElementById(slug) : null;
     if (card && card.classList.contains("sh-hill")) openLb(card);
     else hideLb();
+  }
+
+  function adopt(data, overrides, index) {
+    (data.hills || []).forEach(function (hill) {
+      if (!hill.runs || !hill.runs.length) return;
+      if (!hill.province) hill.province = "bc";
+      var row = overrides[hill.id];
+      if (row && row.name) hill.name = row.name;
+      if (hills.some(function (have) { return have.id === hill.id; })) return;
+      hills.push(hill);
+      draw(hill);
+      if (watch && hill.el) watch.observe(hill.el);
+    });
+    Object.keys(index || {}).forEach(function (slug) {
+      contourIndex[slug] = index[slug];
+    });
+  }
+
+  function ensureAlberta() {
+    if (albertaPromise) return albertaPromise;
+    albertaPromise = Promise.all([
+      fetch("alberta.json?v=20261016i").then(function (res) {
+        if (!res.ok) throw new Error("alberta");
+        return res.json();
+      }),
+      fetch("alberta-names.json?v=20261016i").then(function (res) {
+        return res.ok ? res.json() : {};
+      }).catch(function () { return {}; }),
+      fetch("contours/alberta-index.json?v=20261016i").then(function (res) {
+        return res.ok ? res.json() : { hills: {} };
+      }).catch(function () { return { hills: {} }; })
+    ]).then(function (pair) {
+      adopt(pair[0], pair[1] || {}, (pair[2] && pair[2].hills) || {});
+      albertaReady = true;
+    }).catch(function () {
+      albertaPromise = null;
+      if (count) count.textContent = "The Alberta drawings did not load.";
+    });
+    return albertaPromise;
   }
 
   if (tags) {
     tags.addEventListener("click", function (e) {
       var btn = e.target.closest ? e.target.closest(".sh-tag") : null;
       if (!btn) return;
-      var id = btn.getAttribute("data-sh-region") || "bc";
-      region = (id === region && id !== "bc") ? "bc" : id;
-      setPressed(region);
+      var nextProvince = btn.getAttribute("data-sh-province");
+      if (nextProvince) {
+        province = nextProvince;
+        region = "all";
+        setPressed();
+        if (province === "ab" && !albertaReady) {
+          if (count) count.textContent = "Loading Alberta…";
+          ensureAlberta().then(function () {
+            apply(false);
+            requestAnimationFrame(syncStroke);
+          });
+          return;
+        }
+        apply(false);
+        requestAnimationFrame(syncStroke);
+        return;
+      }
+      var id = btn.getAttribute("data-sh-region") || "all";
+      region = (id === region && id !== "all") ? "all" : id;
+      setPressed();
       apply(false);
     });
   }
@@ -510,7 +598,7 @@
   });
 
   Promise.all([
-    fetch("hills.json?v=20261016f").then(function (res) {
+    fetch("hills.json?v=20261016i").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
@@ -521,26 +609,14 @@
       return res.ok ? res.json() : { hills: {} };
     }).catch(function () { return { hills: {} }; })
   ]).then(function (pair) {
-    var data = pair[0];
-    var overrides = pair[1] || {};
     contourIndex = (pair[2] && pair[2].hills) || {};
-    hills = (data.hills || []).filter(function (hill) {
-      return hill.runs && hill.runs.length;
-    });
-    hills.forEach(function (hill) {
-      var row = overrides[hill.id];
-      if (row && row.name) hill.name = row.name;
-    });
-    hills.forEach(draw);
-    var watch = new IntersectionObserver(function (entries) {
+    watch = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) loadContour(entry.target);
       });
     }, { rootMargin: "280px" });
-    hills.forEach(function (hill) {
-      if (hill.el) watch.observe(hill.el);
-    });
-    setPressed(region);
+    adopt(pair[0], pair[1] || {}, {});
+    setPressed();
     syncFromHash(true);
     requestAnimationFrame(syncStroke);
   }).catch(function () {
