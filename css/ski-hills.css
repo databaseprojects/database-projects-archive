@@ -127,16 +127,20 @@
 }
 
 .sh-tags {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
   margin-top: 0.9rem;
 }
 
 .sh-prov,
 .sh-sub {
-  display: inline;
+  display: block;
 }
 
 .sh-sub {
-  margin-left: 0.35rem;
+  margin-left: 0;
 }
 
 .sh-sub[hidden] {
@@ -358,16 +362,7 @@
 }
 
 .sh-hill-name {
-  display: block;
-  margin-top: 0.35rem;
-  color: #111;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  line-height: 1.35;
-}
-
-.sh-hill.sh-on .sh-hill-name {
-  text-decoration: underline;
+  display: none;
 }
 
 .sh-credit {
