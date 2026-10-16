@@ -68,10 +68,108 @@
     card.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>" +
       '<span class="sh-hill-name"></span>';
     card.querySelector(".sh-hill-name").textContent = hill.name || "Unnamed hill";
+    card._shift = centerArt(card.querySelector("svg"));
     card._hill = hill;
     hill.el = card;
     grid.appendChild(card);
   }
+
+  function boundsOf(svg) {
+    var minX = Infinity;
+    var minY = Infinity;
+    var maxX = -Infinity;
+    var maxY = -Infinity;
+    Array.prototype.forEach.call(svg.querySelectorAll("polyline.sh-run, polyline.sh-lift"), function (node) {
+      (node.getAttribute("points") || "").trim().split(/\s+/).forEach(function (pair) {
+        if (!pair) return;
+        var xy = pair.split(",");
+        var x = parseFloat(xy[0]);
+        var y = parseFloat(xy[1]);
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      });
+    });
+    if (minX === Infinity) return null;
+    return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+  }
+
+  function shiftPoints(points, dx, dy) {
+    return (points || "").trim().split(/\s+/).map(function (pair) {
+      var xy = pair.split(",");
+      return (parseFloat(xy[0]) + dx).toFixed(1) + "," + (parseFloat(xy[1]) + dy).toFixed(1);
+    }).join(" ");
+  }
+
+  function centerArt(svg) {
+    var box = boundsOf(svg);
+    if (!box) return { dx: 0, dy: 0 };
+    var dx = 500 - (box.minX + box.maxX) / 2;
+    var dy = 500 - (box.minY + box.maxY) / 2;
+    if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) return { dx: 0, dy: 0 };
+    Array.prototype.forEach.call(svg.querySelectorAll("polyline.sh-run, polyline.sh-lift"), function (node) {
+      node.setAttribute("points", shiftPoints(node.getAttribute("points"), dx, dy));
+    });
+    return { dx: dx, dy: dy };
+  }
+
+  function paintContours(svg, lines, shift) {
+    if (!svg) return;
+    var old = svg.querySelector(".sh-contours");
+    if (old) old.parentNode.removeChild(old);
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "sh-contours");
+    (lines || []).forEach(function (pts) {
+      var line = document.createElementNS(NS, "polyline");
+      line.setAttribute("class", "sh-contour");
+      line.setAttribute("points", shiftPoints(pts, shift.dx, shift.dy));
+      g.appendChild(line);
+    });
+    svg.insertBefore(g, svg.firstChild);
+  }
+
+  var contourIndex = null;
+
+  function loadContour(card) {
+    if (!card || card._contourState || !contourIndex) return;
+    var meta = contourIndex[card.id];
+    if (!meta) {
+      card._contourState = "none";
+      return;
+    }
+    card._contourState = "loading";
+    fetch("contours/" + card.id + ".json?v=20261016g").then(function (res) {
+      if (!res.ok) throw new Error("contour");
+      return res.json();
+    }).then(function (data) {
+      card._contourState = "in";
+      card._contourLines = data.lines || [];
+      var shift = card._shift || { dx: 0, dy: 0 };
+      paintContours(card.querySelector("svg"), card._contourLines, shift);
+      var lb = document.getElementById("sh-lb");
+      if (lb && lb._card === card) paintContours(lb.querySelector("svg"), card._contourLines, shift);
+    }).catch(function () {
+      card._contourState = "err";
+    });
+  }
+
+  function syncStroke() {
+    var g = document.getElementById("sh-grid");
+    var svg = g && (g.querySelector(".sh-hill:not([hidden]) svg") || g.querySelector(".sh-hill svg"));
+    if (!g || !svg) return;
+    var w = svg.getBoundingClientRect().width;
+    if (w < 2) return;
+    var maxW = Math.min(window.innerWidth * 0.92, 1100);
+    var maxH = window.innerHeight * 0.88;
+    var gw = Math.min(maxW, maxH * (1000 / 1080));
+    if (gw < 1) return;
+    var scale = w / gw;
+    g.style.setProperty("--sh-stroke", (1.15 * scale).toFixed(3) + "px");
+    g.style.setProperty("--sh-contour", (0.65 * scale).toFixed(3) + "px");
+  }
+
+  window.shSyncStroke = syncStroke;
 
   var REGIONS = {
     "vancouver-island": "Vancouver Island",
@@ -93,7 +191,9 @@
     return Math.abs(hill.lat).toFixed(4) + "\u00b0 " + ns + ", " + Math.abs(hill.lon).toFixed(4) + "\u00b0 " + ew;
   }
 
-  function diffText(hill) {
+  var NS = "http://www.w3.org/2000/svg";
+
+  function diffCounts(hill) {
     var green = 0;
     var blue = 0;
     var black = 0;
@@ -112,40 +212,98 @@
         rated += 1;
       }
     });
-    if (!rated) return "";
-    return green + " green, " + blue + " blue, " + black + " black";
+    if (!rated) return null;
+    return { green: green, blue: blue, black: black };
   }
 
-  function eleText(hill) {
-    var bits = [];
-    if (typeof hill.drop === "number") bits.push("Drop " + hill.drop + " m");
-    if (typeof hill.base === "number") bits.push("Base " + hill.base + " m");
-    return bits.join(", ");
+  function textWidth(text, size) {
+    var canvas = textWidth.canvas || (textWidth.canvas = document.createElement("canvas"));
+    var ctx = canvas.getContext("2d");
+    ctx.font = size + "px 'Courier New', Courier, monospace";
+    return ctx.measureText(text).width;
+  }
+
+  function textPart(str, size) {
+    var text = document.createElementNS(NS, "text");
+    text.setAttribute("fill", "#111");
+    text.setAttribute("font-family", "Courier New, Courier, monospace");
+    text.setAttribute("font-size", String(size));
+    text.textContent = str;
+    return { node: text, w: textWidth(str, size) };
+  }
+
+  function keyPart(cls, count, size) {
+    var g = document.createElementNS(NS, "g");
+    var len = size * 1.25;
+    var mid = (-size * 0.32).toFixed(1);
+    var line = document.createElementNS(NS, "line");
+    line.setAttribute("class", "sh-run " + cls);
+    line.setAttribute("x1", "0");
+    line.setAttribute("x2", len.toFixed(1));
+    line.setAttribute("y1", mid);
+    line.setAttribute("y2", mid);
+    var gap = size * 0.4;
+    var text = document.createElementNS(NS, "text");
+    text.setAttribute("x", (len + gap).toFixed(1));
+    text.setAttribute("y", "0");
+    text.setAttribute("fill", "#111");
+    text.setAttribute("font-family", "Courier New, Courier, monospace");
+    text.setAttribute("font-size", String(size));
+    text.textContent = String(count);
+    g.appendChild(line);
+    g.appendChild(text);
+    return { node: g, w: len + gap + textWidth(String(count), size) };
+  }
+
+  function layoutRow(svg, y, parts, startSize) {
+    var pad = 36;
+    var inner = 1000 - pad * 2;
+    var size = startSize;
+    var built = [];
+    while (size >= 12) {
+      built = parts.map(function (part) {
+        return part.key ? keyPart(part.key, part.n, size) : textPart(part.text, size);
+      });
+      var total = built.reduce(function (sum, part) { return sum + part.w; }, 0);
+      var minGaps = Math.max(parts.length - 1, 0) * 14;
+      if (total + minGaps <= inner || size === 12) break;
+      size -= 1;
+    }
+    var totalW = built.reduce(function (sum, part) { return sum + part.w; }, 0);
+    var gap = built.length > 1 ? (inner - totalW) / (built.length - 1) : 0;
+    var x = pad;
+    built.forEach(function (part) {
+      part.node.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
+      svg.appendChild(part.node);
+      x += part.w + gap;
+    });
   }
 
   function writeCaption(svg, hill) {
-    var lines = [{ text: hill.name || "Unnamed hill", size: 26 }];
+    var cap = document.createElementNS(NS, "g");
+    cap.setAttribute("class", "sh-caption");
+    var row1 = [{ text: hill.name || "Unnamed hill" }];
     var loc = locationText(hill);
     var gps = gpsText(hill);
-    var diff = diffText(hill);
-    var ele = eleText(hill);
-    if (loc) lines.push({ text: loc, size: 20 });
-    if (gps) lines.push({ text: gps, size: 20 });
-    if (diff) lines.push({ text: diff, size: 20 });
-    if (ele) lines.push({ text: ele, size: 20 });
-    var y = 1000;
-    lines.forEach(function (line) {
-      y += line.size + 12;
-      var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      text.setAttribute("x", "48");
-      text.setAttribute("y", String(y));
-      text.setAttribute("fill", "#111");
-      text.setAttribute("font-family", "Courier New, Courier, monospace");
-      text.setAttribute("font-size", String(line.size));
-      text.textContent = line.text;
-      svg.appendChild(text);
-    });
-    var height = Math.ceil(y + 32);
+    if (loc) row1.push({ text: loc });
+    if (gps) row1.push({ text: gps });
+    var row2 = [];
+    var counts = diffCounts(hill);
+    if (counts) {
+      if (counts.green) row2.push({ key: "sh-easy", n: counts.green });
+      if (counts.blue) row2.push({ key: "sh-intermediate", n: counts.blue });
+      if (counts.black) row2.push({ key: "sh-advanced", n: counts.black });
+    }
+    if (typeof hill.drop === "number") row2.push({ text: "Drop " + hill.drop + " m" });
+    if (typeof hill.base === "number") row2.push({ text: "Base " + hill.base + " m" });
+    var y = 1034;
+    layoutRow(cap, y, row1, 20);
+    if (row2.length) {
+      y += 36;
+      layoutRow(cap, y, row2, 18);
+    }
+    svg.appendChild(cap);
+    var height = Math.ceil(y + 34);
     svg.setAttribute("viewBox", "0 0 1000 " + height);
     return height;
   }
@@ -198,6 +356,7 @@
     lb.setAttribute("aria-label", name ? name.textContent : "Ski hill");
     lb._card = card;
     lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
+    loadContour(card);
     var big = src.cloneNode(true);
     big.removeAttribute("aria-hidden");
     var poster = writeCaption(big, card._hill || { name: name ? name.textContent : "" });
@@ -281,10 +440,14 @@
     }),
     fetch("names.json?v=20261016f").then(function (res) {
       return res.ok ? res.json() : {};
-    }).catch(function () { return {}; })
+    }).catch(function () { return {}; }),
+    fetch("contours/index.json?v=20261016g").then(function (res) {
+      return res.ok ? res.json() : { hills: {} };
+    }).catch(function () { return { hills: {} }; })
   ]).then(function (pair) {
     var data = pair[0];
     var overrides = pair[1] || {};
+    contourIndex = (pair[2] && pair[2].hills) || {};
     hills = (data.hills || []).filter(function (hill) {
       return hill.runs && hill.runs.length;
     });
@@ -293,8 +456,17 @@
       if (row && row.name) hill.name = row.name;
     });
     hills.forEach(draw);
+    var watch = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) loadContour(entry.target);
+      });
+    }, { rootMargin: "280px" });
+    hills.forEach(function (hill) {
+      if (hill.el) watch.observe(hill.el);
+    });
     setPressed(region);
     syncFromHash(true);
+    requestAnimationFrame(syncStroke);
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
   });
@@ -376,6 +548,9 @@
     if (!g) return;
     g.setAttribute("data-columns", String(n));
     g.style.setProperty("--sh-cols", String(n));
+    requestAnimationFrame(function () {
+      if (window.shSyncStroke) window.shSyncStroke();
+    });
   }
 
   function lockScroll() {
@@ -459,7 +634,7 @@
       if (nowPhone !== phoneCols) {
         phoneCols = nowPhone;
         setCols(nowPhone ? 4 : storedCols());
-      }
+      } else if (window.shSyncStroke) window.shSyncStroke();
     }, 150);
   });
 })();
