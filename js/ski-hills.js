@@ -648,6 +648,7 @@
     mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
+    refreshMockArt(card);
     fitFrameArt(lb);
     var r = big.getBoundingClientRect();
     if (r.width && thumb.width) {
@@ -1846,7 +1847,6 @@
     view.appendChild(mountBuy(hill));
     lb.appendChild(view);
     bindDrag(lb, stage);
-    refreshMockArt(card);
     renderCart();
     stage.addEventListener("click", function (e) { e.stopPropagation(); });
   }
@@ -1856,12 +1856,12 @@
     if (!lb || lb._closing || !card || lb._card !== card || !card._hill) return;
     var slot = lb.querySelector(".sh-frame-art");
     if (!slot) return;
-    slot.innerHTML = "";
     var svg = mockCardSvg(card._hill);
+    if (!svg) return;
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
-    slot.appendChild(svg);
+    slot.replaceChildren(svg);
     fitFrameArt(lb);
   }
 
