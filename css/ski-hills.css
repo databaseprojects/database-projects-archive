@@ -591,4 +591,264 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   .sh-hill-name {
     display: none;
   }
+
+  .sh-mock,
+  .sh-proof {
+    display: none;
+  }
+}
+
+.sh-mock {
+  --sh-mock-w: min(400px, 88vw);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100000;
+  pointer-events: none;
+}
+
+.sh-mock[hidden] {
+  display: none;
+}
+
+.sh-mock-tab {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 58px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #111;
+  border-right: 0;
+  border-radius: 0;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  pointer-events: auto;
+  appearance: none;
+  transform: translateY(-50%);
+  transition: right 0.28s ease;
+}
+
+.sh-mock.sh-mock-open .sh-mock-tab {
+  right: var(--sh-mock-w);
+}
+
+.sh-mock-tab svg {
+  display: block;
+  width: 12px;
+  height: 12px;
+  transition: transform 0.28s ease;
+}
+
+.sh-mock.sh-mock-open .sh-mock-tab svg {
+  transform: rotate(180deg);
+}
+
+.sh-mock-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--sh-mock-w);
+  box-sizing: border-box;
+  padding: 1.15rem 1rem 1.25rem;
+  border-left: 1px solid #111;
+  background: #fff;
+  color: #111;
+  pointer-events: auto;
+  overflow: auto;
+  pointer-events: none;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+}
+
+.sh-mock.sh-mock-open .sh-mock-panel {
+  pointer-events: auto;
+  transform: none;
+}
+
+.sh-mock-modes,
+.sh-mock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.sh-mock .sh-tag {
+  margin: 0;
+}
+
+.sh-mock-cart:disabled,
+.sh-mock-cart:disabled:hover {
+  border-color: rgba(0, 0, 0, 0.35);
+  background: transparent;
+  color: rgba(0, 0, 0, 0.55);
+  cursor: default;
+}
+
+.sh-mock-stage {
+  flex: 1 1 auto;
+  min-height: 240px;
+  margin: 0.9rem 0 1rem;
+}
+
+.sh-mock-wall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 240px;
+  padding: 11%;
+  background: #f3f2ef;
+}
+
+.sh-mock[data-mock="room"] .sh-mock-wall {
+  display: none;
+}
+
+.sh-mock-frame {
+  width: min(78%, 280px);
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  padding: 2.4%;
+  background: #1a1a1a;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+}
+
+.sh-mock-mat {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 12%;
+  background: #f7f4ee;
+}
+
+.sh-mock-art,
+.sh-mock-art .sh-card,
+.sh-proof-art .sh-card {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+.sh-mock-room {
+  display: none;
+  height: 100%;
+  min-height: 240px;
+  background: #f3f2ef;
+}
+
+.sh-mock[data-mock="room"] .sh-mock-room {
+  display: block;
+}
+
+.sh-room {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sh-mock polyline,
+.sh-proof polyline,
+.sh-mock line,
+.sh-proof line {
+  fill: none;
+  stroke: #111;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.sh-mock polyline.sh-run,
+.sh-mock polyline.sh-lift,
+.sh-proof polyline.sh-run,
+.sh-proof polyline.sh-lift {
+  stroke-width: 1.15;
+}
+
+.sh-mock polyline.sh-contour,
+.sh-proof polyline.sh-contour {
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: 0.65;
+}
+
+.sh-mock polyline.sh-easy,
+.sh-mock line.sh-easy,
+.sh-proof polyline.sh-easy,
+.sh-proof line.sh-easy { stroke: #1b7a32; }
+
+.sh-mock polyline.sh-intermediate,
+.sh-mock line.sh-intermediate,
+.sh-proof polyline.sh-intermediate,
+.sh-proof line.sh-intermediate { stroke: #1a4f9c; }
+
+.sh-mock polyline.sh-advanced,
+.sh-mock line.sh-advanced,
+.sh-proof polyline.sh-advanced,
+.sh-proof line.sh-advanced { stroke: #111; }
+
+.sh-mock polyline.sh-unrated,
+.sh-proof polyline.sh-unrated { stroke: #8a8a8a; }
+
+.sh-mock .sh-lift,
+.sh-proof .sh-lift {
+  stroke-dasharray: 4 3;
+}
+
+.sh-mock text,
+.sh-proof text {
+  font-family: "Courier New", Courier, monospace;
+  fill: #111;
+}
+
+.sh-proof {
+  position: fixed;
+  inset: 0;
+  z-index: 100002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.88);
+  cursor: zoom-out;
+}
+
+.sh-proof-sheet {
+  position: relative;
+  width: min(92vmin, 1200px);
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  background: #fff;
+  cursor: default;
+}
+
+.sh-proof-art {
+  position: absolute;
+  inset: 5%;
+}
+
+.sh-proof-credit {
+  position: absolute;
+  right: 5%;
+  bottom: 1.4%;
+  left: 5%;
+  margin: 0;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 8px;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  text-align: center;
 }
