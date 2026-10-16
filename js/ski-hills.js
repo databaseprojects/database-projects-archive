@@ -68,8 +68,86 @@
     card.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>" +
       '<span class="sh-hill-name"></span>';
     card.querySelector(".sh-hill-name").textContent = hill.name || "Unnamed hill";
+    card._hill = hill;
     hill.el = card;
     grid.appendChild(card);
+  }
+
+  var REGIONS = {
+    "vancouver-island": "Vancouver Island",
+    "vancouver-coast-and-mountains": "Vancouver, Coast and Mountains",
+    "thompson-okanagan": "Thompson Okanagan",
+    "kootenay-rockies": "Kootenay Rockies",
+    "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast",
+    "northern-british-columbia": "Northern British Columbia"
+  };
+
+  function locationText(hill) {
+    return (hill.region && REGIONS[hill.region]) || "";
+  }
+
+  function gpsText(hill) {
+    if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return "";
+    var ns = hill.lat >= 0 ? "N" : "S";
+    var ew = hill.lon >= 0 ? "E" : "W";
+    return Math.abs(hill.lat).toFixed(4) + "\u00b0 " + ns + ", " + Math.abs(hill.lon).toFixed(4) + "\u00b0 " + ew;
+  }
+
+  function diffText(hill) {
+    var green = 0;
+    var blue = 0;
+    var black = 0;
+    var rated = 0;
+    (hill.runs || []).forEach(function (run) {
+      var d = run && run.d;
+      if (d === "novice" || d === "easy") {
+        green += 1;
+        rated += 1;
+      } else if (d === "intermediate") {
+        blue += 1;
+        rated += 1;
+      } else if (d === "advanced" || d === "expert" || d === "freeride" || d === "extreme" ||
+        (typeof d === "string" && /black|expert|freeride|extreme/.test(d))) {
+        black += 1;
+        rated += 1;
+      }
+    });
+    if (!rated) return "";
+    return green + " green, " + blue + " blue, " + black + " black";
+  }
+
+  function eleText(hill) {
+    var bits = [];
+    if (typeof hill.drop === "number") bits.push("Drop " + hill.drop + " m");
+    if (typeof hill.base === "number") bits.push("Base " + hill.base + " m");
+    return bits.join(", ");
+  }
+
+  function writeCaption(svg, hill) {
+    var lines = [{ text: hill.name || "Unnamed hill", size: 26 }];
+    var loc = locationText(hill);
+    var gps = gpsText(hill);
+    var diff = diffText(hill);
+    var ele = eleText(hill);
+    if (loc) lines.push({ text: loc, size: 20 });
+    if (gps) lines.push({ text: gps, size: 20 });
+    if (diff) lines.push({ text: diff, size: 20 });
+    if (ele) lines.push({ text: ele, size: 20 });
+    var y = 1000;
+    lines.forEach(function (line) {
+      y += line.size + 12;
+      var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", "48");
+      text.setAttribute("y", String(y));
+      text.setAttribute("fill", "#111");
+      text.setAttribute("font-family", "Courier New, Courier, monospace");
+      text.setAttribute("font-size", String(line.size));
+      text.textContent = line.text;
+      svg.appendChild(text);
+    });
+    var height = Math.ceil(y + 32);
+    svg.setAttribute("viewBox", "0 0 1000 " + height);
+    return height;
   }
 
   function hideLb() {
@@ -122,9 +200,12 @@
     lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
     var big = src.cloneNode(true);
     big.removeAttribute("aria-hidden");
-    var side = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.88, 1100);
-    big.style.width = side.toFixed(1) + "px";
-    big.style.height = side.toFixed(1) + "px";
+    var poster = writeCaption(big, card._hill || { name: name ? name.textContent : "" });
+    var maxW = Math.min(window.innerWidth * 0.92, 1100);
+    var maxH = window.innerHeight * 0.88;
+    var scale = Math.min(maxW / 1000, maxH / poster);
+    big.style.width = (1000 * scale).toFixed(1) + "px";
+    big.style.height = (poster * scale).toFixed(1) + "px";
     lb.appendChild(big);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
@@ -193,12 +274,23 @@
     }
   });
 
-  fetch("hills.json?v=20261016d").then(function (res) {
-    if (!res.ok) throw new Error("hills");
-    return res.json();
-  }).then(function (data) {
+  Promise.all([
+    fetch("hills.json?v=20261016f").then(function (res) {
+      if (!res.ok) throw new Error("hills");
+      return res.json();
+    }),
+    fetch("names.json?v=20261016f").then(function (res) {
+      return res.ok ? res.json() : {};
+    }).catch(function () { return {}; })
+  ]).then(function (pair) {
+    var data = pair[0];
+    var overrides = pair[1] || {};
     hills = (data.hills || []).filter(function (hill) {
-      return (hill.runs && hill.runs.length) || (hill.lifts && hill.lifts.length);
+      return hill.runs && hill.runs.length;
+    });
+    hills.forEach(function (hill) {
+      var row = overrides[hill.id];
+      if (row && row.name) hill.name = row.name;
     });
     hills.forEach(draw);
     setPressed(region);
