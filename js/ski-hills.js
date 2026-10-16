@@ -9,6 +9,7 @@
   var kind = "all";
   var popular = false;
   var query = "";
+  var shownIds = null;
   var watch = null;
   var albertaReady = false;
   var albertaPromise = null;
@@ -96,10 +97,16 @@
     }).slice(0, 15);
   }
 
+  function isShown(hill) {
+    if (!shownIds) return matches(hill);
+    return !!shownIds[hill.id];
+  }
+
   function apply(scroll) {
     var slug = slugFromHash();
     var list = visibleHills();
     var on = {};
+    shownIds = on;
     list.forEach(function (hill) { on[hill.id] = true; });
     var shown = 0;
     var total = 0;
@@ -1125,6 +1132,7 @@
       el.dataset.slug = hill.slug;
       el.dataset.name = hill.name || "Unnamed hill";
       el.setAttribute("aria-hidden", "true");
+      el.hidden = true;
       mapField.appendChild(el);
       hill.dot = el;
     });
@@ -1148,7 +1156,7 @@
     hills.forEach(function (hill) {
       var el = hill.dot;
       if (!el || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
-      if (!matches(hill)) {
+      if (!isShown(hill)) {
         el.hidden = true;
         return;
       }
@@ -1171,7 +1179,7 @@
     var dots = [];
     hills.forEach(function (hill) {
       var el = hill.dot;
-      if (!el || !matches(hill)) return;
+      if (!el || !isShown(hill)) return;
       el.hidden = false;
       el.style.opacity = "0";
       dots.push(el);
@@ -1233,7 +1241,7 @@
     var matched = [];
     hills.forEach(function (hill) {
       if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
-      if (matches(hill)) matched.push(hill);
+      if (isShown(hill)) matched.push(hill);
     });
     var one = query && matched.length === 1 ? matched[0] : null;
     if (!one) {
