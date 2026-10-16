@@ -204,7 +204,11 @@
 
   var clipSerial = 0;
 
-  function paintContours(svg, lines, shift) {
+  function stackWanted(hill) {
+    return !!(hill && hill.stacked && hill._stackOn);
+  }
+
+  function paintContours(svg, lines, shift, stack) {
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
     if (old) old.parentNode.removeChild(old);
@@ -233,6 +237,16 @@
     (lines || []).forEach(function (pts) {
       var mapped = mapPoints(pts, shift);
       if (mapped.split(/\s+/).length < 2) return;
+      if (stack) {
+        var depth;
+        for (depth = 4; depth >= 1; depth--) {
+          var shade = document.createElementNS(NS, "polyline");
+          shade.setAttribute("class", "sh-contour sh-contour-shade");
+          shade.setAttribute("data-depth", String(depth));
+          shade.setAttribute("points", mapped);
+          g.appendChild(shade);
+        }
+      }
       var line = document.createElementNS(NS, "polyline");
       line.setAttribute("class", "sh-contour");
       line.setAttribute("points", mapped);
@@ -257,9 +271,9 @@
     }).then(function (data) {
       card._contourState = "in";
       card._contourLines = data.lines || [];
-      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE });
+      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false);
       var lb = document.getElementById("sh-lb");
-      if (lb && lb._card === card && lb._shift && lb._svg) paintContours(lb._svg, card._contourLines, lb._shift);
+      if (lb && lb._card === card && lb._shift && lb._svg) paintContours(lb._svg, card._contourLines, lb._shift, stackWanted(card._hill));
       refreshMockArt(card);
     }).catch(function () {
       card._contourState = "err";
@@ -636,7 +650,7 @@
     var shift = fitArt(big, DRAW);
     writeCaption(big, card._hill);
     lb._shift = shift;
-    if (card._contourLines) paintContours(big, card._contourLines, shift);
+    if (card._contourLines) paintContours(big, card._contourLines, shift, stackWanted(card._hill));
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
     var maxH = window.innerHeight * 0.86 - 88;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
@@ -1640,7 +1654,7 @@
     svg.setAttribute("class", "sh-card");
     var shift = fitArt(svg, DRAW);
     writeCaption(svg, hill);
-    if (card && card._contourLines) paintContours(svg, card._contourLines, shift);
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, stackWanted(hill));
     return svg;
   }
 
@@ -1815,6 +1829,33 @@
     stage.addEventListener("pointercancel", endDrag);
   }
 
+  function applyStack(hill) {
+    var card = hill && hill.el;
+    var lb = document.getElementById("sh-lb");
+    if (lb && card && lb._card === card && lb._svg && card._contourLines && lb._shift) {
+      paintContours(lb._svg, card._contourLines, lb._shift, stackWanted(hill));
+    }
+    if (card) refreshMockArt(card);
+  }
+
+  function mountStackButton(hill) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sh-tag sh-stack-btn";
+    btn.textContent = "3D view";
+    btn.setAttribute("aria-pressed", hill._stackOn ? "true" : "false");
+    if (hill._stackOn) btn.classList.add("sh-on");
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      hill._stackOn = !hill._stackOn;
+      btn.classList.toggle("sh-on", !!hill._stackOn);
+      btn.setAttribute("aria-pressed", hill._stackOn ? "true" : "false");
+      applyStack(hill);
+    });
+    return btn;
+  }
+
   function mountGallery(lb, big, card, px) {
     var hill = card._hill;
     lb._svg = big;
@@ -1844,6 +1885,7 @@
     view.className = "sh-view";
     view.style.width = px;
     view.appendChild(stage);
+    if (hill && hill.stacked) view.appendChild(mountStackButton(hill));
     view.appendChild(mountBuy(hill));
     lb.appendChild(view);
     bindDrag(lb, stage);
@@ -1887,7 +1929,7 @@
   ensureCart();
 
   Promise.all([
-    fetch("hills.json?v=20261016l").then(function (res) {
+    fetch("hills.json?v=20261016z").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
