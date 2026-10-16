@@ -326,15 +326,14 @@
   justify-content: center;
   padding: 24px;
   box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.82);
-  opacity: 0;
+  background: rgba(0, 0, 0, 0);
   overflow: hidden;
-  transition: opacity 0.32s ease;
+  transition: background 0.32s ease;
   cursor: zoom-out;
 }
 
 .sh-lb.sh-lb-on {
-  opacity: 1;
+  background: rgba(0, 0, 0, 0.82);
 }
 
 .sh-lb svg {
@@ -344,8 +343,7 @@
   outline: 0;
   box-shadow: none;
   transform-origin: center center;
-  will-change: transform;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.4s ease-out;
   cursor: default;
 }
 
@@ -355,12 +353,11 @@
 }
 
 .sh-lb.sh-lb-closing {
-  opacity: 0;
-  transition: opacity 0.28s ease;
+  background: rgba(0, 0, 0, 0);
 }
 
 .sh-lb.sh-lb-closing svg {
-  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.32s ease-out;
 }
 
 .sh-hill-name {
@@ -592,47 +589,37 @@ html.sh-lb-open .sh-hill .sh-hill-name {
     display: none;
   }
 
-  .sh-proof {
+  html:not(.sh-credit-print) .sh-credit {
+    display: none;
+  }
+
+  .sh-cart-panel,
+  .sh-cart-btn {
     display: none;
   }
 }
 
-.sh-mock-tab {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  z-index: 100001;
+.sh-view {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 58px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #111;
-  border-right: 0;
-  border-radius: 0;
-  background: #fff;
-  color: #111;
-  cursor: pointer;
-  appearance: none;
-  transform: translateY(-50%);
-}
-
-.sh-mock-tab svg {
-  display: block;
-  width: 12px;
-  height: 12px;
-  background: transparent;
-  transition: transform 0.45s ease;
-}
-
-.sh-lb.sh-framed .sh-mock-tab svg {
-  transform: rotate(180deg);
+  flex-direction: column;
+  align-items: stretch;
+  width: min(92vw, 1100px);
 }
 
 .sh-stage {
   overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.sh-stage.sh-dragging {
+  cursor: grabbing;
+}
+
+.sh-stage svg {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .sh-lb:not(.sh-lb-on) .sh-stage {
@@ -646,7 +633,7 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-track {
   display: flex;
   width: 200%;
-  transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+  transition: transform 400ms ease-out;
 }
 
 .sh-lb.sh-framed .sh-track {
@@ -667,44 +654,148 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   width: 100%;
 }
 
-.sh-slide-art .sh-card,
-.sh-frame-art .sh-card,
-.sh-proof-art .sh-card {
+.sh-slide-art .sh-card {
   display: block;
   width: 100%;
   height: 100%;
   background: #fff;
 }
 
-.sh-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.25rem;
-  margin: 0.55rem 0 0;
+.sh-frame-art .sh-card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
 }
 
-.sh-preview,
-.sh-cart {
+.sh-buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.55rem;
+  padding: 0.45rem 0.4rem 0.15rem;
+  box-sizing: border-box;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sh-lb.sh-lb-on .sh-buy {
+  opacity: 1;
+}
+
+.sh-lb.sh-lb-closing .sh-buy {
+  opacity: 0;
+}
+
+.sh-buy .sh-tag {
+  margin: 0 0.4em 0.35em 0;
+}
+
+.sh-add,
+.sh-cart-btn {
+  margin: 0 0 0.35em 0.15em;
+  padding: 0.25em 0.75em;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #111;
+  color: #fff;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sh-cart-btn {
+  margin: 0;
+  background: transparent;
+  color: #111;
+}
+
+.sh-zoom .sh-cart-btn {
+  flex-shrink: 0;
+}
+
+.sh-add:disabled,
+.sh-add:disabled:hover {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.35);
+  border-color: rgba(0, 0, 0, 0.28);
+  cursor: default;
+}
+
+.sh-cart-panel {
+  position: fixed;
+  z-index: 100010;
+  top: 58px;
+  right: 16px;
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(70vh, 480px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 0.7rem 0.75rem 0.55rem;
+  border: 1px solid #111;
+  background: #fff;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+}
+
+.sh-cart-panel[hidden] {
+  display: none;
+}
+
+.sh-cart-panel h2,
+.sh-cart-empty,
+.sh-cart-sub {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sh-cart-list {
+  margin: 0.55rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sh-cart-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 0.6rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.sh-cart-list button {
+  align-self: center;
   margin: 0;
   padding: 0;
   border: 0;
   background: none;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: "Courier New", Courier, monospace;
+  color: #111;
+  font-family: inherit;
   font-size: 11px;
-  font-weight: 400;
   letter-spacing: 0.04em;
-  line-height: 1.4;
   text-decoration: underline;
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.15em;
   cursor: pointer;
 }
 
-.sh-cart:disabled,
-.sh-cart:disabled:hover {
-  color: rgba(255, 255, 255, 0.42);
-  text-decoration: none;
-  cursor: default;
+.sh-cart-sub {
+  padding-top: 0.35rem;
+  border-top: 1px solid #111;
 }
 
 .sh-wall {
@@ -729,22 +820,23 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-hang {
   position: relative;
   z-index: 1;
-  width: 72%;
+  width: 88%;
   filter: drop-shadow(9px 16px 14px rgba(0, 0, 0, 0.28));
 }
 
 .sh-mould {
   box-sizing: border-box;
-  padding: 2.15%;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 36%),
-    linear-gradient(320deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 42%),
-    linear-gradient(160deg, #6a5142 0%, #3c2b22 46%, #241812 100%);
+  padding: 1.8%;
+  background-color: #111;
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(325deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0) 42%),
+    linear-gradient(180deg, #3a3a3a 0%, #111 46%, #070707 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
-    inset 1px 0 0 rgba(255, 255, 255, 0.16),
-    inset -1px 0 0 rgba(0, 0, 0, 0.4);
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85),
+    inset 1px 0 0 rgba(255, 255, 255, 0.2),
+    inset -1px 0 0 rgba(0, 0, 0, 0.72);
 }
 
 .sh-mat {
@@ -759,6 +851,8 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 
 .sh-frame-art {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1;
   background: #fff;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
@@ -774,82 +868,3 @@ html.sh-lb-open .sh-hill .sh-hill-name {
     inset 0 0 0 1px rgba(80, 62, 44, 0.2);
 }
 
-.sh-proof polyline,
-.sh-proof line {
-  fill: none;
-  stroke: #111;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.sh-proof polyline.sh-run,
-.sh-proof polyline.sh-lift {
-  stroke-width: 1.15;
-}
-
-.sh-proof polyline.sh-contour {
-  stroke: rgba(0, 0, 0, 0.1);
-  stroke-width: 0.65;
-}
-
-.sh-proof polyline.sh-easy,
-.sh-proof line.sh-easy { stroke: #1b7a32; }
-
-.sh-proof polyline.sh-intermediate,
-.sh-proof line.sh-intermediate { stroke: #1a4f9c; }
-
-.sh-proof polyline.sh-advanced,
-.sh-proof line.sh-advanced { stroke: #111; }
-
-.sh-proof polyline.sh-unrated { stroke: #8a8a8a; }
-
-.sh-proof .sh-lift {
-  stroke-dasharray: 4 3;
-}
-
-.sh-proof text {
-  font-family: "Courier New", Courier, monospace;
-  fill: #111;
-}
-
-.sh-proof {
-  position: fixed;
-  inset: 0;
-  z-index: 100002;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 28px;
-  box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.88);
-  cursor: zoom-out;
-}
-
-.sh-proof-sheet {
-  position: relative;
-  width: min(92vmin, 1200px);
-  aspect-ratio: 1;
-  box-sizing: border-box;
-  background: #fff;
-  cursor: default;
-}
-
-.sh-proof-art {
-  position: absolute;
-  inset: 5%;
-}
-
-.sh-proof-credit {
-  position: absolute;
-  right: 5%;
-  bottom: 1.4%;
-  left: 5%;
-  margin: 0;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 8px;
-  letter-spacing: 0.03em;
-  line-height: 1.35;
-  text-align: center;
-}
