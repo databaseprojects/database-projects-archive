@@ -26,6 +26,7 @@
   var placeKey = "";
   var didFit = false;
   var lastPan = "";
+  var mapAimed = "";
   var mapToken = 0;
   var mapZoomLock = 0;
   var mapZoomTarget = null;
@@ -1190,7 +1191,16 @@
       if (matches(hill)) matched.push(hill);
     });
     var one = query && matched.length === 1 ? matched[0] : null;
-    if (!one) lastPan = "";
+    if (!one) {
+      lastPan = "";
+      mapAimed = "";
+    } else {
+      lastPan = one.slug;
+      if (shBasemap && mapAimed !== one.slug) {
+        mapAimed = one.slug;
+        panTo(one);
+      }
+    }
     if (!boundaries) {
       ensureBoundaries().then(function () {
         if (view === "map") syncMap();
@@ -1206,10 +1216,6 @@
       }
       placeKey = province + "|" + region;
       didFit = true;
-      if (lastPan !== one.slug) {
-        lastPan = one.slug;
-        panTo(one);
-      }
       syncMock();
       return;
     }
@@ -1231,6 +1237,7 @@
     placeKey = "";
     didFit = false;
     lastPan = "";
+    mapAimed = "";
     mapZoomTarget = null;
     mapFlight = null;
   }
@@ -1371,6 +1378,7 @@
     placeKey = "";
     didFit = false;
     lastPan = "";
+    mapAimed = "";
     if (grid) grid.classList.add("sh-held");
     syncMapButton();
     syncMock();
@@ -1489,7 +1497,7 @@
   function mockHill() {
     var lb = document.getElementById("sh-lb");
     if (lb && !lb._closing && lb._card && lb._card._hill) return lb._card._hill;
-    if (view !== "map" || !shBasemap || !mapField) return null;
+    if (view !== "map" || !mapField) return null;
     if (lastPan) {
       var named = null;
       hills.forEach(function (hill) {
@@ -1497,7 +1505,7 @@
       });
       if (named) return named;
     }
-    if (shBasemap.getZoom() < 8.5) return null;
+    if (!shBasemap || shBasemap.getZoom() < 8.5) return null;
     var lngLat = shBasemap.getCenter();
     var center = shBasemap.project([lngLat.lng, lngLat.lat]);
     var best = null;

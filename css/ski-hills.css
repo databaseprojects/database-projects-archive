@@ -830,14 +830,13 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   width: min(92vmin, 1200px);
   aspect-ratio: 1;
   box-sizing: border-box;
-  padding: 5%;
   background: #fff;
   cursor: default;
 }
 
 .sh-proof-art {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 5%;
 }
 
 .sh-proof-credit {
