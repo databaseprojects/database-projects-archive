@@ -1,4 +1,4 @@
-/* Ski Hills. Static drawings. The file is local; nothing is fetched from OpenSkiMap. */
+/* Ski Hills. Drawings are local. The map loads only after Map is opened. */
 (function () {
   var grid = document.getElementById("sh-grid");
   var count = document.querySelector(".sh-count");
@@ -14,6 +14,25 @@
   var SQUARE = 1000;
   var BAND = 120;
   var DRAW = SQUARE - BAND;
+  var view = "grid";
+  var pendingFrom = null;
+  var mapField = null;
+  var shBasemap = null;
+  var boundaries = null;
+  var boundariesPromise = null;
+  var mapLibrePromise = null;
+  var positronStyle = null;
+  var mapFlight = null;
+  var placeKey = "";
+  var didFit = false;
+  var lastPan = "";
+  var mapToken = 0;
+  var mapZoomLock = 0;
+  var mapZoomTarget = null;
+  var mapFadeTimer = 0;
+  var maskWait = false;
+  var mapResizeBound = false;
+  var mapTip = null;
 
   function slugFromHash() {
     return decodeURIComponent((location.hash || "").replace(/^#/, "")).trim();
@@ -68,9 +87,10 @@
       card.classList.toggle("sh-on", marked);
       if (inProv) total += 1;
       if (on) shown += 1;
-      if (marked && scroll) card.scrollIntoView({ block: "center" });
+      if (marked && scroll && !card.hidden && view !== "map") card.scrollIntoView({ block: "center" });
     });
     if (count) count.textContent = (query && !shown) ? "No hills match" : (shown + " of " + total);
+    if (view === "map") syncMap();
   }
 
   function runClass(d) {
@@ -556,14 +576,25 @@
     }
   }
 
-  function openLb(card) {
+  function rectBox(box) {
+    if (!box) return null;
+    var x = box.x != null ? box.x : box.left;
+    var y = box.y != null ? box.y : box.top;
+    var w = box.w != null ? box.w : box.width;
+    var h = box.h != null ? box.h : box.height;
+    if (!(w > 0) || !(h > 0)) return null;
+    return { x: x, y: y, w: w, h: h };
+  }
+
+  function openLb(card, origin) {
     if (!card) return;
     var existing = document.getElementById("sh-lb");
     if (existing && existing._card === card && !existing._closing) return;
     if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
     var src = card.querySelector("svg");
     if (!src) return;
-    var thumb = src.getBoundingClientRect();
+    var from = rectBox(origin) || rectBox(src.getBoundingClientRect()) || { x: 0, y: 0, w: 0, h: 0 };
+    var thumb = { left: from.x, top: from.y, width: from.w, height: from.h };
     var name = card.querySelector(".sh-hill-name");
     var lb = document.createElement("div");
     lb.id = "sh-lb";
@@ -572,7 +603,7 @@
     lb.setAttribute("aria-modal", "true");
     lb.setAttribute("aria-label", name ? name.textContent : "Ski hill");
     lb._card = card;
-    lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
+    lb._from = from;
     loadContour(card);
     var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
@@ -632,8 +663,10 @@
       }
     }
     apply(scroll);
+    var from = pendingFrom;
+    pendingFrom = null;
     var card = slug ? document.getElementById(slug) : null;
-    if (card && card.classList.contains("sh-hill")) openLb(card);
+    if (card && card.classList.contains("sh-hill")) openLb(card, from);
     else hideLb();
   }
 
@@ -674,6 +707,687 @@
       if (count) count.textContent = "The Alberta drawings did not load.";
     });
     return albertaPromise;
+  }
+
+  var DOT = 8;
+
+  function syncMapButton() {
+    var btn = document.getElementById("sh-map-btn");
+    if (!btn) return;
+    var on = view === "map";
+    btn.classList.toggle("sh-icon-on", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
+  function ensureTip() {
+    if (mapTip) return mapTip;
+    mapTip = document.createElement("p");
+    mapTip.className = "sh-map-tip";
+    mapTip.hidden = true;
+    document.body.appendChild(mapTip);
+    return mapTip;
+  }
+
+  function showTip(dot) {
+    var tip = ensureTip();
+    if (!dot || document.getElementById("sh-lb")) {
+      tip.hidden = true;
+      if (mapField) mapField.style.cursor = "";
+      return;
+    }
+    tip.hidden = false;
+    tip.textContent = dot.dataset.name || "";
+    var r = dot.getBoundingClientRect();
+    var tw = tip.offsetWidth || 80;
+    var left = r.right + 8;
+    var top = r.top + r.height / 2 - 10;
+    if (left + tw > window.innerWidth - 8) left = Math.max(8, r.left - tw - 8);
+    if (top < 8) top = 8;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+    if (mapField) mapField.style.cursor = "pointer";
+  }
+
+  function dotUnder(x, y) {
+    if (!mapField || mapFlight) return null;
+    var hits = [];
+    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
+      if (el.hidden) return;
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var cx = r.left + r.width / 2;
+      var cy = r.top + r.height / 2;
+      if (Math.hypot(x - cx, y - cy) <= r.width / 2 + 4) hits.push(el);
+    });
+    return hits.length ? hits[hits.length - 1] : null;
+  }
+
+  function snapshotHills() {
+    var map = new Map();
+    if (!grid) return map;
+    Array.prototype.forEach.call(grid.querySelectorAll(".sh-hill"), function (el) {
+      if (el.hidden) return;
+      var r = el.getBoundingClientRect();
+      if (r.width) map.set(el.id, { left: r.left, top: r.top, width: r.width, height: r.height });
+    });
+    return map;
+  }
+
+  function snapshotDots() {
+    var map = new Map();
+    if (!mapField) return map;
+    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
+      if (el.hidden) return;
+      var r = el.getBoundingClientRect();
+      if (r.width) map.set(el.dataset.slug, { left: r.left, top: r.top, width: r.width, height: r.height });
+    });
+    return map;
+  }
+
+  function slideInto(list, before, keyOf) {
+    if (!before) return;
+    var items = Array.prototype.slice.call(list);
+    var step = Math.min(20, 480 / Math.max(items.length, 1));
+    var k = 0;
+    items.forEach(function (el) {
+      var a = before.get(keyOf(el));
+      if (!a) return;
+      (el.getAnimations ? el.getAnimations() : []).forEach(function (an) {
+        if (an.id === "sh-flow") an.cancel();
+      });
+      el.style.transform = "";
+      var b = el.getBoundingClientRect();
+      var layout = el.offsetWidth || b.width;
+      if (!layout) return;
+      var dx = a.left + a.width / 2 - (b.left + b.width / 2);
+      var dy = a.top + a.height / 2 - (b.top + b.height / 2);
+      var scale = a.width / layout;
+      if (!isFinite(scale) || scale <= 0) scale = 1;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(scale - 1) < 0.04) return;
+      var mid = scale + (1 - scale) * 0.82;
+      var anim = el.animate(
+        [
+          { transform: "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")" },
+          { transform: "translate(" + (dx * 0.04).toFixed(1) + "px," + (dy * 0.04 - 2).toFixed(1) + "px) scale(" + mid.toFixed(4) + ")", offset: 0.82 },
+          { transform: "none" }
+        ],
+        { duration: 480, delay: k++ * step, easing: "cubic-bezier(.22,.8,.25,1)", fill: "both" }
+      );
+      anim.id = "sh-flow";
+    });
+  }
+
+  function ensureMapLibre() {
+    if (window.maplibregl) return Promise.resolve();
+    if (mapLibrePromise) return mapLibrePromise;
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css";
+    document.head.appendChild(link);
+    mapLibrePromise = new Promise(function (resolve, reject) {
+      var script = document.createElement("script");
+      script.src = "https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js";
+      script.async = true;
+      script.onload = function () { resolve(); };
+      script.onerror = function () {
+        mapLibrePromise = null;
+        reject(new Error("map"));
+      };
+      document.head.appendChild(script);
+    });
+    return mapLibrePromise;
+  }
+
+  function ensureBoundaries() {
+    if (boundaries) return Promise.resolve(boundaries);
+    if (boundariesPromise) return boundariesPromise;
+    boundariesPromise = fetch("boundaries.json?v=20261016n").then(function (res) {
+      if (!res.ok) throw new Error("boundaries");
+      return res.json();
+    }).then(function (data) {
+      boundaries = data;
+      return data;
+    }).catch(function (err) {
+      boundariesPromise = null;
+      throw err;
+    });
+    return boundariesPromise;
+  }
+
+  function tintStyle(style) {
+    delete style.sprite;
+    delete style.glyphs;
+    style.layers = style.layers.filter(function (layer) {
+      return layer.type !== "symbol";
+    });
+    style.layers.forEach(function (layer) {
+      var paint = layer.paint || (layer.paint = {});
+      if (layer.id === "water") paint["fill-color"] = "#c3d3de";
+      if (layer.id === "waterway") paint["line-color"] = "#a9c0ce";
+      if (layer.id === "park") paint["fill-color"] = "#d3e0d2";
+      if (layer.id === "landcover_wood") paint["fill-color"] = "#c5d4c4";
+    });
+    return style;
+  }
+
+  function loadPositron() {
+    if (!positronStyle) {
+      positronStyle = fetch("https://tiles.openfreemap.org/styles/positron")
+        .then(function (res) { return res.json(); })
+        .then(tintStyle)
+        .catch(function (err) {
+          positronStyle = null;
+          throw err;
+        });
+    }
+    return positronStyle;
+  }
+
+  function selectedRings() {
+    var bag = boundaries && boundaries[province];
+    if (!bag) return [];
+    var ids = region === "all" ? Object.keys(bag) : [region];
+    var rings = [];
+    ids.forEach(function (id) {
+      (bag[id] || []).forEach(function (ring) {
+        if (ring && ring.length) rings.push(ring);
+      });
+    });
+    return rings;
+  }
+
+  function ringArea(ring) {
+    var a = 0;
+    var i;
+    for (i = 0; i < ring.length - 1; i++) {
+      a += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+    }
+    return a / 2;
+  }
+
+  function holeRing(ring) {
+    if (ringArea(ring) > 0) return ring.slice().reverse();
+    return ring.slice();
+  }
+
+  function boundsOfRings(rings) {
+    var west = Infinity;
+    var south = Infinity;
+    var east = -Infinity;
+    var north = -Infinity;
+    rings.forEach(function (ring) {
+      ring.forEach(function (p) {
+        if (p[0] < west) west = p[0];
+        if (p[0] > east) east = p[0];
+        if (p[1] < south) south = p[1];
+        if (p[1] > north) north = p[1];
+      });
+    });
+    if (!isFinite(west)) return null;
+    return [[west, south], [east, north]];
+  }
+
+  function maskOpacityFor(z) {
+    var o = 0.26 + (13 - z) * 0.18;
+    if (o < 0.1) o = 0.1;
+    if (o > 0.86) o = 0.86;
+    return Math.round(o * 100) / 100;
+  }
+
+  function maskData(rings) {
+    var world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
+    return {
+      type: "Feature",
+      properties: {},
+      geometry: { type: "Polygon", coordinates: [world].concat(rings.map(holeRing)) }
+    };
+  }
+
+  function openingBounds() {
+    var box = boundsOfRings(selectedRings());
+    if (box) return box;
+    if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
+    return [[-139.1, 48.2], [-114, 60.05]];
+  }
+
+  function waitMask() {
+    if (maskWait || !shBasemap || !shBasemap.once) return;
+    maskWait = true;
+    shBasemap.once("idle", function () {
+      maskWait = false;
+      if (view === "map") syncMap();
+    });
+  }
+
+  function paintMask() {
+    if (!shBasemap || !boundaries) return false;
+    var rings = selectedRings();
+    if (!rings.length) return false;
+    var ready = !!(shBasemap.isStyleLoaded && shBasemap.isStyleLoaded());
+    var source = null;
+    try { source = shBasemap.getSource("sh-mask"); } catch (err) { source = null; }
+    if (!ready && !source) {
+      waitMask();
+      return false;
+    }
+    var data = maskData(rings);
+    if (!source) {
+      shBasemap.addSource("sh-mask", { type: "geojson", data: data });
+      shBasemap.addLayer({
+        id: "sh-mask",
+        type: "fill",
+        source: "sh-mask",
+        paint: { "fill-color": "#ffffff", "fill-opacity": maskOpacityFor(shBasemap.getZoom()) }
+      });
+    } else {
+      source.setData(data);
+      if (ready) shBasemap.setPaintProperty("sh-mask", "fill-opacity", maskOpacityFor(shBasemap.getZoom()));
+    }
+    return ready;
+  }
+
+  function fitPlace() {
+    if (!shBasemap || !boundaries) return;
+    var key = province + "|" + region;
+    if (key === placeKey) return;
+    var box = boundsOfRings(selectedRings());
+    if (!box || !paintMask()) return;
+    placeKey = key;
+    var animate = didFit;
+    didFit = true;
+    mapZoomLock += 1;
+    shBasemap.fitBounds(box, { padding: 36, animate: animate, duration: animate ? 700 : 0 });
+    mapZoomLock -= 1;
+    mapZoomTarget = null;
+  }
+
+  function panTo(hill) {
+    if (!shBasemap || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
+    var z = shBasemap.getZoom();
+    if (z < 8.5) z = 8.5;
+    mapZoomLock += 1;
+    if (shBasemap.easeTo) shBasemap.easeTo({ center: [hill.lon, hill.lat], zoom: z, duration: 700 });
+    mapZoomLock -= 1;
+    mapZoomTarget = null;
+  }
+
+  function stepMapZoom(dir) {
+    if (!shBasemap) return;
+    var current = mapZoomTarget == null ? shBasemap.getZoom() : mapZoomTarget;
+    var next = current + dir;
+    var minZ = shBasemap.getMinZoom();
+    var maxZ = shBasemap.getMaxZoom();
+    if (next < minZ) next = minZ;
+    if (next > maxZ) next = maxZ;
+    mapZoomTarget = next;
+    mapZoomLock += 1;
+    if (shBasemap.easeTo) shBasemap.easeTo({ zoom: next, duration: 200 });
+    else shBasemap.setZoom(next);
+    mapZoomLock -= 1;
+  }
+
+  function cancelMapFade() {
+    if (!mapFadeTimer) return;
+    window.clearTimeout(mapFadeTimer);
+    mapFadeTimer = 0;
+  }
+
+  function revealMap() {
+    cancelMapFade();
+    if (!mapField || !mapField.isConnected || mapField.classList.contains("sh-map-in")) return;
+    projectDots();
+    releaseMapFlight();
+    mapField.classList.add("sh-map-in");
+  }
+
+  function armMapFade() {
+    cancelMapFade();
+    mapFadeTimer = window.setTimeout(revealMap, 1500);
+  }
+
+  function ensureDots() {
+    if (!mapField) return;
+    hills.forEach(function (hill) {
+      if (hill.dot || typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
+      var el = document.createElement("span");
+      el.className = "sh-dot" + (hill.type ? " sh-dot-" + hill.type : "");
+      el.dataset.slug = hill.slug;
+      el.dataset.name = hill.name || "Unnamed hill";
+      el.setAttribute("aria-hidden", "true");
+      mapField.appendChild(el);
+      hill.dot = el;
+    });
+  }
+
+  function clearDots() {
+    hills.forEach(function (hill) {
+      if (hill.dot && hill.dot.parentNode) hill.dot.parentNode.removeChild(hill.dot);
+      hill.dot = null;
+    });
+  }
+
+  function projectDots() {
+    if (!shBasemap || !mapField) return;
+    hills.forEach(function (hill) {
+      var el = hill.dot;
+      if (!el || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
+      if (!matches(hill)) {
+        el.hidden = true;
+        return;
+      }
+      var p = shBasemap.project([hill.lon, hill.lat]);
+      var left = (p.x - DOT / 2).toFixed(1) + "px";
+      var top = (p.y - DOT / 2).toFixed(1) + "px";
+      if (mapFlight) {
+        el.dataset.mx = left;
+        el.dataset.my = top;
+        if (!mapFlight.get(hill.slug)) el.hidden = true;
+        return;
+      }
+      if (el.getAnimations && el.getAnimations().some(function (an) { return an.id === "sh-flow" && an.playState !== "finished"; })) return;
+      el.hidden = false;
+      el.style.transform = "";
+      el.style.left = left;
+      el.style.top = top;
+    });
+    if (mapFlight && mapField.classList.contains("sh-map-in")) releaseMapFlight();
+  }
+
+  function parkMapDots() {
+    if (!mapFlight || !mapField) return;
+    var box = mapField.getBoundingClientRect();
+    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
+      var a = mapFlight.get(el.dataset.slug);
+      if (!a) {
+        el.hidden = true;
+        return;
+      }
+      el.hidden = false;
+      el.style.left = (a.left + a.width / 2 - box.left - DOT / 2).toFixed(1) + "px";
+      el.style.top = (a.top + a.height / 2 - box.top - DOT / 2).toFixed(1) + "px";
+      if (a.width > 0 && Math.abs(a.width - DOT) > 0.5) {
+        el.style.transform = "scale(" + (a.width / DOT).toFixed(4) + ")";
+      }
+    });
+  }
+
+  function releaseMapFlight() {
+    if (!mapFlight || !mapField) return;
+    var from = mapFlight;
+    var ready = false;
+    var pending = false;
+    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
+      if (!from.get(el.dataset.slug)) return;
+      if (!el.dataset.mx) {
+        if (!el.hidden) pending = true;
+        return;
+      }
+      ready = true;
+      el.hidden = false;
+      el.style.left = el.dataset.mx;
+      el.style.top = el.dataset.my;
+    });
+    if (!ready && pending) return;
+    mapFlight = null;
+    hills.forEach(function (hill) {
+      var el = hill.dot;
+      if (!el || !el.dataset.mx || from.get(hill.slug)) return;
+      if (!matches(hill)) {
+        el.hidden = true;
+        return;
+      }
+      el.hidden = false;
+      el.style.transform = "";
+      el.style.left = el.dataset.mx;
+      el.style.top = el.dataset.my;
+    });
+    slideInto(mapField.querySelectorAll(".sh-dot"), from, function (el) { return el.dataset.slug; });
+  }
+
+  function sizeMap() {
+    if (!mapField) return;
+    var width = mapField.clientWidth;
+    if (width < 40) {
+      var main = document.querySelector("main");
+      width = (main && main.clientWidth) || 640;
+    }
+    var height = Math.max(640, Math.round(Math.max(280, width) * 100 / 120));
+    mapField.style.height = height + "px";
+  }
+
+  function onMapResize() {
+    if (view !== "map" || !mapField) return;
+    sizeMap();
+    if (shBasemap) {
+      shBasemap.resize();
+      projectDots();
+    }
+  }
+
+  function syncMap() {
+    if (view !== "map" || !mapField) return;
+    ensureDots();
+    if (mapFlight) parkMapDots();
+    projectDots();
+    var matched = [];
+    hills.forEach(function (hill) {
+      if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
+      if (matches(hill)) matched.push(hill);
+    });
+    var one = query && matched.length === 1 ? matched[0] : null;
+    if (!one) lastPan = "";
+    if (!boundaries) {
+      ensureBoundaries().then(function () {
+        if (view === "map") syncMap();
+      }).catch(function () {});
+      return;
+    }
+    paintMask();
+    if (one) {
+      if (!shBasemap) return;
+      placeKey = province + "|" + region;
+      didFit = true;
+      if (lastPan !== one.slug) {
+        lastPan = one.slug;
+        panTo(one);
+      }
+      return;
+    }
+    fitPlace();
+  }
+
+  function tearDownMap() {
+    cancelMapFade();
+    showTip(null);
+    maskWait = false;
+    if (shBasemap) {
+      shBasemap.remove();
+      shBasemap = null;
+    }
+    clearDots();
+    if (mapField && mapField.parentNode) mapField.parentNode.removeChild(mapField);
+    mapField = null;
+    placeKey = "";
+    didFit = false;
+    lastPan = "";
+    mapZoomTarget = null;
+    mapFlight = null;
+  }
+
+  function buildMapField() {
+    if (mapField || !grid || !grid.parentNode) return;
+    var field = document.createElement("div");
+    field.className = "sh-map";
+    var zoom = document.createElement("div");
+    zoom.className = "sh-map-zoom";
+    zoom.setAttribute("role", "group");
+    zoom.setAttribute("aria-label", "Map zoom");
+    var zin = document.createElement("button");
+    zin.type = "button";
+    zin.className = "sh-map-zoom-btn";
+    zin.setAttribute("aria-label", "Zoom in");
+    zin.textContent = "+";
+    var zout = document.createElement("button");
+    zout.type = "button";
+    zout.className = "sh-map-zoom-btn";
+    zout.setAttribute("aria-label", "Zoom out");
+    zout.textContent = "\u2212";
+    zoom.appendChild(zin);
+    zoom.appendChild(zout);
+    zin.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      stepMapZoom(1);
+    });
+    zout.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      stepMapZoom(-1);
+    });
+    var credit = document.createElement("p");
+    credit.className = "sh-map-credit";
+    credit.textContent = "\u00a9 OpenStreetMap";
+    field.appendChild(zoom);
+    field.appendChild(credit);
+    grid.parentNode.insertBefore(field, grid.nextSibling);
+    mapField = field;
+    sizeMap();
+    var pressX = 0;
+    var pressY = 0;
+    var pressMoved = false;
+    field.addEventListener("pointerdown", function (e) {
+      if (e.target.closest && e.target.closest(".sh-map-zoom")) return;
+      pressX = e.clientX;
+      pressY = e.clientY;
+      pressMoved = false;
+    });
+    field.addEventListener("pointermove", function (e) {
+      if (Math.hypot(e.clientX - pressX, e.clientY - pressY) > 8) pressMoved = true;
+      if (e.pointerType === "touch") return;
+      showTip(dotUnder(e.clientX, e.clientY));
+    });
+    field.addEventListener("pointerleave", function () { showTip(null); });
+    field.addEventListener("click", function (e) {
+      if (pressMoved) return;
+      if (e.target.closest && e.target.closest(".sh-map-zoom")) return;
+      var dot = dotUnder(e.clientX, e.clientY);
+      if (!dot) return;
+      e.preventDefault();
+      pendingFrom = rectBox(dot.getBoundingClientRect());
+      showTip(null);
+      if (slugFromHash() === dot.dataset.slug) syncFromHash(false);
+      else location.hash = dot.dataset.slug;
+    });
+    if (!mapResizeBound) {
+      mapResizeBound = true;
+      window.addEventListener("resize", onMapResize);
+    }
+  }
+
+  function mountBasemap() {
+    if (!mapField || shBasemap || !window.maplibregl) return;
+    var field = mapField;
+    var el = document.createElement("div");
+    el.className = "sh-map-tiles";
+    el.setAttribute("aria-hidden", "true");
+    field.insertBefore(el, field.firstChild);
+    armMapFade();
+    var token = {};
+    field._shToken = token;
+    loadPositron().then(function (style) {
+      if (field._shToken !== token || !field.isConnected) return;
+      var map = new maplibregl.Map({
+        container: el,
+        style: JSON.parse(JSON.stringify(style)),
+        bounds: openingBounds(),
+        fitBoundsOptions: { padding: 36, animate: false },
+        interactive: true,
+        attributionControl: false,
+        dragRotate: false,
+        pitchWithRotate: false,
+        touchPitch: false,
+        fadeDuration: 0,
+        preserveDrawingBuffer: true,
+        failIfMajorPerformanceCaveat: false
+      });
+      if (map.touchZoomRotate) map.touchZoomRotate.disableRotation();
+      if (map.dragRotate) map.dragRotate.disable();
+      if (map.keyboard) map.keyboard.disable();
+      shBasemap = map;
+      map.on("load", function () {
+        if (field._shToken !== token) return;
+        map.resize();
+        syncMap();
+        function whenTiles() {
+          if (field._shToken !== token) return;
+          if (map.areTilesLoaded && !map.areTilesLoaded()) return;
+          revealMap();
+        }
+        whenTiles();
+        map.on("idle", whenTiles);
+      });
+      map.on("move", function () {
+        projectDots();
+        showTip(null);
+      });
+      map.on("zoom", function () {
+        if (map.getLayer && map.getLayer("sh-mask")) {
+          map.setPaintProperty("sh-mask", "fill-opacity", maskOpacityFor(map.getZoom()));
+        }
+      });
+      map.on("resize", projectDots);
+    }).catch(function () {
+      if (field._shToken === token) revealMap();
+    });
+  }
+
+  function enterMap() {
+    if (view === "map") return;
+    var before = snapshotHills();
+    view = "map";
+    mapFlight = before.size ? before : null;
+    placeKey = "";
+    didFit = false;
+    lastPan = "";
+    if (grid) grid.classList.add("sh-held");
+    syncMapButton();
+    var token = ++mapToken;
+    buildMapField();
+    ensureDots();
+    parkMapDots();
+    Promise.all([
+      ensureMapLibre(),
+      ensureBoundaries().catch(function () { return null; })
+    ]).then(function () {
+      if (token !== mapToken || view !== "map" || !mapField) return;
+      mountBasemap();
+    }).catch(function () {
+      if (token !== mapToken || view !== "map") return;
+      leaveMap(false);
+    });
+  }
+
+  function leaveMap(animate) {
+    if (view !== "map" && !mapField) return;
+    var before = animate === false ? null : snapshotDots();
+    view = "grid";
+    mapToken += 1;
+    tearDownMap();
+    if (grid) grid.classList.remove("sh-held");
+    syncMapButton();
+    if (before && grid) {
+      void grid.offsetWidth;
+      syncStroke();
+      slideInto(grid.querySelectorAll(".sh-hill"), before, function (el) { return el.id; });
+    }
+  }
+
+  var mapBtn = document.getElementById("sh-map-btn");
+  if (mapBtn) {
+    mapBtn.addEventListener("click", function () {
+      if (view === "map") leaveMap(true);
+      else enterMap();
+    });
   }
 
   var find = document.querySelector(".sh-find");
@@ -729,7 +1443,7 @@
     });
   }
 
-  window.addEventListener("hashchange", function () { syncFromHash(true); });
+  window.addEventListener("hashchange", function () { syncFromHash(view !== "map"); });
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && document.getElementById("sh-lb")) {
       e.preventDefault();
