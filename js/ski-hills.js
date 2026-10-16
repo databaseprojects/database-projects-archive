@@ -471,7 +471,7 @@
     }, 0);
   }
 
-  function placeRow(parent, fields, y, startSize) {
+  function placeRow(parent, fields, y, startSize, alignRight) {
     var rowH = BAND / 2;
     var inset = 18;
     var size = startSize;
@@ -489,8 +489,12 @@
       size -= 1;
     }
     var extra = SQUARE - widths.reduce(function (sum, w) { return sum + w; }, 0);
-    if (extra > 0 && widths.length) widths[0] += extra;
-    var x = 0;
+    var lead = 0;
+    if (extra > 0) {
+      if (alignRight) lead = extra;
+      else if (widths.length) widths[0] += extra;
+    }
+    var x = lead;
     var valueY = y + rowH - 16;
     fields.forEach(function (field, i) {
       if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
@@ -538,7 +542,7 @@
     if (gps) bottom.push({ label: "GPS", text: gps });
     hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
-    if (top.length) placeRow(cap, top, DRAW, 16);
+    if (top.length) placeRow(cap, top, DRAW, 16, true);
     placeRow(cap, bottom, DRAW + BAND / 2, 20);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
