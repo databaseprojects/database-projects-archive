@@ -910,7 +910,7 @@
     return ring.slice();
   }
 
-  function boundsOf(rings) {
+  function boundsOfRings(rings) {
     var west = Infinity;
     var south = Infinity;
     var east = -Infinity;
@@ -944,7 +944,7 @@
   }
 
   function openingBounds() {
-    var box = boundsOf(selectedRings());
+    var box = boundsOfRings(selectedRings());
     if (box) return box;
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
@@ -990,7 +990,7 @@
     if (!shBasemap || !boundaries) return;
     var key = province + "|" + region;
     if (key === placeKey) return;
-    var box = boundsOf(selectedRings());
+    var box = boundsOfRings(selectedRings());
     if (!box || !paintMask()) return;
     placeKey = key;
     var animate = didFit;
