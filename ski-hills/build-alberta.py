@@ -130,6 +130,72 @@ def gps_name(lat, lon):
     return f"Hill at {abs(lat):.2f}° {ns}, {abs(lon):.2f}° {ew}"
 
 
+def line_metres(pts):
+    if len(pts) < 2:
+        return 0.0
+    mid = sum(p[1] for p in pts) / len(pts)
+    cos = math.cos(mid * math.pi / 180)
+    total = 0.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        total += math.hypot((x1 - x0) * 111320 * cos, (y1 - y0) * 110540)
+    return total
+
+
+def use_buckets(uses):
+    if isinstance(uses, str):
+        uses = [uses]
+    found = {str(item) for item in (uses or [])}
+    buckets = set()
+    if "skitour" in found or "backcountry" in found:
+        buckets.add("backcountry")
+    if "nordic" in found:
+        buckets.add("cross-country")
+    if "downhill" in found:
+        buckets.add("downhill")
+    return buckets
+
+
+def hill_type(name, activities, has_lifts, downhill_m, nordic_m, backcountry_m):
+    """Downhill needs lifts and downhill runs. Backcountry is skitour/backcountry,
+    or no lifts and no resort name with other non-nordic runs. Cross-country is
+    nordic runs only. Mixed hills take the longer run total.
+    """
+    acts = set(activities or [])
+    down, nordic, back = float(downhill_m or 0), float(nordic_m or 0), float(backcountry_m or 0)
+    if down == nordic == back == 0:
+        if "skitour" in acts or "backcountry" in acts:
+            back = 1
+        if "nordic" in acts:
+            nordic = 1
+        if "downhill" in acts:
+            down = 1
+    resort = bool(re.search(r"\bresorts?\b", name or "", re.I))
+    eligible = {}
+    if nordic > 0 and down == 0 and back == 0:
+        eligible["cross-country"] = nordic
+    if has_lifts and down > 0:
+        eligible["downhill"] = down
+    if back > 0:
+        eligible["backcountry"] = back
+    if (not has_lifts) and (not resort) and (down > 0 or back > 0):
+        eligible["backcountry"] = max(eligible.get("backcountry", 0), down + back)
+    if nordic > 0 and (down > 0 or back > 0):
+        eligible["cross-country"] = nordic
+        if down > 0 and has_lifts:
+            eligible["downhill"] = down
+        if down > 0 and (not has_lifts) and (not resort):
+            eligible["backcountry"] = max(eligible.get("backcountry", 0), down + back)
+    if not eligible:
+        if down > 0 and (has_lifts or resort):
+            return "downhill"
+        if nordic > 0:
+            return "cross-country"
+        return "backcountry" if not has_lifts else "downhill"
+    if len(eligible) == 1:
+        return next(iter(eligible))
+    return max(eligible, key=lambda key: eligible[key])
+
+
 def absorb(path, hills, key, keep_diff=False):
     kept = 0
     with open(path, "rb") as handle:
@@ -146,10 +212,15 @@ def absorb(path, hills, key, keep_diff=False):
                 raw = props.get("difficulty")
                 if isinstance(raw, str) and raw.strip():
                     diff = raw.strip().lower()
+            buckets = use_buckets(props.get("uses")) if keep_diff else set()
+            dist = sum(line_metres(line) for line in lines) if buckets else 0
             for oid in ids:
                 if keep_diff:
                     for line in lines:
                         hills[oid][key].append((diff, line))
+                    tally = hills[oid].setdefault("use_m", {"downhill": 0.0, "cross-country": 0.0, "backcountry": 0.0})
+                    for bucket in buckets:
+                        tally[bucket] += dist
                 else:
                     hills[oid][key].extend(lines)
             kept += 1
@@ -233,6 +304,7 @@ def main():
             "lat": round(loc[1], 5) if loc else None,
             "base": base,
             "drop": drop,
+            "activities": list(feat["properties"].get("activities") or []),
             "runs": [],
             "lifts": [],
         }
@@ -282,6 +354,14 @@ def main():
             "province": "ab",
             "lon": lon,
             "lat": lat,
+            "type": hill_type(
+                label,
+                hill.get("activities"),
+                bool(lifts),
+                (hill.get("use_m") or {}).get("downhill", 0),
+                (hill.get("use_m") or {}).get("cross-country", 0),
+                (hill.get("use_m") or {}).get("backcountry", 0),
+            ),
             "runs": runs,
             "lifts": lifts,
         }

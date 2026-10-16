@@ -6,6 +6,7 @@
   var hills = [];
   var province = "bc";
   var region = "all";
+  var kind = "all";
   var query = "";
   var watch = null;
   var albertaReady = false;
@@ -34,6 +35,11 @@
         btn.setAttribute("aria-pressed", on ? "true" : "false");
       });
     });
+    Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-type]"), function (btn) {
+      var on = btn.getAttribute("data-sh-type") === kind;
+      btn.classList.toggle("sh-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
   }
 
   function fold(text) {
@@ -43,6 +49,7 @@
   function matches(hill) {
     if ((hill.province || "bc") !== province) return false;
     if (region !== "all" && hill.region !== region) return false;
+    if (kind !== "all" && hill.type !== kind) return false;
     if (query && fold(hill.name).indexOf(query) === -1) return false;
     return true;
   }
@@ -263,6 +270,12 @@
     "alberta-central": "Alberta Central",
     "edmonton-area": "Edmonton & Area",
     "alberta-north": "Alberta North"
+  };
+
+  var TYPES = {
+    "downhill": "Downhill",
+    "backcountry": "Backcountry",
+    "cross-country": "Cross-country"
   };
 
   function locationText(hill) {
@@ -498,6 +511,7 @@
     if (typeof hill.drop === "number") top.push({ label: "DROP", text: hill.drop + " m" });
     if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
     var bottom = [{ label: "NAME", text: hill.name || "Unnamed hill" }];
+    if (hill.type && TYPES[hill.type]) bottom.push({ label: "TYPE", text: TYPES[hill.type] });
     var loc = locationText(hill);
     var gps = gpsText(hill);
     if (loc) bottom.push({ label: "REGION", text: loc });
@@ -642,7 +656,7 @@
   function ensureAlberta() {
     if (albertaPromise) return albertaPromise;
     albertaPromise = Promise.all([
-      fetch("alberta.json?v=20261016k").then(function (res) {
+      fetch("alberta.json?v=20261016l").then(function (res) {
         if (!res.ok) throw new Error("alberta");
         return res.json();
       }),
@@ -691,6 +705,13 @@
         requestAnimationFrame(syncStroke);
         return;
       }
+      var nextType = btn.getAttribute("data-sh-type");
+      if (nextType) {
+        kind = nextType === kind ? "all" : nextType;
+        setPressed();
+        apply(false);
+        return;
+      }
       var id = btn.getAttribute("data-sh-region") || "all";
       region = (id === region && id !== "all") ? "all" : id;
       setPressed();
@@ -717,7 +738,7 @@
   });
 
   Promise.all([
-    fetch("hills.json?v=20261016i").then(function (res) {
+    fetch("hills.json?v=20261016l").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
