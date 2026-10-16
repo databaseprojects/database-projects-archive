@@ -80,7 +80,7 @@
     return 0;
   }
 
-  function draw(hill) {
+  function drawingSvg(hill) {
     var runs = (hill.runs || []).slice().sort(function (a, b) {
       return runRank(a && a.d) - runRank(b && b.d);
     }).map(function (run) {
@@ -91,18 +91,26 @@
     var lifts = (hill.lifts || []).map(function (pts) {
       return '<polyline class="sh-lift" points="' + pts + '"></polyline>';
     }).join("");
+    var holder = document.createElement("div");
+    holder.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>";
+    return holder.querySelector("svg");
+  }
+
+  function draw(hill) {
     var card = document.createElement("a");
     card.className = "sh-hill";
     card.id = hill.slug;
     card.href = "#" + hill.slug;
     card.setAttribute("data-sh-id", hill.id);
     card.setAttribute("data-sh-region", hill.region || "");
-    card.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>" +
-      '<span class="sh-hill-name"></span>';
-    card.querySelector(".sh-hill-name").textContent = hill.name || "Unnamed hill";
-    var svg = card.querySelector("svg");
-    card._shift = fitArt(svg);
-    writeCaption(svg, hill);
+    card.setAttribute("aria-label", hill.name || "Unnamed hill");
+    var svg = drawingSvg(hill);
+    card.appendChild(svg);
+    var name = document.createElement("span");
+    name.className = "sh-hill-name";
+    name.textContent = hill.name || "Unnamed hill";
+    card.appendChild(name);
+    card._shift = fitArt(svg, SQUARE);
     card._hill = hill;
     hill.el = card;
     card.hidden = !matches(hill);
@@ -140,16 +148,17 @@
     }).join(" ");
   }
 
-  function fitArt(svg) {
+  function fitArt(svg, limitY) {
     var box = boundsOf(svg);
     var pad = 40;
-    if (!box) return { s: 1, dx: 0, dy: 0 };
+    var limit = limitY == null ? DRAW : limitY;
+    if (!box) return { s: 1, dx: 0, dy: 0, clip: limit };
     var bw = Math.max(box.maxX - box.minX, 1);
     var bh = Math.max(box.maxY - box.minY, 1);
-    var s = Math.min((SQUARE - pad * 2) / bw, (DRAW - pad * 2) / bh);
+    var s = Math.min((SQUARE - pad * 2) / bw, (limit - pad * 2) / bh);
     var dx = SQUARE / 2 - ((box.minX + box.maxX) / 2) * s;
-    var dy = pad + (DRAW - pad * 2) / 2 - ((box.minY + box.maxY) / 2) * s;
-    var shift = { s: s, dx: dx, dy: dy };
+    var dy = pad + (limit - pad * 2) / 2 - ((box.minY + box.maxY) / 2) * s;
+    var shift = { s: s, dx: dx, dy: dy, clip: limit };
     Array.prototype.forEach.call(svg.querySelectorAll("polyline.sh-run, polyline.sh-lift"), function (node) {
       node.setAttribute("points", mapPoints(node.getAttribute("points"), shift));
     });
@@ -171,7 +180,8 @@
       var xy = pair.split(",");
       var x = parseFloat(xy[0]) * s + dx;
       var y = parseFloat(xy[1]) * s + dy;
-      if (y > DRAW || x < -30 || x > SQUARE + 30 || y < -30) {
+      var clip = shift.clip == null ? DRAW : shift.clip;
+      if (y > clip || x < -30 || x > SQUARE + 30 || y < -30) {
         flush();
         return;
       }
@@ -214,10 +224,9 @@
     }).then(function (data) {
       card._contourState = "in";
       card._contourLines = data.lines || [];
-      var shift = card._shift || { dx: 0, dy: 0 };
-      paintContours(card.querySelector("svg"), card._contourLines, shift);
+      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE });
       var lb = document.getElementById("sh-lb");
-      if (lb && lb._card === card) paintContours(lb.querySelector("svg"), card._contourLines, shift);
+      if (lb && lb._card === card && lb._shift) paintContours(lb.querySelector("svg"), card._contourLines, lb._shift);
     }).catch(function () {
       card._contourState = "err";
     });
@@ -248,7 +257,12 @@
     "kootenay-rockies": "Kootenay Rockies",
     "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast",
     "northern-british-columbia": "Northern British Columbia",
-    "alberta": "Alberta"
+    "canadian-rockies": "Canadian Rockies",
+    "alberta-south": "Alberta South",
+    "calgary-area": "Calgary & Area",
+    "alberta-central": "Alberta Central",
+    "edmonton-area": "Edmonton & Area",
+    "alberta-north": "Alberta North"
   };
 
   function locationText(hill) {
@@ -390,27 +404,108 @@
     });
   }
 
+  function hairline(parent, x1, y1, x2, y2) {
+    var line = document.createElementNS(NS, "polyline");
+    line.setAttribute("class", "sh-rule");
+    line.setAttribute("points", x1.toFixed(1) + "," + y1.toFixed(1) + " " + x2.toFixed(1) + "," + y2.toFixed(1));
+    line.setAttribute("style", "stroke:rgba(0,0,0,0.4);stroke-width:0.65;stroke-linecap:butt;fill:none");
+    parent.appendChild(line);
+  }
+
+  function fieldLabel(str, x, y) {
+    var text = document.createElementNS(NS, "text");
+    text.setAttribute("class", "sh-field-label");
+    text.setAttribute("x", x.toFixed(1));
+    text.setAttribute("y", y.toFixed(1));
+    text.setAttribute("font-family", "Courier New, Courier, monospace");
+    text.setAttribute("font-size", "9");
+    text.setAttribute("style", "fill:rgba(0,0,0,0.55);letter-spacing:0.16em");
+    text.textContent = str;
+    return text;
+  }
+
+  function labelWidth(str) {
+    var size = 9;
+    return textWidth(str, size) + Math.max(str.length - 1, 0) * size * 0.16;
+  }
+
+  function keysWidth(keys, size) {
+    var between = Math.max(14, size * 0.8);
+    return keys.reduce(function (sum, key, i) {
+      var len = size * 1.25;
+      var gap = size * 0.55;
+      return sum + (i ? between : 0) + len + gap + textWidth(String(key.n), size);
+    }, 0);
+  }
+
+  function placeRow(parent, fields, y, startSize) {
+    var rowH = BAND / 2;
+    var inset = 18;
+    var size = startSize;
+    var widths = [];
+    function measure(sz) {
+      return fields.map(function (field) {
+        var valueW = field.keys ? keysWidth(field.keys, sz) : textWidth(field.text, sz);
+        return Math.max(labelWidth(field.label), valueW) + inset * 2;
+      });
+    }
+    while (size >= 12) {
+      widths = measure(size);
+      var used = widths.reduce(function (sum, w) { return sum + w; }, 0);
+      if (used <= SQUARE || size === 12) break;
+      size -= 1;
+    }
+    var extra = SQUARE - widths.reduce(function (sum, w) { return sum + w; }, 0);
+    if (extra > 0 && widths.length) widths[0] += extra;
+    var x = 0;
+    var valueY = y + rowH - 16;
+    fields.forEach(function (field, i) {
+      if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
+      var inner = x + inset;
+      parent.appendChild(fieldLabel(field.label, inner, y + 20));
+      if (field.keys) {
+        var cursor = inner;
+        var between = Math.max(14, size * 0.8);
+        field.keys.forEach(function (key, ki) {
+          if (ki) cursor += between;
+          var part = keyPart(key.key, key.n, size);
+          part.node.setAttribute("transform", "translate(" + cursor.toFixed(1) + " " + valueY.toFixed(1) + ")");
+          parent.appendChild(part.node);
+          cursor += part.w;
+        });
+      } else {
+        var text = textPart(field.text, size);
+        text.node.setAttribute("x", inner.toFixed(1));
+        text.node.setAttribute("y", valueY.toFixed(1));
+        parent.appendChild(text.node);
+      }
+      x += widths[i];
+    });
+  }
+
   function writeCaption(svg, hill) {
     var cap = document.createElementNS(NS, "g");
     cap.setAttribute("class", "sh-caption");
-    var nameRow = [{ text: hill.name || "Unnamed hill", bold: true }];
-    var loc = locationText(hill);
-    var gps = gpsText(hill);
-    if (loc) nameRow.push({ text: loc });
-    if (gps) nameRow.push({ text: gps });
-    var keys = [];
-    var elev = [];
+    var top = [];
     var counts = diffCounts(hill);
     if (counts) {
+      var keys = [];
       if (counts.green) keys.push({ key: "sh-easy", n: counts.green });
       if (counts.blue) keys.push({ key: "sh-intermediate", n: counts.blue });
       if (counts.black) keys.push({ key: "sh-advanced", n: counts.black });
+      if (keys.length) top.push({ label: "RUNS", keys: keys });
     }
-    if (typeof hill.drop === "number") elev.push({ text: "Drop " + hill.drop + " m" });
-    if (typeof hill.base === "number") elev.push({ text: "Base " + hill.base + " m" });
-    var yName = DRAW + 78;
-    if (keys.length || elev.length) layoutEnds(cap, DRAW + 40, keys, elev, 18);
-    layoutRow(cap, yName, nameRow, 20);
+    if (typeof hill.drop === "number") top.push({ label: "DROP", text: hill.drop + " m" });
+    if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
+    var bottom = [{ label: "NAME", text: hill.name || "Unnamed hill" }];
+    var loc = locationText(hill);
+    var gps = gpsText(hill);
+    if (loc) bottom.push({ label: "REGION", text: loc });
+    if (gps) bottom.push({ label: "GPS", text: gps });
+    hairline(cap, 0, DRAW, SQUARE, DRAW);
+    hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
+    if (top.length) placeRow(cap, top, DRAW, 16);
+    placeRow(cap, bottom, DRAW + BAND / 2, 20);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
     return SQUARE;
@@ -465,8 +560,12 @@
     lb._card = card;
     lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
     loadContour(card);
-    var big = src.cloneNode(true);
+    var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
+    var shift = fitArt(big, DRAW);
+    writeCaption(big, card._hill);
+    lb._shift = shift;
+    if (card._contourLines) paintContours(big, card._contourLines, shift);
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
     var maxH = window.innerHeight * 0.88;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
@@ -543,7 +642,7 @@
   function ensureAlberta() {
     if (albertaPromise) return albertaPromise;
     albertaPromise = Promise.all([
-      fetch("alberta.json?v=20261016i").then(function (res) {
+      fetch("alberta.json?v=20261016k").then(function (res) {
         if (!res.ok) throw new Error("alberta");
         return res.json();
       }),
