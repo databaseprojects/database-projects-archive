@@ -16,6 +16,7 @@
   var DRAW = SQUARE - BAND;
   var view = "grid";
   var pendingFrom = null;
+  var scrollHold = null;
   var mapField = null;
   var shBasemap = null;
   var boundaries = null;
@@ -554,12 +555,20 @@
     return SQUARE;
   }
 
+  window.addEventListener("scroll", function () {
+    if (scrollHold == null) return;
+    if (window.scrollY !== scrollHold) window.scrollTo(window.scrollX, scrollHold);
+  }, { passive: true });
+
   function hideLb() {
     var lb = document.getElementById("sh-lb");
     if (!lb || lb._closing) return;
     lb._closing = true;
     var track = lb.querySelector(".sh-track");
-    if (track) track.style.transition = "none";
+    if (track) {
+      track.style.transition = "none";
+      track.style.transform = "translateX(0)";
+    }
     lb.classList.remove("sh-framed");
     var big = lb._svg;
     var from = lb._from;
@@ -576,7 +585,10 @@
     }
     setTimeout(function () {
       if (lb.parentNode) lb.parentNode.removeChild(lb);
-      if (!document.getElementById("sh-lb")) document.documentElement.classList.remove("sh-lb-open");
+      if (!document.getElementById("sh-lb")) {
+        document.documentElement.classList.remove("sh-lb-open");
+        scrollHold = null;
+      }
       syncMock();
     }, 340);
     syncMock();
@@ -626,33 +638,32 @@
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift);
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
-    var maxH = window.innerHeight * 0.88 - 36;
+    var maxH = window.innerHeight * 0.86 - 88;
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
     var px = (SQUARE * scale).toFixed(1) + "px";
     big.style.width = "100%";
     big.style.height = "100%";
+    big.setAttribute("draggable", "false");
+    if (scrollHold == null) scrollHold = window.scrollY;
     mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
-    requestAnimationFrame(function () {
-      if (lb._closing) return;
-      var r = big.getBoundingClientRect();
-      if (!r.width || !thumb.width) {
-        lb.classList.add("sh-lb-on");
-        return;
-      }
+    fitFrameArt(lb);
+    var r = big.getBoundingClientRect();
+    if (r.width && thumb.width) {
       var s = Math.min(thumb.width / r.width, thumb.height / r.height);
       var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
       var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
       big.style.transition = "none";
       big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-      void big.offsetWidth;
+    }
+    void big.offsetWidth;
+    requestAnimationFrame(function () {
+      if (lb._closing) return;
+      window.scrollTo(window.scrollX, scrollHold);
+      lb.classList.add("sh-lb-on");
       big.style.transition = "";
-      requestAnimationFrame(function () {
-        if (lb._closing) return;
-        lb.classList.add("sh-lb-on");
-        big.style.transform = "none";
-      });
+      big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
       if (e.target === lb) closeLb();
@@ -1300,10 +1311,8 @@
       var dot = dotUnder(e.clientX, e.clientY);
       if (!dot) return;
       e.preventDefault();
-      pendingFrom = rectBox(dot.getBoundingClientRect());
       showTip(null);
-      if (slugFromHash() === dot.dataset.slug) syncFromHash(false);
-      else location.hash = dot.dataset.slug;
+      showHill(dot.dataset.slug, rectBox(dot.getBoundingClientRect()));
     });
     if (!mapResizeBound) {
       mapResizeBound = true;
@@ -1469,14 +1478,159 @@
       var card = e.target.closest ? e.target.closest(".sh-hill") : null;
       if (!card) return;
       e.preventDefault();
-      if (slugFromHash() === card.id) syncFromHash(true);
-      else location.hash = card.id;
+      var svg = card.querySelector("svg");
+      showHill(card.id, rectBox(svg ? svg.getBoundingClientRect() : null));
     });
   }
 
+  function showHill(slug, origin) {
+    var y = window.scrollY;
+    scrollHold = y;
+    pendingFrom = origin || null;
+    var want = "#" + slug;
+    if (location.hash !== want) history.pushState(null, "", location.pathname + location.search + want);
+    window.scrollTo(window.scrollX, y);
+    syncFromHash(false);
+  }
+
   window.addEventListener("hashchange", function () { syncFromHash(view !== "map"); });
-  function printsOn() {
-    return !!(window.SH_PRINTS && window.SH_PRINTS.enabled === true);
+  window.addEventListener("popstate", function () {
+    scrollHold = window.scrollY;
+    syncFromHash(false);
+  });
+  var CART_KEY = "shDemoCart";
+  var SIZES = [
+    { kind: "5x5", label: "5 x 5 in" },
+    { kind: "10x10", label: "10 x 10 in" },
+    { kind: "12x12", label: "12 x 12 in" },
+    { kind: "20x20", label: "20 x 20 in" }
+  ];
+
+  function priceFor(kind) {
+    var prices = window.SH_PRINTS && window.SH_PRINTS.prices;
+    if (!prices || !Object.prototype.hasOwnProperty.call(prices, kind)) return null;
+    return typeof prices[kind] === "number" ? prices[kind] : null;
+  }
+
+  function money(amount) {
+    if (typeof amount !== "number") return "Price TBD";
+    var cur = (window.SH_PRINTS && window.SH_PRINTS.currency) || "CAD";
+    var num = amount % 1 === 0 ? String(amount) : amount.toFixed(2);
+    return "$" + num + " " + cur;
+  }
+
+  function readCart() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      if (!Array.isArray(raw)) return [];
+      return raw.filter(function (item) { return item && item.kind && item.slug; });
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function writeCart(items) {
+    try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
+    renderCart();
+  }
+
+  function addItem(hill, kind, label) {
+    if (!hill) return;
+    var items = readCart();
+    var key = hill.slug + "|" + kind;
+    var found = null;
+    items.forEach(function (item) { if (item.key === key) found = item; });
+    if (found) found.qty = (found.qty || 1) + 1;
+    else items.push({ key: key, slug: hill.slug, name: hill.name || "Unnamed hill", kind: kind, label: label, qty: 1 });
+    writeCart(items);
+  }
+
+  function renderCart() {
+    var items = readCart();
+    var n = items.reduce(function (sum, item) { return sum + (item.qty || 1); }, 0);
+    Array.prototype.forEach.call(document.querySelectorAll(".sh-cart-n"), function (node) {
+      node.textContent = String(n);
+    });
+    var panel = document.getElementById("sh-cart-panel");
+    if (!panel) return;
+    panel.textContent = "";
+    var title = document.createElement("h2");
+    title.textContent = "Cart";
+    panel.appendChild(title);
+    if (!items.length) {
+      var empty = document.createElement("p");
+      empty.className = "sh-cart-empty";
+      empty.textContent = "Cart is empty";
+      panel.appendChild(empty);
+      return;
+    }
+    var list = document.createElement("ul");
+    list.className = "sh-cart-list";
+    var sum = 0;
+    items.forEach(function (item) {
+      var li = document.createElement("li");
+      var info = document.createElement("div");
+      var name = document.createElement("div");
+      name.textContent = item.name + (item.qty > 1 ? " × " + item.qty : "");
+      var kind = document.createElement("div");
+      kind.textContent = item.kind === "digital" ? "Digital" : item.label;
+      var amount = priceFor(item.kind);
+      var price = document.createElement("div");
+      price.textContent = money(amount);
+      if (typeof amount === "number") sum += amount * (item.qty || 1);
+      info.appendChild(name);
+      info.appendChild(kind);
+      info.appendChild(price);
+      var remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", function (e) {
+        e.stopPropagation();
+        writeCart(readCart().filter(function (row) { return row.key !== item.key; }));
+      });
+      li.appendChild(info);
+      li.appendChild(remove);
+      list.appendChild(li);
+    });
+    panel.appendChild(list);
+    var sub = document.createElement("p");
+    sub.className = "sh-cart-sub";
+    sub.textContent = "Subtotal " + money(sum);
+    panel.appendChild(sub);
+  }
+
+  function toggleCart(force) {
+    var panel = document.getElementById("sh-cart-panel");
+    if (!panel) return;
+    var open = force == null ? panel.hidden : !!force;
+    panel.hidden = !open;
+    Array.prototype.forEach.call(document.querySelectorAll(".sh-cart-btn"), function (btn) {
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  }
+
+  function ensureCart() {
+    if (!document.getElementById("sh-cart-panel")) {
+      var panel = document.createElement("div");
+      panel.id = "sh-cart-panel";
+      panel.className = "sh-cart-panel";
+      panel.hidden = true;
+      panel.setAttribute("role", "dialog");
+      panel.setAttribute("aria-label", "Cart");
+      document.body.appendChild(panel);
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest && e.target.closest(".sh-cart-btn");
+        if (btn) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleCart();
+          return;
+        }
+        if (e.target.closest && e.target.closest("#sh-cart-panel")) return;
+        toggleCart(false);
+      });
+    }
+    renderCart();
   }
 
   function mockCardSvg(hill) {
@@ -1489,81 +1643,175 @@
     return svg;
   }
 
-  function syncCart(root) {
-    var on = printsOn();
-    Array.prototype.forEach.call((root || document).querySelectorAll(".sh-cart"), function (cart) {
-      cart.disabled = !on;
-      cart.textContent = on ? "Add to Cart" : "Prints coming soon";
-    });
-  }
-
-  function closeProof() {
-    var proof = document.getElementById("sh-proof");
-    if (!proof) return false;
-    if (proof.parentNode) proof.parentNode.removeChild(proof);
-    return true;
-  }
-
-  function openProof(hill) {
-    closeProof();
-    var proof = document.createElement("div");
-    proof.id = "sh-proof";
-    proof.className = "sh-proof";
-    proof.setAttribute("role", "dialog");
-    proof.setAttribute("aria-modal", "true");
-    proof.setAttribute("aria-label", "Print preview");
-    var sheet = document.createElement("div");
-    sheet.className = "sh-proof-sheet";
-    var art = document.createElement("div");
-    art.className = "sh-proof-art";
-    art.appendChild(mockCardSvg(hill));
-    var credit = document.createElement("p");
-    credit.className = "sh-proof-credit";
-    credit.textContent = "© OpenStreetMap contributors, OpenSkiMap.org (ODbL). Contains information licensed under the Open Government Licence – Canada.";
-    sheet.appendChild(art);
-    sheet.appendChild(credit);
-    proof.appendChild(sheet);
-    proof.addEventListener("click", function (e) {
-      if (e.target === proof) closeProof();
-    });
-    sheet.addEventListener("click", function (e) { e.stopPropagation(); });
-    document.body.appendChild(proof);
-  }
-
   function setFramed(lb, on) {
     if (!lb) return;
     var track = lb.querySelector(".sh-track");
-    if (track) track.style.transition = "";
     lb.classList.toggle("sh-framed", !!on);
-    var tab = lb.querySelector(".sh-mock-tab");
-    if (!tab) return;
-    tab.setAttribute("aria-label", on ? "Show the plain print" : "Show the framed print");
+    var mock = lb.querySelector(".sh-mock");
+    if (mock) {
+      mock.classList.toggle("sh-on", !!on);
+      mock.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    if (!track) return;
+    track.style.transition = "transform 400ms ease-out";
+    track.style.transform = on ? "translateX(-50%)" : "translateX(0)";
   }
 
-  function linkRow(hill) {
-    var row = document.createElement("p");
-    row.className = "sh-links";
-    var preview = document.createElement("button");
-    preview.type = "button";
-    preview.className = "sh-preview";
-    preview.textContent = "Preview";
-    preview.addEventListener("click", function (e) {
-      e.stopPropagation();
-      openProof(hill);
+  function syncAdd(row) {
+    var add = row.querySelector(".sh-add");
+    if (add) add.disabled = !row.querySelector(".sh-size.sh-on");
+  }
+
+  function mountBuy(hill) {
+    var row = document.createElement("div");
+    row.className = "sh-buy";
+    SIZES.forEach(function (size) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "sh-tag sh-size";
+      btn.setAttribute("data-size", size.kind);
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = size.label;
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var on = !btn.classList.contains("sh-on");
+        btn.classList.toggle("sh-on", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        syncAdd(row);
+      });
+      row.appendChild(btn);
     });
+    var digital = document.createElement("button");
+    digital.type = "button";
+    digital.className = "sh-tag sh-digital";
+    digital.textContent = "Digital download, " + money(priceFor("digital"));
+    digital.addEventListener("click", function (e) {
+      e.stopPropagation();
+      addItem(hill, "digital", "Digital");
+    });
+    row.appendChild(digital);
+    var mock = document.createElement("button");
+    mock.type = "button";
+    mock.className = "sh-tag sh-mock";
+    mock.setAttribute("aria-pressed", "false");
+    mock.textContent = "Mockup";
+    mock.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var lb = document.getElementById("sh-lb");
+      setFramed(lb, !(lb && lb.classList.contains("sh-framed")));
+    });
+    row.appendChild(mock);
+    var add = document.createElement("button");
+    add.type = "button";
+    add.className = "sh-add";
+    add.disabled = true;
+    add.textContent = "Add to cart";
+    add.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var picked = row.querySelectorAll(".sh-size.sh-on");
+      if (!picked.length) return;
+      Array.prototype.forEach.call(picked, function (btn) {
+        var kind = btn.getAttribute("data-size");
+        var size = SIZES.filter(function (s) { return s.kind === kind; })[0];
+        if (!size) return;
+        addItem(hill, size.kind, size.label);
+        btn.classList.remove("sh-on");
+        btn.setAttribute("aria-pressed", "false");
+      });
+      syncAdd(row);
+    });
+    row.appendChild(add);
     var cart = document.createElement("button");
     cart.type = "button";
-    cart.className = "sh-cart";
-    cart.disabled = true;
-    cart.textContent = "Prints coming soon";
-    cart.addEventListener("click", function (e) {
-      e.stopPropagation();
-      if (!printsOn()) return;
-      if (window.SH_PRINTS && typeof window.SH_PRINTS.add === "function") window.SH_PRINTS.add(hill);
-    });
-    row.appendChild(preview);
+    cart.className = "sh-cart-btn";
+    cart.setAttribute("aria-expanded", "false");
+    cart.setAttribute("aria-controls", "sh-cart-panel");
+    cart.appendChild(document.createTextNode("Cart "));
+    var n = document.createElement("span");
+    n.className = "sh-cart-n";
+    n.textContent = "0";
+    cart.appendChild(n);
     row.appendChild(cart);
     return row;
+  }
+
+  function fitFrameArt(lb) {
+    if (!lb) return;
+    var art = lb.querySelector(".sh-frame-art");
+    if (!art) return;
+    var w = art.clientWidth;
+    if (!(w > 8)) return;
+    art.style.height = w.toFixed(1) + "px";
+    var svg = art.querySelector("svg");
+    if (!svg) return;
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    svg.setAttribute("width", String(Math.round(w)));
+    svg.setAttribute("height", String(Math.round(w)));
+  }
+
+  function bindDrag(lb, stage) {
+    var drag = null;
+    stage.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    stage.addEventListener("pointerdown", function (e) {
+      if (e.button != null && e.button !== 0) return;
+      e.preventDefault();
+      var w = stage.clientWidth || 1;
+      drag = {
+        id: e.pointerId,
+        x0: e.clientX,
+        y0: e.clientY,
+        lastX: e.clientX,
+        lastT: performance.now(),
+        vx: 0,
+        w: w,
+        base: lb.classList.contains("sh-framed") ? -w : 0,
+        active: false
+      };
+      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    stage.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x0;
+      var dy = e.clientY - drag.y0;
+      var now = performance.now();
+      var dt = now - drag.lastT;
+      if (dt >= 16) {
+        drag.vx = (e.clientX - drag.lastX) / dt;
+        drag.lastX = e.clientX;
+        drag.lastT = now;
+      }
+      if (!drag.active) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          drag = null;
+          return;
+        }
+        drag.active = true;
+        stage.classList.add("sh-dragging");
+      }
+      e.preventDefault();
+      var x = Math.max(-drag.w, Math.min(0, drag.base + dx));
+      var track = stage.querySelector(".sh-track");
+      if (!track) return;
+      track.style.transition = "none";
+      track.style.transform = "translateX(" + x.toFixed(1) + "px)";
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var info = drag;
+      drag = null;
+      stage.classList.remove("sh-dragging");
+      if (!info.active) return;
+      var dx = e.clientX - info.x0;
+      var towardFrame = info.base === 0;
+      var progress = towardFrame ? -dx / info.w : dx / info.w;
+      var flick = Math.abs(dx) > 18 && (towardFrame ? info.vx < -0.45 : info.vx > 0.45);
+      var snap = progress > 0.25 || flick;
+      setFramed(lb, towardFrame ? snap : !snap);
+    }
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
   }
 
   function mountGallery(lb, big, card, px) {
@@ -1581,7 +1829,6 @@
     plainArt.style.height = px;
     plainArt.appendChild(big);
     plain.appendChild(plainArt);
-    plain.appendChild(linkRow(hill));
     var framed = document.createElement("div");
     framed.className = "sh-slide sh-slide-frame";
     var wall = document.createElement("div");
@@ -1589,24 +1836,18 @@
     wall.style.height = px;
     wall.innerHTML = '<div class="sh-hang"><div class="sh-mould"><div class="sh-mat"><div class="sh-frame-art"></div></div></div></div>';
     framed.appendChild(wall);
-    framed.appendChild(linkRow(hill));
     track.appendChild(plain);
     track.appendChild(framed);
     stage.appendChild(track);
-    var tab = document.createElement("button");
-    tab.type = "button";
-    tab.className = "sh-mock-tab";
-    tab.setAttribute("aria-label", "Show the framed print");
-    tab.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 2.5 L8 6 L4.5 9.5"></path></svg>';
-    tab.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      setFramed(lb, !lb.classList.contains("sh-framed"));
-    });
-    lb.appendChild(stage);
-    lb.appendChild(tab);
+    var view = document.createElement("div");
+    view.className = "sh-view";
+    view.style.width = px;
+    view.appendChild(stage);
+    view.appendChild(mountBuy(hill));
+    lb.appendChild(view);
+    bindDrag(lb, stage);
     refreshMockArt(card);
-    syncCart(lb);
+    renderCart();
     stage.addEventListener("click", function (e) { e.stopPropagation(); });
   }
 
@@ -1616,35 +1857,34 @@
     var slot = lb.querySelector(".sh-frame-art");
     if (!slot) return;
     slot.innerHTML = "";
-    slot.appendChild(mockCardSvg(card._hill));
+    var svg = mockCardSvg(card._hill);
+    svg.setAttribute("draggable", "false");
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    slot.appendChild(svg);
+    fitFrameArt(lb);
   }
 
   function syncMock() {
-    var lb = document.getElementById("sh-lb");
-    if (!lb || lb._closing) {
-      closeProof();
-      return;
-    }
-    syncCart(lb);
+    renderCart();
   }
 
   window.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
-    if (closeProof()) {
+    var panel = document.getElementById("sh-cart-panel");
+    if (panel && !panel.hidden) {
       e.preventDefault();
+      toggleCart(false);
       return;
     }
     var lb = document.getElementById("sh-lb");
-    if (lb && lb.classList.contains("sh-framed")) {
-      e.preventDefault();
-      setFramed(lb, false);
-      return;
-    }
-    if (lb) {
-      e.preventDefault();
-      closeLb();
-    }
+    if (!lb) return;
+    e.preventDefault();
+    if (lb.classList.contains("sh-framed")) setFramed(lb, false);
+    else closeLb();
   });
+
+  ensureCart();
 
   Promise.all([
     fetch("hills.json?v=20261016l").then(function (res) {
