@@ -203,7 +203,7 @@
       return '<polyline class="sh-lift" points="' + pts + '"></polyline>';
     }).join("");
     var holder = document.createElement("div");
-    holder.innerHTML = '<svg viewBox="0 0 1000 1000" aria-hidden="true">' + runs + lifts + "</svg>";
+    holder.innerHTML = '<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + runs + lifts + "</svg>";
     return holder.querySelector("svg");
   }
 
@@ -1934,6 +1934,8 @@
     if (!svg) return;
     var old = svg.querySelector(".sh-frontal");
     if (old && old.parentNode) old.parentNode.removeChild(old);
+    var plate = svg.querySelector(".sh-frontal-plate");
+    if (plate && plate.parentNode) plate.parentNode.removeChild(plate);
   }
 
   function mountFrontal(svg, markup) {
@@ -1944,15 +1946,25 @@
     if (!art) return;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-frontal");
-    var scale = DRAW / SQUARE;
-    var tx = ((1 - scale) * SQUARE) / 2;
-    g.setAttribute("transform", "translate(" + tx.toFixed(2) + " 0) scale(" + scale.toFixed(4) + ")");
+    // The frontal file is already fitted to the caption band. Mounting it
+    // 1:1 lets the topo meet the card edge; the old 0.88 scale left a white
+    // gutter between the drawing and the dark lightbox.
+    svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
     Array.prototype.forEach.call(art.childNodes, function (node) {
       if (node.nodeType === 1) g.appendChild(document.importNode(node, true));
     });
     var cap = svg.querySelector(".sh-caption");
-    if (cap) svg.insertBefore(g, cap);
-    else svg.appendChild(g);
+    if (cap) {
+      svg.insertBefore(g, cap);
+      var plate = document.createElementNS(NS, "rect");
+      plate.setAttribute("class", "sh-frontal-plate");
+      plate.setAttribute("x", "0");
+      plate.setAttribute("y", String(DRAW));
+      plate.setAttribute("width", String(SQUARE));
+      plate.setAttribute("height", String(BAND));
+      plate.setAttribute("fill", "#fff");
+      cap.insertBefore(plate, cap.firstChild);
+    } else svg.appendChild(g);
   }
 
   function paintPlan(svg, hill, lines, shift) {
@@ -1977,7 +1989,7 @@
       return;
     }
     hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017l").then(function (res) {
+    fetch("frontal/" + hill.slug + ".svg?v=20261017m").then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {
