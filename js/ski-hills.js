@@ -1299,7 +1299,8 @@
       var main = document.querySelector("main");
       width = (main && main.clientWidth) || 640;
     }
-    var height = Math.max(640, Math.round(Math.max(280, width) * 100 / 120));
+    var full = Math.max(640, Math.round(Math.max(280, width) * 100 / 120));
+    var height = Math.round(full / 2);
     mapField.style.height = height + "px";
   }
 
