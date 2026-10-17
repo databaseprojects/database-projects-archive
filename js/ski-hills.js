@@ -27,9 +27,8 @@
   var positronStyle = null;
   var pinsHeld = false;
   var pinToken = 0;
-  var maskByKey = {};
   var boundsByKey = {};
-  var masksMounted = false;
+  var ringsByKey = {};
   var placeKey = "";
   var didFit = false;
   var lastPan = "";
@@ -38,7 +37,7 @@
   var mapZoomLock = 0;
   var mapZoomTarget = null;
   var mapFadeTimer = 0;
-  var maskWait = false;
+  var outlineWait = false;
   var mapResizeBound = false;
   var mapTip = null;
 
@@ -53,12 +52,25 @@
       btn.classList.toggle("sh-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    var displaced = {};
+    var switching = province === "bc" || province === "ab";
+    if (switching && window.Shared && Shared.syncSubtags) {
+      Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-for]"), function (group) {
+        var id = group.getAttribute("data-sh-for");
+        if (id === province || group.hidden) return;
+        var parent = tags.querySelector('[data-sh-province="' + id + '"]');
+        Shared.syncSubtags(group, parent, false, "push");
+        displaced[id] = true;
+      });
+    }
     Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-for]"), function (group) {
       var id = group.getAttribute("data-sh-for");
       var mine = id === province;
       var parent = tags.querySelector('[data-sh-province="' + id + '"]');
-      if (window.Shared && Shared.syncSubtags) Shared.syncSubtags(group, parent, mine);
-      else group.hidden = !mine;
+      if (!displaced[id]) {
+        if (window.Shared && Shared.syncSubtags) Shared.syncSubtags(group, parent, mine);
+        else group.hidden = !mine;
+      }
       Array.prototype.forEach.call(group.querySelectorAll("[data-sh-region]"), function (btn) {
         var on = mine && btn.getAttribute("data-sh-region") === region;
         btn.classList.toggle("sh-on", on);
@@ -111,6 +123,27 @@
   function isShown(hill) {
     if (!shownIds) return matches(hill);
     return !!shownIds[hill.id];
+  }
+
+  function inPlace(hill) {
+    if (province === "all") return true;
+    if ((hill.province || "bc") !== province) return false;
+    if (region !== "all" && hill.region !== region) return false;
+    return true;
+  }
+
+  // Kind, search, and Most popular still choose which dots are on the map.
+  // Province and region only dim the ones outside the selected place.
+  function onMap(hill) {
+    if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return false;
+    if (kind !== "all" && hill.type !== kind) return false;
+    if (query && fold(hill.name).indexOf(query) === -1) return false;
+    if (popular) return isShown(hill);
+    return true;
+  }
+
+  function dotFade(hill) {
+    return inPlace(hill) ? "1" : "0.2";
   }
 
   function apply(scroll) {
@@ -967,8 +1000,8 @@
   function warmBoundaryCache() {
     if (!boundaries) return;
     function put(key, rings) {
-      if (!rings.length || maskByKey[key]) return;
-      maskByKey[key] = maskData(rings);
+      if (!rings.length || ringsByKey[key]) return;
+      ringsByKey[key] = rings;
       boundsByKey[key] = boundsOfRings(rings);
     }
     ["bc", "ab"].forEach(function (prov) {
@@ -982,20 +1015,6 @@
       put(prov + "|all", all);
     });
     put("all|all", ringsFrom("bc", "all").concat(ringsFrom("ab", "all")));
-  }
-
-  function ringArea(ring) {
-    var a = 0;
-    var i;
-    for (i = 0; i < ring.length - 1; i++) {
-      a += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
-    }
-    return a / 2;
-  }
-
-  function holeRing(ring) {
-    if (ringArea(ring) > 0) return ring.slice().reverse();
-    return ring.slice();
   }
 
   function boundsOfRings(rings) {
@@ -1015,69 +1034,48 @@
     return [[west, south], [east, north]];
   }
 
-  function maskOpacityFor(z) {
-    var o = 0.26 + (13 - z) * 0.18;
-    if (o < 0.1) o = 0.1;
-    if (o > 0.86) o = 0.86;
-    return Math.round(o * 100) / 100;
-  }
-
-  function maskData(rings) {
-    var outer = [[-141.2, 46.6], [-107.6, 46.6], [-107.6, 61.8], [-141.2, 61.8], [-141.2, 46.6]];
-    return {
-      type: "Feature",
-      properties: {},
-      geometry: { type: "Polygon", coordinates: [outer].concat(rings.map(holeRing)) }
-    };
-  }
-
-  function maskLayerId(key) {
-    return "sh-mask-" + String(key).replace("|", "-");
-  }
-
-  function mountMasks() {
-    if (!shBasemap || masksMounted || !boundaries) return false;
-    if (!(shBasemap.isStyleLoaded && shBasemap.isStyleLoaded())) return false;
-    warmBoundaryCache();
-    var opacity = maskOpacityFor(shBasemap.getZoom());
-    Object.keys(maskByKey).forEach(function (key) {
-      var id = maskLayerId(key);
-      if (shBasemap.getSource(id)) return;
-      shBasemap.addSource(id, { type: "geojson", data: maskByKey[key] });
-      shBasemap.addLayer({
-        id: id,
-        type: "fill",
-        source: id,
-        layout: { visibility: "none" },
-        paint: { "fill-color": "#ffffff", "fill-opacity": opacity }
-      });
-    });
-    masksMounted = true;
-    return true;
-  }
-
-  function paintMask() {
+  function paintOutline() {
     if (!shBasemap || !boundaries) return false;
-    var key = placeId();
-    if (!maskByKey[key]) {
-      var rings = selectedRings();
-      if (!rings.length) return false;
-      maskByKey[key] = maskData(rings);
-      if (!boundsByKey[key]) boundsByKey[key] = boundsOfRings(rings);
-      masksMounted = false;
-    }
-    if (!masksMounted && !mountMasks()) {
-      waitMask();
+    if (!(shBasemap.isStyleLoaded && shBasemap.isStyleLoaded())) {
+      waitOutline();
       return false;
     }
-    var show = maskLayerId(key);
-    if (!shBasemap.getLayer(show)) return false;
-    Object.keys(maskByKey).forEach(function (idKey) {
-      var id = maskLayerId(idKey);
-      if (!shBasemap.getLayer(id)) return;
-      shBasemap.setLayoutProperty(id, "visibility", id === show ? "visible" : "none");
-    });
+    var key = placeId();
+    var rings = key === "all|all" ? [] : (ringsByKey[key] || selectedRings());
+    var data = {
+      type: "FeatureCollection",
+      features: rings.length ? [{
+        type: "Feature",
+        properties: {},
+        geometry: { type: "MultiLineString", coordinates: rings }
+      }] : []
+    };
+    var src = shBasemap.getSource("sh-outline");
+    if (!src) {
+      shBasemap.addSource("sh-outline", { type: "geojson", data: data });
+      shBasemap.addLayer({
+        id: "sh-outline",
+        type: "line",
+        source: "sh-outline",
+        paint: {
+          "line-color": "#1a1a1a",
+          "line-width": 1.15,
+          "line-opacity": 0.8
+        }
+      });
+    } else {
+      src.setData(data);
+    }
     return true;
+  }
+
+  function waitOutline() {
+    if (outlineWait || !shBasemap || !shBasemap.once) return;
+    outlineWait = true;
+    shBasemap.once("idle", function () {
+      outlineWait = false;
+      if (view === "map") paintOutline();
+    });
   }
 
   function openingBounds() {
@@ -1088,21 +1086,13 @@
     return [[-139.1, 48.2], [-114, 60.05]];
   }
 
-  function waitMask() {
-    if (maskWait || !shBasemap || !shBasemap.once) return;
-    maskWait = true;
-    shBasemap.once("idle", function () {
-      maskWait = false;
-      if (view === "map") syncMap();
-    });
-  }
-
   function fitPlace() {
     if (!shBasemap || !boundaries) return;
     var key = placeId();
+    paintOutline();
     if (key === placeKey) return;
     var box = boundsByKey[key] || boundsOfRings(selectedRings());
-    if (!box || !paintMask()) return;
+    if (!box) return;
     placeKey = key;
     var animate = didFit;
     didFit = true;
@@ -1110,54 +1100,6 @@
     shBasemap.fitBounds(box, { padding: 36, animate: animate, duration: animate ? 700 : 0 });
     mapZoomLock -= 1;
     mapZoomTarget = null;
-  }
-
-  function warmProvinceTiles(map) {
-    if (!map || map._shWarmed || !map.getStyle) return;
-    map._shWarmed = true;
-    var style = map.getStyle();
-    if (!style || !style.sources) return;
-    function cover(templates, box, z) {
-      if (!templates || !templates.length || !box) return;
-      var n = Math.pow(2, z);
-      function xt(lon) { return (lon + 180) / 360 * n; }
-      function yt(lat) {
-        var s = Math.sin(lat * Math.PI / 180);
-        return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
-      }
-      var x0 = Math.floor(xt(box[0][0]));
-      var x1 = Math.floor(xt(box[1][0]));
-      var y0 = Math.floor(yt(box[1][1]));
-      var y1 = Math.floor(yt(box[0][1]));
-      var tmpl = templates[0];
-      var count = 0;
-      var x, y;
-      for (x = x0; x <= x1 && count < 28; x++) {
-        for (y = y0; y <= y1 && count < 28; y++) {
-          var url = tmpl.replace("{z}", String(z)).replace("{x}", String(x)).replace("{y}", String(y));
-          fetch(url, { mode: "cors", credentials: "omit" }).catch(function () {});
-          count += 1;
-        }
-      }
-    }
-    Object.keys(style.sources).forEach(function (id) {
-      var src = style.sources[id];
-      if (!src || src.type === "geojson") return;
-      var ready = src.tiles && src.tiles.length ? Promise.resolve(src.tiles) : (
-        src.url ? fetch(src.url).then(function (res) { return res.json(); }).then(function (json) {
-          return json.tiles || [];
-        }).catch(function () { return []; }) : Promise.resolve([])
-      );
-      ready.then(function (templates) {
-        ["bc|all", "ab|all"].forEach(function (key) {
-          var box = boundsByKey[key];
-          if (!box || !map.cameraForBounds) return;
-          var cam = map.cameraForBounds(box, { padding: 36 });
-          if (!cam || typeof cam.zoom !== "number") return;
-          cover(templates, box, Math.max(0, Math.min(14, Math.round(cam.zoom))));
-        });
-      });
-    });
   }
 
   function panTo(hill) {
@@ -1242,10 +1184,12 @@
     hills.forEach(function (hill) {
       var el = hill.dot;
       if (!el || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
-      if (!isShown(hill)) {
+      if (!onMap(hill)) {
         el.hidden = true;
         return;
       }
+      var fade = dotFade(hill);
+      el.dataset.fade = fade;
       var p = shBasemap.project([hill.lon, hill.lat]);
       el.style.left = (p.x - DOT / 2).toFixed(1) + "px";
       el.style.top = (p.y - DOT / 2).toFixed(1) + "px";
@@ -1253,10 +1197,15 @@
         el.hidden = true;
         return;
       }
-      el.hidden = false;
       if (pinPlaying(el)) return;
-      el.style.opacity = "";
+      if (el.getAnimations) {
+        el.getAnimations().forEach(function (an) {
+          if (an.id === "sh-pin") an.cancel();
+        });
+      }
+      el.style.opacity = fade;
       el.style.transform = "";
+      el.hidden = false;
     });
   }
 
@@ -1265,7 +1214,9 @@
     var dots = [];
     hills.forEach(function (hill) {
       var el = hill.dot;
-      if (!el || !isShown(hill)) return;
+      if (!el || !onMap(hill)) return;
+      var fade = dotFade(hill);
+      el.dataset.fade = fade;
       el.hidden = false;
       el.style.opacity = "0";
       dots.push(el);
@@ -1274,12 +1225,18 @@
     var span = n > 1 ? Math.min(800, (n - 1) * 28) : 0;
     dots.forEach(function (el, i) {
       var delay = n > 1 ? span * i / (n - 1) : 0;
+      var fade = Number(el.dataset.fade);
+      if (!isFinite(fade)) fade = 1;
       var anim = el.animate([
         { transform: "translateY(-40px)", opacity: 0 },
-        { transform: "translateY(2px)", opacity: 1, offset: 0.84 },
-        { transform: "translateY(0)", opacity: 1 }
+        { transform: "translateY(2px)", opacity: fade, offset: 0.84 },
+        { transform: "translateY(0)", opacity: fade }
       ], { duration: 350, delay: delay, easing: "cubic-bezier(0.2, 0.8, 0.25, 1)", fill: "both" });
       anim.id = "sh-pin";
+      anim.onfinish = function () {
+        el.style.opacity = el.dataset.fade || "1";
+        anim.cancel();
+      };
     });
   }
 
@@ -1327,7 +1284,7 @@
     var matched = [];
     hills.forEach(function (hill) {
       if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
-      if (isShown(hill)) matched.push(hill);
+      if (onMap(hill) && isShown(hill)) matched.push(hill);
     });
     var one = query && matched.length === 1 ? matched[0] : null;
     if (!one) {
@@ -1347,8 +1304,8 @@
       syncMock();
       return;
     }
-    paintMask();
     if (one) {
+      paintOutline();
       if (!shBasemap) {
         syncMock();
         return;
@@ -1365,7 +1322,7 @@
   function tearDownMap() {
     cancelMapFade();
     showTip(null);
-    maskWait = false;
+    outlineWait = false;
     if (shBasemap) {
       shBasemap.remove();
       shBasemap = null;
@@ -1375,7 +1332,6 @@
     mapField = null;
     placeKey = "";
     didFit = false;
-    masksMounted = false;
     lastPan = "";
     mapAimed = "";
     mapZoomTarget = null;
@@ -1491,18 +1447,10 @@
         }
         whenTiles();
         map.on("idle", whenTiles);
-        map.once("idle", function () { warmProvinceTiles(map); });
       });
       map.on("move", function () {
         projectDots();
         showTip(null);
-      });
-      map.on("zoom", function () {
-        var opacity = maskOpacityFor(map.getZoom());
-        Object.keys(maskByKey).forEach(function (key) {
-          var id = maskLayerId(key);
-          if (map.getLayer(id)) map.setPaintProperty(id, "fill-opacity", opacity);
-        });
       });
       map.on("resize", projectDots);
       map.on("moveend", syncMock);
@@ -2029,7 +1977,7 @@
       return;
     }
     hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017c").then(function (res) {
+    fetch("frontal/" + hill.slug + ".svg?v=20261017g").then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {

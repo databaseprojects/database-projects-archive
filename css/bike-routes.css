@@ -17,38 +17,6 @@
   text-transform: uppercase;
 }
 
-.br-zoom {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin-left: auto;
-}
-
-.br-find {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 9.5rem;
-  margin: 0;
-  padding: 0.22em 0.55em;
-  border: 1px solid rgba(0, 0, 0, 0.55);
-  border-radius: 0;
-  background: transparent;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
-}
-
-.br-find::placeholder {
-  color: rgba(0, 0, 0, 0.45);
-}
-
-.br-find:focus {
-  outline: 1px solid #000;
-  outline-offset: 2px;
-}
-
 .br-note,
 .br-count,
 .br-credit {
@@ -64,68 +32,22 @@
   color: rgba(0, 0, 0, 0.75);
 }
 
-.br-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  margin-top: 0.9rem;
-}
-
-.br-tag {
-  display: inline-block;
-  box-sizing: border-box;
-  margin: 0 0.5em 0.35em 0;
-  padding: 0.25em 0.75em;
-  border: 1px solid rgba(0, 0, 0, 0.55);
-  border-radius: 0;
-  background: transparent;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1.4;
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-}
-
-.br-tag:hover {
-  border-color: #000;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.br-tag.br-on {
-  background: #111;
-  border-color: #111;
-  color: #fff;
-}
-
-.br-tag:focus-visible {
-  outline: 1px solid #000;
-  outline-offset: 2px;
-}
-
 .br-map {
   position: relative;
   width: 100%;
-  height: calc(100vh - 12.5rem);
+  height: calc(100vh - 11rem);
   min-height: 520px;
-  margin-top: 0.35rem;
+  margin-top: 0.7rem;
   overflow: hidden;
   background: #e4e2dc;
 }
 
 .br-map-tiles {
-  position: absolute;
-  inset: 0;
-}
-
-.br-map-tiles .maplibregl-map,
-.br-map-tiles .maplibregl-canvas-container {
-  width: 100%;
-  height: 100%;
+  position: absolute !important;
+  left: 0;
+  top: 0;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .br-map-credit {
@@ -194,16 +116,6 @@
 }
 
 @media (max-width: 767px) {
-  .br-zoom {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .br-find {
-    flex: 1 1 auto;
-    width: 100%;
-  }
-
   .br-map {
     height: 70vh;
     min-height: 420px;

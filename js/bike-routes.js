@@ -1,100 +1,53 @@
 /* Bike Routes. One map of every signed Vancouver route. */
 (function () {
   var count = document.querySelector(".br-count");
-  var tags = document.querySelector(".br-tags");
-  var find = document.querySelector(".br-find");
   var mapField = document.getElementById("br-map");
+  var tiles = mapField.querySelector(".br-map-tiles");
   var routes = [];
-  var kind = "all";
-  var query = "";
   var map = null;
   var mapTip = null;
   var boundary = null;
   var positron = null;
-  var fitted = "";
   var CITY = [[-123.27, 49.198], [-123.02, 49.315]];
 
-  function fold(text) {
-    return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  }
-
-  function lineOn(line) {
-    return kind === "all" || line.t === kind;
-  }
-
-  function named(route) {
-    return !!query && fold(route.name).indexOf(query) !== -1;
-  }
-
-  function shownCount() {
-    var n = 0;
-    routes.forEach(function (route) {
-      var on = (route.lines || []).some(lineOn);
-      if (on) n += 1;
-    });
-    return n;
-  }
-
-  function lineFeatures() {
-    var rest = [];
-    var hits = [];
-    routes.forEach(function (route) {
-      var hit = named(route);
-      (route.lines || []).forEach(function (line) {
-        if (!lineOn(line)) return;
-        var feature = {
-          type: "Feature",
-          properties: {
-            id: route.id,
-            name: route.name,
-            type: line.t,
-            hit: hit ? 1 : 0,
-            dim: query && !hit ? 1 : 0
-          },
-          geometry: { type: "LineString", coordinates: line.c }
-        };
-        (hit ? hits : rest).push(feature);
-      });
-    });
-    return { type: "FeatureCollection", features: rest.concat(hits) };
-  }
-
-  function hitBounds() {
-    var w = Infinity;
-    var s = Infinity;
-    var e = -Infinity;
-    var n = -Infinity;
-    var any = false;
-    routes.forEach(function (route) {
-      if (!named(route)) return;
-      (route.lines || []).forEach(function (line) {
-        if (!lineOn(line)) return;
-        (line.c || []).forEach(function (p) {
-          any = true;
-          if (p[0] < w) w = p[0];
-          if (p[0] > e) e = p[0];
-          if (p[1] < s) s = p[1];
-          if (p[1] > n) n = p[1];
+  function scrubStyle(style) {
+    (style.layers || []).forEach(function (layer) {
+      ["paint", "layout"].forEach(function (bag) {
+        var obj = layer[bag];
+        if (!obj) return;
+        Object.keys(obj).forEach(function (key) {
+          if (obj[key] == null) delete obj[key];
         });
       });
     });
-    return any ? [[w, s], [e, n]] : null;
+    return style;
   }
 
-  function paint() {
-    var n = shownCount();
-    if (count) count.textContent = String(n);
-    syncMap();
-    syncFit();
-  }
-
-  function setPressed() {
-    if (!tags) return;
-    Array.prototype.forEach.call(tags.querySelectorAll("[data-br-type]"), function (btn) {
-      var on = btn.getAttribute("data-br-type") === kind;
-      btn.classList.toggle("br-on", on);
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
+  function lineFeatures() {
+    var features = [];
+    routes.forEach(function (route) {
+      (route.lines || []).forEach(function (line) {
+        features.push({
+          type: "Feature",
+          properties: { id: route.id, name: route.name, type: line.t },
+          geometry: { type: "LineString", coordinates: line.c }
+        });
+      });
     });
+    return { type: "FeatureCollection", features: features };
+  }
+
+  function syncLines() {
+    if (!map || !map.getSource("br-lines")) return;
+    map.getSource("br-lines").setData(lineFeatures());
+  }
+
+  function sizeMap() {
+    var width = mapField.clientWidth || (mapField.parentNode && mapField.parentNode.clientWidth) || 640;
+    var top = mapField.getBoundingClientRect().top;
+    var height = Math.max(520, Math.round(window.innerHeight - top - 78));
+    mapField.style.height = height + "px";
+    if (map) map.resize();
   }
 
   function mapLibre() {
@@ -131,7 +84,7 @@
         if (layer.id === "water") paint["fill-color"] = "#c3d3de";
         if (layer.id === "park") paint["fill-color"] = "#d3e0d2";
       });
-      return style;
+      return scrubStyle(style);
     }).catch(function (err) {
       positron = null;
       throw err;
@@ -148,26 +101,6 @@
       boundary = data;
       return data;
     });
-  }
-
-  function syncMap() {
-    if (!map || !map.getSource("br-lines")) return;
-    map.getSource("br-lines").setData(lineFeatures());
-  }
-
-  function syncFit() {
-    if (!map) return;
-    var key = kind + "\n" + query;
-    if (key === fitted) return;
-    var hadQuery = fitted.indexOf("\n") !== -1 && fitted.slice(fitted.indexOf("\n") + 1);
-    fitted = key;
-    var motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 450;
-    if (!query) {
-      if (hadQuery) map.fitBounds(CITY, { padding: 28, duration: motion });
-      return;
-    }
-    var box = hitBounds();
-    if (box) map.fitBounds(box, { padding: 64, duration: motion, maxZoom: 15 });
   }
 
   function ensureTip() {
@@ -192,11 +125,13 @@
   }
 
   function startMap() {
+    sizeMap();
     Promise.all([mapLibre(), loadPositron(), loadBoundary()]).then(function (ready) {
       if (map) return;
+      sizeMap();
       var style = JSON.parse(JSON.stringify(ready[1]));
       map = new maplibregl.Map({
-        container: mapField.querySelector(".br-map-tiles"),
+        container: tiles,
         style: style,
         bounds: CITY,
         fitBoundsOptions: { padding: 28, animate: false },
@@ -237,8 +172,7 @@
               "Shared Lanes", "#5c5c5c",
               "#111111"
             ],
-            "line-width": ["case", ["==", ["get", "hit"], 1], 4, 2.2],
-            "line-opacity": ["case", ["==", ["get", "dim"], 1], 0.18, 1]
+            "line-width": 2.2
           }
         });
         map.on("mousemove", "br-lines", function (e) {
@@ -251,28 +185,10 @@
           showTip("", 0, 0);
         });
         map.resize();
-        syncFit();
+        syncLines();
       });
     }).catch(function () {
       if (count) count.textContent = "The map did not load.";
-    });
-  }
-
-  if (tags) {
-    tags.addEventListener("click", function (e) {
-      var btn = e.target.closest ? e.target.closest("[data-br-type]") : null;
-      if (!btn) return;
-      var next = btn.getAttribute("data-br-type");
-      kind = kind === next ? "all" : next;
-      setPressed();
-      paint();
-    });
-  }
-
-  if (find) {
-    find.addEventListener("input", function () {
-      query = fold(find.value.trim());
-      paint();
     });
   }
 
@@ -285,9 +201,11 @@
     });
   }
 
-  window.addEventListener("resize", function () {
-    if (map) map.resize();
-  });
+  window.addEventListener("resize", sizeMap);
+  if (window.ResizeObserver) {
+    var watcher = new ResizeObserver(function () { if (map) map.resize(); });
+    watcher.observe(mapField);
+  }
 
   startMap();
   fetch("routes.json?v=20261017d").then(function (res) {
@@ -295,7 +213,9 @@
     return res.json();
   }).then(function (data) {
     routes = data.routes || [];
-    paint();
+    if (count) count.textContent = String(routes.length);
+    syncLines();
+    sizeMap();
   }).catch(function () {
     if (count) count.textContent = "The routes did not load.";
   });
