@@ -599,15 +599,37 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 }
 
 .sh-view {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  width: min(92vw, 1100px);
+  align-items: center;
+  width: max-content;
+  max-width: calc(100vw - 48px);
+  pointer-events: none;
 }
 
 .sh-stack-btn {
-  align-self: flex-start;
-  margin: 0.4rem 0 0;
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  z-index: 5;
+  display: inline-flex;
+  margin: 0.45rem 0 0;
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
+
+.sh-stack .sh-tag {
+  margin: 0;
+}
+
+.sh-stack .sh-tag + .sh-tag {
+  margin-left: -1px;
+}
+
+.sh-stack .sh-tag.sh-on:hover {
+  background: #111;
+  color: #fff;
 }
 
 .sh-lb.sh-framed .sh-stack-btn {
@@ -617,7 +639,15 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-print-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  pointer-events: none;
+}
+
+html.sh-prints-off .sh-cart-btn,
+html.sh-prints-off .sh-cart-add,
+html.sh-prints-off .sh-cart-panel {
+  display: none;
 }
 
 .sh-cart-add {
@@ -672,25 +702,35 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   cursor: grab;
   touch-action: none;
   user-select: none;
+  pointer-events: auto;
 }
 
 .sh-edge {
   position: absolute;
   top: 50%;
   z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 28px;
-  height: 28px;
+  height: 36px;
   margin: 0;
   padding: 0;
-  border: 1px solid #111;
-  background: #fff;
+  border: 0;
+  background: none;
   color: #111;
-  font: 20px/1 "Courier New", Courier, monospace;
   transform: translateY(-50%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
   cursor: pointer;
+}
+
+.sh-edge svg {
+  display: block;
+  width: 11px;
+  height: 18px;
+  pointer-events: none;
 }
 
 .sh-edge-next { right: 8px; }
@@ -703,8 +743,13 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 
 .sh-lb:not(.sh-framed) .sh-stage:hover .sh-edge-next,
 .sh-lb.sh-framed .sh-stage:hover .sh-edge-prev {
-  opacity: 1;
+  opacity: 0.4;
   pointer-events: auto;
+}
+
+.sh-lb:not(.sh-framed) .sh-stage .sh-edge-next:hover,
+.sh-lb.sh-framed .sh-stage .sh-edge-prev:hover {
+  opacity: 0.7;
 }
 
 .sh-lb:not(.sh-framed) .sh-stage.sh-touch-hint .sh-edge-next,

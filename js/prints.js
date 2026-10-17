@@ -1,4 +1,4 @@
-/* Print store. The Buy Button stays off until Shopify is connected. */
+/* Print store. The cart stays hidden until enabled is set true. */
 (function (root) {
   root.SH_PRINTS = {
     enabled: false,
@@ -18,6 +18,7 @@
     var doc = root.document;
     if (!doc || !doc.documentElement) return;
     doc.documentElement.classList.toggle("sh-credit-print", root.SH_PRINTS.creditOnPrint === true);
+    doc.documentElement.classList.toggle("sh-prints-off", root.SH_PRINTS.enabled !== true);
   }
 
   syncCreditPrint();
