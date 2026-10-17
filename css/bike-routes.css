@@ -1,4 +1,4 @@
-/* Bike Routes. One city map. */
+/* Bike Routes. One static print of the city routes. */
 
 .br-bar {
   display: flex;
@@ -32,66 +32,26 @@
   color: rgba(0, 0, 0, 0.75);
 }
 
-.br-map {
-  position: relative;
-  width: 100%;
-  height: calc(100vh - 11rem);
-  min-height: 520px;
-  margin-top: 0.7rem;
-  overflow: hidden;
-  background: #e4e2dc;
-}
-
-.br-map-tiles {
-  position: absolute !important;
-  left: 0;
-  top: 0;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.br-map-credit {
-  position: absolute;
-  right: 0.4rem;
-  bottom: 0.3rem;
-  z-index: 2;
-  margin: 0;
-  pointer-events: none;
-  font-size: 10px;
-  letter-spacing: 0.02em;
-  color: rgba(0, 0, 0, 0.45);
-}
-
-.br-map-zoom {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  z-index: 3;
+.br-stage {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  justify-content: center;
+  margin-top: 0.7rem;
 }
 
-.br-map-zoom button {
-  width: 28px;
-  height: 28px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.55);
+.br-print {
+  width: min(100%, calc(100vh - 12rem));
+  min-width: 280px;
   background: #fff;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
 }
 
-.br-map-zoom button:hover {
-  background: #111;
-  color: #fff;
+.br-print svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
 }
 
-.br-map-tip {
+.br-tip {
   position: fixed;
   z-index: 80;
   margin: 0;
@@ -107,7 +67,7 @@
   pointer-events: none;
 }
 
-.br-map-tip[hidden] {
+.br-tip[hidden] {
   display: none;
 }
 
@@ -116,8 +76,7 @@
 }
 
 @media (max-width: 767px) {
-  .br-map {
-    height: 70vh;
-    min-height: 420px;
+  .br-print {
+    width: 100%;
   }
 }
