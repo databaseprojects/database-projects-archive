@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Front-facing trail maps.
 
-Orthographic view. Pitch is degrees of tilt up from a flat map, set per hill:
-Cypress 15, Grass Mountain 17. Elevations are stretched 1.5x.
-20 m contours are projected at their true height, with nearer ground hiding the
-lines on the run face, plus a light hillshade from the upper left. Runs and
-lifts sit on top. No labels.
+Orthographic view. Each hill sets elevation, degrees above the horizon.
+Pitch, the tilt up from a flat plan, is 90 minus elevation, so 0 elevation
+is a side view and 90 is top-down. Cypress is elevation 15 (pitch 75).
+Grass Mountain stays at elevation 73, which is the old pitch of 17.
+Heights are stretched 1.5x.
+20 m contours are projected at their true elevation in metres, the same
+unit as the ground, stretched 1.5x. Nearer ground hides lines behind it.
+There is no filled shade: the paper stays white. Runs and lifts sit on top.
+No labels.
 
 Facing is the compass bearing the camera looks, in degrees clockwise from
 north. 0 looks due north: the viewer stands south of the hill, west is on the
@@ -36,17 +40,18 @@ ROOT = Path(__file__).resolve().parent
 GEOM = Path("/tmp/cypress-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.
 DEM = Path("/tmp/cypress-dem-wide.tif")
-PITCH = math.radians(17)
 Z_SCALE = 1.5
 CONTOUR_M = 20
 COLS = 110
 ROWS = 72
 # facing: look azimuth, degrees clockwise from north. 0 is due north.
-# pitch: degrees up from a flat map. Higher stands the face up more.
+# elevation: camera degrees above the horizon. pitch = 90 - elevation
+# is the tilt up from a flat plan (0 top-down, 90 a pure side view).
+# Grass Mountain's elevation 73 is the previous pitch of 17, unchanged.
 # Not passed through orient(), which would flip a hand-set facing 180°.
 CAMERAS = {
-    "cypress-mountain": {"facing": 0.0, "pitch": 15.0},
-    "grass-mountain": {"facing": 0.0, "pitch": 17.0},
+    "cypress-mountain": {"facing": 0.0, "elevation": 15.0},
+    "grass-mountain": {"facing": 0.0, "elevation": 73.0},
 }
 
 
@@ -317,15 +322,19 @@ def stitch(segments):
     return lines
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, resort):
-    """Contours across the whole DEM. Horizon removal stays on the run face.
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of):
+    """Contours across the whole DEM. The front silhouette hides the back.
 
     A wide paper clip keeps the line ends outside the frame. The SVG mask
     fades the edges, so the old ground-window cutoff is not the visible edge.
+    Anything at or below the skyline of nearer ground is dropped, including
+    contours behind the resort, so a low camera does not show the back side
+    through the face.
     """
-    gx0, gx1, gy0, gy1 = resort
     raw = marching_contours(arr, gt, CONTOUR_M)
     drawn = []
+    kept = 0
+    hidden = 0
     for elev, line in raw:
         chunk = []
         depth = None
@@ -342,20 +351,21 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             if px < -220 or px > 1220 or py < -220 or py > 1220:
                 flush()
                 continue
-            on_face = gx0 <= xr <= gx1 and gy0 <= yr <= gy1
-            if on_face:
-                horizon = horizon_at(yr)
-                if py >= horizon[col_of(px)] - 0.45:
-                    flush()
-                    continue
+            horizon = horizon_at(yr)
+            if py >= horizon[col_of(px)] - 0.45:
+                hidden += 1
+                flush()
+                continue
+            kept += 1
             if not chunk:
                 depth = yr
             chunk.append((px, py))
         flush()
+    print("occlusion", "kept", kept, "hidden", hidden)
     return drawn
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", pitch=None):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -425,10 +435,13 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     gx0, gx1 = min(rxs) - pad_x, max(rxs) + pad_x
     gy0, gy1 = min(rys) - pad_y, max(rys) + pad_y
 
-    pitch_rad = PITCH if pitch is None else pitch
+    # elevation is degrees above the horizon. pitch tilts up from a flat plan.
+    pitch_rad = math.radians(90.0 - elevation)
+    scale = Z_SCALE if z_scale is None else z_scale
 
     def project_xy(xr, yr, z):
-        return xr, yr * math.cos(pitch_rad) + z * Z_SCALE * math.sin(pitch_rad)
+        # xr, yr and z are metres. z is the real elevation, not a 0–1 fraction.
+        return xr, yr * math.cos(pitch_rad) + z * scale * math.sin(pitch_rad)
 
     grid = []
     for ri in range(ROWS):
@@ -462,30 +475,6 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         py = margin + (extra_y / 2 + (maxy - sy)) / span * (1000 - margin * 2)
         return px, py
 
-    shades = []
-    # Upper left of the sheet: left on the cross-slope axis, and from above.
-    light = (-0.62, 0.18, 0.76)
-    ln = math.sqrt(sum(v * v for v in light))
-    light = tuple(v / ln for v in light)
-    for r in range(len(grid) - 1):
-        for c in range(len(grid[0]) - 1):
-            cell = [grid[r][c], grid[r][c + 1], grid[r + 1][c], grid[r + 1][c + 1]]
-            if any(p is None for p in cell):
-                continue
-            e1 = (cell[1][3] - cell[0][3], cell[1][4] - cell[0][4], cell[1][2] - cell[0][2])
-            e2 = (cell[2][3] - cell[0][3], cell[2][4] - cell[0][4], cell[2][2] - cell[0][2])
-            nx = e1[1] * e2[2] - e1[2] * e2[1]
-            ny = e1[2] * e2[0] - e1[0] * e2[2]
-            nz = e1[0] * e2[1] - e1[1] * e2[0]
-            mag = math.sqrt(nx * nx + ny * ny + nz * nz) or 1
-            shade = max(0.0, min(1.0, (nx * light[0] + ny * light[1] + nz * light[2]) / mag))
-            opacity = 0.012 + (1 - shade) * 0.10
-            poly = []
-            for p in (cell[0], cell[1], cell[3], cell[2]):
-                px, py = paper(p[0], p[1])
-                poly.append(f"{px:.1f},{py:.1f}")
-            shades.append((opacity, " ".join(poly)))
-
     bins = 960
     horizon = [1e9] * bins
     horizons = []
@@ -516,6 +505,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 stamp(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
 
     def horizon_at(yr):
+        # Past the far edge, the whole stamped skyline hides the back side.
+        if depths and yr > depths[-1]:
+            return horizon
         idx = 0
         for i, depth in enumerate(depths):
             if depth <= yr:
@@ -525,7 +517,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         return horizons[idx]
 
     contours = project_contours(
-        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, (gx0, gx1, gy0, gy1)
+        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     )
 
     def stroke(lines, colour, width):
@@ -571,10 +563,6 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     for lift in lifts:
         lift_parts.extend(stroke(lift["lines"], "#111", 1.15))
 
-    shade_xml = "\n".join(
-        f'<polygon points="{pts}" fill="#000" fill-opacity="{op:.3f}"/>'
-        for op, pts in shades
-    )
     if not contours:
         raise SystemExit("no contours")
     front = min(item[0] for item in contours)
@@ -608,7 +596,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">\n'
         '<g class="sh-frontal-art">\n'
-        f"{defs}{shade_xml}\n"
+        f"{defs}\n"
         f'<g mask="url(#{mask_id})">\n' + "\n".join(contour_xml) + "\n</g>\n"
         + "\n".join(run_parts)
         + "\n"
@@ -626,8 +614,18 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         dest.stat().st_size,
         "facing_deg",
         az,
+        "elevation_deg",
+        elevation,
         "pitch_deg",
         round(math.degrees(pitch_rad), 1),
+        "z_scale",
+        scale,
+        "aspect",
+        round((maxy - miny) / max(maxx - minx, 1), 2),
+        "lift_20m",
+        round(20 * scale * math.sin(pitch_rad), 2),
+        "depth_20m",
+        round(20 * math.cos(pitch_rad), 2),
         "contours",
         len(contours),
         "runs",
@@ -650,7 +648,7 @@ def main():
     print("dem", len(arr[0]), len(arr))
     # Kept so a later hill without a hand-set facing still has the rule.
     print("default_facing_deg", round(math.degrees(default_facing(arr, gt, runs)) % 360, 1))
-    # Grass stays at 17°. Only Cypress is re-rendered.
+    # Grass stays at elevation 73 (pitch 17) and is not re-rendered.
     slug = "cypress-mountain"
     cam = CAMERAS[slug]
     build(
@@ -662,7 +660,7 @@ def main():
         lock_facing=True,
         out_path=ROOT / "frontal" / f"{slug}.svg",
         slug=slug,
-        pitch=math.radians(cam["pitch"]),
+        elevation=cam["elevation"],
     )
 
 
