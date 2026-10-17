@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="449.5,449.0 429.5,444.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="383.3,432.8 344.2,432.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="344.2,432.0 329.1,431.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="767.3,439.1 534.3,438.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="459.3,450.5 449.5,449.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="306.6,431.5 229.9,430.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="844.0,440.4 767.3,439.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="534.3,438.9 495.4,450.7 459.3,450.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="429.5,444.4 383.3,432.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="152.4,429.3 36.0,432.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="229.9,430.3 152.4,429.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="329.1,431.8 306.6,431.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">4th Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  2.4 km  ·  West Point Grey</text>
+</svg>

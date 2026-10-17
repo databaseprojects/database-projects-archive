@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="794.0,434.2 757.9,433.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="269.7,448.1 217.4,448.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="57.5,445.8 36.0,445.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="844.0,434.2 794.0,434.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="578.8,431.9 363.5,433.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="95.2,446.5 57.5,445.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="187.5,447.3 95.2,446.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="757.9,433.5 578.8,431.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="217.4,448.1 187.5,447.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="363.5,433.5 269.7,448.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">63rd Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.8 km  ·  Marpole</text>
+</svg>

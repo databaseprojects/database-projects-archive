@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="217.8,296.0 36.0,178.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="844.0,702.0 635.7,566.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="479.1,464.5 427.4,431.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="635.7,566.7 553.4,513.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="427.4,431.4 337.2,373.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="337.2,373.0 217.8,296.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="553.4,513.6 479.1,464.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Alberni</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  0.6 km  ·  West End</text>
+</svg>

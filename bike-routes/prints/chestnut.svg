@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="426.7,757.8 425.4,786.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="448.0,229.7 450.6,171.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="438.7,465.9 440.0,415.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="450.6,171.3 451.9,136.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="432.0,610.5 436.0,538.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="446.6,288.1 448.0,229.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="453.3,113.0 457.2,36.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="436.0,538.8 438.7,465.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="451.9,136.8 453.3,113.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.7,732.6 426.7,757.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="425.4,786.9 422.8,844.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="444.0,346.5 446.6,288.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="440.0,415.5 444.0,346.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Chestnut</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.6 km  ·  Kitsilano</text>
+</svg>

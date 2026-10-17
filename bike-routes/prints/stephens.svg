@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="435.9,600.2 430.4,718.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="452.3,110.0 438.6,36.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="446.8,268.8 444.1,353.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="444.1,353.7 435.9,600.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="430.4,718.0 427.7,844.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="452.3,110.0 446.8,268.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Stephens</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.3 km  ·  Kitsilano</text>
+</svg>

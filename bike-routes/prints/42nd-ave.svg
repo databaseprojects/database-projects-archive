@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="246.6,436.9 101.1,430.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="795.0,450.7 654.1,448.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="453.4,444.6 246.6,436.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="654.1,448.4 453.4,444.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="844.0,451.5 795.0,450.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="101.1,430.8 36.0,428.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">42nd Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.8 km  ·  Oakridge</text>
+</svg>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="345.1,824.9 346.5,790.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="478.9,485.0 491.2,446.8 425.7,434.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="478.9,485.0 530.8,448.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="530.8,448.2 517.1,386.8 616.7,108.3 593.5,75.6 517.1,51.0 529.4,36.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="712.3,681.6 695.9,542.4 640.0,508.2 478.9,485.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="167.7,844.0 169.1,824.9 345.1,824.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="346.5,790.8 341.0,564.2 478.9,485.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="346.5,790.8 704.1,773.0 712.3,681.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Hastings Park</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  1.4 km  ·  Hastings-Sunrise</text>
+</svg>

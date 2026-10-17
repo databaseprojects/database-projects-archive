@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="449.0,188.8 448.1,228.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.0,429.7 439.1,470.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="446.3,267.0 444.5,305.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="430.1,713.7 429.2,729.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.5,305.6 443.6,347.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="432.8,632.8 431.9,673.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="431.9,673.2 430.1,713.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="453.5,75.5 451.7,112.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.6,347.0 441.8,389.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="450.8,149.2 449.0,188.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="429.2,729.9 428.3,755.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="434.6,592.3 432.8,632.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="436.4,551.0 434.6,592.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="451.7,112.4 450.8,149.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="454.4,36.0 453.5,75.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="428.3,755.0 427.4,795.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="437.3,510.6 436.4,551.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="441.8,389.2 440.0,429.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="448.1,228.3 446.3,267.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.1,470.1 437.3,510.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="427.4,795.5 425.6,844.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Blanca</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  1.0 km  ·  West Point Grey</text>
+</svg>

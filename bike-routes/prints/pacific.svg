@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="426.4,510.8 457.0,502.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="561.1,509.5 572.4,506.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="241.6,482.2 235.8,478.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="283.7,510.4 273.5,503.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="376.3,523.6 392.6,519.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="513.9,506.7 544.7,511.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="36.0,348.6 63.3,366.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="544.7,511.0 561.1,509.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="472.0,500.2 499.1,501.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="144.2,418.9 188.1,447.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="188.1,447.0 199.8,454.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,450.5 840.5,455.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="294.1,517.3 303.2,523.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="572.4,506.7 583.7,502.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="273.5,503.4 268.3,500.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="314.9,528.4 328.4,531.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="751.8,444.2 807.8,446.2 820.1,451.2 829.9,460.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="723.6,443.8 751.8,444.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="97.4,388.5 144.2,418.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="328.4,531.4 351.6,530.8 376.3,523.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="692.8,452.5 723.6,443.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="263.1,496.5 251.6,488.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="303.2,523.2 314.9,528.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="392.6,519.5 426.4,510.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="231.2,475.0 220.8,468.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="840.5,455.1 829.9,460.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="583.7,502.6 608.2,493.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="457.0,502.8 472.0,500.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="235.8,478.1 231.2,475.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="220.8,468.1 210.2,461.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="199.8,454.4 210.2,461.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="268.3,500.0 263.1,496.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="251.6,488.7 241.6,482.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="608.2,493.0 692.8,452.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="63.3,366.4 97.4,388.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="294.1,517.3 283.7,510.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="499.1,501.9 513.9,506.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Pacific</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  3.3 km  ·  Downtown, West End</text>
+</svg>

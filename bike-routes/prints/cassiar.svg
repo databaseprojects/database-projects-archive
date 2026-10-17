@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="331.3,615.7 331.3,630.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="330.8,699.5 330.3,730.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,522.0 329.2,531.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,244.4 463.3,236.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="330.8,602.1 331.3,615.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="296.8,523.5 306.7,523.5 315.6,463.8 329.2,463.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="330.3,589.5 330.8,602.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,425.1 329.2,436.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="352.3,386.8 339.7,401.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="583.2,106.2 581.1,36.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="333.4,673.3 330.8,699.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="564.4,37.0 563.3,105.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,221.9 463.8,193.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="440.8,290.5 463.3,259.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.8,193.1 463.8,150.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,294.2 463.3,259.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="440.8,290.5 463.3,294.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,259.6 579.6,132.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="579.6,132.9 583.2,106.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.8,801.6 335.0,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="563.3,105.6 485.8,186.8 483.7,165.9 463.8,193.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="371.7,358.6 352.3,386.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="309.3,651.8 333.4,673.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="330.3,730.4 330.3,758.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,236.0 463.3,229.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="388.4,358.6 371.7,358.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,463.8 329.2,483.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="331.3,630.9 310.4,641.9 309.3,651.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,259.6 463.3,244.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,507.3 329.2,522.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,531.4 328.7,554.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="388.4,358.6 388.9,343.4 440.8,290.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="339.7,401.0 329.2,425.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="463.3,229.2 463.3,221.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,483.2 329.2,507.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="329.2,436.6 329.2,463.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="330.3,758.6 329.8,801.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="328.7,554.9 330.3,589.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Cassiar</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  2.8 km  ·  Hastings-Sunrise</text>
+</svg>

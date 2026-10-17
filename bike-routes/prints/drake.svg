@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="318.6,361.9 376.8,398.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="318.6,361.9 263.9,325.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="710.7,614.9 654.8,579.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="263.9,325.5 208.1,290.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="489.6,472.5 433.7,436.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="773.3,656.0 710.7,614.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="654.8,579.6 600.1,544.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="208.1,290.1 152.2,253.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="433.7,436.0 376.8,398.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="36.0,178.5 152.2,253.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,701.5 773.3,656.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="600.1,544.3 544.3,507.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="544.3,507.8 489.6,472.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Drake</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.7 km  ·  Downtown, West End</text>
+</svg>

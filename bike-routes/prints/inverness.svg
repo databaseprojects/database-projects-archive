@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="419.7,344.5 418.8,376.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="412.1,558.8 415.0,572.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.6,437.0 416.2,450.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="422.3,271.1 421.0,311.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="412.7,544.5 412.1,558.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="420.1,337.1 419.7,344.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="423.6,829.6 423.3,843.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.0,572.5 418.1,605.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="450.7,830.3 423.6,829.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.2,450.4 415.6,463.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="418.8,376.0 418.5,389.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="418.1,605.4 417.8,612.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.2,656.8 417.2,674.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.1,166.8 424.2,213.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.5,632.5 417.2,656.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.2,744.2 415.9,757.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="397.4,843.4 423.3,843.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="421.0,314.2 420.7,324.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="421.0,311.6 421.0,314.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="420.7,324.4 420.1,337.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.2,421.0 416.6,437.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="482.6,844.0 482.3,839.5 462.2,839.2 450.7,830.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.6,463.4 414.6,487.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="418.5,389.8 417.8,403.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.6,716.1 416.2,730.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.8,612.4 417.8,618.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.9,688.3 416.9,702.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="423.9,772.9 424.2,787.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.2,730.4 416.2,744.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.9,708.4 416.6,716.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="424.2,787.9 423.9,816.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.8,618.8 417.5,632.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="414.3,501.4 412.7,544.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.9,702.4 416.9,708.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="428.7,86.7 427.1,139.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.2,674.3 416.9,688.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="423.9,816.2 423.6,829.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.9,757.9 423.9,772.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="414.6,487.7 414.3,501.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="417.8,403.5 417.2,421.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="424.2,213.7 422.3,271.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="430.0,36.0 428.7,86.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.4,153.1 426.1,166.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="427.1,139.4 426.4,153.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Inverness</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  3.0 km  ·  Sunset, Kensington-Cedar Cottage</text>
+</svg>

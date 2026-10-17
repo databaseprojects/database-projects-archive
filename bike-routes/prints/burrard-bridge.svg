@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="729.3,335.4 628.4,368.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="382.6,447.6 102.8,537.7 36.0,583.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="620.3,371.3 382.6,447.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="799.3,312.1 729.3,335.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,296.9 799.3,312.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="628.4,368.1 620.3,371.3"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Burrard Bridge</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  1.1 km  ·  Downtown, West End, Fairview, Kitsilano</text>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,185.0 823.6,171.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="777.7,229.0 750.9,246.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="799.5,214.5 777.7,229.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="823.6,171.8 790.0,160.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="541.5,385.3 501.1,412.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,185.0 821.3,200.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="211.3,603.3 139.1,651.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="428.9,459.8 398.9,479.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="501.1,412.1 428.9,459.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="703.2,278.1 651.0,313.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="284.0,555.6 211.3,603.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="139.1,651.4 93.2,681.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="728.6,261.7 703.2,278.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="356.2,507.9 284.0,555.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="651.0,313.1 573.3,364.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="750.9,246.7 728.6,261.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="398.9,479.7 356.2,507.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="573.3,364.4 541.5,385.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="73.7,694.6 36.0,719.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="821.3,200.0 799.5,214.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="93.2,681.9 73.7,694.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Hornby</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  1.9 km  ·  Downtown</text>
+</svg>

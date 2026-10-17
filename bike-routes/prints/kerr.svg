@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="472.0,222.0 471.7,225.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="466.2,330.9 465.2,348.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="432.0,815.6 430.2,844.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="474.8,165.8 474.1,178.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="454.9,566.2 453.5,592.6"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="477.5,115.1 474.8,165.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="459.0,474.8 457.6,507.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="432.0,805.6 432.0,815.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="471.7,225.8 471.3,230.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="432.0,761.5 432.3,794.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="470.3,253.2 468.6,283.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="432.3,794.3 432.0,805.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="461.7,416.9 461.1,431.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="473.1,197.7 472.7,209.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="464.5,364.1 463.5,383.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="460.4,450.1 459.0,474.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="472.7,209.7 472.0,222.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="453.5,592.6 449.8,666.9 432.0,761.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="463.5,383.0 461.7,416.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="467.9,295.3 466.2,330.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="465.2,348.0 464.5,364.1"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="474.1,178.5 473.4,191.8"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="402.5,36.0 413.8,66.8 477.5,115.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="468.6,283.6 467.9,295.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="473.4,191.8 473.1,197.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="471.3,230.6 471.0,241.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="470.7,245.6 470.3,253.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="471.0,241.5 470.7,245.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="457.6,507.6 454.9,566.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="460.7,442.2 460.4,450.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="461.1,431.3 460.7,442.2"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Kerr</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  2.7 km  ·  Killarney</text>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="380.9,478.3 324.5,516.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="155.2,628.4 98.8,665.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="437.3,441.1 408.6,460.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="606.6,328.2 550.2,366.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.6,460.2 380.9,478.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="550.2,366.5 493.8,403.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="690.7,273.9 664.1,291.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="776.9,216.4 720.5,253.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="664.1,291.0 632.2,311.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="632.2,311.2 606.6,328.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="268.1,553.9 211.7,591.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="720.5,253.7 690.7,273.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="324.5,516.6 268.1,553.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="493.8,403.8 437.3,441.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,172.8 776.9,216.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="211.7,591.2 155.2,628.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="98.8,665.7 36.0,707.2"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Chilco</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.8 km  ·  West End</text>
+</svg>

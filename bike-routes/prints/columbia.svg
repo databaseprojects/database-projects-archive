@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="432.9,779.9 432.9,715.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="434.3,455.0 434.3,380.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="444.3,125.8 447.1,36.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="432.9,715.7 432.9,651.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="434.3,586.1 434.3,521.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="435.7,315.3 440.0,215.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="432.9,651.6 434.3,586.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="434.3,521.9 434.3,455.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="440.0,215.6 444.3,125.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="434.3,380.9 435.7,315.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="432.9,844.0 432.9,779.9"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Columbia</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.6 km  ·  Mount Pleasant</text>
+</svg>
