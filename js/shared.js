@@ -1,6 +1,6 @@
 /* Shared helpers. Each page keeps its own column limits, slider ends, and
    scroll-lock class. Parent and sub-tags share syncSubtags: Ski Hills now,
-   Bike Routes when it is built. */
+   Bike Routes when it has parent and sub-tags. */
 
 (function (root) {
   var PHONE_MAX = 767;
@@ -79,11 +79,11 @@
     if (typeof opts.unpack === "function") opts.unpack(g, lock);
   }
 
-  /* Sub-tags slide out from the selected parent and back in when it is
-     cleared. group holds the sub-tag elements; parent is that tag.
-     30ms stagger, 250ms ease-out. prefers-reduced-motion shows and hides
-     them immediately. A matching call does not replay the motion. */
-  var SUB_STAGGER = 30;
+  /* Sub-tags cascade by wrapped row. Row 1 slides down, and each later row
+     starts 70ms after the one above it, 250ms ease-out. Closing runs the
+     cascade back up, last row first. prefers-reduced-motion shows and hides
+     the group immediately. A matching call does not replay the motion. */
+  var SUB_STAGGER = 70;
   var SUB_DURATION = 250;
 
   function subReduced() {
@@ -92,126 +92,123 @@
 
   function subItems(group) {
     return Array.prototype.filter.call(group.children, function (el) {
-      return el && el.nodeType === 1;
+      return el && el.nodeType === 1 && el.className !== "bk-subrow";
     });
   }
 
-  function clearSubMotion(el) {
-    el.style.transition = "";
-    el.style.transform = "";
-    el.style.opacity = "";
-    el.style.position = "";
-    el.style.left = "";
-    el.style.top = "";
-    el.style.width = "";
-    el.style.margin = "";
-    el.style.zIndex = "";
-    el.style.pointerEvents = "";
+  function releaseRows(group) {
+    var shells = [];
+    Array.prototype.forEach.call(group.children, function (el) {
+      if (el && el.className === "bk-subrow") shells.push(el);
+    });
+    shells.forEach(function (shell) {
+      while (shell.firstChild) group.insertBefore(shell.firstChild, shell);
+      shell.remove();
+    });
   }
 
-  function subShift(el, parent) {
-    var tag = el.getBoundingClientRect();
-    var from = parent.getBoundingClientRect();
-    return {
-      x: (from.left + from.width / 2) - (tag.left + tag.width / 2),
-      y: (from.top + from.height / 2) - (tag.top + tag.height / 2)
-    };
+  function clearSubStyles(group) {
+    group.style.width = "";
+    Array.prototype.forEach.call(group.querySelectorAll(".sh-tag, .br-tag, button"), function (el) {
+      el.style.transition = "";
+      el.style.transform = "";
+    });
   }
 
-  function subTiming(i) {
-    var delay = i * SUB_STAGGER;
-    var slide = "transform " + SUB_DURATION + "ms ease-out " + delay + "ms";
-    var fade = "opacity " + SUB_DURATION + "ms ease-out " + delay + "ms";
-    return slide + ", " + fade;
-  }
-
-  function subLater(group, token, items, done) {
-    var wait = SUB_DURATION + Math.max(items.length - 1, 0) * SUB_STAGGER + 40;
-    root.setTimeout(function () {
-      if (group._bkSubToken !== token) return;
-      done();
-    }, wait);
-  }
-
-  function subInstant(group, items, open) {
-    items.forEach(clearSubMotion);
+  function subInstant(group, open) {
+    releaseRows(group);
+    clearSubStyles(group);
     group.hidden = !open;
     group._bkSubBusy = false;
     if (open) group.removeAttribute("aria-hidden");
     else group.setAttribute("aria-hidden", "true");
   }
 
-  function slideSubtagsOut(group, parent, items, token) {
-    group._bkSubBusy = true;
-    group.hidden = false;
-    group.removeAttribute("aria-hidden");
-    items.forEach(clearSubMotion);
-    var shifts = items.map(function (el) { return subShift(el, parent); });
-    items.forEach(function (el, i) {
-      el.style.transition = "none";
-      el.style.transform = "translate(" + shifts[i].x.toFixed(1) + "px," + shifts[i].y.toFixed(1) + "px)";
-      el.style.opacity = "0";
+  function rowBuckets(group) {
+    var rows = [];
+    var lastTop = null;
+    subItems(group).forEach(function (el) {
+      var top = el.offsetTop;
+      if (!rows.length || Math.abs(top - lastTop) > 2) {
+        rows.push([el]);
+        lastTop = top;
+      } else rows[rows.length - 1].push(el);
     });
-    void group.offsetWidth;
-    root.requestAnimationFrame(function () {
-      if (group._bkSubToken !== token) return;
-      items.forEach(function (el, i) {
-        el.style.transition = subTiming(i);
-        el.style.transform = "translate(0px,0px)";
-        el.style.opacity = "1";
-      });
-    });
-    subLater(group, token, items, function () {
-      if (!group._bkSubOpen) return;
-      items.forEach(function (el) {
-        el.style.transition = "";
-        el.style.transform = "";
-        el.style.opacity = "";
-      });
-      group._bkSubBusy = false;
-    });
+    return rows;
   }
 
-  function slideSubtagsIn(group, parent, items, token) {
+  function rowDelay(i, count, open) {
+    return (open ? i : (count - 1 - i)) * SUB_STAGGER;
+  }
+
+  function slideSubtags(group, open, token) {
     group._bkSubBusy = true;
-    group.setAttribute("aria-hidden", "true");
-    var boxes = items.map(function (el) { return el.getBoundingClientRect(); });
-    var from = parent.getBoundingClientRect();
-    items.forEach(function (el, i) {
-      var box = boxes[i];
-      el.style.transition = "none";
-      el.style.position = "fixed";
-      el.style.left = box.left.toFixed(1) + "px";
-      el.style.top = box.top.toFixed(1) + "px";
-      el.style.width = box.width.toFixed(1) + "px";
-      el.style.margin = "0";
-      el.style.transform = "none";
-      el.style.zIndex = "40";
-      el.style.pointerEvents = "none";
-      el._bkSubX = (from.left + from.width / 2) - (box.left + box.width / 2);
-      el._bkSubY = (from.top + from.height / 2) - (box.top + box.height / 2);
+    releaseRows(group);
+    clearSubStyles(group);
+    if (open) {
+      group.hidden = false;
+      group.removeAttribute("aria-hidden");
+    } else group.setAttribute("aria-hidden", "true");
+    var width = group.getBoundingClientRect().width;
+    var rows = rowBuckets(group);
+    if (!rows.length) {
+      subInstant(group, open);
+      return;
+    }
+    if (width) group.style.width = width.toFixed(2) + "px";
+    var shells = rows.map(function (els) {
+      var shell = document.createElement("span");
+      shell.className = "bk-subrow";
+      shell.style.display = "block";
+      shell.style.overflow = "hidden";
+      group.insertBefore(shell, els[0]);
+      els.forEach(function (el) { shell.appendChild(el); });
+      var h = Math.ceil(shell.getBoundingClientRect().height);
+      if (h < 1) h = Math.ceil(els[0].getBoundingClientRect().height);
+      shell._bkH = h;
+      return shell;
+    });
+    shells.forEach(function (shell, i) {
+      var h = shell._bkH;
+      var tags = subItems(shell);
+      shell.style.transition = "none";
+      shell.style.pointerEvents = open ? "" : "none";
+      shell.style.height = open ? "0px" : (h + "px");
+      tags.forEach(function (el) {
+        el.style.transition = "none";
+        el.style.transform = open ? ("translateY(-" + h + "px)") : "translateY(0px)";
+      });
     });
     void group.offsetWidth;
     root.requestAnimationFrame(function () {
       if (group._bkSubToken !== token) return;
-      items.forEach(function (el, i) {
-        el.style.transition = subTiming(i);
-        el.style.transform = "translate(" + el._bkSubX.toFixed(1) + "px," + el._bkSubY.toFixed(1) + "px)";
-        el.style.opacity = "0";
+      shells.forEach(function (shell, i) {
+        var h = shell._bkH;
+        var delay = rowDelay(i, shells.length, open);
+        var ease = SUB_DURATION + "ms ease-out " + delay + "ms";
+        shell.style.transition = "height " + ease;
+        shell.style.height = open ? (h + "px") : "0px";
+        subItems(shell).forEach(function (el) {
+          el.style.transition = "transform " + ease;
+          el.style.transform = open ? "translateY(0px)" : ("translateY(-" + h + "px)");
+        });
       });
     });
-    subLater(group, token, items, function () {
-      if (group._bkSubOpen) return;
-      items.forEach(clearSubMotion);
-      group.hidden = true;
+    var wait = SUB_DURATION + Math.max(shells.length - 1, 0) * SUB_STAGGER + 50;
+    root.setTimeout(function () {
+      if (group._bkSubToken !== token || group._bkSubOpen !== open) return;
+      releaseRows(group);
+      clearSubStyles(group);
+      group.hidden = !open;
       group._bkSubBusy = false;
-    });
+      if (open) group.removeAttribute("aria-hidden");
+      else group.setAttribute("aria-hidden", "true");
+    }, wait);
   }
 
   function syncSubtags(group, parent, open) {
     if (!group) return;
     open = !!open;
-    var items = subItems(group);
     if (group._bkSubOpen == null && !group._bkSubBusy && (!group.hidden) === open) {
       group._bkSubOpen = open;
       return;
@@ -220,12 +217,11 @@
     group._bkSubOpen = open;
     group._bkSubToken = (group._bkSubToken || 0) + 1;
     var token = group._bkSubToken;
-    if (subReduced() || !parent || !items.length) {
-      subInstant(group, items, open);
+    if (subReduced() || !parent) {
+      subInstant(group, open);
       return;
     }
-    if (open) slideSubtagsOut(group, parent, items, token);
-    else slideSubtagsIn(group, parent, items, token);
+    slideSubtags(group, open, token);
   }
 
   root.Shared = {
