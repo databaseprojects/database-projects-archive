@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Front-facing trail map for one hill.
 
-Orthographic view from the base, 30 degrees above horizontal, looking up the
-fall line. Cross-slope ridge lines with hidden parts removed, a light
-hillshade, then runs and lifts on the same surface. No labels.
+Orthographic view from the base, 17 degrees above horizontal, looking straight
+up the fall line so the run face is square to the viewer. Elevations are
+stretched 1.5x. 20 m contours are projected at their true height, with nearer
+ground hiding the lines behind them, plus a light hillshade from the upper
+left. Runs and lifts sit on top. No labels.
 
     python3 ski-hills/build-frontal.py
 """
@@ -24,9 +26,11 @@ SLUG = "cypress-mountain"
 GEOM = Path("/tmp/cypress-geom.json")
 DEM = Path("/tmp/cypress-dem.tif")
 OUT = ROOT / "frontal" / f"{SLUG}.svg"
-PITCH = math.radians(30)
-COLS = 120
-ROWS = 64
+PITCH = math.radians(17)
+Z_SCALE = 1.5
+CONTOUR_M = 20
+COLS = 110
+ROWS = 72
 
 
 def load_geom():
@@ -182,6 +186,140 @@ def fall_line(arr, gt, runs):
     return math.atan2(-vx / wt, -vy / wt)
 
 
+def marching_contours(arr, gt, interval):
+    h, w = len(arr), len(arr[0])
+    flat = [arr[r][c] for r in range(h) for c in range(w) if arr[r][c] == arr[r][c]]
+    if len(flat) < 10:
+        return []
+    z0 = interval * math.ceil((min(flat) + 0.01) / interval)
+    z1 = interval * math.floor((max(flat) - 0.01) / interval)
+    levels = []
+    level = z0
+    while level <= z1 + 0.01:
+        levels.append(level)
+        level += interval
+    buckets = {lv: [] for lv in levels}
+
+    def edge_point(va, vb, c0, r0, c1, r1, elev):
+        if va == vb or (va < elev) == (vb < elev):
+            return None
+        t = (elev - va) / (vb - va)
+        lon0 = gt[0] + c0 * gt[1]
+        lat0 = gt[3] + r0 * gt[5]
+        lon1 = gt[0] + c1 * gt[1]
+        lat1 = gt[3] + r1 * gt[5]
+        return (lon0 + (lon1 - lon0) * t, lat0 + (lat1 - lat0) * t)
+
+    for r in range(h - 1):
+        for c in range(w - 1):
+            cell = (arr[r][c], arr[r][c + 1], arr[r + 1][c + 1], arr[r + 1][c])
+            if any(v != v for v in cell):
+                continue
+            lo, hi = min(cell), max(cell)
+            for elev in levels:
+                if elev < lo or elev > hi:
+                    continue
+                hits = []
+                corners = (
+                    (0, 1, c, r, c + 1, r),
+                    (1, 2, c + 1, r, c + 1, r + 1),
+                    (2, 3, c + 1, r + 1, c, r + 1),
+                    (3, 0, c, r + 1, c, r),
+                )
+                for a, b, c0, r0, c1, r1 in corners:
+                    pt = edge_point(cell[a], cell[b], c0, r0, c1, r1, elev)
+                    if pt:
+                        hits.append(pt)
+                if len(hits) == 2:
+                    buckets[elev].append(hits)
+                elif len(hits) == 4:
+                    mid = sum(cell) / 4
+                    if (cell[0] >= elev) == (mid >= elev):
+                        buckets[elev].append([hits[0], hits[1]])
+                        buckets[elev].append([hits[2], hits[3]])
+                    else:
+                        buckets[elev].append([hits[0], hits[3]])
+                        buckets[elev].append([hits[1], hits[2]])
+    lines = []
+    for elev, segs in buckets.items():
+        lines.extend((elev, line) for line in stitch(segs) if len(line) >= 2)
+    return lines
+
+
+def stitch(segments):
+    def key(p):
+        return (round(p[0], 5), round(p[1], 5))
+
+    links = {}
+    for a, b in segments:
+        ka, kb = key(a), key(b)
+        if ka == kb:
+            continue
+        links.setdefault(ka, []).append(kb)
+        links.setdefault(kb, []).append(ka)
+    used = set()
+
+    def edge(a, b):
+        return (a, b) if a <= b else (b, a)
+
+    lines = []
+    for start in list(links):
+        for nxt in links[start]:
+            if edge(start, nxt) in used:
+                continue
+            path = [start]
+            prev, cur = start, nxt
+            used.add(edge(prev, cur))
+            path.append(cur)
+            while True:
+                choices = [n for n in links.get(cur, []) if edge(cur, n) not in used]
+                if not choices:
+                    break
+                nxt = choices[0]
+                used.add(edge(cur, nxt))
+                prev, cur = cur, nxt
+                path.append(cur)
+                if cur == start:
+                    break
+            if len(path) >= 2:
+                lines.append([(p[0], p[1]) for p in path])
+    return lines
+
+
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, window):
+    gx0, gx1, gy0, gy1 = window
+    raw = marching_contours(arr, gt, CONTOUR_M)
+    drawn = []
+    for elev, line in raw:
+        chunk = []
+        depth = None
+
+        def flush():
+            nonlocal chunk
+            if len(chunk) >= 2:
+                drawn.append((depth, chunk))
+            chunk = []
+
+        for lon, lat in line:
+            xr, yr = rot(*metres(lon, lat))
+            if xr < gx0 or xr > gx1 or yr < gy0 or yr > gy1:
+                flush()
+                continue
+            px, py = paper(*project_xy(xr, yr, elev))
+            if px < 8 or px > 992 or py < 8 or py > 992:
+                flush()
+                continue
+            horizon = horizon_at(yr)
+            if py < horizon[col_of(px)] - 0.45:
+                if not chunk:
+                    depth = yr
+                chunk.append((px, py))
+            else:
+                flush()
+        flush()
+    return drawn
+
+
 def build(arr, gt, runs, lifts, facing):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
@@ -249,7 +387,7 @@ def build(arr, gt, runs, lifts, facing):
     gy0, gy1 = min(rys) - pad_y, max(rys) + pad_y
 
     def project_xy(xr, yr, z):
-        return xr, yr * math.cos(PITCH) + z * math.sin(PITCH)
+        return xr, yr * math.cos(PITCH) + z * Z_SCALE * math.sin(PITCH)
 
     grid = []
     for ri in range(ROWS):
@@ -284,8 +422,8 @@ def build(arr, gt, runs, lifts, facing):
         return px, py
 
     shades = []
-    # Light from the front-left, so the face toward the base stays pale.
-    light = (-0.35, -0.25, 0.9)
+    # Upper left of the sheet: left on the cross-slope axis, and from above.
+    light = (-0.62, 0.18, 0.76)
     ln = math.sqrt(sum(v * v for v in light))
     light = tuple(v / ln for v in light)
     for r in range(len(grid) - 1):
@@ -307,42 +445,47 @@ def build(arr, gt, runs, lifts, facing):
                 poly.append(f"{px:.1f},{py:.1f}")
             shades.append((opacity, " ".join(poly)))
 
-    horizon = [1e9] * 900
+    bins = 960
+    horizon = [1e9] * bins
+    horizons = []
+    depths = []
 
     def col_of(px):
-        i = int((px - margin) / (1000 - margin * 2) * (len(horizon) - 1))
-        return max(0, min(len(horizon) - 1, i))
+        i = int((px - margin) / (1000 - margin * 2) * (bins - 1))
+        return max(0, min(bins - 1, i))
 
     def stamp(px, py):
         i = col_of(px)
         if py < horizon[i]:
             horizon[i] = py
 
-    ridges = []
     for line in grid:
-        run = []
+        yrs = [cell[4] for cell in line if cell]
+        depths.append(sum(yrs) / len(yrs) if yrs else 0)
+        horizons.append(horizon[:])
         stamped = []
         for cell in line:
             if not cell:
-                if len(run) >= 2:
-                    ridges.append(run)
-                run = []
                 continue
-            px, py = paper(cell[0], cell[1])
-            stamped.append((px, py))
-            if py < horizon[col_of(px)] - 0.35:
-                run.append((px, py))
-            else:
-                if len(run) >= 2:
-                    ridges.append(run)
-                run = []
-        if len(run) >= 2:
-            ridges.append(run)
+            stamped.append(paper(cell[0], cell[1]))
         for a, b in zip(stamped, stamped[1:]):
             steps = max(2, int(abs(b[0] - a[0]) / 2))
             for k in range(steps + 1):
                 t = k / steps
                 stamp(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
+
+    def horizon_at(yr):
+        idx = 0
+        for i, depth in enumerate(depths):
+            if depth <= yr:
+                idx = i
+            else:
+                break
+        return horizons[idx]
+
+    contours = project_contours(
+        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, (gx0, gx1, gy0, gy1)
+    )
 
     def stroke(lines, colour, width):
         parts = []
@@ -391,17 +534,26 @@ def build(arr, gt, runs, lifts, facing):
         f'<polygon points="{pts}" fill="#000" fill-opacity="{op:.3f}"/>'
         for op, pts in shades
     )
-    ridge_xml = "\n".join(
-        '<polyline points="%s" fill="none" stroke="#000" stroke-opacity="0.42" stroke-width="0.9" '
-        'style="fill:none;stroke:#000;stroke-opacity:0.42;stroke-width:0.9;'
-        'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
-        % " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in line)
-        for line in ridges
-    )
+    if not contours:
+        raise SystemExit("no contours")
+    front = min(item[0] for item in contours)
+    back = max(item[0] for item in contours)
+    span_d = max(back - front, 1)
+    contour_xml = []
+    for yr, line in sorted(contours, key=lambda item: -item[0]):
+        # Farther up the hill is paler. The near face is a little darker.
+        t = (yr - front) / span_d
+        opacity = 0.50 - t * 0.26
+        pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in line)
+        contour_xml.append(
+            f'<polyline points="{pts}" fill="none" stroke="#000" stroke-opacity="{opacity:.3f}" '
+            f'stroke-width="0.85" style="fill:none;stroke:#000;stroke-opacity:{opacity:.3f};'
+            f'stroke-width:0.85;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
+        )
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">\n'
         '<g class="sh-frontal-art">\n'
-        f"{shade_xml}\n{ridge_xml}\n"
+        f"{shade_xml}\n" + "\n".join(contour_xml) + "\n"
         + "\n".join(run_parts)
         + "\n"
         + "\n".join(lift_parts)
@@ -417,8 +569,8 @@ def build(arr, gt, runs, lifts, facing):
         OUT.stat().st_size,
         "facing_deg",
         az,
-        "ridges",
-        len(ridges),
+        "contours",
+        len(contours),
         "runs",
         len(run_parts),
         "lifts",
@@ -439,14 +591,20 @@ def main():
     print("dem", len(arr[0]), len(arr))
     hills = json.loads((ROOT / "hills.json").read_text())
     hill = next(item for item in hills["hills"] if item["slug"] == SLUG)
-    facing = hill.get("facing")
-    if isinstance(facing, (int, float)):
-        ang = math.radians(float(facing))
-    else:
-        ang = fall_line(arr, gt, runs)
+    ang = fall_line(arr, gt, runs)
     az = build(arr, gt, runs, lifts, ang)
-    if hill.get("facing") != az:
-        raw = (ROOT / "hills.json").read_text()
+    raw = (ROOT / "hills.json").read_text()
+    import re
+    updated, n = re.subn(
+        r'("slug":"cypress-mountain","stacked":true,"facing":)[0-9.]+',
+        lambda m: m.group(1) + str(az),
+        raw,
+        count=1,
+    )
+    if n and updated != raw:
+        (ROOT / "hills.json").write_text(updated)
+        print("stored facing", az)
+    elif n == 0:
         needle = '"slug":"cypress-mountain","stacked":true'
         at = raw.find(needle)
         if at >= 0 and '"facing"' not in raw[at : at + 90]:
