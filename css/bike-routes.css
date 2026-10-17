@@ -1,4 +1,4 @@
-/* Bike Routes. Same filing type, cards, and gallery as Ski Hills. */
+/* Bike Routes. One city map. */
 
 .br-bar {
   display: flex;
@@ -47,63 +47,6 @@
 .br-find:focus {
   outline: 1px solid #000;
   outline-offset: 2px;
-}
-
-.br-zslider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 170px;
-  height: 22px;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  touch-action: none;
-}
-
-.br-zslider:focus {
-  outline: none;
-}
-
-.br-zslider::-webkit-slider-runnable-track {
-  height: 3px;
-  border: 0;
-  border-radius: 3px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.75) var(--br-p, 50%), rgba(0, 0, 0, 0.14) var(--br-p, 50%));
-}
-
-.br-zslider::-moz-range-track {
-  height: 3px;
-  border: 0;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.14);
-}
-
-.br-zslider::-moz-range-progress {
-  height: 3px;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.75);
-}
-
-.br-zslider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  margin-top: -5.5px;
-  border: 0;
-  border-radius: 50%;
-  background: #111;
-  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
-}
-
-.br-zslider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border: 0;
-  border-radius: 50%;
-  background: #111;
-  box-shadow: 0 0 0 3px rgba(243, 239, 228, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .br-note,
@@ -164,96 +107,14 @@
   outline-offset: 2px;
 }
 
-.br-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--br-cols, 5), minmax(0, 1fr));
-  gap: 1.15rem 0.85rem;
-  margin-top: 1.1rem;
-}
-
-.br-grid.br-held {
-  display: none;
-}
-
-.br-route {
-  position: relative;
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-
-.br-route[hidden] {
-  display: none;
-}
-
-.br-route svg,
-.br-lb svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: #fff;
-}
-
-.br-route polyline,
-.br-lb polyline {
-  fill: none;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.br-lb text {
-  font-family: "Courier New", Courier, monospace;
-  fill: #111;
-}
-
-.br-credit {
-  margin-top: 1.6rem;
-}
-
-.br-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-radius: 2px;
-  background: transparent;
-  color: #111;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.br-icon svg {
-  display: block;
-  width: 18px;
-  height: 18px;
-  pointer-events: none;
-}
-
-.br-icon.br-icon-on {
-  background: #111;
-  border-color: #111;
-  color: #fff;
-}
-
-.br-icon:focus-visible {
-  outline: 1px solid #000;
-  outline-offset: 2px;
-}
-
 .br-map {
   position: relative;
   width: 100%;
-  margin-top: 1.1rem;
+  height: calc(100vh - 12.5rem);
+  min-height: 520px;
+  margin-top: 0.35rem;
   overflow: hidden;
   background: #e4e2dc;
-}
-
-.br-map[hidden] {
-  display: none;
 }
 
 .br-map-tiles {
@@ -328,151 +189,8 @@
   display: none;
 }
 
-.br-lb {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-  background: rgba(0, 0, 0, 0);
-  overflow: hidden;
-  transition: background 0.32s ease;
-  cursor: zoom-out;
-}
-
-.br-lb.br-lb-on {
-  background: rgba(0, 0, 0, 0.82);
-}
-
-.br-view {
-  position: relative;
-  display: flex;
-  width: max-content;
-  max-width: calc(100vw - 48px);
-  pointer-events: none;
-}
-
-.br-stage {
-  position: relative;
-  overflow: hidden;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-  pointer-events: auto;
-  background: #fff;
-}
-
-.br-stage.br-dragging {
-  cursor: grabbing;
-}
-
-.br-track {
-  display: flex;
-  width: 200%;
-  transition: transform 400ms ease-out;
-}
-
-.br-lb.br-framed .br-track {
-  transform: translateX(-50%);
-}
-
-.br-slide {
-  flex: 0 0 50%;
-  width: 50%;
-}
-
-.br-wall {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(130% 95% at 0% 0%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 56%),
-    linear-gradient(180deg, #f7f6f3 0%, #e6e3dc 100%);
-}
-
-.br-hang {
-  width: 88%;
-  filter: drop-shadow(9px 16px 14px rgba(0, 0, 0, 0.28));
-}
-
-.br-mould {
-  box-sizing: border-box;
-  padding: 1.8%;
-  background: #111;
-}
-
-.br-mat {
-  box-sizing: border-box;
-  padding: 10.5%;
-  background: #f4f0e6;
-}
-
-.br-frame-art {
-  background: #fff;
-}
-
-.br-frame-art svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.br-edge {
-  position: absolute;
-  top: 50%;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 36px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: #111;
-  transform: translateY(-50%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  cursor: pointer;
-}
-
-.br-edge svg {
-  display: block;
-  width: 11px;
-  height: 18px;
-  pointer-events: none;
-}
-
-.br-edge-next { right: 8px; }
-.br-edge-prev { left: 8px; }
-
-.br-lb:not(.br-framed) .br-edge-prev,
-.br-lb.br-framed .br-edge-next {
-  visibility: hidden;
-}
-
-.br-lb:not(.br-framed) .br-stage:hover .br-edge-next,
-.br-lb.br-framed .br-stage:hover .br-edge-prev {
-  opacity: 0.4;
-  pointer-events: auto;
-}
-
-.br-lb:not(.br-framed) .br-stage .br-edge-next:hover,
-.br-lb.br-framed .br-stage .br-edge-prev:hover {
-  opacity: 0.7;
-}
-
-.br-stage.br-touch-hint .br-edge-next,
-.br-lb.br-framed .br-stage.br-touch-hint .br-edge-prev {
-  opacity: 0.4;
-  pointer-events: auto;
+.br-credit {
+  margin-top: 0.8rem;
 }
 
 @media (max-width: 767px) {
@@ -482,20 +200,12 @@
   }
 
   .br-find {
-    flex: 0 0 8.2rem;
-    width: 8.2rem;
-  }
-
-  .br-zslider {
     flex: 1 1 auto;
-    width: auto;
+    width: 100%;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .br-lb,
-  .br-track,
-  .br-edge {
-    transition: none;
+  .br-map {
+    height: 70vh;
+    min-height: 420px;
   }
 }
