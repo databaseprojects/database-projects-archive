@@ -10,7 +10,9 @@ by DEPTH_SCALE before projection, so a fixed 20 m interval opens on
 gentle slopes and stays tight on steep ones. Cypress uses 2; Grass stays 1.
 20 m contours are projected at their true elevation in metres, the same
 unit as the ground, stretched 1.5x. Nearer ground hides lines behind it.
-There is no filled shade and no drawn silhouette: the paper stays white.
+A soft grey hillshade sits under the contours. It is lit by one sun,
+from the surface normals, and the paper stays white around it. There is
+no drawn silhouette and no dark backing box.
 A far contour loses to terrain a short depth in front of it, and stops
 just under that ridge. Visibility has to hold for a few pixels, so a
 contour stays one solid stroke. Runs sit a few metres above the surface.
@@ -30,13 +32,16 @@ Contours use a wider DEM and fade softly at the frame edge.
 
     python3 ski-hills/build-frontal.py
 """
+import base64
 import bisect
+import io
 import json
 import math
 import struct
 from pathlib import Path
 
 from osgeo import gdal
+from PIL import Image, ImageDraw, ImageFilter
 
 gdal.SetConfigOption("GDAL_HTTP_TIMEOUT", "60")
 gdal.SetConfigOption("GDAL_HTTP_MAX_RETRY", "1")
@@ -76,8 +81,28 @@ ROWS = 72
 # is the tilt up from a flat plan (0 top-down, 90 a pure side view).
 # Grass Mountain's elevation 73 is the previous pitch of 17, unchanged.
 # Not passed through orient(), which would flip a hand-set facing 180°.
+# Sun azimuth is clockwise from north, the direction the light comes from.
+# Left unset, it sits 135° counter-clockwise of the camera facing: the
+# viewer's upper left. Elevation is degrees above the horizon. Intensity
+# scales the directional term. Ambient is the floor, so a shaded face
+# stays grey. Grass has no bird's-eye sun; it is not re-rendered.
+SUN_OFFSET_CCW = 135.0
+SUN_ELEVATION = 40.0
+SUN_INTENSITY = 0.50
+SUN_AMBIENT = 0.35
 CAMERAS = {
-    "cypress-mountain": {"facing": 0.0, "elevation": 15.0, "depth_scale": DEPTH_SCALE},
+    "cypress-mountain": {
+        "facing": 0.0,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "grouse-mountain": {
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "mt-seymour": {
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     "grass-mountain": {"facing": 0.0, "elevation": 73.0, "depth_scale": 1.0},
 }
 
@@ -498,7 +523,132 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     return drawn
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0):
+def resolve_sun(facing_deg, settings):
+    """One sun. Azimuth follows the hill unless a setting overrides it."""
+    settings = settings or {}
+    azimuth = settings.get("azimuth")
+    if azimuth is None:
+        azimuth = (facing_deg - SUN_OFFSET_CCW) % 360.0
+    return {
+        "azimuth": float(azimuth) % 360.0,
+        "elevation": float(settings.get("elevation", SUN_ELEVATION)),
+        "intensity": float(settings.get("intensity", SUN_INTENSITY)),
+        "ambient": float(settings.get("ambient", SUN_AMBIENT)),
+    }
+
+
+def sun_vector(facing_rad, sun):
+    """Unit vector toward the sun, in the view frame (right, away, up)."""
+    az = math.radians(sun["azimuth"])
+    el = math.radians(sun["elevation"])
+    east = math.cos(el) * math.sin(az)
+    north = math.cos(el) * math.cos(az)
+    up = math.sin(el)
+    ca, sa = math.cos(facing_rad), math.sin(facing_rad)
+    xr = east * ca - north * sa
+    yr = east * sa + north * ca
+    length = math.hypot(xr, math.hypot(yr, up)) or 1.0
+    return xr / length, yr / length, up / length
+
+
+def shade_grey(ndotl, sun):
+    """Lambertian reflectance, held in a light grey. Never black.
+
+    Ambient is the floor of the light, then the whole range is placed
+    between a soft shadow grey and white so the tone stays readable.
+    """
+    lit = sun["ambient"] + sun["intensity"] * max(0.0, min(1.0, ndotl))
+    peak = sun["ambient"] + sun["intensity"]
+    t = (lit - sun["ambient"]) / max(peak - sun["ambient"], 1e-6)
+    # #9c9c9c at ambient, #fafafa in full sun. Contours stay darker than both.
+    return int(round(156 + t * (250 - 156)))
+
+
+def hillshade_png(grid, paper, sun_dir, sun):
+    """Projected terrain mesh. Far quads first, so the near slope wins."""
+    rows = len(grid)
+    cols = len(grid[0]) if rows else 0
+    image = Image.new("RGBA", (1000, 1000), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    greys = []
+
+    def neighbor(ci, ri, dc, dr):
+        cc, rr = ci + dc, ri + dr
+        if 0 <= cc < cols and 0 <= rr < rows:
+            return grid[rr][cc]
+        return None
+
+    def normal_grey(ci, ri):
+        cell = grid[ri][ci]
+        if cell is None:
+            return None
+        left, right = neighbor(ci, ri, -1, 0), neighbor(ci, ri, 1, 0)
+        down, up = neighbor(ci, ri, 0, -1), neighbor(ci, ri, 0, 1)
+        if left and right:
+            dx = right[3] - left[3]
+            dzdx = (right[2] - left[2]) / dx if abs(dx) >= 1 else 0.0
+        elif right:
+            dx = right[3] - cell[3]
+            dzdx = (right[2] - cell[2]) / dx if abs(dx) >= 1 else 0.0
+        elif left:
+            dx = cell[3] - left[3]
+            dzdx = (cell[2] - left[2]) / dx if abs(dx) >= 1 else 0.0
+        else:
+            return None
+        if down and up:
+            dy = up[4] - down[4]
+            dzdy = (up[2] - down[2]) / dy if abs(dy) >= 1 else 0.0
+        elif up:
+            dy = up[4] - cell[4]
+            dzdy = (up[2] - cell[2]) / dy if abs(dy) >= 1 else 0.0
+        elif down:
+            dy = cell[4] - down[4]
+            dzdy = (cell[2] - down[2]) / dy if abs(dy) >= 1 else 0.0
+        else:
+            return None
+        # The drawing stretches height, so the shade uses the same slopes
+        # with a modest z-factor. Otherwise a facing slope stays one grey.
+        nx, ny, nz = -dzdx * 2.0, -dzdy * 2.0, 1.0
+        length = math.hypot(nx, math.hypot(ny, nz)) or 1.0
+        ndotl = (nx * sun_dir[0] + ny * sun_dir[1] + nz * sun_dir[2]) / length
+        return shade_grey(ndotl, sun)
+
+    # ri grows away from the camera, so the high rows are the far slope.
+    for ri in range(rows - 2, -1, -1):
+        for ci in range(cols - 1):
+            quad = (
+                grid[ri][ci],
+                grid[ri][ci + 1],
+                grid[ri + 1][ci + 1],
+                grid[ri + 1][ci],
+            )
+            if any(cell is None for cell in quad):
+                continue
+            grey = normal_grey(ci, ri)
+            if grey is None:
+                continue
+            greys.append(grey)
+            pts = [paper(cell[0], cell[1]) for cell in quad]
+            if max(p[0] for p in pts) < -20 or min(p[0] for p in pts) > 1020:
+                continue
+            if max(p[1] for p in pts) < -20 or min(p[1] for p in pts) > 1020:
+                continue
+            draw.polygon(pts, fill=(grey, grey, grey, 255))
+    if not greys:
+        return None, None, None
+    # Blur against white so clear pixels do not pull the tone toward black.
+    flat = Image.new("RGB", image.size, (255, 255, 255))
+    flat.paste(image, mask=image.split()[-1])
+    flat = flat.filter(ImageFilter.GaussianBlur(radius=1.8))
+    alpha = image.split()[-1].filter(ImageFilter.GaussianBlur(radius=1.6))
+    image = flat.convert("RGBA")
+    image.putalpha(alpha)
+    buf = io.BytesIO()
+    image.save(buf, format="PNG", optimize=True)
+    return base64.b64encode(buf.getvalue()).decode("ascii"), min(greys), max(greys)
+
+
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -617,6 +767,26 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         px = pad_x + (sx - minx) * fit
         py = pad_y + (maxy - sy) * fit
         return px, py
+
+    facing_deg = math.degrees(ang) % 360.0
+    sun = resolve_sun(facing_deg, sun)
+    sun_dir = sun_vector(ang, sun)
+    shade_cols, shade_rows = 220, 150
+    shade_grid = []
+    for ri in range(shade_rows):
+        yr = gy0 + (gy1 - gy0) * ri / (shade_rows - 1)
+        line = []
+        for ci in range(shade_cols):
+            xr = gx0 + (gx1 - gx0) * ci / (shade_cols - 1)
+            lon, lat = unmetres(*unrot(xr, yr))
+            z = sample(arr, gt, lon, lat)
+            if z is None:
+                line.append(None)
+                continue
+            sx, sy = project_xy(xr, yr, z)
+            line.append((sx, sy, z, xr, yr))
+        shade_grid.append(line)
+    shade_b64, shade_lo, shade_hi = hillshade_png(shade_grid, paper, sun_dir, sun)
 
     bins = 2000
     empty_py = [1e9] * bins
@@ -773,7 +943,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">\n'
         '<g class="sh-frontal-art">\n'
         f"{defs}\n"
-        f'<g mask="url(#{mask_id})">\n' + "\n".join(contour_xml) + "\n</g>\n"
+        f'<g mask="url(#{mask_id})">\n'
+        + (
+            f'<image class="sh-frontal-shade" x="0" y="0" width="1000" height="1000" '
+            f'href="data:image/png;base64,{shade_b64}"/>\n'
+            if shade_b64
+            else ""
+        )
+        + "\n".join(contour_xml)
+        + "\n</g>\n"
         + "\n".join(run_parts)
         + "\n"
         + "\n".join(lift_parts)
@@ -790,6 +968,17 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         dest.stat().st_size,
         "facing_deg",
         az,
+        "sun_azimuth",
+        round(sun["azimuth"], 1),
+        "sun_elevation",
+        round(sun["elevation"], 1),
+        "sun_intensity",
+        round(sun["intensity"], 2),
+        "sun_ambient",
+        round(sun["ambient"], 2),
+        "shade_grey",
+        shade_lo,
+        shade_hi,
         "elevation_deg",
         elevation,
         "pitch_deg",
@@ -843,22 +1032,53 @@ def render_default(slug):
         slug=slug,
         elevation=15.0,
         depth_scale=DEPTH_SCALE,
+        sun=(CAMERAS.get(slug) or {}).get("sun"),
+    )
+
+
+def render_cypress():
+    """Hand-set facing 0. Same sheet as before, plus the default sun."""
+    global GEOM, DEM
+    slug = "cypress-mountain"
+    GEOM = Path("/tmp/cypress-geom.json")
+    DEM = Path("/tmp/cypress-dem-wide.tif")
+    cam = CAMERAS[slug]
+    runs, lifts = load_geom()
+    box = wide_box(runs, lifts)
+    print(slug, "bbox", tuple(round(v, 4) for v in box))
+    ensure_dem(box)
+    arr, gt = read_grid()
+    build(
+        arr,
+        gt,
+        runs,
+        lifts,
+        math.radians(cam["facing"]),
+        lock_facing=True,
+        out_path=ROOT / "frontal" / f"{slug}.svg",
+        slug=slug,
+        elevation=cam["elevation"],
+        depth_scale=cam["depth_scale"],
+        sun=cam.get("sun"),
     )
 
 
 def main():
-    # Cypress and Grass stay as already rendered. These two use the same
-    # elevation, depth, contour, run and lift treatment, with auto facing.
-    for slug in ("grouse-mountain", "mt-seymour"):
+    # Grass stays at elevation 73 and is not re-rendered.
+    for slug, draw in (
+        ("cypress-mountain", render_cypress),
+        ("grouse-mountain", lambda: render_default("grouse-mountain")),
+        ("mt-seymour", lambda: render_default("mt-seymour")),
+    ):
         try:
-            render_default(slug)
+            draw()
         except Exception as err:
             print("fail", slug, err)
-            dem = Path(f"/tmp/{slug}-dem-wide.tif")
+            dem = Path("/tmp/cypress-dem-wide.tif" if slug == "cypress-mountain" else f"/tmp/{slug}-dem-wide.tif")
             if dem.exists():
                 dem.unlink()
             try:
-                render_default(slug)
+                draw()
             except Exception as err2:
                 print("skip", slug, err2)
 
