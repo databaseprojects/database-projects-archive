@@ -404,13 +404,18 @@
     });
   }
 
+  function frameLimit() {
+    var viewW = document.documentElement.clientWidth || window.innerWidth;
+    return Math.min(viewW * 0.92, Math.max(viewW - 48, 0), 1100);
+  }
+
   function syncStroke() {
     var g = document.getElementById("sh-grid");
     var svg = g && (g.querySelector(".sh-hill:not([hidden]) svg") || g.querySelector(".sh-hill svg"));
     if (!g || !svg) return;
     var w = svg.getBoundingClientRect().width;
     if (w < 2) return;
-    var maxW = Math.min(window.innerWidth * 0.92, 1100);
+    var maxW = frameLimit();
     var maxH = window.innerHeight * 0.88;
     var gw = Math.min(maxW, maxH);
     if (gw < 1) return;
@@ -785,7 +790,7 @@
     writeCaption(big, card._hill);
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift, false);
-    var maxW = Math.min(window.innerWidth * 0.92, 1100);
+    var maxW = frameLimit();
     var maxH = window.innerHeight * 0.86 - (sideViews(card._hill) ? 112 : 72);
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
     var px = (SQUARE * scale).toFixed(1) + "px";
