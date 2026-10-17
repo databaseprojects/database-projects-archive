@@ -68,11 +68,24 @@ def linked_ids(props, wanted):
     return ids
 
 
-def project(lines, keyed=False):
+PAD = 48
+SIZE = 1000 - PAD * 2
+# A lift end this close to a run, in metres, is pulled onto that run.
+# Farther gaps are real and stay put. The shared frame is the alignment.
+SNAP_M = 30.0
+
+
+def frame_of(lines, keyed=False):
+    """One equirectangular frame for a hill.
+
+    Runs and lifts must share it. A separate lift box uses a different
+    origin and scale, so the lift drawing cannot meet the runs. The frame
+    comes from the runs: contours are built in that same frame.
+    """
     seq = [item[1] for item in lines] if keyed else lines
     pts = [p for line in seq if line for p in line]
     if not pts:
-        return []
+        return None
     lats = [p[1] for p in pts]
     mid = sum(lats) / len(lats)
     cos = math.cos(mid * math.pi / 180)
@@ -80,9 +93,21 @@ def project(lines, keyed=False):
     ys = [p[1] * 110540 for p in pts]
     minx, maxx = min(xs), max(xs)
     miny, maxy = min(ys), max(ys)
-    span = max(maxx - minx, maxy - miny, 1)
-    pad = 48
-    size = 1000 - pad * 2
+    return {
+        "cos": cos,
+        "minx": minx,
+        "maxx": maxx,
+        "miny": miny,
+        "maxy": maxy,
+        "span": max(maxx - minx, maxy - miny, 1.0),
+    }
+
+
+def project_in(lines, fr, keyed=False):
+    if not fr:
+        return []
+    seq = [item[1] for item in lines] if keyed else lines
+    cos = fr["cos"]
     drawn = []
     for i, line in enumerate(seq):
         if len(line) < 2:
@@ -91,13 +116,60 @@ def project(lines, keyed=False):
         for lon, lat in line:
             x = lon * 111320 * cos
             y = lat * 110540
-            px = pad + (x - minx) / span * size
-            py = pad + (maxy - y) / span * size
+            px = PAD + (x - fr["minx"]) / fr["span"] * SIZE
+            py = PAD + (fr["maxy"] - y) / fr["span"] * SIZE
             cmd.append(f"{px:.1f},{py:.1f}")
         if len(cmd) >= 2:
             text = " ".join(cmd)
             drawn.append({"d": lines[i][0], "p": text} if keyed else text)
     return drawn
+
+
+def snap_terminals(lines, run_lines, cos):
+    """Move a terminal onto the nearest run when it is already within 30 m."""
+    if not run_lines:
+        return lines
+    segs = []
+    for line in run_lines:
+        prev = None
+        for lon, lat in line:
+            if prev:
+                segs.append((prev[0], prev[1], lon, lat))
+            prev = (lon, lat)
+
+    def closest(lon, lat):
+        x = lon * 111320 * cos
+        y = lat * 110540
+        best = None
+        best_d = SNAP_M
+        for ax, ay, bx, by in segs:
+            mx, my = ax * 111320 * cos, ay * 110540
+            nx, ny = bx * 111320 * cos, by * 110540
+            dx, dy = nx - mx, ny - my
+            len2 = dx * dx + dy * dy
+            if len2 == 0:
+                t = 0.0
+                d = math.hypot(x - mx, y - my)
+            else:
+                t = max(0.0, min(1.0, ((x - mx) * dx + (y - my) * dy) / len2))
+                d = math.hypot(x - (mx + t * dx), y - (my + t * dy))
+            if d < best_d:
+                best_d = d
+                best = (ax + (bx - ax) * t, ay + (by - ay) * t)
+        return best
+
+    snapped = []
+    for line in lines:
+        if len(line) < 2:
+            snapped.append(line)
+            continue
+        pts = list(line)
+        for index in (0, -1):
+            hit = closest(pts[index][0], pts[index][1])
+            if hit:
+                pts[index] = hit
+        snapped.append(pts)
+    return snapped
 
 
 def hill_point(feat):
@@ -329,8 +401,11 @@ def main():
     with_elev = 0
     for oid in sorted(order, key=lambda i: ((hills[i]["name"] or "").lower(), i)):
         hill = hills[oid]
-        runs = project(hill["runs"], True)
-        lifts = project(hill["lifts"])
+        fr = frame_of(hill["runs"], True)
+        run_lines = [item[1] for item in hill["runs"]]
+        lifts_ll = snap_terminals(hill["lifts"], run_lines, fr["cos"]) if fr else []
+        runs = project_in(hill["runs"], fr, True)
+        lifts = project_in(lifts_ll, fr, False)
         if not runs and not lifts:
             omitted_empty += 1
             continue

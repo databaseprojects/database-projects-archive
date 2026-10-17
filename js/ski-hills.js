@@ -834,7 +834,7 @@
   function ensureAlberta() {
     if (albertaPromise) return albertaPromise;
     albertaPromise = Promise.all([
-      fetch("alberta.json?v=20261017t").then(function (res) {
+      fetch("alberta.json?v=20261017u").then(function (res) {
         if (!res.ok) throw new Error("alberta");
         return res.json();
       }),
@@ -1989,7 +1989,7 @@
       return;
     }
     hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017t").then(function (res) {
+    fetch("frontal/" + hill.slug + ".svg?v=20261017u").then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {
@@ -2140,7 +2140,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
   Promise.all([
-    fetch("hills.json?v=20261017t").then(function (res) {
+    fetch("hills.json?v=20261017u").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
