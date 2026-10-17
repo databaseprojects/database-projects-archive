@@ -10,9 +10,9 @@ by DEPTH_SCALE before projection, so a fixed 20 m interval opens on
 gentle slopes and stays tight on steep ones. Cypress uses 2; Grass stays 1.
 20 m contours are projected at their true elevation in metres, the same
 unit as the ground, stretched 1.5x. Nearer ground hides lines behind it.
-A soft grey hillshade sits under the contours. It is lit by one sun,
-from the surface normals, and the paper stays white around it. There is
-no drawn silhouette and no dark backing box.
+Shading is off unless SHADE_MODE is soft or contrast. Either look is a
+grey hillshade under the contours, from one sun and the surface normals.
+The paper stays white around it. There is no silhouette and no dark box.
 A far contour loses to terrain a short depth in front of it, and stops
 just under that ridge. Visibility has to hold for a few pixels, so a
 contour stays one solid stroke. Runs sit a few metres above the surface.
@@ -84,17 +84,24 @@ ROWS = 72
 # Sun azimuth is clockwise from north, the direction the light comes from.
 # Left unset, it sits 135° counter-clockwise of the camera facing: the
 # viewer's upper left. Elevation is degrees above the horizon. Intensity
-# scales the directional term. Ambient is the floor of that light and is
-# not divided back out. Gamma 0.5 lifts the bright slopes toward white.
-# The grey runs from 136 at no light to 252 in full sun. Grass has no
-# bird's-eye sun; it is not re-rendered.
+# scales the directional term. Ambient is the floor, so a shaded face
+# stays grey. Grass has no bird's-eye sun; it is not re-rendered.
+# SHADE_MODE "off" draws lines only and is the default for every hill.
+# "soft" is the pre-q look: ambient is divided back out, grey 156-250.
+# "contrast" is the q mapping: ambient 0.20, intensity 0.80, gamma 0.50,
+# grey 136-252, ambient left in the tone. A hill's sun.shade overrides this.
+SHADE_MODE = "off"
 SUN_OFFSET_CCW = 135.0
 SUN_ELEVATION = 40.0
-SUN_INTENSITY = 0.80
-SUN_AMBIENT = 0.20
-SUN_GAMMA = 0.50
-SHADE_GREY_LO = 136
-SHADE_GREY_HI = 252
+SUN_INTENSITY = 0.50
+SUN_AMBIENT = 0.35
+CONTRAST_AMBIENT = 0.20
+CONTRAST_INTENSITY = 0.80
+CONTRAST_GAMMA = 0.50
+CONTRAST_GREY_LO = 136
+CONTRAST_GREY_HI = 252
+SOFT_GREY_LO = 156
+SOFT_GREY_HI = 250
 CAMERAS = {
     "cypress-mountain": {
         "facing": 0.0,
@@ -539,6 +546,7 @@ def resolve_sun(facing_deg, settings):
         "elevation": float(settings.get("elevation", SUN_ELEVATION)),
         "intensity": float(settings.get("intensity", SUN_INTENSITY)),
         "ambient": float(settings.get("ambient", SUN_AMBIENT)),
+        "shade": settings.get("shade") or SHADE_MODE,
     }
 
 
@@ -557,14 +565,20 @@ def sun_vector(facing_rad, sun):
 
 
 def shade_grey(ndotl, sun):
-    """Lambertian reflectance. Ambient stays in the grey; it is not divided out.
+    """Lambertian reflectance. Never black.
 
-    Gamma lifts the lit shoulder toward white. No light is 136 and full
-    sun is 252, so a shaded face stays grey and never goes black.
+    soft divides ambient back out and maps the light onto 156-250.
+    contrast leaves ambient in the tone: 0.20 plus 0.80 of the square
+    root of the light, mapped from 136 at no light to 252 in full sun.
     """
     n = max(0.0, min(1.0, ndotl))
-    lit = sun["ambient"] + sun["intensity"] * (n ** SUN_GAMMA)
-    return int(round(SHADE_GREY_LO + lit * (SHADE_GREY_HI - SHADE_GREY_LO)))
+    if sun.get("shade") == "contrast":
+        lit = CONTRAST_AMBIENT + CONTRAST_INTENSITY * (n ** CONTRAST_GAMMA)
+        return int(round(CONTRAST_GREY_LO + lit * (CONTRAST_GREY_HI - CONTRAST_GREY_LO)))
+    lit = sun["ambient"] + sun["intensity"] * n
+    peak = sun["ambient"] + sun["intensity"]
+    t = (lit - sun["ambient"]) / max(peak - sun["ambient"], 1e-6)
+    return int(round(SOFT_GREY_LO + t * (SOFT_GREY_HI - SOFT_GREY_LO)))
 
 
 def hillshade_png(grid, paper, sun_dir, sun):
@@ -774,22 +788,24 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
     sun_dir = sun_vector(ang, sun)
-    shade_cols, shade_rows = 220, 150
-    shade_grid = []
-    for ri in range(shade_rows):
-        yr = gy0 + (gy1 - gy0) * ri / (shade_rows - 1)
-        line = []
-        for ci in range(shade_cols):
-            xr = gx0 + (gx1 - gx0) * ci / (shade_cols - 1)
-            lon, lat = unmetres(*unrot(xr, yr))
-            z = sample(arr, gt, lon, lat)
-            if z is None:
-                line.append(None)
-                continue
-            sx, sy = project_xy(xr, yr, z)
-            line.append((sx, sy, z, xr, yr))
-        shade_grid.append(line)
-    shade_b64, shade_lo, shade_hi = hillshade_png(shade_grid, paper, sun_dir, sun)
+    shade_b64, shade_lo, shade_hi = None, None, None
+    if sun.get("shade") in ("soft", "contrast"):
+        shade_cols, shade_rows = 220, 150
+        shade_grid = []
+        for ri in range(shade_rows):
+            yr = gy0 + (gy1 - gy0) * ri / (shade_rows - 1)
+            line = []
+            for ci in range(shade_cols):
+                xr = gx0 + (gx1 - gx0) * ci / (shade_cols - 1)
+                lon, lat = unmetres(*unrot(xr, yr))
+                z = sample(arr, gt, lon, lat)
+                if z is None:
+                    line.append(None)
+                    continue
+                sx, sy = project_xy(xr, yr, z)
+                line.append((sx, sy, z, xr, yr))
+            shade_grid.append(line)
+        shade_b64, shade_lo, shade_hi = hillshade_png(shade_grid, paper, sun_dir, sun)
 
     bins = 2000
     empty_py = [1e9] * bins
@@ -979,6 +995,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         round(sun["intensity"], 2),
         "sun_ambient",
         round(sun["ambient"], 2),
+        "shade",
+        sun.get("shade"),
         "shade_grey",
         shade_lo,
         shade_hi,

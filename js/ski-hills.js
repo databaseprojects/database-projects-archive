@@ -1989,7 +1989,7 @@
       return;
     }
     hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017q").then(function (res) {
+    fetch("frontal/" + hill.slug + ".svg?v=20261017r").then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {
