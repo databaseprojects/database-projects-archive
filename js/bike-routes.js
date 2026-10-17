@@ -1,4 +1,4 @@
-/* Bike Routes. Drawings are local. The map loads only after Map is opened. */
+/* Bike Routes. Drawings are local. One map, opened from Map, draws every signed route. */
 (function () {
   var grid = document.getElementById("br-grid");
   var count = document.querySelector(".br-count");
@@ -33,10 +33,6 @@
     if (!query) return true;
     var hay = fold(route.name + " " + (route.areas || []).join(" ") + " " + (route.streets || []).join(" "));
     return hay.indexOf(query) !== -1;
-  }
-
-  function visible() {
-    return routes.filter(matches);
   }
 
   function caption(route) {
@@ -388,7 +384,7 @@
 
   function lineFeatures() {
     var features = [];
-    visible().forEach(function (route) {
+    routes.forEach(function (route) {
       (route.lines || []).forEach(function (line) {
         features.push({
           type: "Feature",
