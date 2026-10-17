@@ -1989,7 +1989,7 @@
       return;
     }
     hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017r").then(function (res) {
+    fetch("frontal/" + hill.slug + ".svg?v=20261017s").then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {
@@ -2140,7 +2140,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
   Promise.all([
-    fetch("hills.json?v=20261017p").then(function (res) {
+    fetch("hills.json?v=20261017s").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
