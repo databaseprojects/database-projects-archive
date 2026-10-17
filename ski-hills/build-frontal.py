@@ -84,12 +84,17 @@ ROWS = 72
 # Sun azimuth is clockwise from north, the direction the light comes from.
 # Left unset, it sits 135° counter-clockwise of the camera facing: the
 # viewer's upper left. Elevation is degrees above the horizon. Intensity
-# scales the directional term. Ambient is the floor, so a shaded face
-# stays grey. Grass has no bird's-eye sun; it is not re-rendered.
+# scales the directional term. Ambient is the floor of that light and is
+# not divided back out. Gamma 0.5 lifts the bright slopes toward white.
+# The grey runs from 136 at no light to 252 in full sun. Grass has no
+# bird's-eye sun; it is not re-rendered.
 SUN_OFFSET_CCW = 135.0
 SUN_ELEVATION = 40.0
-SUN_INTENSITY = 0.50
-SUN_AMBIENT = 0.35
+SUN_INTENSITY = 0.80
+SUN_AMBIENT = 0.20
+SUN_GAMMA = 0.50
+SHADE_GREY_LO = 136
+SHADE_GREY_HI = 252
 CAMERAS = {
     "cypress-mountain": {
         "facing": 0.0,
@@ -552,16 +557,14 @@ def sun_vector(facing_rad, sun):
 
 
 def shade_grey(ndotl, sun):
-    """Lambertian reflectance, held in a light grey. Never black.
+    """Lambertian reflectance. Ambient stays in the grey; it is not divided out.
 
-    Ambient is the floor of the light, then the whole range is placed
-    between a soft shadow grey and white so the tone stays readable.
+    Gamma lifts the lit shoulder toward white. No light is 136 and full
+    sun is 252, so a shaded face stays grey and never goes black.
     """
-    lit = sun["ambient"] + sun["intensity"] * max(0.0, min(1.0, ndotl))
-    peak = sun["ambient"] + sun["intensity"]
-    t = (lit - sun["ambient"]) / max(peak - sun["ambient"], 1e-6)
-    # #9c9c9c at ambient, #fafafa in full sun. Contours stay darker than both.
-    return int(round(156 + t * (250 - 156)))
+    n = max(0.0, min(1.0, ndotl))
+    lit = sun["ambient"] + sun["intensity"] * (n ** SUN_GAMMA)
+    return int(round(SHADE_GREY_LO + lit * (SHADE_GREY_HI - SHADE_GREY_LO)))
 
 
 def hillshade_png(grid, paper, sun_dir, sun):
