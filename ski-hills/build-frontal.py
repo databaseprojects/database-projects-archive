@@ -124,6 +124,14 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Mt Norquay only. Automatic facing was 68.6. 248.6 is 180° further,
+    # which turns the bird's-eye drawing upside down. Edit this number.
+    "mt-norquay": {
+        "facing": 248.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
 }
 
 
