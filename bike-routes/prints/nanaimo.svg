@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,254.9 439.7,277.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.3,223.9 439.7,254.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,600.9 438.6,739.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,499.1 439.2,532.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.8,139.0 440.3,164.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.8,112.0 440.8,139.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,422.6 439.7,439.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,277.4 439.7,300.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="438.6,739.3 438.6,844.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="441.4,36.0 441.4,61.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,346.0 439.2,392.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,447.9 439.2,473.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="441.4,61.3 440.8,86.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.8,86.6 440.8,112.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,549.7 439.2,580.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.3,191.3 440.3,223.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,486.1 439.2,499.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,300.5 439.7,323.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,473.2 439.2,486.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,323.5 439.7,346.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="440.3,164.3 440.3,191.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,532.8 439.2,549.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.7,439.4 439.2,447.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="439.2,392.7 439.2,422.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Nanaimo</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  1.6 km  ·  Grandview-Woodland</text>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="500.6,596.6 510.3,306.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="533.6,103.5 515.9,104.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="558.5,237.6 530.4,247.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="491.8,229.6 533.6,194.2 544.0,136.4 533.6,103.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="524.7,169.3 515.9,104.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="403.5,177.4 478.2,232.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="534.4,816.7 515.9,705.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="318.3,121.1 403.5,177.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="478.2,232.0 499.0,267.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="515.9,705.0 500.6,596.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="522.3,219.9 524.7,169.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="530.4,247.2 520.7,247.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="499.0,267.3 510.3,306.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="515.9,104.3 511.9,95.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="499.0,710.7 506.3,830.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="500.6,596.6 474.9,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="561.7,227.2 558.5,237.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="520.7,247.2 522.3,219.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="510.3,306.7 561.7,227.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="511.9,95.4 445.2,36.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Cambie Bridge</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  2.3 km  ·  Downtown, Fairview, Mount Pleasant</text>
+</svg>

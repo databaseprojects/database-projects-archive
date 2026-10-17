@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="566.2,660.3 524.0,633.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="497.8,608.5 490.4,601.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="750.3,751.6 689.4,740.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="167.4,151.3 164.5,123.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="650.8,715.1 646.2,712.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="337.8,449.7 293.0,405.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,839.4 810.0,817.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="164.1,206.8 168.7,182.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="508.2,618.9 502.0,612.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="689.4,740.4 650.8,715.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="385.9,497.8 337.8,449.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="89.9,75.0 36.0,40.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="288.5,402.5 239.6,371.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="524.0,633.0 508.2,618.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="293.0,405.4 288.5,402.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="490.4,601.1 456.8,568.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="150.4,280.2 164.1,206.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="168.7,182.8 167.4,151.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="164.5,123.1 147.1,111.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="190.6,339.1 150.4,280.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="239.6,371.0 190.6,339.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="456.8,568.3 385.9,497.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="147.1,111.9 89.9,75.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="810.0,817.5 766.1,788.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="502.0,612.7 497.8,608.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="766.1,788.9 756.5,780.6 759.0,763.2 750.3,751.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Beach</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  2.5 km  ·  West End, Downtown</text>
+</svg>

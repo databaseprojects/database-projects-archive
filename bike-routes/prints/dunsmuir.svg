@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="248.9,415.4 228.0,401.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="743.0,599.6 691.6,602.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="376.4,497.2 333.3,470.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="456.1,549.1 400.4,512.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="200.6,384.5 185.8,374.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="291.1,442.8 248.9,415.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="560.6,589.5 456.1,549.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="78.2,304.8 56.9,291.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="164.4,361.0 143.1,347.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="121.3,333.1 78.2,304.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="185.8,374.5 164.4,361.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="217.1,394.9 206.7,388.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="400.4,512.9 376.4,497.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="206.7,388.4 200.6,384.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="743.0,599.6 844.0,592.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="691.6,602.2 560.6,589.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="228.0,401.9 217.1,394.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="333.3,470.3 291.1,442.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="56.9,291.3 36.0,277.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="143.1,347.1 121.3,333.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Dunsmuir</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  1.7 km  ·  Downtown</text>
+</svg>

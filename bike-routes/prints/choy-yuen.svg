@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="263.1,502.8 581.3,722.6 755.0,731.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="104.0,347.9 125.0,383.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="51.7,138.6 104.0,347.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="125.0,383.5 263.1,502.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="755.0,731.0 828.3,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="53.8,36.0 51.7,138.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Choy Yuen</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.6 km  ·  Oakridge, South Cambie</text>
+</svg>

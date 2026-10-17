@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="460.4,43.8 441.9,43.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="384.8,97.1 384.6,103.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="410.8,43.7 398.6,47.3 388.3,55.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="383.0,145.4 382.9,151.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="385.2,91.2 384.8,97.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="354.2,554.5 361.6,566.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="361.6,566.8 413.4,654.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="383.8,127.5 383.5,133.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="433.1,381.7 419.4,382.5 382.8,376.9 367.6,378.9 352.8,388.7 349.9,396.9 349.5,409.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="415.0,289.3 451.6,338.5 455.4,349.4 455.2,361.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="384.2,115.3 384.1,121.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="509.2,828.3 528.0,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="457.6,734.9 482.0,783.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="521.5,44.0 524.1,36.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="534.5,38.9 521.5,44.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="382.9,151.4 382.6,157.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="382.6,157.3 380.4,163.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="478.5,768.7 475.0,769.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="413.4,654.0 422.7,669.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="345.5,536.9 345.9,538.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="455.2,361.9 453.8,368.1 448.7,374.6 433.1,381.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="482.0,783.3 488.1,795.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="503.5,44.6 472.8,44.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="422.7,669.8 425.2,674.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="439.7,699.0 457.6,734.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="347.7,458.2 346.2,506.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="415.0,289.3 415.0,289.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="349.5,409.9 347.7,458.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="488.1,795.3 500.5,819.5 509.2,828.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="384.6,103.1 384.5,109.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="383.5,133.5 383.3,139.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="425.2,674.0 439.7,699.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="346.2,506.3 345.5,536.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="521.5,44.0 503.5,44.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="380.7,238.7 385.8,250.1 415.0,289.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="441.9,43.5 410.8,43.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="347.6,543.0 348.6,545.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="380.4,163.4 382.2,165.9 380.7,238.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="388.3,55.9 386.0,66.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="383.3,139.4 383.0,145.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="348.6,545.1 354.2,554.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="384.1,121.5 383.8,127.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="384.5,109.1 384.2,115.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="472.8,44.0 460.4,43.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="345.9,538.6 347.6,543.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Arbutus Greenway</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  8.3 km  ·  Kitsilano, Kerrisdale, Marpole, Arbutus Ridge</text>
+</svg>

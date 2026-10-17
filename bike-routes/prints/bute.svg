@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="629.1,315.3 574.3,350.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="520.6,386.3 466.9,422.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="250.9,564.7 197.2,600.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="143.5,636.7 89.7,672.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,172.4 790.3,208.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="682.8,279.8 629.1,315.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="790.3,208.9 736.5,244.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="359.4,493.7 305.7,529.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="466.9,422.8 413.1,458.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="736.5,244.3 682.8,279.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="574.3,350.8 520.6,386.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="305.7,529.2 250.9,564.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="197.2,600.2 143.5,636.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="89.7,672.2 36.0,707.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.1,458.2 359.4,493.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Bute</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.8 km  ·  West End</text>
+</svg>

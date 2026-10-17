@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="514.1,36.0 514.1,70.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="407.8,734.0 407.8,755.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,70.4 514.1,70.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="410.8,472.0 410.8,491.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="409.3,577.9 408.9,594.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.8,212.6 413.1,251.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="414.2,251.2 413.4,311.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,70.4 415.7,92.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="412.7,350.0 412.7,367.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="365.9,755.3 407.8,755.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.6,436.8 411.2,453.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="367.4,844.0 366.3,840.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="410.1,543.5 409.7,560.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="410.1,526.6 410.1,543.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="410.8,491.8 410.4,509.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.6,419.6 411.6,436.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.2,717.1 407.8,734.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="365.9,755.3 365.9,787.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="409.7,560.7 409.3,577.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.9,613.8 408.9,632.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.1,251.2 414.2,251.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,112.7 415.7,128.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.2,453.3 410.8,472.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.2,699.9 408.2,717.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.1,330.5 412.7,350.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="412.3,384.8 411.9,402.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.6,666.2 408.2,683.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,128.1 415.7,143.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.3,173.7 413.8,212.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.6,649.4 408.6,666.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.9,594.8 408.9,613.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.4,311.4 413.4,313.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,158.4 415.3,173.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.9,632.2 408.6,649.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="413.4,313.3 413.1,330.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="365.9,787.9 366.3,840.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="410.4,509.4 410.1,526.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.9,402.0 411.6,419.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,92.5 415.7,112.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="415.7,143.4 415.7,158.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="408.2,683.1 408.2,699.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="412.7,367.2 412.3,384.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">East Side Cross Cut</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  2.7 km  ·  Hastings-Sunrise, Renfrew-Collingwood</text>
+</svg>

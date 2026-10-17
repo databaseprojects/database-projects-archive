@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="749.3,235.2 649.9,301.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="331.3,512.0 286.8,540.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,172.1 780.8,214.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="649.9,301.2 490.2,407.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="490.2,407.0 466.0,422.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="286.8,540.8 182.7,609.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="780.8,214.8 749.3,235.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="466.0,422.8 453.0,432.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="453.0,432.1 331.3,512.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="182.7,609.5 36.0,707.9"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Beatty</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.9 km  ·  Downtown</text>
+</svg>

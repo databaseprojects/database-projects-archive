@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="382.8,142.4 368.4,158.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="260.7,318.3 242.5,396.3 247.5,480.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="247.5,480.3 259.4,518.4 281.5,553.6 349.3,622.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="478.2,36.0 382.8,142.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="349.3,622.3 447.2,681.6 567.2,730.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="629.9,791.4 620.6,768.1 595.6,742.3 567.2,730.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="548.1,721.1 566.3,739.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="637.5,844.0 629.1,835.5 637.5,799.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="368.4,158.5 303.1,236.9 260.7,318.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="637.5,799.9 629.9,791.4"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Stanley Park Causeway</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  2.6 km</text>
+</svg>

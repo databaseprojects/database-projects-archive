@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="453.6,436.4 427.2,436.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="350.2,434.8 321.4,434.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="559.3,437.9 532.9,437.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="844.0,442.1 770.8,441.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="243.3,433.3 218.7,432.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="480.0,436.7 453.6,436.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="400.7,435.6 374.3,435.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="506.5,437.1 480.0,436.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="744.4,440.6 718.0,440.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="96.5,445.2 37.1,444.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="295.0,434.1 268.6,433.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="718.0,440.2 691.5,439.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="665.1,439.4 638.6,439.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="532.9,437.5 506.5,437.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="770.8,441.0 744.4,440.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="612.2,438.7 585.8,438.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="691.5,439.8 665.1,439.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="585.8,438.3 559.3,437.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="638.6,439.0 612.2,438.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="218.0,447.1 193.5,446.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="427.2,436.0 400.7,435.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="37.1,444.0 36.0,442.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="218.7,432.9 218.0,447.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="193.5,446.7 157.8,445.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="321.4,434.4 295.0,434.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="268.6,433.7 243.3,433.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="374.3,435.2 350.2,434.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">67th Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  1.5 km  ·  Marpole</text>
+</svg>

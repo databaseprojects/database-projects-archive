@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="682.4,415.3 701.9,401.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="634.7,425.5 674.1,419.9 682.4,415.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="438.1,391.9 450.8,402.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="303.1,350.3 357.5,362.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="271.8,357.1 303.1,350.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="194.3,373.9 224.7,367.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.5,381.4 438.1,391.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="574.9,434.4 634.7,425.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="485.4,413.7 557.1,430.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="660.6,525.4 672.0,526.8 672.2,529.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="50.9,466.3 65.8,447.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="450.8,402.5 464.0,412.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="81.2,428.8 96.1,410.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="154.3,382.0 194.3,373.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="629.6,457.4 642.4,461.3 647.0,467.3 634.7,516.2 642.6,522.7 660.6,525.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="785.6,364.6 806.3,361.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="464.0,412.0 467.8,414.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="701.9,401.7 738.3,382.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="629.6,457.4 629.2,443.9 634.7,425.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,481.6 50.9,466.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="806.3,361.3 844.0,355.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="557.1,430.7 574.9,434.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.8,374.5 426.5,381.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="467.8,414.1 485.4,413.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="96.1,410.2 154.3,382.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="248.8,362.1 271.8,357.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="224.7,367.3 248.8,362.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="65.8,447.7 81.2,428.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="357.5,362.3 411.8,374.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Portside</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  3.9 km  ·  Hastings-Sunrise, Grandview-Woodland</text>
+</svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="448.8,165.6 448.8,174.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.3,36.0 449.4,135.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="448.8,143.7 448.8,152.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="439.7,525.8 422.1,590.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="448.8,174.7 448.8,185.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="416.6,590.9 415.4,618.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="457.9,275.1 451.9,230.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="406.2,844.0 407.4,816.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="473.8,410.2 461.6,298.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="448.8,152.8 448.8,165.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="473.2,416.3 473.8,410.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="473.2,416.3 461.6,484.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="449.4,135.2 448.8,143.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="408.1,788.6 407.4,816.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="461.6,298.8 457.9,275.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="415.4,618.3 414.1,648.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="444.6,517.9 439.7,525.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="412.9,678.5 411.7,705.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="451.9,230.7 439.1,198.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="409.3,761.3 408.1,788.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="461.6,484.4 444.6,517.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="414.1,648.7 412.9,678.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="411.7,705.9 409.3,761.3"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Quebec</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  1.5 km  ·  Mount Pleasant, Downtown</text>
+</svg>

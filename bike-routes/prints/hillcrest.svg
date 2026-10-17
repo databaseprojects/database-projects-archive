@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="643.8,423.6 658.8,423.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="706.9,423.9 739.7,424.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,455.4 59.9,455.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="399.4,475.0 416.0,475.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="608.5,423.3 626.0,423.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="169.8,457.7 178.9,457.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="416.0,475.5 433.5,475.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="316.3,473.2 399.4,475.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="233.4,458.9 232.8,471.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="626.0,423.3 643.8,423.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="247.1,471.9 249.9,471.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="192.2,458.2 201.8,458.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="600.1,423.3 608.5,423.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="577.0,423.1 600.1,423.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="76.4,456.1 85.3,456.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="59.9,455.9 68.8,455.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="541.3,476.2 560.2,476.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="110.0,456.7 119.4,456.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="178.9,457.9 192.2,458.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="817.8,414.2 818.3,403.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="565.3,476.5 575.4,476.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="134.7,456.9 152.2,457.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="249.9,471.9 316.3,473.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="739.7,424.1 756.0,424.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="526.1,476.2 541.3,476.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="119.4,456.7 134.7,456.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="690.6,423.9 706.9,423.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="826.7,403.8 844.0,403.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="658.8,423.6 674.1,423.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="772.5,424.4 789.8,424.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="560.2,476.5 565.3,476.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="68.8,455.9 76.4,456.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="818.3,403.5 826.7,403.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="789.8,424.6 817.5,424.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="756.0,424.4 772.5,424.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="817.5,424.9 817.8,414.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="674.1,423.6 690.6,423.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="232.8,471.7 247.1,471.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="433.5,475.5 476.8,476.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="208.7,458.4 233.4,458.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="201.8,458.2 208.7,458.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="85.3,456.1 101.9,456.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="101.9,456.7 110.0,456.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="152.2,457.4 169.8,457.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="476.8,476.0 526.1,476.2"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Hillcrest</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  2.5 km  ·  Kensington-Cedar Cottage, Riley Park</text>
+</svg>

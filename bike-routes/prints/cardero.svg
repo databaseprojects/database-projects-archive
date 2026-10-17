@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="654.3,294.6 643.5,301.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="547.8,365.0 515.9,386.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="90.8,667.9 36.0,704.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="99.8,661.9 90.8,667.9"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="832.0,176.6 792.2,203.1"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="713.3,255.5 675.4,280.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="757.3,226.6 713.3,255.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="579.7,344.0 547.8,365.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="792.2,203.1 757.3,226.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="163.6,619.7 131.7,640.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="260.0,555.9 228.1,577.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="291.9,534.8 260.0,555.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="419.5,449.9 387.6,471.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="483.4,407.2 465.9,419.2"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="643.5,301.8 631.5,309.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="451.4,428.9 419.5,449.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="832.0,176.6 844.0,176.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="323.8,513.8 291.9,534.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="611.6,322.9 579.7,344.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="228.1,577.0 195.6,598.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="465.9,419.2 451.4,428.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="355.7,492.1 323.8,513.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="515.9,386.1 503.8,393.9"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="631.5,309.6 611.6,322.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="387.6,471.0 355.7,492.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="503.8,393.9 483.4,407.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="675.4,280.7 654.3,294.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="131.7,640.8 99.8,661.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="195.6,598.0 163.6,619.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Cardero</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  1.4 km  ·  West End, Downtown</text>
+</svg>

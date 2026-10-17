@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="441.5,803.4 434.5,844.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.0,330.9 443.5,412.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="442.0,758.7 441.5,803.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="445.0,183.0 444.5,207.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,420.7 443.5,454.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,454.8 443.5,475.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="445.0,162.4 445.0,183.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.0,496.4 443.5,541.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.5,248.7 444.0,281.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,588.2 443.0,632.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,475.9 443.0,496.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.5,222.6 444.5,248.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,412.7 443.5,420.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.5,207.5 444.5,222.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.0,632.8 443.0,677.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.5,541.1 443.5,588.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="443.0,677.5 442.5,716.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.0,281.8 444.0,307.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="442.5,716.6 442.0,758.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="445.5,43.5 445.5,36.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="444.0,307.8 444.0,330.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="445.5,43.5 445.0,162.4"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Rupert</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  1.8 km  ·  Renfrew-Collingwood</text>
+</svg>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="145.1,430.8 163.8,441.3 166.1,443.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="229.1,481.9 248.4,486.1 251.5,484.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="619.7,454.5 619.1,451.6 616.8,451.5 615.7,453.1 613.5,452.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="739.0,458.1 737.4,458.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="698.9,459.0 688.7,458.5 686.5,457.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="597.7,443.5 591.0,441.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="51.3,402.2 66.8,402.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="591.0,441.6 591.0,440.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="613.5,452.5 609.5,449.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="739.8,457.8 739.0,458.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="78.1,403.7 94.7,409.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,479.9 830.0,477.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="637.7,454.8 640.2,453.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="177.8,447.8 176.1,448.3 166.1,443.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="803.9,472.4 788.0,469.6 772.8,464.3 744.6,457.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="66.8,402.4 76.2,404.2 78.1,403.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="735.3,458.2 716.1,459.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="623.9,454.9 619.7,454.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="830.0,477.1 821.3,475.8 820.5,471.6 819.3,471.9 818.8,475.2 803.9,472.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="737.4,458.7 735.3,458.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="716.1,459.2 698.9,459.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="36.9,400.4 44.3,402.0 51.3,402.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="609.5,449.8 605.9,449.8 599.6,447.7 597.8,445.6 597.7,443.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="36.0,393.9 36.9,400.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="744.6,457.4 739.8,457.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="623.9,454.9 627.3,454.9 630.9,456.6 636.5,455.9 637.7,454.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="686.5,457.1 670.2,458.4 667.4,457.7 668.3,457.2 667.0,456.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Fraser River Trail</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  5.6 km  ·  Killarney, Victoria-Fraserview, Kerrisdale, Marpole</text>
+</svg>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="291.9,344.2 239.0,310.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="542.6,506.8 492.8,473.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="341.6,376.3 291.9,344.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="643.0,572.1 593.3,538.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="442.1,441.6 392.3,409.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="186.2,275.8 136.5,243.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="743.5,636.3 693.8,604.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="657.5,580.4 643.0,572.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="492.8,473.7 442.1,441.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="239.0,310.0 186.2,275.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="392.3,409.4 341.6,376.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="693.8,604.2 657.5,580.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="136.5,243.7 36.0,178.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,701.6 801.5,674.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="801.5,674.6 743.5,636.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="593.3,538.9 542.6,506.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Smithe</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.8 km  ·  Downtown</text>
+</svg>
