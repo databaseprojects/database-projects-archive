@@ -1925,6 +1925,9 @@
   function setPlanHidden(svg, hidden) {
     if (!svg) return;
     Array.prototype.forEach.call(svg.querySelectorAll(".sh-contours, .sh-run, .sh-lift"), function (node) {
+      // The caption key uses the same run and lift classes as the plan drawing.
+      // Hiding those would blank the coloured swatches in bird's eye view.
+      if (node.closest && node.closest(".sh-caption")) return;
       if (hidden) node.setAttribute("display", "none");
       else node.removeAttribute("display");
     });
