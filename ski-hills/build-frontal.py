@@ -24,7 +24,8 @@ Default camera facing, for a hill with no hand-set facing: point toward the
 flattest side, the side that shows the most runs, same as the plan map.
 fall_line weights the downhill direction by run length, then orient() turns
 the summit away from the viewer. Hand-set facings are passed in radians and
-are not flipped: Cypress 0, Grass Mountain 0. Only those two are rendered.
+are not flipped: Cypress 0, Grass Mountain 0. Grouse Mountain and Mt Seymour
+use that default, with Cypress's elevation and depth. Grass is not re-rendered.
 Contours use a wider DEM and fade softly at the frame edge.
 
     python3 ski-hills/build-frontal.py
@@ -818,30 +819,48 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     return az
 
 
-def main():
+def render_default(slug):
+    """Cypress elevation and depth, camera from default_facing."""
+    global GEOM, DEM
+    GEOM = Path(f"/tmp/{slug}-geom.json")
+    DEM = Path(f"/tmp/{slug}-dem-wide.tif")
     runs, lifts = load_geom()
     box = wide_box(runs, lifts)
-    print("bbox", tuple(round(v, 4) for v in box))
+    print(slug, "bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
-    print("dem", len(arr[0]), len(arr))
-    # Kept so a later hill without a hand-set facing still has the rule.
-    print("default_facing_deg", round(math.degrees(default_facing(arr, gt, runs)) % 360, 1))
-    # Grass stays at elevation 73 (pitch 17) and is not re-rendered.
-    slug = "cypress-mountain"
-    cam = CAMERAS[slug]
+    print(slug, "dem", len(arr[0]), len(arr))
+    guess = default_facing(arr, gt, runs)
+    print(slug, "default_facing_deg", round(math.degrees(guess) % 360, 1))
     build(
         arr,
         gt,
         runs,
         lifts,
-        math.radians(cam["facing"]),
-        lock_facing=True,
+        guess,
+        lock_facing=False,
         out_path=ROOT / "frontal" / f"{slug}.svg",
         slug=slug,
-        elevation=cam["elevation"],
-        depth_scale=cam["depth_scale"],
+        elevation=15.0,
+        depth_scale=DEPTH_SCALE,
     )
+
+
+def main():
+    # Cypress and Grass stay as already rendered. These two use the same
+    # elevation, depth, contour, run and lift treatment, with auto facing.
+    for slug in ("grouse-mountain", "mt-seymour"):
+        try:
+            render_default(slug)
+        except Exception as err:
+            print("fail", slug, err)
+            dem = Path(f"/tmp/{slug}-dem-wide.tif")
+            if dem.exists():
+                dem.unlink()
+            try:
+                render_default(slug)
+            except Exception as err2:
+                print("skip", slug, err2)
 
 
 if __name__ == "__main__":
