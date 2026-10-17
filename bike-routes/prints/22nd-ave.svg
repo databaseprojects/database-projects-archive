@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="726.1,440.0 782.4,439.3"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="475.1,440.5 499.9,440.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="225.4,439.3 270.3,439.8"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="405.1,440.5 452.5,440.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="834.2,439.8 844.0,440.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="578.0,440.7 596.7,440.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="208.2,439.3 225.4,439.3"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="452.5,440.5 467.3,440.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="782.4,439.3 804.0,439.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="514.7,440.7 529.4,440.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="499.9,440.7 514.7,440.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="86.6,439.5 143.8,439.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="270.3,439.8 287.7,439.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="287.7,439.8 341.3,440.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="193.4,439.3 208.2,439.3"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="467.3,440.5 475.1,440.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="54.4,439.8 86.6,439.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="341.3,440.2 405.1,440.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="143.8,439.3 193.4,439.3"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="529.4,440.7 578.0,440.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="804.0,439.5 834.2,439.8"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="691.0,440.5 726.1,440.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="596.7,440.7 691.0,440.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="36.0,440.0 54.4,439.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">22nd Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Shared Lanes  ·  2.4 km  ·  Renfrew-Collingwood, Kensington-Cedar Cottage</text>
+</svg>

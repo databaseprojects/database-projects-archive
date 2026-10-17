@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="62.6,434.7 36.0,434.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="97.1,435.3 62.6,434.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="503.6,441.9 475.5,441.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="567.5,440.0 558.4,439.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="815.5,445.2 844.0,445.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="757.0,444.6 766.6,444.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="718.8,444.0 727.2,444.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="766.6,444.9 775.5,445.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="537.8,439.4 503.7,439.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="718.8,444.0 690.9,443.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="165.3,436.4 131.2,435.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="199.4,437.0 165.3,436.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="653.5,441.3 653.5,442.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="653.5,441.3 632.1,441.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="727.2,444.2 746.6,444.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="604.0,440.6 575.8,440.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="775.5,445.0 784.1,445.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="441.6,440.9 407.1,440.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="784.1,445.2 815.5,445.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="632.1,441.0 604.0,440.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="407.1,440.3 372.5,439.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="690.9,443.5 653.5,442.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="338.4,439.1 304.3,438.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="270.2,438.1 245.0,437.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="234.8,437.6 224.5,437.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="575.8,440.1 567.5,440.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="224.5,437.4 199.4,437.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="475.5,441.4 441.6,440.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="558.4,439.9 537.8,439.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="372.5,439.7 338.4,439.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="304.3,438.7 270.2,438.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="245.0,437.7 234.8,437.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="131.2,435.8 97.1,435.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="746.6,444.5 757.0,444.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">14th Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  4.1 km  ·  Fairview, Mount Pleasant, Kitsilano</text>
+</svg>

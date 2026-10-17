@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="275.7,611.5 276.3,641.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="504.4,117.1 554.9,137.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="275.2,581.5 275.7,611.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="388.5,127.3 370.2,146.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="274.1,527.8 274.6,554.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="277.3,717.8 277.9,746.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="272.5,446.7 274.1,527.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="278.9,795.1 277.3,819.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="297.2,189.5 279.5,207.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="352.0,164.3 327.8,174.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="274.6,554.6 275.2,581.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="327.8,174.5 313.8,179.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="313.8,179.3 297.2,189.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="652.6,36.0 605.4,84.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="424.4,91.3 401.3,114.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="574.2,117.6 554.9,137.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="277.9,746.3 278.4,765.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="227.4,260.4 269.8,279.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="424.4,91.3 451.3,102.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="276.3,641.1 276.8,665.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="269.8,279.7 269.8,285.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="270.9,365.6 272.5,446.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="370.2,146.1 352.0,164.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="261.8,225.5 249.9,237.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="276.8,691.5 277.3,700.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="276.8,665.8 276.8,691.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="605.4,84.9 574.2,117.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="269.8,285.1 270.9,365.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="277.3,819.3 276.3,844.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="278.4,765.1 278.9,795.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="279.5,207.3 261.8,225.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="401.3,114.4 388.5,127.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="451.3,102.0 504.4,117.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="244.6,242.7 227.4,260.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="249.9,237.3 244.6,242.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="277.3,700.7 277.3,717.8"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Wales Duchess</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  2.1 km  ·  Renfrew-Collingwood, Victoria-Fraserview</text>
+</svg>

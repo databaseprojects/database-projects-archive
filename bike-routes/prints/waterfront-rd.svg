@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="344.5,434.2 260.0,402.9"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="142.8,367.3 36.0,338.5"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="260.0,402.9 142.8,367.3"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="774.9,524.7 659.1,523.9 344.5,434.2"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="826.8,541.5 844.0,507.6 826.4,493.9 790.8,496.0 777.9,507.2 774.9,524.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Waterfront Rd</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Shared Lanes  ·  1.6 km  ·  Downtown</text>
+</svg>

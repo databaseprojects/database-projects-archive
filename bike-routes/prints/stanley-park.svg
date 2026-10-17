@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="691.7,721.2 724.2,714.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="660.1,690.1 696.2,717.6 717.4,752.4 717.8,774.9 695.7,827.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="358.5,742.0 433.5,743.8 507.9,710.8 609.5,693.2 659.2,700.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="659.2,700.0 691.7,721.2"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="121.5,786.2 252.0,774.9"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="724.2,714.0 743.1,721.2"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="434.4,93.8 421.3,45.5 410.4,36.0"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="743.1,721.2 758.5,732.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="735.0,764.6 758.5,732.1"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="252.0,774.9 298.9,750.1 358.5,742.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="695.7,827.7 700.7,844.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Stanley Park</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Shared Lanes  ·  1.8 km</text>
+</svg>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="251.8,432.5 144.6,429.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="545.5,443.4 483.4,441.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="782.5,452.3 755.2,451.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="473.8,440.7 436.9,439.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="483.4,441.4 473.8,440.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="373.4,437.3 359.1,436.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="359.1,436.6 251.8,432.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,455.0 782.5,452.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="436.9,439.3 373.4,437.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="706.7,449.6 545.5,443.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="144.6,429.1 36.0,425.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="755.2,451.6 706.7,449.6"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">49th Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.9 km  ·  Oakridge</text>
+</svg>

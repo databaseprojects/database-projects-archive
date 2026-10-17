@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="473.4,450.4 655.7,383.7 844.0,238.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="431.8,490.4 473.4,450.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="36.0,232.4 181.3,328.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="474.8,235.4 476.3,190.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="181.3,328.8 249.5,391.1 385.9,429.6 431.8,490.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="473.4,450.4 474.8,235.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="431.8,490.4 418.5,689.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Knight St Bridge</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.9 km  ·  Victoria-Fraserview, Sunset</text>
+</svg>

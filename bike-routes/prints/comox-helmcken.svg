@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="547.3,494.7 616.6,539.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="844.0,717.7 822.4,704.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="434.3,421.9 486.4,455.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="70.9,186.6 113.3,213.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="243.5,298.3 312.8,343.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="173.8,253.2 243.5,298.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,162.3 70.9,186.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="616.6,539.8 712.0,601.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="486.4,455.5 547.3,494.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="712.0,601.6 800.7,659.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="113.3,213.9 173.8,253.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="777.3,674.9 801.2,689.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="382.2,387.9 434.3,421.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="312.8,343.3 382.2,387.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="801.2,689.9 822.4,704.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Comox-Helmcken</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  1.9 km  ·  West End, Downtown</text>
+</svg>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="189.1,330.3 149.4,318.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="844.0,594.7 827.6,591.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="801.2,586.9 745.4,576.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="149.4,318.5 130.5,313.2"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="130.5,313.2 80.3,298.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="745.4,576.7 717.9,571.7"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="80.3,298.7 36.0,285.3"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="717.9,571.7 671.1,563.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="827.6,591.6 806.2,587.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="806.2,587.8 801.2,586.9"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Pender</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  0.8 km  ·  Downtown</text>
+</svg>

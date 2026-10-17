@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="438.9,453.8 435.4,552.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="451.5,145.0 449.2,197.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="446.9,249.5 445.7,301.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="445.7,301.1 443.4,351.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="456.1,36.0 453.8,91.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="435.4,552.5 430.8,651.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.2,768.2 426.2,786.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="441.1,402.1 438.9,453.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="443.4,351.6 441.1,402.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="430.8,651.2 427.4,747.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="453.8,91.1 451.5,145.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="449.2,197.8 446.9,249.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="426.2,786.6 423.9,844.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="427.4,747.6 426.2,768.2"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Highbury</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.8 km  ·  West Point Grey</text>
+</svg>

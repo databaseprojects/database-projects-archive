@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="551.8,305.7 549.7,350.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="556.0,201.8 553.9,249.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="347.1,641.5 340.8,707.6"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="559.1,143.0 556.0,201.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="330.3,763.2 316.7,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="340.8,707.6 330.3,763.2"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="544.4,482.0 499.3,537.6 365.0,606.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="365.0,606.8 347.1,641.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="553.9,249.0 551.8,305.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="563.3,36.0 562.2,59.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="560.2,114.7 559.1,143.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="549.7,350.8 548.6,394.9"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="562.2,59.1 560.2,114.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="548.6,394.9 544.4,482.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Carrall</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  0.9 km  ·  Downtown</text>
+</svg>

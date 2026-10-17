@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="266.1,430.3 318.1,430.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="561.1,431.7 631.6,431.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="76.4,438.7 76.4,440.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="702.4,431.7 773.2,431.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="489.5,431.4 508.4,431.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="193.7,429.5 231.1,429.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="231.1,429.8 266.1,430.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="76.6,427.9 136.7,428.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="136.7,428.7 193.7,429.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="474.5,431.4 489.5,431.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,451.8 76.1,452.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="76.6,427.9 76.4,438.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="823.5,431.9 844.0,431.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="422.5,431.1 474.5,431.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="318.1,430.6 370.3,430.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="370.3,430.6 422.5,431.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="76.4,440.0 76.1,452.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="508.4,431.7 561.1,431.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="773.2,431.9 823.5,431.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="631.6,431.7 702.4,431.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Pandora</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  2.3 km  ·  Grandview-Woodland, Hastings-Sunrise</text>
+</svg>

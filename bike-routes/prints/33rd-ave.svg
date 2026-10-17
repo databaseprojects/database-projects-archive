@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="179.3,430.8 129.0,429.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="793.2,449.9 742.9,447.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="844.0,451.8 824.6,450.8"/>
+<polyline stroke="#5c5c5c" stroke-width="1.7" points="64.1,428.7 36.0,428.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="184.8,430.8 179.3,430.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="742.9,447.8 724.7,447.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="189.4,431.0 184.8,430.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="824.6,450.8 793.2,449.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="219.0,431.5 189.4,431.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="78.7,428.9 64.1,428.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="129.0,429.8 118.6,429.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="118.6,429.6 78.7,428.9"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">33rd Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  1.0 km  ·  Arbutus Ridge, South Cambie, Shaughnessy</text>
+</svg>

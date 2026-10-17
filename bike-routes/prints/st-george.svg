@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1b7a32" stroke-width="3.1" points="445.5,36.0 445.5,134.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="443.3,232.5 441.1,330.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="434.5,745.7 434.5,844.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="438.9,529.5 436.7,636.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="445.5,134.3 443.3,232.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="441.1,429.1 438.9,529.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="436.7,636.5 434.5,745.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="441.1,330.8 441.1,429.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">St George</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.4 km  ·  Mount Pleasant</text>
+</svg>

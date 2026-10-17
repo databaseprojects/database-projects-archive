@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="266.0,36.0 520.6,131.1 614.0,273.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="614.0,273.6 607.2,416.2 437.5,844.0"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Arthur Laing Bridge</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  0.6 km  ·  Marpole</text>
+</svg>

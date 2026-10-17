@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="306.6,436.0 289.5,436.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="776.0,440.1 733.5,418.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="393.6,475.6 357.7,456.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="844.0,446.1 814.3,445.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="172.4,435.6 104.2,435.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="662.2,405.8 643.8,412.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="643.8,412.6 638.8,414.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="326.5,439.9 306.6,436.0"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="571.1,440.7 506.2,466.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="698.8,404.2 662.2,405.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="616.1,423.4 602.5,428.5"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="184.7,435.6 172.4,435.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="638.8,414.5 616.1,423.4"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="814.3,445.5 787.6,443.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="71.9,435.1 49.4,434.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="49.4,434.9 36.0,434.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="787.6,443.2 776.0,440.1"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="232.5,435.8 184.7,435.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="357.7,456.8 326.5,439.9"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="445.1,475.8 393.6,475.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="706.2,405.6 698.8,404.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="723.3,412.2 706.2,405.6"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="289.5,436.0 232.5,435.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="506.2,466.1 475.2,474.8 445.1,475.8"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="733.5,418.2 723.3,412.2"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="602.5,428.5 571.1,440.7"/>
+<polyline stroke="#1a4f9c" stroke-width="2.3" points="104.2,435.1 71.9,435.1"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">King Edward</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Painted Lanes  ·  3.1 km  ·  Arbutus Ridge, Dunbar-Southlands, Shaughnessy</text>
+</svg>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="98.3,207.3 98.1,216.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="639.9,601.1 648.4,604.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="293.9,459.2 339.7,477.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="532.6,557.0 550.4,564.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="550.4,564.4 570.8,572.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="591.4,581.1 630.0,597.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="157.5,349.0 152.0,357.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="152.0,357.7 132.4,387.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="212.6,425.4 293.9,459.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.2,233.3 52.1,233.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="142.5,323.0 134.8,320.1 135.5,244.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="98.5,199.2 98.3,207.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="436.5,517.8 445.6,521.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="570.8,572.7 591.4,581.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="339.7,496.3 353.7,496.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="136.5,343.0 157.5,349.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="97.9,225.0 97.9,233.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="674.4,615.4 684.9,619.7"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="353.7,496.3 366.8,496.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="203.8,419.4 212.6,425.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="430.5,515.3 436.5,517.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="456.9,526.2 513.7,549.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="366.8,496.3 388.6,496.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="135.5,244.2 119.6,238.8 97.9,238.8 97.9,233.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="445.6,521.5 456.9,526.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="98.7,185.2 98.5,199.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="98.1,216.3 97.9,225.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="417.5,510.0 427.4,514.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="132.4,387.8 196.5,414.4"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="721.9,637.5 844.0,694.8"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="388.6,496.5 400.6,503.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="684.9,619.7 721.9,637.5"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="648.4,604.5 654.6,607.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,242.1 36.2,233.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="513.7,549.4 532.6,557.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="630.0,597.0 639.9,601.1"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="400.6,503.1 417.5,510.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="427.4,514.1 430.5,515.3"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="654.6,607.3 674.4,615.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="136.5,343.0 142.5,323.0"/>
+<polyline stroke="#1b7a32" stroke-width="3.1" points="196.5,414.4 203.8,419.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="60.6,233.5 97.9,233.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="52.1,233.5 60.6,233.5"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">BC Parkway</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Protected Bike Lanes  ·  4.8 km  ·  Renfrew-Collingwood, Kensington-Cedar Cottage</text>
+</svg>

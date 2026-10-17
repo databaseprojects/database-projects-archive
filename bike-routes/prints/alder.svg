@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="440.0,434.3 437.5,492.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="427.4,786.2 424.9,844.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="443.8,318.7 442.5,376.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="455.1,36.0 452.6,88.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="437.5,492.1 436.2,550.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="452.6,88.8 451.3,141.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="428.7,728.4 427.4,786.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="451.3,141.6 448.8,195.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="431.2,670.6 428.7,728.4"/>
+<polyline stroke="#111111" stroke-width="1.5" points="442.5,376.5 440.0,434.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="433.7,610.3 431.2,670.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="448.8,195.6 446.3,255.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="436.2,550.0 433.7,610.3"/>
+<polyline stroke="#111111" stroke-width="1.5" points="446.3,255.9 443.8,318.7"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">Alder</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  0.7 km  ·  Fairview</text>
+</svg>

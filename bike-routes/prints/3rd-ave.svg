@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#fff"/>
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<polyline stroke="#111111" stroke-width="1.5" points="752.2,451.9 732.5,451.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="844.0,453.4 789.9,452.5"/>
+<polyline stroke="#111111" stroke-width="1.5" points="221.0,444.0 164.8,443.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="164.8,443.1 75.4,441.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="397.8,446.9 339.0,446.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="411.6,447.2 397.8,446.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="281.9,445.1 221.0,444.0"/>
+<polyline stroke="#111111" stroke-width="1.5" points="513.7,448.7 456.6,447.8"/>
+<polyline stroke="#111111" stroke-width="1.5" points="36.0,426.6 76.0,426.9"/>
+<polyline stroke="#111111" stroke-width="1.5" points="456.6,447.8 411.6,447.2"/>
+<polyline stroke="#111111" stroke-width="1.5" points="732.5,451.6 651.0,450.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="570.5,449.6 513.7,448.7"/>
+<polyline stroke="#111111" stroke-width="1.5" points="339.0,446.0 281.9,445.1"/>
+<polyline stroke="#111111" stroke-width="1.5" points="651.0,450.1 570.5,449.6"/>
+<polyline stroke="#111111" stroke-width="1.5" points="789.9,452.5 752.2,451.9"/>
+</g>
+<line x1="0" y1="880" x2="1000" y2="880" stroke="#111" stroke-width="1"/>
+<text x="36" y="932" fill="#111" font-family="Courier New, Courier, monospace" font-size="28" letter-spacing="0.5">3rd Ave</text>
+<text x="36" y="972" fill="#111" font-family="Courier New, Courier, monospace" font-size="16" letter-spacing="0.4">Local Street  ·  2.0 km  ·  Kitsilano, West Point Grey</text>
+</svg>
