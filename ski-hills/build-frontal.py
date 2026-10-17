@@ -6,13 +6,16 @@ Orthographic view, 17 degrees above horizontal. Elevations are stretched 1.5x.
 lines on the run face, plus a light hillshade from the upper left. Runs and
 lifts sit on top. No labels.
 
+Facing is the compass bearing the camera looks, in degrees clockwise from
+north. 0 looks due north: the viewer stands south of the hill, west is on the
+left, east is on the right. It is not a math angle from east, and it is not
+the downhill aspect. 335 looked up Cypress's fall line, 25° west of north.
 Default camera facing, for a hill with no hand-set facing: point toward the
-flattest side, the side that shows the most runs. That is the same logic as
-the plan map. fall_line weights the downhill direction by run length, then
-orient() turns the summit away from the viewer so the runs spread across the
-face. Hand-set facings override that and are not flipped: Cypress 335, Grass
-Mountain 0 (due north, the face square to the viewer). Only those two are
-rendered. Contours use a wider DEM and fade softly at the frame edge.
+flattest side, the side that shows the most runs, same as the plan map.
+fall_line weights the downhill direction by run length, then orient() turns
+the summit away from the viewer. Hand-set facings are passed in radians and
+are not flipped: Cypress 0, Grass Mountain 0. Only those two are rendered.
+Contours use a wider DEM and fade softly at the frame edge.
 
     python3 ski-hills/build-frontal.py
 """
@@ -37,9 +40,10 @@ Z_SCALE = 1.5
 CONTOUR_M = 20
 COLS = 110
 ROWS = 72
-# Hand-set camera azimuths in degrees. Not passed through orient().
+# Look azimuth in degrees clockwise from north. 0 is due north.
+# Not passed through orient(), which would flip a hand-set value 180°.
 HAND_FACING = {
-    "cypress-mountain": 335.0,
+    "cypress-mountain": 0.0,
     "grass-mountain": 0.0,
 }
 
@@ -176,8 +180,8 @@ def default_facing(arr, gt, runs):
 
     Points toward the flattest side, the side that shows the most runs, using
     the same weighting as the plan map. build() still runs orient() on this
-    result so the summit sits away from the viewer. Cypress (335) and Grass
-    Mountain (0) do not use this path.
+    result so the summit sits away from the viewer. Cypress and Grass
+    Mountain are hand-set to 0 (look north) and do not use this path.
     """
     return fall_line(arr, gt, runs)
 
