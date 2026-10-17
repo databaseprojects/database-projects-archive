@@ -8,8 +8,9 @@ Grass Mountain stays at elevation 73, which is the old pitch of 17.
 Heights are stretched 1.5x.
 20 m contours are projected at their true elevation in metres, the same
 unit as the ground, stretched 1.5x. Nearer ground hides lines behind it.
-There is no filled shade: the paper stays white. Runs and lifts sit on top.
-No labels.
+There is no filled shade: the paper stays white. A far contour loses to
+terrain a short depth in front of it, and stops just under that ridge.
+Runs sit on the surface. Lifts sit a few metres above it. No labels.
 
 Facing is the compass bearing the camera looks, in degrees clockwise from
 north. 0 looks due north: the viewer stands south of the hill, west is on the
@@ -24,6 +25,7 @@ Contours use a wider DEM and fade softly at the frame edge.
 
     python3 ski-hills/build-frontal.py
 """
+import bisect
 import json
 import math
 import struct
@@ -41,6 +43,13 @@ GEOM = Path("/tmp/cypress-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.
 DEM = Path("/tmp/cypress-dem-wide.tif")
 Z_SCALE = 1.5
+# Metres. The occlusion test looks at terrain this far in front of a
+# contour, so the near slope wins a near tie. Coordinates are not moved.
+DEPTH_BIAS = 40.0
+# Pixels under the near silhouette. Screen y grows downward.
+RIDGE_MARGIN = 1.75
+SPACING_MIN = 1.5
+LIFT_CLEAR = 12.0
 CONTOUR_M = 20
 COLS = 110
 ROWS = 72
@@ -323,26 +332,26 @@ def stitch(segments):
 
 
 def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of):
-    """Contours across the whole DEM. The front silhouette hides the back.
+    """Contours across the whole DEM. Nearer ground hides the back.
 
-    A wide paper clip keeps the line ends outside the frame. The SVG mask
-    fades the edges, so the old ground-window cutoff is not the visible edge.
-    Anything at or below the skyline of nearer ground is dropped, including
-    contours behind the resort, so a low camera does not show the back side
-    through the face.
+    The horizon for a point is the skyline of terrain DEPTH_BIAS metres
+    nearer, so a far slope at almost the same depth loses the tie. The
+    point's own coordinates are not shifted. Far lines also stop
+    RIDGE_MARGIN pixels under that skyline, and a farther line within
+    SPACING_MIN pixels of a nearer one is dropped.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
-    drawn = []
-    kept = 0
     hidden = 0
+    chunks = []
     for elev, line in raw:
+        if len(line) < 2:
+            continue
         chunk = []
-        depth = None
 
         def flush():
             nonlocal chunk
             if len(chunk) >= 2:
-                drawn.append((depth, chunk))
+                chunks.append(chunk)
             chunk = []
 
         for lon, lat in line:
@@ -351,17 +360,73 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             if px < -220 or px > 1220 or py < -220 or py > 1220:
                 flush()
                 continue
-            horizon = horizon_at(yr)
-            if py >= horizon[col_of(px)] - 0.45:
+            crest, cdepth = horizon_at(yr)
+            i = col_of(px)
+            top = crest[i]
+            # At or under the nearer skyline: hidden. A far line also stops
+            # RIDGE_MARGIN px under a ridge that is DEPTH_BIAS metres in front.
+            # The vertex coordinates themselves are not moved.
+            if top < 1e8 and (
+                py >= top - 0.35
+                or (yr - cdepth[i] >= DEPTH_BIAS and py >= top - RIDGE_MARGIN)
+            ):
                 hidden += 1
                 flush()
                 continue
-            kept += 1
-            if not chunk:
-                depth = yr
-            chunk.append((px, py))
+            chunk.append((px, py, yr))
         flush()
-    print("occlusion", "kept", kept, "hidden", hidden)
+
+    order = []
+    for ci, chunk in enumerate(chunks):
+        for pi, (px, py, yr) in enumerate(chunk):
+            order.append((yr, px, py, ci, pi))
+    order.sort()
+    drop = set()
+    occupied = {}
+    kept = 0
+    for yr, px, py, ci, pi in order:
+        b = int(px)
+        close = False
+        for col in (b - 1, b, b + 1):
+            for opy, oyr in occupied.get(col, ()):
+                if yr > oyr + 1 and abs(py - opy) < SPACING_MIN:
+                    close = True
+                    break
+            if close:
+                break
+        if close:
+            drop.add((ci, pi))
+            hidden += 1
+            continue
+        occupied.setdefault(b, []).append((py, yr))
+        kept += 1
+
+    drawn = []
+    seen = set()
+    for ci, chunk in enumerate(chunks):
+        part = []
+        depth = None
+
+        def flush_part():
+            nonlocal part, depth
+            if len(part) >= 2:
+                sig = tuple((round(p[0], 1), round(p[1], 1)) for p in part)
+                rev = tuple(reversed(sig))
+                if sig not in seen and rev not in seen:
+                    seen.add(sig)
+                    drawn.append((depth, part))
+            part = []
+            depth = None
+
+        for pi, (px, py, yr) in enumerate(chunk):
+            if (ci, pi) in drop:
+                flush_part()
+                continue
+            if depth is None:
+                depth = yr
+            part.append((px, py))
+        flush_part()
+    print("occlusion", "kept", kept, "hidden", hidden, "lines", len(drawn))
     return drawn
 
 
@@ -475,53 +540,139 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         py = margin + (extra_y / 2 + (maxy - sy)) / span * (1000 - margin * 2)
         return px, py
 
-    bins = 960
-    horizon = [1e9] * bins
-    horizons = []
-    depths = []
+    bins = 2000
+    empty_py = [1e9] * bins
+    empty_depth = [0.0] * bins
 
     def col_of(px):
         i = int((px - margin) / (1000 - margin * 2) * (bins - 1))
         return max(0, min(bins - 1, i))
 
-    def stamp(px, py):
-        i = col_of(px)
-        if py < horizon[i]:
-            horizon[i] = py
-
-    for line in grid:
-        yrs = [cell[4] for cell in line if cell]
-        depths.append(sum(yrs) / len(yrs) if yrs else 0)
-        horizons.append(horizon[:])
-        stamped = []
-        for cell in line:
-            if not cell:
+    # Every DEM sample in the resort window. Contours are interpolated
+    # between these samples, so they cannot sit above this skyline.
+    samples = []
+    for r in range(h):
+        lat = maxlat + (r + 0.5) * gt[5]
+        for c in range(w):
+            z = arr[r][c]
+            if z != z:
                 continue
-            stamped.append(paper(cell[0], cell[1]))
-        for a, b in zip(stamped, stamped[1:]):
-            steps = max(2, int(abs(b[0] - a[0]) / 2))
-            for k in range(steps + 1):
+            lon = minlon + (c + 0.5) * gt[1]
+            xr, yr = rot(*metres(lon, lat))
+            if xr < gx0 or xr > gx1 or yr < gy0 or yr > gy1:
+                continue
+            samples.append((yr, paper(*project_xy(xr, yr, z))))
+    samples.sort()
+    step = 8.0
+    horizon_py = empty_py[:]
+    horizon_depth = empty_depth[:]
+    snap_yr = []
+    snap_py = []
+    snap_depth = []
+    buckets = {}
+    for yr, (px, py) in samples:
+        buckets.setdefault(int(yr // step), []).append((px, py, yr))
+
+    def paint(px, py, yr):
+        i = col_of(px)
+        if py < horizon_py[i]:
+            horizon_py[i] = py
+            horizon_depth[i] = yr
+
+    for key in sorted(buckets):
+        snap_yr.append(key * step)
+        snap_py.append(horizon_py[:])
+        snap_depth.append(horizon_depth[:])
+        row = sorted(buckets[key])
+        for (ax, ay, ayr), (bx, by, byr) in zip(row, row[1:]):
+            paint(ax, ay, ayr)
+            gap = bx - ax
+            # Bridge one DEM cell. A wider gap is a real break in the ridge.
+            if gap <= 0 or gap > 18:
+                continue
+            steps = max(1, int(gap))
+            for k in range(1, steps):
                 t = k / steps
-                stamp(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
+                paint(ax + (bx - ax) * t, ay + (by - ay) * t, ayr + (byr - ayr) * t)
+        if row:
+            paint(*row[-1])
+    final_horizon = horizon_py[:]
+    i = 0
+    while i < bins:
+        if final_horizon[i] < 1e8:
+            i += 1
+            continue
+        j = i
+        while j < bins and final_horizon[j] > 1e8:
+            j += 1
+        if i > 0 and j < bins and j - i <= 24 and abs(final_horizon[i - 1] - final_horizon[j]) < 22:
+            left, right = final_horizon[i - 1], final_horizon[j]
+            gap_n = j - (i - 1)
+            for k in range(i, j):
+                t = (k - (i - 1)) / gap_n
+                final_horizon[k] = left + (right - left) * t
+        i = max(j, i + 1)
+    for _ in range(4):
+        for i in range(1, bins - 1):
+            left, mid, right = final_horizon[i - 1], final_horizon[i], final_horizon[i + 1]
+            if mid > 1e8 and left < 1e8 and right < 1e8 and abs(left - right) < 24:
+                final_horizon[i] = min(left, right)
 
     def horizon_at(yr):
-        # Past the far edge, the whole stamped skyline hides the back side.
-        if depths and yr > depths[-1]:
-            return horizon
-        idx = 0
-        for i, depth in enumerate(depths):
-            if depth <= yr:
-                idx = i
-            else:
-                break
-        return horizons[idx]
+        # Skyline of samples strictly nearer than this depth. Comparison only.
+        idx = bisect.bisect_right(snap_yr, yr) - 1
+        if idx < 0:
+            return empty_py, empty_depth
+        return snap_py[idx], snap_depth[idx]
 
     contours = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     )
 
-    def stroke(lines, colour, width):
+    def ridge_line():
         parts = []
+        chunk = []
+
+        def flush():
+            nonlocal chunk
+            if len(chunk) >= 4:
+                pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in chunk)
+                parts.append(
+                    f'<polyline points="{pts}" fill="none" stroke="#111" '
+                    f'style="fill:none;stroke:#111;stroke-width:1.15;'
+                    f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
+                )
+            chunk = []
+
+        # A short moving average turns the binned skyline into one ridge.
+        smooth = final_horizon[:]
+        for i in range(bins):
+            if final_horizon[i] > 1e8:
+                continue
+            acc = []
+            for j in range(i - 3, i + 4):
+                if 0 <= j < bins and final_horizon[j] < 1e8 and abs(final_horizon[j] - final_horizon[i]) < 18:
+                    acc.append(final_horizon[j])
+            if acc:
+                smooth[i] = sum(acc) / len(acc)
+        prev = None
+        for i in range(0, bins, 2):
+            py = smooth[i]
+            if py > 1e8 or py < -40 or py > 1040:
+                flush()
+                prev = None
+                continue
+            px = margin + i / (bins - 1) * (1000 - margin * 2)
+            if prev is not None and abs(py - prev) > 28:
+                flush()
+            chunk.append((px, py))
+            prev = py
+        flush()
+        return parts
+
+    def stroke(lines, colour, width, z_add=0.0, dash=None):
+        parts = []
+        dash_style = f"stroke-dasharray:{dash};" if dash else ""
         for line in lines:
             sampled = []
             chunks = []
@@ -533,7 +684,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     sampled = []
                     continue
                 xr, yr = rot(*metres(lon, lat))
-                px, py = paper(*project_xy(xr, yr, z))
+                # Lifts are not occlusion-tested against their own slope.
+                px, py = paper(*project_xy(xr, yr, z + z_add))
                 sampled.append((px, py))
             if len(sampled) >= 2:
                 chunks.append(sampled)
@@ -542,6 +694,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 parts.append(
                     f'<polyline points="{pts}" fill="none" stroke="{colour}" '
                     f'style="fill:none;stroke:{colour};stroke-width:{width};'
+                    f"{dash_style}"
                     f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
                 )
         return parts
@@ -561,7 +714,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         run_parts.extend(stroke(run["lines"], colour, 2.2))
     lift_parts = []
     for lift in lifts:
-        lift_parts.extend(stroke(lift["lines"], "#111", 1.15))
+        lift_parts.extend(stroke(lift["lines"], "#111", 1.7, z_add=LIFT_CLEAR, dash="6 4"))
+    ridge_parts = ridge_line()
 
     if not contours:
         raise SystemExit("no contours")
@@ -598,6 +752,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         '<g class="sh-frontal-art">\n'
         f"{defs}\n"
         f'<g mask="url(#{mask_id})">\n' + "\n".join(contour_xml) + "\n</g>\n"
+        + "\n".join(ridge_parts)
+        + "\n"
         + "\n".join(run_parts)
         + "\n"
         + "\n".join(lift_parts)
