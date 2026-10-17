@@ -290,6 +290,36 @@
     return !!(hill && hill.stacked && hill._stackOn);
   }
 
+  // A second bird's-eye facing. Front is first and is the default.
+  // Another hill gets the same toggle once its slug is listed here and
+  // frontal/{slug}-front.svg and frontal/{slug}-back.svg exist.
+  var SIDE_VIEWS = {
+    "mount-washington-alpine-resort": ["front", "back"]
+  };
+
+  function sideViews(hill) {
+    var list = hill && SIDE_VIEWS[hill.slug];
+    return list && list.length > 1 ? list : null;
+  }
+
+  function sideName(hill) {
+    var list = sideViews(hill);
+    if (!list) return "";
+    var side = hill._side || list[0];
+    return list.indexOf(side) < 0 ? list[0] : side;
+  }
+
+  function frontalUrl(hill) {
+    var side = stackWanted(hill) ? sideName(hill) : "";
+    var file = side ? hill.slug + "-" + side : hill.slug;
+    return "frontal/" + file + ".svg?v=20261017v";
+  }
+
+  function frontalArt(hill) {
+    var url = frontalUrl(hill);
+    return (hill._frontalCache && hill._frontalCache[url]) || "";
+  }
+
   function paintContours(svg, lines, shift, stack) {
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
@@ -756,7 +786,7 @@
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift, false);
     var maxW = Math.min(window.innerWidth * 0.92, 1100);
-    var maxH = window.innerHeight * 0.86 - 72;
+    var maxH = window.innerHeight * 0.86 - (sideViews(card._hill) ? 112 : 72);
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
     var px = (SQUARE * scale).toFixed(1) + "px";
     big.style.width = "100%";
@@ -1778,9 +1808,10 @@
     var shift = fitArt(svg, DRAW);
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
-    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !hill._frontal);
-    if (raised && hill._frontal) {
-      mountFrontal(svg, hill._frontal);
+    var art = raised ? frontalArt(hill) : "";
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art);
+    if (raised && art) {
+      mountFrontal(svg, art);
       setPlanHidden(svg, true);
     }
     return svg;
@@ -1978,30 +2009,37 @@
 
   function paintRaised(svg, hill, lines, shift) {
     if (lines && shift) paintContours(svg, lines, shift, false);
-    mountFrontal(svg, hill._frontal);
+    mountFrontal(svg, frontalArt(hill));
     setPlanHidden(svg, true);
   }
 
   function ensureFrontal(hill, done) {
-    if (!hill || hill._frontal || hill._frontalFailed) {
+    if (!hill) {
       done();
       return;
     }
-    if (hill._frontalLoading) {
+    var url = frontalUrl(hill);
+    hill._frontalCache = hill._frontalCache || {};
+    hill._frontalFail = hill._frontalFail || {};
+    if (hill._frontalCache[url] || hill._frontalFail[url]) {
+      done();
+      return;
+    }
+    if (hill._frontalLoadingUrl === url) {
       (hill._frontalWait = hill._frontalWait || []).push(done);
       return;
     }
-    hill._frontalLoading = true;
-    fetch("frontal/" + hill.slug + ".svg?v=20261017v").then(function (res) {
+    hill._frontalLoadingUrl = url;
+    fetch(url).then(function (res) {
       if (!res.ok) throw new Error("frontal");
       return res.text();
     }).then(function (text) {
       if (text.indexOf("sh-frontal-art") < 0) throw new Error("frontal");
-      hill._frontal = text;
+      hill._frontalCache[url] = text;
     }).catch(function () {
-      hill._frontalFailed = true;
+      hill._frontalFail[url] = true;
     }).then(function () {
-      hill._frontalLoading = false;
+      if (hill._frontalLoadingUrl === url) hill._frontalLoadingUrl = "";
       done();
       (hill._frontalWait || []).splice(0).forEach(function (fn) { fn(); });
     });
@@ -2012,23 +2050,30 @@
     var lb = document.getElementById("sh-lb");
     function paint() {
       var on = stackWanted(hill);
+      var url = frontalUrl(hill);
+      var art = on ? frontalArt(hill) : "";
+      var failed = on && hill._frontalFail && hill._frontalFail[url];
       if (lb && card && lb._card === card && lb._svg && lb._shift) {
-        if (on && hill._frontal) paintRaised(lb._svg, hill, card._contourLines, lb._shift);
-        else if (on && hill._frontalFailed && card._contourLines) {
+        if (on && art) paintRaised(lb._svg, hill, card._contourLines, lb._shift);
+        else if (failed && card._contourLines) {
           clearFrontal(lb._svg);
           setPlanHidden(lb._svg, false);
           paintContours(lb._svg, card._contourLines, lb._shift, true);
         } else if (!on) paintPlan(lb._svg, hill, card._contourLines, lb._shift);
       }
       if (card) refreshMockArt(card);
+      if (lb && card && lb._card === card && lb._syncSide) lb._syncSide();
     }
-    if (stackWanted(hill) && !hill._frontal && !hill._frontalFailed) ensureFrontal(hill, paint);
-    else paint();
+    if (stackWanted(hill) && !frontalArt(hill) && !(hill._frontalFail && hill._frontalFail[frontalUrl(hill)])) {
+      ensureFrontal(hill, paint);
+    } else paint();
   }
 
   function mountStackButton(hill) {
+    var wrap = document.createElement("div");
+    wrap.className = "sh-stack-btn";
     var group = document.createElement("div");
-    group.className = "sh-stack sh-stack-btn";
+    group.className = "sh-stack";
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", "View");
     function side(label, bird) {
@@ -2049,17 +2094,58 @@
     }
     var plan = side("Plan view", false);
     var bird = side("Bird's eye view", true);
+    var views = sideViews(hill);
+    var sideRow = null;
+    var sideBtns = [];
+    if (views) {
+      sideRow = document.createElement("div");
+      sideRow.className = "sh-stack sh-side-btn";
+      sideRow.setAttribute("role", "group");
+      sideRow.setAttribute("aria-label", "Side");
+      views.forEach(function (name) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "sh-tag";
+        btn.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+        btn.setAttribute("aria-pressed", "false");
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (sideName(hill) === name && hill._stackOn) return;
+          hill._side = name;
+          if (!hill._stackOn) hill._stackOn = true;
+          sync();
+          applyStack(hill);
+        });
+        sideBtns.push(btn);
+        sideRow.appendChild(btn);
+      });
+    }
     function sync() {
       var on = !!hill._stackOn;
       plan.classList.toggle("sh-on", !on);
       bird.classList.toggle("sh-on", on);
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
+      if (sideRow) {
+        var show = on;
+        sideRow.hidden = !show;
+        sideRow.classList.toggle("sh-side-on", show);
+        var current = sideName(hill);
+        sideBtns.forEach(function (btn, i) {
+          var picked = views[i] === current;
+          btn.classList.toggle("sh-on", picked);
+          btn.setAttribute("aria-pressed", picked ? "true" : "false");
+        });
+      }
     }
     sync();
     group.appendChild(plan);
     group.appendChild(bird);
-    return group;
+    wrap.appendChild(group);
+    if (sideRow) wrap.appendChild(sideRow);
+    wrap._sync = sync;
+    return wrap;
   }
 
   function mountGallery(lb, big, card, px) {
@@ -2095,7 +2181,11 @@
     var view = document.createElement("div");
     view.className = "sh-view";
     view.appendChild(row);
-    if (hill && hill.stacked) view.appendChild(mountStackButton(hill));
+    if (hill && hill.stacked) {
+      var controls = mountStackButton(hill);
+      lb._syncSide = controls._sync;
+      view.appendChild(controls);
+    }
     lb.appendChild(view);
     bindDrag(lb, stage);
     if (printsOn()) renderCart();
