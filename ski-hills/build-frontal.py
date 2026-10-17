@@ -116,6 +116,22 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     "grass-mountain": {"facing": 0.0, "elevation": 73.0, "depth_scale": 1.0},
+    # Banff only. Automatic facing was 311.9. 41.9 is 90° further clockwise,
+    # which turns the bird's-eye drawing 90° counter-clockwise. Edit this number.
+    "banff-sunshine-village": {
+        "facing": 41.9,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Mt Norquay only. Automatic facing was 68.6. 248.6 is 180° further,
+    # which turns the bird's-eye drawing upside down. Edit this number.
+    "mt-norquay": {
+        "facing": 248.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
 }
 
 
@@ -1030,30 +1046,37 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
 
 
 def render_default(slug):
-    """Cypress elevation and depth, camera from default_facing."""
+    """Cypress elevation and depth. A hand-set facing is locked; otherwise auto."""
     global GEOM, DEM
     GEOM = Path(f"/tmp/{slug}-geom.json")
     DEM = Path(f"/tmp/{slug}-dem-wide.tif")
+    cam = CAMERAS.get(slug) or {}
     runs, lifts = load_geom()
     box = wide_box(runs, lifts)
     print(slug, "bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
     print(slug, "dem", len(arr[0]), len(arr))
-    guess = default_facing(arr, gt, runs)
-    print(slug, "default_facing_deg", round(math.degrees(guess) % 360, 1))
+    if "facing" in cam:
+        guess = math.radians(cam["facing"])
+        lock = True
+        print(slug, "hand_facing_deg", cam["facing"])
+    else:
+        guess = default_facing(arr, gt, runs)
+        lock = False
+        print(slug, "default_facing_deg", round(math.degrees(guess) % 360, 1))
     build(
         arr,
         gt,
         runs,
         lifts,
         guess,
-        lock_facing=False,
+        lock_facing=lock,
         out_path=ROOT / "frontal" / f"{slug}.svg",
         slug=slug,
-        elevation=15.0,
-        depth_scale=DEPTH_SCALE,
-        sun=(CAMERAS.get(slug) or {}).get("sun"),
+        elevation=cam.get("elevation", 15.0),
+        depth_scale=cam.get("depth_scale", DEPTH_SCALE),
+        sun=cam.get("sun"),
     )
 
 
