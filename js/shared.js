@@ -80,9 +80,11 @@
   }
 
   /* Sub-tags cascade by wrapped row. Row 1 slides down, and each later row
-     starts 70ms after the one above it, 250ms ease-out. Closing runs the
-     cascade back up, last row first. prefers-reduced-motion shows and hides
-     the group immediately. A matching call does not replay the motion. */
+     starts 70ms after the one above it, 250ms ease-out. Closing with nothing
+     in its place runs the cascade back up, last row first. Switching from
+     one parent to another drops the old group downward and fades it while
+     the new rows cascade down. prefers-reduced-motion shows and hides the
+     group immediately. A matching call does not replay the motion. */
   var SUB_STAGGER = 70;
   var SUB_DURATION = 250;
 
@@ -108,7 +110,16 @@
   }
 
   function clearSubStyles(group) {
+    group.style.position = "";
+    group.style.left = "";
+    group.style.top = "";
     group.style.width = "";
+    group.style.margin = "";
+    group.style.transform = "";
+    group.style.opacity = "";
+    group.style.transition = "";
+    group.style.zIndex = "";
+    group.style.pointerEvents = "";
     Array.prototype.forEach.call(group.querySelectorAll(".sh-tag, .br-tag, button"), function (el) {
       el.style.transition = "";
       el.style.transform = "";
@@ -206,7 +217,50 @@
     }, wait);
   }
 
-  function syncSubtags(group, parent, open) {
+  function pushSubtags(group, token) {
+    group._bkSubBusy = true;
+    releaseRows(group);
+    clearSubStyles(group);
+    group.setAttribute("aria-hidden", "true");
+    var host = group.parentNode;
+    var hostPos = host.style.position;
+    if (window.getComputedStyle(host).position === "static") host.style.position = "relative";
+    var top = group.offsetTop;
+    var left = group.offsetLeft;
+    var width = group.offsetWidth;
+    var height = group.offsetHeight || 36;
+    group.style.position = "absolute";
+    group.style.left = left + "px";
+    group.style.top = top + "px";
+    group.style.width = width + "px";
+    group.style.margin = "0";
+    group.style.zIndex = "2";
+    group.style.pointerEvents = "none";
+    group.style.transform = "translateY(0px)";
+    group.style.opacity = "1";
+    group.style.transition = "none";
+    void group.offsetWidth;
+    root.requestAnimationFrame(function () {
+      if (group._bkSubToken !== token) return;
+      var ease = SUB_DURATION + "ms ease-out";
+      group.style.transition = "transform " + ease + ", opacity " + ease;
+      group.style.transform = "translateY(" + Math.round(height) + "px)";
+      group.style.opacity = "0";
+    });
+    root.setTimeout(function () {
+      if (group._bkSubToken !== token || group._bkSubOpen) return;
+      clearSubStyles(group);
+      group.hidden = true;
+      group._bkSubBusy = false;
+      var still = false;
+      Array.prototype.forEach.call(host.children, function (el) {
+        if (el.style && el.style.position === "absolute") still = true;
+      });
+      if (!still) host.style.position = hostPos;
+    }, SUB_DURATION + 40);
+  }
+
+  function syncSubtags(group, parent, open, how) {
     if (!group) return;
     open = !!open;
     if (group._bkSubOpen == null && !group._bkSubBusy && (!group.hidden) === open) {
@@ -219,6 +273,10 @@
     var token = group._bkSubToken;
     if (subReduced() || !parent) {
       subInstant(group, open);
+      return;
+    }
+    if (!open && how === "push") {
+      pushSubtags(group, token);
       return;
     }
     slideSubtags(group, open, token);
