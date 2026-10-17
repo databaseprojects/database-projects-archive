@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-"""Front-facing trail map for one hill.
+"""Front-facing trail maps.
 
-Orthographic view from the base, 17 degrees above horizontal, looking straight
-up the fall line so the run face is square to the viewer. Elevations are
-stretched 1.5x. 20 m contours are projected at their true height, with nearer
-ground hiding the lines behind them, plus a light hillshade from the upper
-left. Runs and lifts sit on top. No labels.
+Orthographic view, 17 degrees above horizontal. Elevations are stretched 1.5x.
+20 m contours are projected at their true height, with nearer ground hiding the
+lines on the run face, plus a light hillshade from the upper left. Runs and
+lifts sit on top. No labels.
+
+Default camera facing, for a hill with no hand-set facing: point toward the
+flattest side, the side that shows the most runs. That is the same logic as
+the plan map. fall_line weights the downhill direction by run length, then
+orient() turns the summit away from the viewer so the runs spread across the
+face. Hand-set facings override that and are not flipped: Cypress 335, Grass
+Mountain 0 (due north, the face square to the viewer). Only those two are
+rendered. Contours use a wider DEM and fade softly at the frame edge.
 
     python3 ski-hills/build-frontal.py
 """
@@ -22,15 +29,19 @@ gdal.SetConfigOption("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY")
 gdal.SetConfigOption("CPL_VSIL_CURL_ALLOWED_EXTENSIONS", ".tif,.TIF")
 
 ROOT = Path(__file__).resolve().parent
-SLUG = "cypress-mountain"
 GEOM = Path("/tmp/cypress-geom.json")
-DEM = Path("/tmp/cypress-dem.tif")
-OUT = ROOT / "frontal" / f"{SLUG}.svg"
+# Wider than the old tight crop so the contour field reaches the frame.
+DEM = Path("/tmp/cypress-dem-wide.tif")
 PITCH = math.radians(17)
 Z_SCALE = 1.5
 CONTOUR_M = 20
 COLS = 110
 ROWS = 72
+# Hand-set camera azimuths in degrees. Not passed through orient().
+HAND_FACING = {
+    "cypress-mountain": 335.0,
+    "grass-mountain": 0.0,
+}
 
 
 def load_geom():
@@ -38,12 +49,15 @@ def load_geom():
     return data["runs"], data["lifts"]
 
 
-def bbox(runs, lifts):
+def wide_box(runs, lifts):
+    """DEM crop about 3x the run extent, so topo continues past the frame."""
     pts = [p for item in runs + lifts for line in item["lines"] for p in line]
     lons = [p[0] for p in pts]
     lats = [p[1] for p in pts]
-    pad_lon = (max(lons) - min(lons)) * 0.08
-    pad_lat = (max(lats) - min(lats)) * 0.08
+    span_lon = max(lons) - min(lons)
+    span_lat = max(lats) - min(lats)
+    pad_lon = span_lon * 1.0
+    pad_lat = span_lat * 1.0
     return min(lons) - pad_lon, min(lats) - pad_lat, max(lons) + pad_lon, max(lats) + pad_lat
 
 
@@ -155,6 +169,17 @@ def sample(arr, gt, lon, lat):
         + vals[2] * (1 - fx) * fy
         + vals[3] * fx * fy
     )
+
+
+def default_facing(arr, gt, runs):
+    """Facing in radians for a hill that has no hand-set camera.
+
+    Points toward the flattest side, the side that shows the most runs, using
+    the same weighting as the plan map. build() still runs orient() on this
+    result so the summit sits away from the viewer. Cypress (335) and Grass
+    Mountain (0) do not use this path.
+    """
+    return fall_line(arr, gt, runs)
 
 
 def fall_line(arr, gt, runs):
@@ -286,8 +311,13 @@ def stitch(segments):
     return lines
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, window):
-    gx0, gx1, gy0, gy1 = window
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, resort):
+    """Contours across the whole DEM. Horizon removal stays on the run face.
+
+    A wide paper clip keeps the line ends outside the frame. The SVG mask
+    fades the edges, so the old ground-window cutoff is not the visible edge.
+    """
+    gx0, gx1, gy0, gy1 = resort
     raw = marching_contours(arr, gt, CONTOUR_M)
     drawn = []
     for elev, line in raw:
@@ -302,25 +332,24 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
 
         for lon, lat in line:
             xr, yr = rot(*metres(lon, lat))
-            if xr < gx0 or xr > gx1 or yr < gy0 or yr > gy1:
-                flush()
-                continue
             px, py = paper(*project_xy(xr, yr, elev))
-            if px < 8 or px > 992 or py < 8 or py > 992:
+            if px < -220 or px > 1220 or py < -220 or py > 1220:
                 flush()
                 continue
-            horizon = horizon_at(yr)
-            if py < horizon[col_of(px)] - 0.45:
-                if not chunk:
-                    depth = yr
-                chunk.append((px, py))
-            else:
-                flush()
+            on_face = gx0 <= xr <= gx1 and gy0 <= yr <= gy1
+            if on_face:
+                horizon = horizon_at(yr)
+                if py >= horizon[col_of(px)] - 0.45:
+                    flush()
+                    continue
+            if not chunk:
+                depth = yr
+            chunk.append((px, py))
         flush()
     return drawn
 
 
-def build(arr, gt, runs, lifts, facing):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill"):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -369,7 +398,11 @@ def build(arr, gt, runs, lifts, facing):
         ly = sum(p[0] for p in pts if p[1] <= low)
         return hy >= ly
 
-    if not orient(ang):
+    # Hand-set facings stay as given. A default facing is flipped when the
+    # summit would otherwise sit on the near side.
+    if lock_facing:
+        ca, sa = math.cos(ang), math.sin(ang)
+    elif not orient(ang):
         ang += math.pi
         orient(ang)
 
@@ -539,6 +572,8 @@ def build(arr, gt, runs, lifts, facing):
     front = min(item[0] for item in contours)
     back = max(item[0] for item in contours)
     span_d = max(back - front, 1)
+    fade_id = "sh-fade-" + slug
+    mask_id = "sh-contour-fade-" + slug
     contour_xml = []
     for yr, line in sorted(contours, key=lambda item: -item[0]):
         # Farther up the hill is paler. The near face is a little darker.
@@ -550,23 +585,37 @@ def build(arr, gt, runs, lifts, facing):
             f'stroke-width="0.85" style="fill:none;stroke:#000;stroke-opacity:{opacity:.3f};'
             f'stroke-width:0.85;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
         )
+    # Soft rectangular fade. The blur eats the hard edge of the wider field.
+    defs = (
+        "<defs>\n"
+        f'<filter id="{fade_id}" x="-25%" y="-25%" width="150%" height="150%">\n'
+        '<feGaussianBlur stdDeviation="42"/>\n'
+        "</filter>\n"
+        f'<mask id="{mask_id}" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">\n'
+        '<rect x="0" y="0" width="1000" height="1000" fill="#000"/>\n'
+        f'<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#{fade_id})"/>\n'
+        "</mask>\n"
+        "</defs>\n"
+    )
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">\n'
         '<g class="sh-frontal-art">\n'
-        f"{shade_xml}\n" + "\n".join(contour_xml) + "\n"
+        f"{defs}{shade_xml}\n"
+        f'<g mask="url(#{mask_id})">\n' + "\n".join(contour_xml) + "\n</g>\n"
         + "\n".join(run_parts)
         + "\n"
         + "\n".join(lift_parts)
         + "\n</g>\n</svg>\n"
     )
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(svg)
+    dest = Path(out_path) if out_path else (ROOT / "frontal" / f"{slug}.svg")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(svg)
     az = round(math.degrees(ang) % 360, 1)
     print(
         "wrote",
-        OUT,
+        dest,
         "bytes",
-        OUT.stat().st_size,
+        dest.stat().st_size,
         "facing_deg",
         az,
         "contours",
@@ -584,33 +633,24 @@ def build(arr, gt, runs, lifts, facing):
 
 def main():
     runs, lifts = load_geom()
-    box = bbox(runs, lifts)
+    box = wide_box(runs, lifts)
     print("bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
     print("dem", len(arr[0]), len(arr))
-    hills = json.loads((ROOT / "hills.json").read_text())
-    hill = next(item for item in hills["hills"] if item["slug"] == SLUG)
-    ang = fall_line(arr, gt, runs)
-    az = build(arr, gt, runs, lifts, ang)
-    raw = (ROOT / "hills.json").read_text()
-    import re
-    updated, n = re.subn(
-        r'("slug":"cypress-mountain","stacked":true,"facing":)[0-9.]+',
-        lambda m: m.group(1) + str(az),
-        raw,
-        count=1,
-    )
-    if n and updated != raw:
-        (ROOT / "hills.json").write_text(updated)
-        print("stored facing", az)
-    elif n == 0:
-        needle = '"slug":"cypress-mountain","stacked":true'
-        at = raw.find(needle)
-        if at >= 0 and '"facing"' not in raw[at : at + 90]:
-            raw = raw.replace(needle, needle + f',"facing":{az}', 1)
-            (ROOT / "hills.json").write_text(raw)
-            print("stored facing", az)
+    # Kept so a later hill without a hand-set facing still has the rule.
+    print("default_facing_deg", round(math.degrees(default_facing(arr, gt, runs)) % 360, 1))
+    for slug, deg in HAND_FACING.items():
+        build(
+            arr,
+            gt,
+            runs,
+            lifts,
+            math.radians(deg),
+            lock_facing=True,
+            out_path=ROOT / "frontal" / f"{slug}.svg",
+            slug=slug,
+        )
 
 
 if __name__ == "__main__":

@@ -503,6 +503,11 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   box-shadow: 0 0 0 1.5px #fff, 0 0.5px 1.5px rgba(0, 0, 0, 0.35);
   pointer-events: none;
   transform-origin: center center;
+  transition: opacity 0.22s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-dot { transition: none; }
 }
 
 .sh-dot[hidden] {
