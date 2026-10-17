@@ -165,6 +165,49 @@ COLOR = {
 }
 
 
+def project_city(routes, pad=64):
+    """Fit every route in one square. Longitude is scaled so the city is not stretched."""
+    pts = [p for route in routes for line in route["lines"] for p in line["c"]]
+    mid = sum(p[1] for p in pts) / len(pts)
+    cos = math.cos(math.radians(mid))
+    xs = [p[0] * cos for p in pts]
+    ys = [p[1] for p in pts]
+    minx, maxx = min(xs), max(xs)
+    miny, maxy = min(ys), max(ys)
+    span = max(maxx - minx, maxy - miny) or 1e-6
+    inner = SQUARE - pad * 2
+    extra_x = (inner - (maxx - minx) / span * inner) / 2
+    extra_y = (inner - (maxy - miny) / span * inner) / 2
+
+    def xy(lon, lat):
+        x = pad + (lon * cos - minx) / span * inner + extra_x
+        y = pad + (maxy - lat) / span * inner + extra_y
+        return x, y
+
+    return xy
+
+
+def write_city(routes, path):
+    xy = project_city(routes)
+    rank = {name: i for i, name in enumerate(TYPES)}
+    ordered = sorted(routes, key=lambda route: (max(rank.get(line["t"], 0) for line in route["lines"]), route["name"].lower()))
+    parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">',
+        '<rect width="1000" height="1000" fill="#fff"/>',
+        '<g fill="none" stroke-linejoin="round" stroke-linecap="round">',
+    ]
+    for route in ordered:
+        parts.append('<g class="br-route" data-name="%s">' % xml(route["name"]))
+        for line in route["lines"]:
+            pts = " ".join("%.1f,%.1f" % xy(*p) for p in line["c"])
+            width = WIDTH.get(line["t"], 1.6)
+            color = COLOR.get(line["t"], "#111111")
+            parts.append('<polyline stroke="%s" stroke-width="%s" points="%s"/>' % (color, width, pts))
+        parts.append("</g>")
+    parts.append("</g></svg>")
+    path.write_text("\n".join(parts) + "\n")
+
+
 def write_svg(path, route):
     xy = project(route["lines"])
     parts = [
@@ -297,6 +340,7 @@ def main():
         old.unlink()
     for route in routes:
         write_svg(prints / (route["id"] + ".svg"), route)
+    write_city(routes, ROOT / "city.svg")
     (ROOT / "boundary.json").write_text(json.dumps(mask(areas), separators=(",", ":")))
     print("routes", len(routes), "json", (ROOT / "routes.json").stat().st_size)
 
