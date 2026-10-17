@@ -38,6 +38,7 @@ import io
 import json
 import math
 import struct
+import sys
 from pathlib import Path
 
 from osgeo import gdal
@@ -128,6 +129,18 @@ CAMERAS = {
     # which turns the bird's-eye drawing upside down. Edit this number.
     "mt-norquay": {
         "facing": 248.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Mount Washington only. Automatic facing 217.2 is kept by orient() and
+    # shows the north side. Black runs cluster north of centre (bearing
+    # 10.6°). Green and blue runs cluster south (bearing 186.7°). Front
+    # looks from that south side back toward the hill. Back looks from the
+    # north side. Edit these numbers. A second entry is enough for the page
+    # to offer Front / Back.
+    "mount-washington-alpine-resort": {
+        "views": {"front": 6.7, "back": 190.6},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -1107,6 +1120,38 @@ def render_cypress():
     )
 
 
+def render_views(slug):
+    """Write one locked frontal SVG per hand-set view, named {slug}-{view}.svg."""
+    global GEOM, DEM
+    GEOM = Path(f"/tmp/{slug}-geom.json")
+    DEM = Path(f"/tmp/{slug}-dem-wide.tif")
+    cam = CAMERAS.get(slug) or {}
+    views = cam.get("views") or {}
+    if not views:
+        raise SystemExit(slug + " has no views")
+    runs, lifts = load_geom()
+    box = wide_box(runs, lifts)
+    print(slug, "bbox", tuple(round(v, 4) for v in box))
+    ensure_dem(box)
+    arr, gt = read_grid()
+    print(slug, "dem", len(arr[0]), len(arr))
+    for name, facing in views.items():
+        print(slug, name, "hand_facing_deg", facing)
+        build(
+            arr,
+            gt,
+            runs,
+            lifts,
+            math.radians(facing),
+            lock_facing=True,
+            out_path=ROOT / "frontal" / f"{slug}-{name}.svg",
+            slug=f"{slug}-{name}",
+            elevation=cam.get("elevation", 15.0),
+            depth_scale=cam.get("depth_scale", DEPTH_SCALE),
+            sun=cam.get("sun"),
+        )
+
+
 def main():
     # Grass stays at elevation 73 and is not re-rendered.
     for slug, draw in (
@@ -1128,4 +1173,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        for slug in sys.argv[1:]:
+            render_views(slug)
+    else:
+        main()
