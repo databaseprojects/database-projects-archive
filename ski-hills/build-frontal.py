@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Front-facing trail maps.
 
-Orthographic view, 17 degrees above horizontal. Elevations are stretched 1.5x.
+Orthographic view. Pitch is degrees of tilt up from a flat map, set per hill:
+Cypress 15, Grass Mountain 17. Elevations are stretched 1.5x.
 20 m contours are projected at their true height, with nearer ground hiding the
 lines on the run face, plus a light hillshade from the upper left. Runs and
 lifts sit on top. No labels.
@@ -40,11 +41,12 @@ Z_SCALE = 1.5
 CONTOUR_M = 20
 COLS = 110
 ROWS = 72
-# Look azimuth in degrees clockwise from north. 0 is due north.
-# Not passed through orient(), which would flip a hand-set value 180°.
-HAND_FACING = {
-    "cypress-mountain": 0.0,
-    "grass-mountain": 0.0,
+# facing: look azimuth, degrees clockwise from north. 0 is due north.
+# pitch: degrees up from a flat map. Higher stands the face up more.
+# Not passed through orient(), which would flip a hand-set facing 180°.
+CAMERAS = {
+    "cypress-mountain": {"facing": 0.0, "pitch": 15.0},
+    "grass-mountain": {"facing": 0.0, "pitch": 17.0},
 }
 
 
@@ -353,7 +355,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     return drawn
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill"):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", pitch=None):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -423,8 +425,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     gx0, gx1 = min(rxs) - pad_x, max(rxs) + pad_x
     gy0, gy1 = min(rys) - pad_y, max(rys) + pad_y
 
+    pitch_rad = PITCH if pitch is None else pitch
+
     def project_xy(xr, yr, z):
-        return xr, yr * math.cos(PITCH) + z * Z_SCALE * math.sin(PITCH)
+        return xr, yr * math.cos(pitch_rad) + z * Z_SCALE * math.sin(pitch_rad)
 
     grid = []
     for ri in range(ROWS):
@@ -622,6 +626,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         dest.stat().st_size,
         "facing_deg",
         az,
+        "pitch_deg",
+        round(math.degrees(pitch_rad), 1),
         "contours",
         len(contours),
         "runs",
@@ -644,17 +650,20 @@ def main():
     print("dem", len(arr[0]), len(arr))
     # Kept so a later hill without a hand-set facing still has the rule.
     print("default_facing_deg", round(math.degrees(default_facing(arr, gt, runs)) % 360, 1))
-    for slug, deg in HAND_FACING.items():
-        build(
-            arr,
-            gt,
-            runs,
-            lifts,
-            math.radians(deg),
-            lock_facing=True,
-            out_path=ROOT / "frontal" / f"{slug}.svg",
-            slug=slug,
-        )
+    # Grass stays at 17°. Only Cypress is re-rendered.
+    slug = "cypress-mountain"
+    cam = CAMERAS[slug]
+    build(
+        arr,
+        gt,
+        runs,
+        lifts,
+        math.radians(cam["facing"]),
+        lock_facing=True,
+        out_path=ROOT / "frontal" / f"{slug}.svg",
+        slug=slug,
+        pitch=math.radians(cam["pitch"]),
+    )
 
 
 if __name__ == "__main__":
