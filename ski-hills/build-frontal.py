@@ -184,6 +184,18 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Kirkwood only. The automatic render faced 30.8 (the 210.8
+    # guess, flipped by orient()). 210.8 is 180° further and turns that
+    # bird's-eye drawing upside down. The turn leaves the summit on the
+    # near side of the run window, so full_ground keeps that foreground.
+    # Edit this number.
+    "kirkwood-mountain-resort": {
+        "facing": 210.8,
+        "full_ground": True,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Mt. Bachelor only. The automatic render faced 7.9 (the 187.9
     # guess, flipped by orient()). 187.9 is 180° further and turns that
     # bird's-eye drawing upside down. Edit this number.
