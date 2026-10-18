@@ -45,8 +45,34 @@
     return decodeURIComponent((location.hash || "").replace(/^#/, "")).trim();
   }
 
+  function lockSubSlot() {
+    var slot = tags && tags.querySelector(".sh-subslot");
+    if (!slot) return;
+    var width = slot.clientWidth || tags.clientWidth;
+    var max = 0;
+    Array.prototype.forEach.call(slot.querySelectorAll("[data-sh-for]"), function (group) {
+      var clone = group.cloneNode(true);
+      clone.hidden = false;
+      clone.removeAttribute("style");
+      clone.style.position = "absolute";
+      clone.style.visibility = "hidden";
+      clone.style.display = "flex";
+      clone.style.height = "auto";
+      clone.style.left = "0";
+      clone.style.top = "0";
+      clone.style.width = width + "px";
+      clone.style.pointerEvents = "none";
+      slot.appendChild(clone);
+      var h = clone.offsetHeight;
+      slot.removeChild(clone);
+      if (h > max) max = h;
+    });
+    if (max) slot.style.minHeight = max + "px";
+  }
+
   function setPressed() {
     if (!tags) return;
+    lockSubSlot();
     Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-province]"), function (btn) {
       var on = btn.getAttribute("data-sh-province") === province;
       btn.classList.toggle("sh-on", on);
@@ -294,7 +320,8 @@
   // Another hill gets the same toggle once its slug is listed here and
   // frontal/{slug}-front.svg and frontal/{slug}-back.svg exist.
   var SIDE_VIEWS = {
-    "mount-washington-alpine-resort": ["front", "back"]
+    "mount-washington-alpine-resort": ["front", "back"],
+    "lake-louise-ski-area": ["front", "back"]
   };
 
   function sideViews(hill) {
@@ -312,7 +339,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261017w";
+    return "frontal/" + file + ".svg?v=20261017z";
   }
 
   function frontalArt(hill) {
@@ -432,7 +459,7 @@
       contour *= 1 + 0.5 * Math.sqrt(t);
     }
     g.style.setProperty("--sh-contour", contour.toFixed(3) + "px");
-    g.style.setProperty("--sh-key", (3.2 * scale).toFixed(3) + "px");
+    g.style.setProperty("--sh-key", (1.6 * scale).toFixed(3) + "px");
   }
 
   window.shSyncStroke = syncStroke;
@@ -1817,7 +1844,7 @@
     var art = raised ? frontalArt(hill) : "";
     if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art);
     if (raised && art) {
-      mountFrontal(svg, art);
+      mountFrontal(svg, art, hill);
       setPlanHidden(svg, true);
     }
     return svg;
@@ -1978,7 +2005,7 @@
     if (plate && plate.parentNode) plate.parentNode.removeChild(plate);
   }
 
-  function mountFrontal(svg, markup) {
+  function mountFrontal(svg, markup, hill) {
     clearFrontal(svg);
     if (!svg || !markup) return;
     var doc = new DOMParser().parseFromString(markup, "image/svg+xml");
@@ -1986,6 +2013,9 @@
     if (!art) return;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-frontal");
+    // Whistler's runs sit low in the square. Shift only this drawing up so
+    // it centres in the area above the caption. The caption stays put.
+    if (hill && hill.slug === "whistler-blackcomb") g.setAttribute("transform", "translate(0 -80)");
     // The frontal file is already fitted to the caption band. Mounting it
     // 1:1 lets the topo meet the card edge; the old 0.88 scale left a white
     // gutter between the drawing and the dark lightbox.
@@ -2015,7 +2045,7 @@
 
   function paintRaised(svg, hill, lines, shift) {
     if (lines && shift) paintContours(svg, lines, shift, false);
-    mountFrontal(svg, frontalArt(hill));
+    mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
   }
 
@@ -2426,6 +2456,7 @@
     if (dragging) return;
     clearTimeout(window.shResize);
     window.shResize = setTimeout(function () {
+      lockSubSlot();
       var nowPhone = phoneSlider();
       if (nowPhone !== phoneCols) {
         phoneCols = nowPhone;
