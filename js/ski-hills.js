@@ -11,8 +11,22 @@
   var query = "";
   var shownIds = null;
   var watch = null;
-  var albertaReady = false;
-  var albertaPromise = null;
+  var catalogs = {
+    ab: {
+      file: "alberta.json?v=20261018c",
+      names: "alberta-names.json?v=20261016i",
+      index: "contours/alberta-index.json?v=20261017c",
+      label: "Alberta"
+    },
+    qc: {
+      file: "quebec.json?v=20261018g",
+      names: "quebec-names.json?v=20261018f",
+      index: "contours/quebec-index.json?v=20261018f",
+      label: "Quebec"
+    }
+  };
+  var catalogReady = {};
+  var catalogPromise = {};
   var SQUARE = 1000;
   var BAND = 120;
   var DRAW = SQUARE - BAND;
@@ -53,7 +67,7 @@
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
     var displaced = {};
-    var switching = province === "bc" || province === "ab";
+    var switching = province !== "all";
     if (switching && window.Shared && Shared.syncSubtags) {
       Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-for]"), function (group) {
         var id = group.getAttribute("data-sh-for");
@@ -313,7 +327,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018e";
+    return "frontal/" + file + ".svg?v=20261018f";
   }
 
   function frontalArt(hill) {
@@ -387,7 +401,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018e").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018f").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -450,7 +464,14 @@
     "calgary-area": "Calgary & Area",
     "alberta-central": "Alberta Central",
     "edmonton-area": "Edmonton & Area",
-    "alberta-north": "Alberta North"
+    "alberta-north": "Alberta North",
+    "outaouais": "Outaouais",
+    "laurentides": "Laurentides",
+    "mauricie": "Mauricie",
+    "cantons-de-lest": "Cantons-de-l'Est",
+    "quebec": "Québec",
+    "saguenay": "Saguenay–Lac-Saint-Jean",
+    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie"
   };
 
   var TYPES = {
@@ -831,8 +852,9 @@
   function syncFromHash(scroll) {
     var slug = slugFromHash();
     var known = !slug || hills.some(function (hill) { return hill.slug === slug && hill.el; });
-    if (!known && !albertaReady) {
-      ensureAlberta().then(function () { syncFromHash(scroll); });
+    var pendingCatalogs = Object.keys(catalogs).filter(function (code) { return !catalogReady[code]; });
+    if (!known && pendingCatalogs.length) {
+      ensureCatalogs(pendingCatalogs).then(function () { syncFromHash(scroll); });
       return;
     }
     if (slug) {
@@ -868,27 +890,34 @@
     });
   }
 
-  function ensureAlberta() {
-    if (albertaPromise) return albertaPromise;
-    albertaPromise = Promise.all([
-      fetch("alberta.json?v=20261018c").then(function (res) {
-        if (!res.ok) throw new Error("alberta");
+  function ensureCatalog(code) {
+    if (catalogReady[code]) return Promise.resolve();
+    if (catalogPromise[code]) return catalogPromise[code];
+    var spec = catalogs[code];
+    if (!spec) return Promise.resolve();
+    catalogPromise[code] = Promise.all([
+      fetch(spec.file).then(function (res) {
+        if (!res.ok) throw new Error(code);
         return res.json();
       }),
-      fetch("alberta-names.json?v=20261016i").then(function (res) {
+      fetch(spec.names).then(function (res) {
         return res.ok ? res.json() : {};
       }).catch(function () { return {}; }),
-      fetch("contours/alberta-index.json?v=20261017c").then(function (res) {
+      fetch(spec.index).then(function (res) {
         return res.ok ? res.json() : { hills: {} };
       }).catch(function () { return { hills: {} }; })
     ]).then(function (pair) {
       adopt(pair[0], pair[1] || {}, (pair[2] && pair[2].hills) || {});
-      albertaReady = true;
+      catalogReady[code] = true;
     }).catch(function () {
-      albertaPromise = null;
-      if (count) count.textContent = "The Alberta drawings did not load.";
+      catalogPromise[code] = null;
+      if (count) count.textContent = "The " + spec.label + " drawings did not load.";
     });
-    return albertaPromise;
+    return catalogPromise[code];
+  }
+
+  function ensureCatalogs(codes) {
+    return Promise.all(codes.map(function (code) { return ensureCatalog(code); }));
   }
 
   var DOT = 8;
@@ -968,7 +997,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261017a").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261018f").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -1026,7 +1055,11 @@
 
   function selectedRings() {
     if (!boundaries) return [];
-    if (province === "all") return ringsFrom("bc", "all").concat(ringsFrom("ab", "all"));
+    if (province === "all") {
+      return ["bc", "ab", "qc"].reduce(function (rings, prov) {
+        return rings.concat(ringsFrom(prov, "all"));
+      }, []);
+    }
     return ringsFrom(province, region);
   }
 
@@ -1041,7 +1074,7 @@
       ringsByKey[key] = rings;
       boundsByKey[key] = boundsOfRings(rings);
     }
-    ["bc", "ab"].forEach(function (prov) {
+    ["bc", "ab", "qc"].forEach(function (prov) {
       var bag = boundaries[prov] || {};
       var all = [];
       Object.keys(bag).forEach(function (id) {
@@ -1051,7 +1084,9 @@
       });
       put(prov + "|all", all);
     });
-    put("all|all", ringsFrom("bc", "all").concat(ringsFrom("ab", "all")));
+    put("all|all", ["bc", "ab", "qc"].reduce(function (rings, prov) {
+      return rings.concat(ringsFrom(prov, "all"));
+    }, []));
   }
 
   function boundsOfRings(rings) {
@@ -1118,7 +1153,7 @@
   function openingBounds() {
     var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
-    if (province === "all") return [[-139.1, 48.2], [-109.95, 60.05]];
+    if (province === "all") return [[-139.1, 45.0], [-57.1, 62.6]];
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
   }
@@ -1583,9 +1618,11 @@
         province = nextProvince;
         region = "all";
         setPressed();
-        if ((province === "ab" || province === "all") && !albertaReady) {
-          if (count) count.textContent = "Loading Alberta…";
-          ensureAlberta().then(function () {
+        var need = province === "all" ? Object.keys(catalogs) : (catalogs[province] ? [province] : []);
+        need = need.filter(function (code) { return !catalogReady[code]; });
+        if (need.length) {
+          if (count) count.textContent = need.length === 1 ? ("Loading " + catalogs[need[0]].label + "…") : "Loading…";
+          ensureCatalogs(need).then(function () {
             apply(false);
             requestAnimationFrame(syncStroke);
           });
@@ -2266,7 +2303,7 @@
     setPressed();
     syncFromHash(true);
     requestAnimationFrame(syncStroke);
-    onIdle(function () { ensureAlberta(); });
+    onIdle(function () { ensureCatalogs(Object.keys(catalogs)); });
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
   });

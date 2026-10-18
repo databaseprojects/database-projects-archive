@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261018e">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261018g">
 </head>
 <body>
   <div class="sheet">
@@ -23,12 +23,13 @@
       <button type="button" class="sh-cart-btn" id="sh-cart-btn" aria-expanded="false" aria-controls="sh-cart-panel">Cart <span class="sh-cart-n">0</span></button>
     </span>
   </div>
-  <p class="sh-note">Line drawings of ski hills in British Columbia and Alberta. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
+  <p class="sh-note">Line drawings of ski hills in British Columbia, Alberta, and Quebec. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
   <div class="sh-tags" role="group" aria-label="Place">
     <span class="sh-prov">
       <button type="button" class="sh-tag" data-sh-province="all" aria-pressed="false">All</button>
       <button type="button" class="sh-tag sh-on" data-sh-province="bc" aria-pressed="true">BC</button>
       <button type="button" class="sh-tag" data-sh-province="ab" aria-pressed="false">Alberta</button>
+      <button type="button" class="sh-tag" data-sh-province="qc" aria-pressed="false">Québec</button>
     </span>
     <span class="sh-sub" data-sh-for="bc">
       <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
@@ -48,6 +49,16 @@
       <button type="button" class="sh-tag" data-sh-region="edmonton-area" aria-pressed="false">Edmonton &amp; Area</button>
       <button type="button" class="sh-tag" data-sh-region="alberta-north" aria-pressed="false">Alberta North</button>
     </span>
+    <span class="sh-sub" data-sh-for="qc" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="outaouais" aria-pressed="false">Outaouais</button>
+      <button type="button" class="sh-tag" data-sh-region="laurentides" aria-pressed="false">Laurentides</button>
+      <button type="button" class="sh-tag" data-sh-region="mauricie" aria-pressed="false">Mauricie</button>
+      <button type="button" class="sh-tag" data-sh-region="cantons-de-lest" aria-pressed="false">Cantons-de-l'Est</button>
+      <button type="button" class="sh-tag" data-sh-region="quebec" aria-pressed="false">Québec</button>
+      <button type="button" class="sh-tag" data-sh-region="saguenay" aria-pressed="false">Saguenay–Lac-Saint-Jean</button>
+      <button type="button" class="sh-tag" data-sh-region="bas-saint-laurent-gaspesie" aria-pressed="false">Bas-Saint-Laurent &amp; Gaspésie</button>
+    </span>
     <span class="sh-kinds" role="group" aria-label="Type">
       <button type="button" class="sh-tag" data-sh-type="downhill" aria-pressed="false">Downhill</button>
       <button type="button" class="sh-tag" data-sh-type="cross-country" aria-pressed="false">Cross-country</button>
@@ -61,6 +72,6 @@
   </div>
   <script src="../js/shared.js?v=20261017g"></script>
   <script src="../js/prints.js?v=20261017c"></script>
-  <script src="../js/ski-hills.js?v=20261018e"></script>
+  <script src="../js/ski-hills.js?v=20261018g"></script>
 </body>
 </html>
