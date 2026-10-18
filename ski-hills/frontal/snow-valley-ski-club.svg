@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-snow-valley-ski-club" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-snow-valley-ski-club" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-snow-valley-ski-club)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-snow-valley-ski-club)">
+<polyline class="sh-frontal-contour" points="1189.8,385.6 1172.9,380.0 1073.6,343.1 951.3,309.8 821.5,288.0 678.7,285.6 649.0,286.7 529.0,293.5 426.9,292.0 384.7,293.4 257.9,267.0 126.5,247.4 68.3,272.9 8.5,307.0 -40.3,343.2 -92.7,378.6 -112.9,390.4 -152.5,412.7" fill="none" stroke="#000" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#000;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1116.0,598.8 989.2,572.4 858.6,551.7 783.2,547.2 718.1,545.9 594.2,558.4 561.6,564.1 482.8,583.3 400.8,613.5 378.5,622.3 326.3,645.0 262.8,678.5 191.9,710.7 170.3,718.4 98.9,738.9 0.9,756.0 -67.9,754.0 -138.9,749.1" fill="none" stroke="#000" stroke-opacity="0.283" stroke-width="0.66" style="fill:none;stroke:#000;stroke-opacity:0.283;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1197.9,1158.5 1186.1,1201.2" fill="none" stroke="#000" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#000;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="942.9,472.9 763.2,743.1" fill="none" stroke="#8a8a8a" style="fill:none;stroke:#8a8a8a;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="264.3,226.3 310.7,442.8 364.9,522.7" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="57.1,647.8 313.7,765.1" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="883.3,404.9 690.2,741.5" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="348.6,197.4 364.9,522.7 360.0,617.1" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="530.3,248.8 570.2,544.4 519.8,700.9" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="617.0,818.4 435.3,819.6" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="322.8,113.0 264.3,226.3 171.2,418.7 104.0,551.0 57.1,647.8" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="762.8,459.3 570.2,544.4" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="171.2,418.7 303.7,578.1" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="104.0,551.0 198.5,629.1 303.7,578.1 360.0,617.1 367.9,716.8" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="443.9,840.8 583.7,837.4" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="624.2,712.9 684.2,638.4 753.1,530.9 836.2,375.9 871.7,306.5" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="448.9,707.5 437.8,618.1 424.0,494.8 409.3,355.0 396.5,235.5 385.7,149.3 377.1,89.6" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="330.7,717.2 83.8,599.1" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+</svg>
