@@ -215,8 +215,64 @@ def wide_box(runs, lifts):
     return min(lons) - pad_lon, min(lats) - pad_lat, max(lons) + pad_lon, max(lats) + pad_lat
 
 
+def raster_has_relief(path):
+    """True when the clip is a real surface, not a nodata field with a few edge values."""
+    if not path.exists() or path.stat().st_size < 1000:
+        return False
+    ds = gdal.Open(str(path))
+    if ds is None:
+        return False
+    band = ds.GetRasterBand(1)
+    nodata = band.GetNoDataValue()
+    w, h = band.XSize, band.YSize
+    raw = band.ReadRaster(0, 0, w, h, w, h, gdal.GDT_Float32) if w and h else None
+    ds = None
+    if not raw:
+        return False
+    vals = struct.unpack(f"<{w * h}f", raw)
+    valid = 0
+    low = None
+    high = None
+    for z in vals:
+        if z != z or z < -100:
+            continue
+        if nodata is not None and z == nodata:
+            continue
+        valid += 1
+        if low is None or z < low:
+            low = z
+        if high is None or z > high:
+            high = z
+    # A Canada clip is full of relief. A miss outside that raster can still
+    # report a range from a handful of pixels, and that is not drawable.
+    if valid < 200 or valid < (w * h) * 0.5 or low is None:
+        return False
+    return (high - low) >= 2
+
+
+def copernicus_sources(box):
+    """One-degree Copernicus GLO-30 tiles that cover a lon/lat box."""
+    minlon, minlat, maxlon, maxlat = box
+    urls = []
+    lat = math.floor(minlat)
+    while lat <= math.floor(maxlat):
+        lon = math.floor(minlon)
+        while lon <= math.floor(maxlon):
+            ns = "N" if lat >= 0 else "S"
+            ew = "E" if lon >= 0 else "W"
+            name = "Copernicus_DSM_COG_10_%s%02d_00_%s%03d_00_DEM" % (ns, abs(lat), ew, abs(lon))
+            url = "/vsicurl/https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/%s/%s.tif" % (name, name)
+            probe = gdal.Open(url)
+            if probe is not None:
+                urls.append(url)
+                probe = None
+            lon += 1
+        lat += 1
+    return urls
+
+
 def ensure_dem(box):
-    if DEM.exists() and DEM.stat().st_size > 1000:
+    if raster_has_relief(DEM):
         return
     minlon, minlat, maxlon, maxlat = box
     src = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
@@ -232,17 +288,18 @@ def ensure_dem(box):
             yRes=0.00035,
             resampleAlg="bilinear",
         )
-        return
+        if raster_has_relief(DEM):
+            return
     except Exception as err:
         print("mrdem failed", err)
-    url = (
-        "https://copernicus-dem-30m.s3.eu-central-1.amazonaws.com/"
-        "Copernicus_DSM_COG_10_N49_00_W123_00_DEM/"
-        "Copernicus_DSM_COG_10_N49_00_W123_00_DEM.tif"
-    )
+    if DEM.exists():
+        DEM.unlink()
+    urls = copernicus_sources(box)
+    if not urls:
+        raise SystemExit("no dem tiles")
     gdal.Warp(
         str(DEM),
-        "/vsicurl/" + url,
+        urls,
         format="GTiff",
         outputBounds=[minlon, minlat, maxlon, maxlat],
         outputBoundsSRS="EPSG:4326",

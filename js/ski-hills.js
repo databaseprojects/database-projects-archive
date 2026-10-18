@@ -79,7 +79,32 @@
       label: "Northwest Territories"
     }
   };
-  var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt"];
+  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd"];
+  var US_STATE_NAMES = {
+    wa: "Washington",
+    or: "Oregon",
+    ca: "California",
+    nv: "Nevada",
+    id: "Idaho",
+    mt: "Montana",
+    wy: "Wyoming",
+    ut: "Utah",
+    co: "Colorado",
+    az: "Arizona",
+    nm: "New Mexico",
+    sd: "South Dakota"
+  };
+  US_STATES.forEach(function (id) {
+    catalogs["us-" + id] = {
+      file: "usa/" + id + ".json?v=20261018l",
+      index: "contours/usa-index.json?v=20261018l",
+      label: US_STATE_NAMES[id]
+    };
+  });
+  var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt", "us"];
+  var canadaProvince = "bc";
+  var canadaRegion = "all";
+  var usaRegion = "all";
   var catalogReady = {};
   var catalogPromise = {};
   var SQUARE = 1000;
@@ -114,9 +139,114 @@
     return decodeURIComponent((location.hash || "").replace(/^#/, "")).trim();
   }
 
+  function countryNow() {
+    if (province === "all") return "all";
+    if (province === "us") return "us";
+    return "ca";
+  }
+
+  function rememberPlace() {
+    if (province === "us") usaRegion = region;
+    else if (province !== "all") {
+      canadaProvince = province;
+      canadaRegion = region;
+    }
+  }
+
+  function placeCatalogs() {
+    if (province === "all") return Object.keys(catalogs);
+    if (province === "us") {
+      if (region === "all") return US_STATES.map(function (id) { return "us-" + id; });
+      return catalogs["us-" + region] ? ["us-" + region] : [];
+    }
+    return catalogs[province] ? [province] : [];
+  }
+
+  function tagOverflow(row) {
+    return Math.max(0, row.scrollWidth - row.clientWidth);
+  }
+
+  function paintTagFade(row) {
+    if (!row) return;
+    if (row.hidden) {
+      row.classList.remove("sh-fade-left");
+      row.classList.remove("sh-fade-right");
+      return;
+    }
+    var max = tagOverflow(row);
+    var left = row.scrollLeft;
+    row.classList.toggle("sh-fade-left", left > 2);
+    row.classList.toggle("sh-fade-right", max > 2 && left < max - 2);
+  }
+
+  function scrollPressedTag(row) {
+    if (!row || row.hidden) return;
+    var on = row.querySelector(".sh-on");
+    if (!on) return;
+    var rowRect = row.getBoundingClientRect();
+    var btnRect = on.getBoundingClientRect();
+    if (!(rowRect.width > 0) || !(btnRect.width > 0)) return;
+    if (btnRect.left >= rowRect.left - 1 && btnRect.right <= rowRect.right + 1) return;
+    var delta = (btnRect.left + btnRect.width / 2) - (rowRect.left + rowRect.width / 2);
+    var left = row.scrollLeft + delta;
+    if (left < 0) left = 0;
+    var max = tagOverflow(row);
+    if (left > max) left = max;
+    if (Math.abs(left - row.scrollLeft) < 2) return;
+    if (row.scrollTo) row.scrollTo({ left: left, behavior: "smooth" });
+    else row.scrollLeft = left;
+  }
+
+  var tagScrollTimer = 0;
+
+  function syncTagScrollers() {
+    if (!tags) return;
+    Array.prototype.forEach.call(tags.querySelectorAll(".sh-scroll"), function (row) {
+      scrollPressedTag(row);
+      paintTagFade(row);
+    });
+  }
+
+  function scheduleTagScroll() {
+    syncTagScrollers();
+    if (tagScrollTimer) window.clearTimeout(tagScrollTimer);
+    tagScrollTimer = window.setTimeout(syncTagScrollers, 340);
+  }
+
+  function bindTagScrollers() {
+    if (!tags || tags._shScroll) return;
+    tags._shScroll = true;
+    Array.prototype.forEach.call(tags.querySelectorAll(".sh-scroll"), function (row) {
+      row.addEventListener("scroll", function () { paintTagFade(row); }, { passive: true });
+    });
+    window.addEventListener("resize", function () {
+      Array.prototype.forEach.call(tags.querySelectorAll(".sh-scroll"), paintTagFade);
+    });
+  }
+
+  function loadPlace(done) {
+    var need = placeCatalogs().filter(function (code) { return !catalogReady[code]; });
+    if (!need.length) {
+      if (done) done();
+      return;
+    }
+    if (count) count.textContent = need.length === 1 ? ("Loading " + catalogs[need[0]].label + "…") : "Loading…";
+    ensureCatalogs(need).then(function () {
+      if (done) done();
+    });
+  }
+
   function setPressed() {
     if (!tags) return;
+    var country = countryNow();
+    tags.setAttribute("data-country", country);
+    Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-country]"), function (btn) {
+      var on = btn.getAttribute("data-sh-country") === country;
+      btn.classList.toggle("sh-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
     Array.prototype.forEach.call(tags.querySelectorAll("[data-sh-province]"), function (btn) {
+      if (btn.hasAttribute("data-sh-country")) return;
       var on = btn.getAttribute("data-sh-province") === province;
       btn.classList.toggle("sh-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
@@ -156,6 +286,8 @@
       pop.classList.toggle("sh-on", popular);
       pop.setAttribute("aria-pressed", popular ? "true" : "false");
     }
+    bindTagScrollers();
+    scheduleTagScroll();
   }
 
   function fold(text) {
@@ -382,7 +514,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018j";
+    return "frontal/" + file + ".svg?v=20261018l";
   }
 
   function frontalArt(hill) {
@@ -456,7 +588,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018j").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018l").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -915,8 +1047,14 @@
     if (slug) {
       var match = hills.filter(function (hill) { return hill.slug === slug; })[0];
       if (match && match.province && match.province !== province) {
+        rememberPlace();
         province = match.province;
         region = "all";
+        if (province === "us") usaRegion = "all";
+        else if (province !== "all") {
+          canadaProvince = province;
+          canadaRegion = "all";
+        }
         setPressed();
       }
     }
@@ -1052,7 +1190,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261018h").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261018l").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -1208,7 +1346,8 @@
   function openingBounds() {
     var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
-    if (province === "all") return [[-141.2, 43.4], [-52.6, 65.6]];
+    if (province === "all") return [[-141.2, 24.4], [-52.6, 65.6]];
+    if (province === "us") return [[-125.0, 24.4], [-66.9, 49.5]];
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
   }
@@ -1672,23 +1811,41 @@
         apply(false);
         return;
       }
+      var nextCountry = btn.getAttribute("data-sh-country");
+      if (nextCountry) {
+        if (nextCountry !== countryNow()) {
+          rememberPlace();
+          if (nextCountry === "all") {
+            province = "all";
+            region = "all";
+          } else if (nextCountry === "us") {
+            province = "us";
+            region = usaRegion || "all";
+          } else {
+            province = canadaProvince || "bc";
+            region = canadaRegion || "all";
+          }
+        }
+        setPressed();
+        loadPlace(function () {
+          apply(false);
+          requestAnimationFrame(syncStroke);
+        });
+        return;
+      }
       var nextProvince = btn.getAttribute("data-sh-province");
       if (nextProvince) {
         province = nextProvince;
         region = "all";
-        setPressed();
-        var need = province === "all" ? Object.keys(catalogs) : (catalogs[province] ? [province] : []);
-        need = need.filter(function (code) { return !catalogReady[code]; });
-        if (need.length) {
-          if (count) count.textContent = need.length === 1 ? ("Loading " + catalogs[need[0]].label + "…") : "Loading…";
-          ensureCatalogs(need).then(function () {
-            apply(false);
-            requestAnimationFrame(syncStroke);
-          });
-          return;
+        if (province !== "all" && province !== "us") {
+          canadaProvince = province;
+          canadaRegion = "all";
         }
-        apply(false);
-        requestAnimationFrame(syncStroke);
+        setPressed();
+        loadPlace(function () {
+          apply(false);
+          requestAnimationFrame(syncStroke);
+        });
         return;
       }
       var nextType = btn.getAttribute("data-sh-type");
@@ -1700,8 +1857,13 @@
       }
       var id = btn.getAttribute("data-sh-region") || "all";
       region = (id === region && id !== "all") ? "all" : id;
+      if (province === "us") usaRegion = region;
+      else if (province !== "all") canadaRegion = region;
       setPressed();
-      apply(false);
+      loadPlace(function () {
+        apply(false);
+        requestAnimationFrame(syncStroke);
+      });
     });
   }
 
@@ -2362,7 +2524,11 @@
     setPressed();
     syncFromHash(true);
     requestAnimationFrame(syncStroke);
-    onIdle(function () { ensureCatalogs(Object.keys(catalogs)); });
+    onIdle(function () {
+      ensureCatalogs(Object.keys(catalogs).filter(function (code) {
+        return code.indexOf("us-") !== 0;
+      }));
+    });
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
   });
