@@ -1894,6 +1894,10 @@
     svg.style.height = "100%";
     svg.setAttribute("width", String(Math.round(w)));
     svg.setAttribute("height", String(Math.round(w)));
+    var plain = lb.querySelector(".sh-slide-plain svg");
+    var fw = svg.clientWidth;
+    var pw = plain ? plain.clientWidth : 0;
+    if (fw > 8 && pw > 8) svg.style.setProperty("--sh-frame-scale", (fw / pw).toFixed(4));
   }
 
   function bindDrag(lb, stage) {
