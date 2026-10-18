@@ -253,14 +253,32 @@
   stroke-width: var(--sh-stroke, 0.3px);
 }
 
+.sh-lb {
+  --sh-run: 1.15px;
+}
+
+/* Whistler only. 0.897 is 22% under the 1.15px run stroke. Framed copies
+   use the same variable, so the ratio holds when the frame scales. */
+.sh-lb[data-sh-hill="whistler-blackcomb"] {
+  --sh-run: 0.897px;
+}
+
 .sh-lb polyline {
   stroke-width: 1.15;
+}
+
+.sh-lb polyline.sh-run {
+  stroke-width: var(--sh-run, 1.15px);
+}
+
+.sh-hill[id="whistler-blackcomb"] polyline.sh-run {
+  stroke-width: calc(var(--sh-stroke, 0.3px) * 0.78);
 }
 
 /* The frame drawing is smaller than the map. non-scaling-stroke would keep
    the same pixel width and look heavier. Scale the run stroke with the frame. */
 .sh-frame-art polyline.sh-run {
-  stroke-width: calc(1.15px * var(--sh-frame-scale, 1));
+  stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1));
 }
 
 .sh-hill polyline.sh-contour {
