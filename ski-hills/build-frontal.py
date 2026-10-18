@@ -125,10 +125,11 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
-    # Mt Norquay only. Automatic facing was 68.6. 248.6 is 180° further,
-    # which turns the bird's-eye drawing upside down. Edit this number.
+    # Mt Norquay only. Automatic facing was 68.6. 248.6 was 180° further,
+    # which turns the bird's-eye drawing upside down. 238.6 is 10° less
+    # than that, which turns the drawing 10° clockwise on screen.
     "mt-norquay": {
-        "facing": 248.6,
+        "facing": 238.6,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -143,6 +144,8 @@ CAMERAS = {
         "views": {"front": 6.7, "back": 190.6},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
+        # Draws both views smaller inside the frame. Same line weight.
+        "frame_scale": 0.92,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     # Lake Louise only. Front faces the main run mass (west of centre) from
@@ -163,6 +166,31 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Camrose Nordic only. The automatic render faced 291.2 (the 111.2
+    # guess, flipped by orient()). Locking 111.2 turns that drawing
+    # upside down. Edit this number.
+    "camrose-nordic-centre": {
+        "facing": 111.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Mount Shark only. Automatic facing was 172.4. 162.4 is 10° less,
+    # which turns the drawing 10° clockwise on screen. full_ground fits
+    # the whole DEM crop. The run window left the peak and the near slope
+    # outside the mesh, so both were projected off the sheet and clipped.
+    "mt-shark": {
+        "facing": 162.4,
+        "full_ground": True,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Uniform shrink around the sheet centre, after the usual fit.
+    # Plan views of Marmot and Nakiska are scaled in the catalog instead.
+    "marmot-basin": {"frame_scale": 0.91},
+    "nakiska": {"frame_scale": 0.95},
+    "kicking-horse-resort": {"frame_scale": 0.95},
     # Whistler only. Run strokes are 22% under the 2.2 used everywhere else.
     # The plan map uses the same ratio in CSS. No facing here, so the
     # automatic camera stays.
@@ -723,7 +751,7 @@ def hillshade_png(grid, paper, sun_dir, sun):
     return base64.b64encode(buf.getvalue()).decode("ascii"), min(greys), max(greys)
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -792,6 +820,22 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     pad_y = (max(rys) - min(rys)) * 0.08
     gx0, gx1 = min(rxs) - pad_x, max(rxs) + pad_x
     gy0, gy1 = min(rys) - pad_y, max(rys) + pad_y
+    if full_ground:
+        # The run window can leave the summit and the near slope outside
+        # the mesh. Those parts then project off the sheet and get clipped.
+        corners = [
+            rot(*metres(lon, lat))
+            for lon, lat in (
+                (minlon, maxlat),
+                (maxlon, maxlat),
+                (minlon, minlat),
+                (maxlon, minlat),
+            )
+        ]
+        gx0 = min(p[0] for p in corners)
+        gx1 = max(p[0] for p in corners)
+        gy0 = min(p[1] for p in corners)
+        gy1 = max(p[1] for p in corners)
 
     # elevation is degrees above the horizon. pitch tilts up from a flat plan.
     pitch_rad = math.radians(90.0 - elevation)
@@ -864,7 +908,11 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
 
     run_pts = run_paper_points()
     fit_label = "inside"
-    if len(run_pts) >= 2:
+    # A full-ground sheet is already fitted to the DEM. Shifting it to
+    # centre the runs would push the restored peak or foreground back off.
+    if full_ground:
+        fit_label = "full-ground"
+    elif len(run_pts) >= 2:
         rx0 = min(p[0] for p in run_pts)
         rx1 = max(p[0] for p in run_pts)
         ry0 = min(p[1] for p in run_pts)
@@ -907,7 +955,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     # hill ends sitting on the caption. Centre the runs between the top
     # margin and the caption band. Terrain and lifts move with the sheet.
     # The shift is clamped so the runs stay inside that box.
-    centered = run_paper_points() if len(run_pts) >= 2 else []
+    centered = [] if full_ground else (run_paper_points() if len(run_pts) >= 2 else [])
     if len(centered) >= 2:
         y0 = min(p[1] for p in centered)
         y1 = max(p[1] for p in centered)
@@ -925,6 +973,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             fit_label += " vcenter %.1f" % vdy
         else:
             fit_label += " vcenter 0"
+
+    if frame_scale != 1:
+        base_paper = paper
+
+        def paper(sx, sy, _base=base_paper, _s=frame_scale):
+            px, py = _base(sx, sy)
+            return 500.0 + (px - 500.0) * _s, 500.0 + (py - 500.0) * _s
+
+        fit_label += " frame %.3f" % frame_scale
 
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
@@ -1127,9 +1184,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         opacity = 0.50 - t * 0.26
         pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in line)
         contour_xml.append(
-            f'<polyline class="sh-frontal-contour" points="{pts}" fill="none" stroke="#000" '
+            f'<polyline class="sh-frontal-contour" points="{pts}" fill="none" stroke="#0a0a0a" '
             f'stroke-opacity="{opacity:.3f}" stroke-width="{CONTOUR_W}" '
-            f'style="fill:none;stroke:#000;stroke-opacity:{opacity:.3f};'
+            f'style="fill:none;stroke:#0a0a0a;stroke-opacity:{opacity:.3f};'
             f'stroke-width:{CONTOUR_W};stroke-dasharray:none;'
             f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
         )
@@ -1251,6 +1308,8 @@ def render_default(slug):
         depth_scale=cam.get("depth_scale", DEPTH_SCALE),
         sun=cam.get("sun"),
         run_width=cam.get("run_width", 2.2),
+        full_ground=cam.get("full_ground", False),
+        frame_scale=cam.get("frame_scale", 1.0),
     )
 
 
@@ -1312,6 +1371,8 @@ def render_views(slug):
             depth_scale=cam.get("depth_scale", DEPTH_SCALE),
             sun=cam.get("sun"),
             run_width=cam.get("run_width", 2.2),
+            full_ground=cam.get("full_ground", False),
+            frame_scale=cam.get("frame_scale", 1.0),
         )
 
 

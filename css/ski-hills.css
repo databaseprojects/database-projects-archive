@@ -291,6 +291,13 @@
   stroke-width: 0.65;
 }
 
+/* Bird's-eye topo only. Ten points toward white from black. The SVG
+   writes the stroke inline, so this has to win. Plan contours stay
+   on .sh-contour. */
+.sh-frontal-contour {
+  stroke: #0a0a0a !important;
+}
+
 .sh-hill polyline.sh-contour-shade,
 .sh-lb polyline.sh-contour-shade {
   fill: none;
@@ -1053,7 +1060,7 @@ html.sh-prints-off .sh-cart-panel {
 .sh-mat {
   box-sizing: border-box;
   padding: 10.5%;
-  background: #fff;
+  background: #f2f2f2;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.13);
 }
 
