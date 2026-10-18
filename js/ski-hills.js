@@ -695,7 +695,39 @@
     "cantons-de-lest": "Cantons-de-l'Est",
     "quebec": "Québec",
     "saguenay": "Saguenay–Lac-Saint-Jean",
-    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie"
+    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie",
+    "georgian-bay": "Georgian Bay",
+    "golden-horseshoe": "Golden Horseshoe",
+    "ontario-highlands": "Ontario Highlands",
+    "northern-ontario": "Northern Ontario",
+    "regina": "Regina",
+    "eastern-saskatchewan": "Eastern Saskatchewan",
+    "northern-saskatchewan": "Northern Saskatchewan",
+    "western-saskatchewan": "Western Saskatchewan",
+    "pembina-valley": "Pembina Valley",
+    "westman": "Westman",
+    "parkland": "Parkland",
+    "northern-manitoba": "Northern Manitoba",
+    "fredericton": "Fredericton",
+    "southeast": "Southeast",
+    "north": "North",
+    "west-coast": "West Coast",
+    "east-coast": "East Coast",
+    "labrador": "Labrador",
+    "mainland": "Mainland",
+    "cape-breton": "Cape Breton",
+    "central": "Central",
+    "eastern": "Eastern",
+    "whitehorse": "Whitehorse",
+    "dawson": "Dawson",
+    "watson-lake": "Watson Lake",
+    "yellowknife": "Yellowknife"
+  };
+
+  // These two BC hills have no stored region. Canadian Rockies is the caption only.
+  var REGION_GAP = {
+    "unnamed-hill": "Canadian Rockies",
+    "unnamed-hill-12": "Canadian Rockies"
   };
 
   var TYPES = {
@@ -704,7 +736,10 @@
   };
 
   function locationText(hill) {
-    return (hill.region && REGIONS[hill.region]) || "";
+    var named = hill.region && REGIONS[hill.region];
+    if (named) return named;
+    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
+    return REGION_GAP[hill.slug] || "";
   }
 
   function gpsText(hill) {
