@@ -193,8 +193,7 @@
     var max = tagOverflow(row);
     if (left > max) left = max;
     if (Math.abs(left - row.scrollLeft) < 2) return;
-    if (row.scrollTo) row.scrollTo({ left: left, behavior: "smooth" });
-    else row.scrollLeft = left;
+    row.scrollLeft = left;
   }
 
   var tagScrollTimer = 0;
