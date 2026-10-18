@@ -185,6 +185,11 @@
 }
 
 .sh-scroll .bk-subrow {
+  display: flex !important;
+  flex-wrap: nowrap;
+  align-items: center;
+  column-gap: 0.25em;
+  min-height: 0;
   white-space: nowrap;
 }
 
