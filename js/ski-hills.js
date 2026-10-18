@@ -4,6 +4,8 @@
   var count = document.querySelector(".sh-count");
   var tags = document.querySelector(".sh-tags");
   var hills = [];
+  var byId = Object.create(null);
+  var bySlug = Object.create(null);
   var province = "bc";
   var region = "all";
   var kind = "all";
@@ -12,6 +14,12 @@
   var shownIds = null;
   var watch = null;
   var catalogs = {
+    bc: {
+      file: "hills.json?v=20261018c",
+      names: "names.json?v=20261016f",
+      index: "contours/index.json?v=20261016w",
+      label: "British Columbia"
+    },
     ab: {
       file: "alberta.json?v=20261018j",
       names: "alberta-names.json?v=20261016i",
@@ -258,13 +266,26 @@
     });
   }
 
+  // One province or one state. All, Canada, and USA-wide stay on the index
+  // until a card actually needs its drawing.
+  function selectedCatalogs() {
+    if (province === "all" || province === "ca") return [];
+    if (province === "us") {
+      if (region === "all") return [];
+      return catalogs["us-" + region] ? ["us-" + region] : [];
+    }
+    return catalogs[province] ? [province] : [];
+  }
+
   function loadPlace(done) {
-    var need = placeCatalogs().filter(function (code) { return !catalogReady[code]; });
+    var need = selectedCatalogs().filter(function (code) { return !catalogReady[code]; });
     if (!need.length) {
       if (done) done();
       return;
     }
-    if (count) count.textContent = need.length === 1 ? ("Loading " + catalogs[need[0]].label + "…") : "Loading…";
+    if (count && !/\d/.test(count.textContent || "")) {
+      count.textContent = need.length === 1 ? ("Loading " + catalogs[need[0]].label + "…") : "Loading…";
+    }
     ensureCatalogs(need).then(function () {
       if (done) done();
     });
@@ -339,7 +360,8 @@
   }
 
   function runTotal(hill) {
-    return (hill.runs && hill.runs.length) || 0;
+    if (hill.runs && hill.runs.length) return hill.runs.length;
+    return hill._runCount || 0;
   }
 
   // popularBoost changes Most popular order only. Captions still count runs.
@@ -445,7 +467,7 @@
     return holder.querySelector("svg");
   }
 
-  function draw(hill) {
+  function shell(hill) {
     var card = document.createElement("a");
     card.className = "sh-hill";
     card.id = hill.slug;
@@ -453,13 +475,15 @@
     card.setAttribute("data-sh-id", hill.id);
     card.setAttribute("data-sh-region", hill.region || "");
     card.setAttribute("aria-label", hill.name || "Unnamed hill");
-    var svg = drawingSvg(hill);
-    card.appendChild(svg);
+    var holder = document.createElementNS(NS, "svg");
+    holder.setAttribute("viewBox", "0 0 1000 1000");
+    holder.setAttribute("preserveAspectRatio", "xMidYMid slice");
+    holder.setAttribute("aria-hidden", "true");
+    card.appendChild(holder);
     var name = document.createElement("span");
     name.className = "sh-hill-name";
     name.textContent = hill.name || "Unnamed hill";
     card.appendChild(name);
-    card._shift = fitArt(svg, SQUARE);
     card._hill = hill;
     card.addEventListener("pointerenter", function (e) {
       if (e.pointerType === "touch") return;
@@ -472,6 +496,33 @@
     hill.el = card;
     card.hidden = !matches(hill);
     grid.appendChild(card);
+    if (watch) watch.observe(card);
+  }
+
+  function catalogCode(hill) {
+    if (hill.catalog) return hill.catalog;
+    if ((hill.province || "bc") === "us") return "us-" + (hill.region || "");
+    return hill.province || "bc";
+  }
+
+  function ensureDrawn(hill) {
+    if (!hill || hill._drawn) return Promise.resolve(hill);
+    if (hill._drawPromise) return hill._drawPromise;
+    hill._drawPromise = ensureCatalog(catalogCode(hill)).then(function () {
+      if (!hill._geom || !hill.el || hill._drawn) return hill;
+      var svg = drawingSvg(hill);
+      var holder = hill.el.querySelector("svg");
+      if (holder) hill.el.replaceChild(svg, holder);
+      else hill.el.insertBefore(svg, hill.el.firstChild);
+      hill.el._shift = fitArt(svg, SQUARE, hill._bounds);
+      hill._drawn = true;
+      loadContour(hill.el);
+      requestAnimationFrame(syncStroke);
+      return hill;
+    }).catch(function () {
+      hill._drawPromise = null;
+    });
+    return hill._drawPromise;
   }
 
   function boundsOf(svg) {
@@ -505,8 +556,8 @@
     }).join(" ");
   }
 
-  function fitArt(svg, limitY) {
-    var box = boundsOf(svg);
+  function fitArt(svg, limitY, box) {
+    if (!box) box = boundsOf(svg);
     var pad = 40;
     var limit = limitY == null ? DRAW : limitY;
     if (!box) return { s: 1, dx: 0, dy: 0, clip: limit };
@@ -615,10 +666,11 @@
     svg.insertBefore(g, svg.firstChild);
   }
 
-  var contourIndex = null;
+  var contourIndex = {};
 
   function loadContour(card) {
-    if (!card || card._contourState || !contourIndex) return;
+    if (!card || card._contourState) return;
+    if (card._hill && !card._hill._geom) return;
     var meta = contourIndex[card.id];
     if (!meta) {
       card._contourState = "none";
@@ -1068,7 +1120,7 @@
     loadContour(card);
     var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
-    var shift = fitArt(big, DRAW);
+    var shift = fitArt(big, DRAW, card._hill && card._hill._bounds);
     writeCaption(big, card._hill);
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift, false);
@@ -1108,47 +1160,113 @@
     });
   }
 
-  function syncFromHash(scroll) {
+  function finishHash(scroll) {
     var slug = slugFromHash();
-    var known = !slug || hills.some(function (hill) { return hill.slug === slug && hill.el; });
-    var pendingCatalogs = Object.keys(catalogs).filter(function (code) { return !catalogReady[code]; });
-    if (!known && pendingCatalogs.length) {
-      ensureCatalogs(pendingCatalogs).then(function () { syncFromHash(scroll); });
-      return;
-    }
-    if (slug) {
-      var match = hills.filter(function (hill) { return hill.slug === slug; })[0];
-      if (match && match.province && match.province !== province) {
-        rememberPlace();
-        province = match.province;
-        region = "all";
-        if (province === "us") usaRegion = "all";
-        else if (province !== "all") {
-          canadaProvince = province;
-          canadaRegion = "all";
-        }
-        setPressed();
-      }
-    }
     apply(scroll);
     var from = pendingFrom;
     pendingFrom = null;
     var card = slug ? document.getElementById(slug) : null;
-    if (card && card.classList.contains("sh-hill")) openLb(card, from);
+    if (card && card.classList.contains("sh-hill") && card.querySelector("svg")) openLb(card, from);
     else hideLb();
   }
 
+  function syncFromHash(scroll) {
+    var slug = slugFromHash();
+    var match = slug ? bySlug[slug] : null;
+    if (match && match.province && match.province !== province) {
+      rememberPlace();
+      province = match.province;
+      region = "all";
+      if (province === "us") usaRegion = "all";
+      else if (province !== "all") {
+        canadaProvince = province;
+        canadaRegion = "all";
+      }
+      setPressed();
+    }
+    if (match && (!match._geom || !match._drawn)) {
+      ensureDrawn(match).then(function () {
+        if (slugFromHash() !== slug) return;
+        finishHash(scroll);
+      });
+      apply(false);
+      return;
+    }
+    finishHash(scroll);
+  }
+
+  function remember(hill) {
+    if (byId[hill.id]) return byId[hill.id];
+    hill._ord = hills.length;
+    hills.push(hill);
+    byId[hill.id] = hill;
+    if (hill.slug) bySlug[hill.slug] = hill;
+    return hill;
+  }
+
+  function adoptIndex(rows) {
+    (rows || []).forEach(function (row) {
+      if (!row || !row.id || byId[row.id]) return;
+      var box = row.bounds;
+      var hill = {
+        id: row.id,
+        slug: row.slug,
+        name: row.name,
+        region: row.region || null,
+        province: row.province || "bc",
+        lat: row.lat,
+        lon: row.lon,
+        type: row.type,
+        catalog: row.catalog,
+        _runCount: row.runs || 0,
+        _bounds: box && box.length === 4 ? { minX: box[0], minY: box[1], maxX: box[2], maxY: box[3] } : null
+      };
+      if (row.popularBoost) hill.popularBoost = row.popularBoost;
+      remember(hill);
+      shell(hill);
+    });
+  }
+
   function adopt(data, overrides, index) {
-    (data.hills || []).forEach(function (hill) {
-      if (!hill.runs || !hill.runs.length) return;
-      if (!hill.province) hill.province = "bc";
-      var row = overrides[hill.id];
+    (data.hills || []).forEach(function (full) {
+      if (!full.runs || !full.runs.length) return;
+      if (!full.province) full.province = "bc";
+      var hill = byId[full.id];
+      if (hill && hill._geom) return;
+      if (!hill) {
+        hill = {
+          id: full.id,
+          slug: full.slug,
+          name: full.name,
+          region: full.region,
+          province: full.province,
+          lat: full.lat,
+          lon: full.lon,
+          type: full.type,
+          _runCount: full.runs.length
+        };
+        remember(hill);
+        shell(hill);
+      }
+      var bounds = hill._bounds;
+      var ord = hill._ord;
+      var el = hill.el;
+      var catalog = hill.catalog;
+      Object.keys(full).forEach(function (key) {
+        hill[key] = full[key];
+      });
+      hill._bounds = bounds;
+      hill._ord = ord;
+      hill.el = el;
+      if (catalog) hill.catalog = catalog;
+      hill._runCount = full.runs.length;
+      hill._geom = true;
+      var row = overrides[full.id];
       if (row && row.name) hill.name = row.name;
-      if (hills.some(function (have) { return have.id === hill.id; })) return;
-      hill._ord = hills.length;
-      hills.push(hill);
-      draw(hill);
-      if (watch && hill.el) watch.observe(hill.el);
+      if (!hill.el) return;
+      hill.el.setAttribute("aria-label", hill.name || "Unnamed hill");
+      var nameEl = hill.el.querySelector(".sh-hill-name");
+      if (nameEl) nameEl.textContent = hill.name || "Unnamed hill";
     });
     Object.keys(index || {}).forEach(function (slug) {
       contourIndex[slug] = index[slug];
@@ -1160,14 +1278,17 @@
     if (catalogPromise[code]) return catalogPromise[code];
     var spec = catalogs[code];
     if (!spec) return Promise.resolve();
+    var namesFetch = spec.names
+      ? fetch(spec.names).then(function (res) {
+          return res.ok ? res.json() : {};
+        }).catch(function () { return {}; })
+      : Promise.resolve({});
     catalogPromise[code] = Promise.all([
       fetch(spec.file).then(function (res) {
         if (!res.ok) throw new Error(code);
         return res.json();
       }),
-      fetch(spec.names).then(function (res) {
-        return res.ok ? res.json() : {};
-      }).catch(function () { return {}; }),
+      namesFetch,
       fetch(spec.index).then(function (res) {
         return res.ok ? res.json() : { hills: {} };
       }).catch(function () { return { hills: {} }; })
@@ -1184,8 +1305,6 @@
   function ensureCatalogs(codes) {
     return Promise.all(codes.map(function (code) { return ensureCatalog(code); }));
   }
-
-  var DOT = 8;
 
   function syncMapButton() {
     var btn = document.getElementById("sh-map-btn");
@@ -1212,8 +1331,14 @@
       return;
     }
     tip.hidden = false;
-    tip.textContent = dot.dataset.name || "";
-    var r = dot.getBoundingClientRect();
+    tip.textContent = dot.name || (dot.dataset && dot.dataset.name) || "";
+    var r = dot.getBoundingClientRect ? dot.getBoundingClientRect() : {
+      left: dot.x,
+      top: dot.y,
+      right: dot.x + (dot.w || 8),
+      width: dot.w || 8,
+      height: dot.h || 8
+    };
     var tw = tip.offsetWidth || 80;
     var left = r.right + 8;
     var top = r.top + r.height / 2 - 10;
@@ -1225,17 +1350,30 @@
   }
 
   function dotUnder(x, y) {
-    if (!mapField || pinsHeld) return null;
+    if (!shBasemap || !mapField || !(shBasemap.getLayer && shBasemap.getLayer("sh-dots"))) return null;
+    var canvas = shBasemap.getCanvas && shBasemap.getCanvas();
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var px = x - rect.left;
+    var py = y - rect.top;
     var hits = [];
-    Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
-      if (el.hidden) return;
-      var r = el.getBoundingClientRect();
-      if (!r.width) return;
-      var cx = r.left + r.width / 2;
-      var cy = r.top + r.height / 2;
-      if (Math.hypot(x - cx, y - cy) <= r.width / 2 + 4) hits.push(el);
-    });
-    return hits.length ? hits[hits.length - 1] : null;
+    try {
+      hits = shBasemap.queryRenderedFeatures([[px - 8, py - 8], [px + 8, py + 8]], { layers: ["sh-dots"] });
+    } catch (err) {
+      return null;
+    }
+    if (!hits.length) return null;
+    var feature = hits[0];
+    var coords = feature.geometry && feature.geometry.coordinates;
+    var point = coords ? shBasemap.project(coords) : { x: px, y: py };
+    return {
+      slug: feature.properties.slug,
+      name: feature.properties.name,
+      x: rect.left + point.x - 4,
+      y: rect.top + point.y - 4,
+      w: 8,
+      h: 8
+    };
   }
 
   function ensureMapLibre() {
@@ -1415,6 +1553,7 @@
     } else {
       src.setData(data);
     }
+    ensureDotLayer();
     return true;
   }
 
@@ -1486,109 +1625,72 @@
 
   function revealMap() {
     cancelMapFade();
-    if (!mapField || !mapField.isConnected || mapField.classList.contains("sh-map-in")) return;
-    projectDots();
+    if (!mapField || !mapField.isConnected) return;
     mapField.classList.add("sh-map-in");
-    var token = ++pinToken;
-    window.setTimeout(function () {
-      if (token !== pinToken || view !== "map") return;
-      pinsHeld = false;
-      pinDrop();
-    }, 300);
+    ensureDotLayer();
   }
 
-  function armMapFade() {
-    cancelMapFade();
-    mapFadeTimer = window.setTimeout(revealMap, 1500);
+  function dotColor(type) {
+    if (type === "downhill") return "#1a4f9c";
+    if (type === "cross-country") return "#1b7a32";
+    return "#111111";
   }
 
-  function ensureDots() {
-    if (!mapField) return;
+  function dotCollection() {
+    var features = [];
     hills.forEach(function (hill) {
-      if (hill.dot || typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
-      var el = document.createElement("span");
-      el.className = "sh-dot" + (hill.type ? " sh-dot-" + hill.type : "");
-      el.dataset.slug = hill.slug;
-      el.dataset.name = hill.name || "Unnamed hill";
-      el.setAttribute("aria-hidden", "true");
-      el.hidden = true;
-      mapField.appendChild(el);
-      hill.dot = el;
+      if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
+      if (!onMap(hill)) return;
+      features.push({
+        type: "Feature",
+        properties: {
+          slug: hill.slug,
+          name: hill.name || "Unnamed hill",
+          fade: Number(dotFade(hill)),
+          color: dotColor(hill.type)
+        },
+        geometry: { type: "Point", coordinates: [hill.lon, hill.lat] }
+      });
     });
+    return { type: "FeatureCollection", features: features };
   }
 
-  function clearDots() {
-    hills.forEach(function (hill) {
-      if (hill.dot && hill.dot.parentNode) hill.dot.parentNode.removeChild(hill.dot);
-      hill.dot = null;
-    });
-  }
-
-  function pinPlaying(el) {
-    return !!(el.getAnimations && el.getAnimations().some(function (an) {
-      return an.id === "sh-pin" && an.playState !== "finished";
-    }));
-  }
-
-  function projectDots() {
-    if (!shBasemap || !mapField) return;
-    hills.forEach(function (hill) {
-      var el = hill.dot;
-      if (!el || typeof hill.lon !== "number" || typeof hill.lat !== "number") return;
-      if (!onMap(hill)) {
-        el.hidden = true;
-        return;
-      }
-      var fade = dotFade(hill);
-      el.dataset.fade = fade;
-      var p = shBasemap.project([hill.lon, hill.lat]);
-      el.style.left = (p.x - DOT / 2).toFixed(1) + "px";
-      el.style.top = (p.y - DOT / 2).toFixed(1) + "px";
-      if (pinsHeld) {
-        el.hidden = true;
-        return;
-      }
-      if (pinPlaying(el)) return;
-      if (el.getAnimations) {
-        el.getAnimations().forEach(function (an) {
-          if (an.id === "sh-pin") an.cancel();
-        });
-      }
-      el.style.opacity = fade;
-      el.style.transform = "";
-      el.hidden = false;
-    });
-  }
-
-  function pinDrop() {
-    if (!mapField) return;
-    var dots = [];
-    hills.forEach(function (hill) {
-      var el = hill.dot;
-      if (!el || !onMap(hill)) return;
-      var fade = dotFade(hill);
-      el.dataset.fade = fade;
-      el.hidden = false;
-      el.style.opacity = "0";
-      dots.push(el);
-    });
-    var n = dots.length;
-    var span = n > 1 ? Math.min(800, (n - 1) * 28) : 0;
-    dots.forEach(function (el, i) {
-      var delay = n > 1 ? span * i / (n - 1) : 0;
-      var fade = Number(el.dataset.fade);
-      if (!isFinite(fade)) fade = 1;
-      var anim = el.animate([
-        { transform: "translateY(-40px)", opacity: 0 },
-        { transform: "translateY(2px)", opacity: fade, offset: 0.84 },
-        { transform: "translateY(0)", opacity: fade }
-      ], { duration: 350, delay: delay, easing: "cubic-bezier(0.2, 0.8, 0.25, 1)", fill: "both" });
-      anim.id = "sh-pin";
-      anim.onfinish = function () {
-        el.style.opacity = el.dataset.fade || "1";
-        anim.cancel();
-      };
-    });
+  function ensureDotLayer() {
+    if (!shBasemap || !(shBasemap.isStyleLoaded && shBasemap.isStyleLoaded())) return;
+    var data = dotCollection();
+    var src = shBasemap.getSource("sh-dots");
+    if (!src) {
+      shBasemap.addSource("sh-dots", { type: "geojson", data: data });
+      shBasemap.addLayer({
+        id: "sh-dot-shadow",
+        type: "circle",
+        source: "sh-dots",
+        paint: {
+          "circle-radius": 5,
+          "circle-color": "rgba(0, 0, 0, 0.35)",
+          "circle-blur": 0.7,
+          "circle-opacity": ["get", "fade"],
+          "circle-translate": [0, 0.5]
+        }
+      });
+      shBasemap.addLayer({
+        id: "sh-dots",
+        type: "circle",
+        source: "sh-dots",
+        paint: {
+          "circle-radius": 4,
+          "circle-color": ["get", "color"],
+          "circle-opacity": ["get", "fade"],
+          "circle-stroke-width": 1.5,
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-opacity": ["get", "fade"]
+        }
+      });
+    } else {
+      src.setData(data);
+    }
+    if (shBasemap.getLayer("sh-dot-shadow")) shBasemap.moveLayer("sh-dot-shadow");
+    if (shBasemap.getLayer("sh-dots")) shBasemap.moveLayer("sh-dots");
   }
 
   function fadeCards(outward) {
@@ -1627,16 +1729,12 @@
   function onMapResize() {
     if (view !== "map" || !mapField) return;
     sizeMap();
-    if (shBasemap) {
-      shBasemap.resize();
-      projectDots();
-    }
+    if (shBasemap) shBasemap.resize();
   }
 
   function syncMap() {
     if (view !== "map" || !mapField) return;
-    ensureDots();
-    projectDots();
+    ensureDotLayer();
     var matched = [];
     hills.forEach(function (hill) {
       if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
@@ -1683,7 +1781,6 @@
       shBasemap.remove();
       shBasemap = null;
     }
-    clearDots();
     if (mapField && mapField.parentNode) mapField.parentNode.removeChild(mapField);
     mapField = null;
     placeKey = "";
@@ -1754,7 +1851,8 @@
       if (!dot) return;
       e.preventDefault();
       showTip(null);
-      showHill(dot.dataset.slug, rectBox(dot.getBoundingClientRect()));
+      var box = dot.getBoundingClientRect ? dot.getBoundingClientRect() : { left: dot.x, top: dot.y, width: dot.w || 8, height: dot.h || 8 };
+      showHill(dot.slug || (dot.dataset && dot.dataset.slug), rectBox(box));
     });
     if (!mapResizeBound) {
       mapResizeBound = true;
@@ -1769,7 +1867,6 @@
     el.className = "sh-map-tiles";
     el.setAttribute("aria-hidden", "true");
     field.insertBefore(el, field.firstChild);
-    armMapFade();
     var token = {};
     field._shToken = token;
     loadPositron().then(function (style) {
@@ -1796,19 +1893,11 @@
         if (field._shToken !== token) return;
         map.resize();
         syncMap();
-        function whenTiles() {
-          if (field._shToken !== token) return;
-          if (map.areTilesLoaded && !map.areTilesLoaded()) return;
-          revealMap();
-        }
-        whenTiles();
-        map.on("idle", whenTiles);
+        revealMap();
       });
       map.on("move", function () {
-        projectDots();
         showTip(null);
       });
-      map.on("resize", projectDots);
       map.on("moveend", syncMock);
     }).catch(function () {
       if (field._shToken === token) revealMap();
@@ -1818,7 +1907,6 @@
   function enterMap() {
     if (view === "map") return;
     view = "map";
-    pinsHeld = true;
     placeKey = "";
     didFit = false;
     lastPan = "";
@@ -1832,7 +1920,6 @@
       grid.classList.add("sh-held");
     }, 220);
     buildMapField();
-    ensureDots();
     Promise.all([
       ensureMapLibre(),
       ensureBoundaries().catch(function () { return null; })
@@ -1858,16 +1945,8 @@
       if (animate !== false) fadeCards(false);
       syncMock();
     };
-    if (animate !== false && mapField) {
-      Array.prototype.forEach.call(mapField.querySelectorAll(".sh-dot"), function (el) {
-        if (el.hidden) return;
-        el.animate([
-          { transform: "translateY(0)", opacity: 1 },
-          { transform: "translateY(-36px)", opacity: 0 }
-        ], { duration: 200, easing: "ease-in", fill: "forwards" });
-      });
-      window.setTimeout(finish, 180);
-    } else finish();
+    if (animate !== false && mapField) window.setTimeout(finish, 180);
+    else finish();
   }
 
   var mapBtn = document.getElementById("sh-map-btn");
@@ -1958,7 +2037,7 @@
       if (!card) return;
       e.preventDefault();
       var svg = card.querySelector("svg");
-      showHill(card.id, rectBox(svg ? svg.getBoundingClientRect() : null));
+      showHill(card.id, rectBox(svg ? svg.getBoundingClientRect() : card.getBoundingClientRect()));
     });
   }
 
@@ -2156,7 +2235,7 @@
     var card = hill && hill.el;
     var svg = drawingSvg(hill);
     svg.setAttribute("class", "sh-card");
-    var shift = fitArt(svg, DRAW);
+    var shift = fitArt(svg, DRAW, hill && hill._bounds);
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
     var art = raised ? frontalArt(hill) : "";
@@ -2587,32 +2666,25 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  Promise.all([
-    fetch("hills.json?v=20261018c").then(function (res) {
-      if (!res.ok) throw new Error("hills");
-      return res.json();
-    }),
-    fetch("names.json?v=20261016f").then(function (res) {
-      return res.ok ? res.json() : {};
-    }).catch(function () { return {}; }),
-    fetch("contours/index.json?v=20261016w").then(function (res) {
-      return res.ok ? res.json() : { hills: {} };
-    }).catch(function () { return { hills: {} }; })
-  ]).then(function (pair) {
-    contourIndex = (pair[2] && pair[2].hills) || {};
+  fetch("hill-index.json?v=20261018q").then(function (res) {
+    if (!res.ok) throw new Error("index");
+    return res.json();
+  }).then(function (index) {
     watch = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) loadContour(entry.target);
+        if (!entry.isIntersecting) return;
+        var hill = entry.target._hill;
+        if (!hill) return;
+        if (hill._drawn) loadContour(entry.target);
+        else ensureDrawn(hill);
       });
-    }, { rootMargin: "280px" });
-    adopt(pair[0], pair[1] || {}, {});
+    }, { rootMargin: "120px" });
+    adoptIndex(index.hills || []);
     setPressed();
-    syncFromHash(true);
-    requestAnimationFrame(syncStroke);
-    onIdle(function () {
-      ensureCatalogs(Object.keys(catalogs).filter(function (code) {
-        return code.indexOf("us-") !== 0;
-      }));
+    apply(false);
+    loadPlace(function () {
+      syncFromHash(true);
+      requestAnimationFrame(syncStroke);
     });
   }).catch(function () {
     if (count) count.textContent = "The hill drawings did not load.";
