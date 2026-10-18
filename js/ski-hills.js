@@ -313,7 +313,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018c";
+    return "frontal/" + file + ".svg?v=20261018e";
   }
 
   function frontalArt(hill) {
@@ -387,7 +387,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261016w").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018e").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -784,6 +784,7 @@
     lb.setAttribute("aria-label", name ? name.textContent : "Ski hill");
     lb._card = card;
     lb._from = from;
+    if (card._hill && card._hill.slug) lb.setAttribute("data-sh-hill", card._hill.slug);
     loadContour(card);
     var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
@@ -1991,9 +1992,6 @@
     if (!art) return;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-frontal");
-    // Whistler's runs sit low in the square. Shift only this drawing up so
-    // it centres in the area above the caption. The caption stays put.
-    if (hill && hill.slug === "whistler-blackcomb") g.setAttribute("transform", "translate(0 -80)");
     // The frontal file is already fitted to the caption band. Mounting it
     // 1:1 lets the topo meet the card edge; the old 0.88 scale left a white
     // gutter between the drawing and the dark lightbox.
