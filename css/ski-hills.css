@@ -257,6 +257,12 @@
   stroke-width: 1.15;
 }
 
+/* The frame drawing is smaller than the map. non-scaling-stroke would keep
+   the same pixel width and look heavier. Scale the run stroke with the frame. */
+.sh-frame-art polyline.sh-run {
+  stroke-width: calc(1.15px * var(--sh-frame-scale, 1));
+}
+
 .sh-hill polyline.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: var(--sh-contour, 0.17px);
