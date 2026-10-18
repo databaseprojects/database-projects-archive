@@ -13,7 +13,7 @@
   var watch = null;
   var catalogs = {
     ab: {
-      file: "alberta.json?v=20261018c",
+      file: "alberta.json?v=20261018j",
       names: "alberta-names.json?v=20261016i",
       index: "contours/alberta-index.json?v=20261017c",
       label: "Alberta"
@@ -382,7 +382,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018h";
+    return "frontal/" + file + ".svg?v=20261018j";
   }
 
   function frontalArt(hill) {
@@ -456,7 +456,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018h").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018j").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
