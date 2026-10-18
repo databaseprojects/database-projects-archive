@@ -808,7 +808,33 @@ def hillshade_png(grid, paper, sun_dir, sun):
     return base64.b64encode(buf.getvalue()).decode("ascii"), min(greys), max(greys)
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0):
+def edge_fit(pts, margin, right=1000.0, bottom=880.0):
+    """Centre the drawing, then zoom out until every side clears `margin`.
+
+    The caption covers the bottom of the square, so the lower frame edge
+    is `bottom` (880), not 1000. Returns (scale, cx, cy, tcx, tcy).
+    Scale stays 1 and the centre is unchanged when the drawing is already
+    clear of the margin. Scale is below 1 only as far as the margin needs.
+    """
+    minx = min(p[0] for p in pts)
+    maxx = max(p[0] for p in pts)
+    miny = min(p[1] for p in pts)
+    maxy = max(p[1] for p in pts)
+    cx = (minx + maxx) / 2.0
+    cy = (miny + maxy) / 2.0
+    if min(minx, right - maxx, miny, bottom - maxy) >= margin - 0.05:
+        return 1.0, cx, cy, cx, cy
+    tcx = right / 2.0
+    tcy = bottom / 2.0
+    half_w = max((maxx - minx) / 2.0, 1.0)
+    half_h = max((maxy - miny) / 2.0, 1.0)
+    avail_w = max((right - 2.0 * margin) / 2.0, 1.0)
+    avail_h = max((bottom - 2.0 * margin) / 2.0, 1.0)
+    scale = min(1.0, avail_w / half_w, avail_h / half_h)
+    return scale, cx, cy, tcx, tcy
+
+
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -1039,6 +1065,50 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             return 500.0 + (px - 500.0) * _s, 500.0 + (py - 500.0) * _s
 
         fit_label += " frame %.3f" % frame_scale
+
+    # US sheets pass a margin. Zoom the whole drawing out, about its own
+    # centre, until the runs and lifts clear that margin. Stroke widths
+    # are applied later in user units, so the line weight does not change.
+    # Canada leaves edge_margin at 0 and skips this.
+    if edge_margin > 0:
+        # Stray lift terminals can sit thousands of units off the hill.
+        # They must not decide the frame. Keep lifts that sit on the runs.
+        run_box = []
+        lift_box = []
+        for group, z_add, bucket in (
+            (runs, RUN_CLEAR, run_box),
+            (lifts, LIFT_CLEAR, lift_box),
+        ):
+            for item in group:
+                for line in item["lines"]:
+                    for lon, lat in line:
+                        z = sample(arr, gt, lon, lat)
+                        if z is None:
+                            continue
+                        xr, yr = rot(*metres(lon, lat))
+                        bucket.append(paper(*project_xy(xr, yr, z + z_add)))
+        drawn_pts = run_box
+        if len(run_box) >= 2:
+            rx0 = min(p[0] for p in run_box)
+            rx1 = max(p[0] for p in run_box)
+            ry0 = min(p[1] for p in run_box)
+            ry1 = max(p[1] for p in run_box)
+            pad = 80.0
+            lift_box = [
+                p for p in lift_box
+                if rx0 - pad <= p[0] <= rx1 + pad and ry0 - pad <= p[1] <= ry1 + pad
+            ]
+            drawn_pts = run_box + lift_box
+        if len(drawn_pts) >= 2:
+            margin_s, mcx, mcy, tcx, tcy = edge_fit(drawn_pts, edge_margin)
+            if margin_s < 0.999 or abs(tcx - mcx) > 0.5 or abs(tcy - mcy) > 0.5:
+                base_paper = paper
+
+                def paper(sx, sy, _base=base_paper, _s=margin_s, _cx=mcx, _cy=mcy, _tx=tcx, _ty=tcy):
+                    px, py = _base(sx, sy)
+                    return _tx + (px - _cx) * _s, _ty + (py - _cy) * _s
+
+                fit_label += " margin %.3f" % margin_s
 
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
@@ -1332,7 +1402,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     return az
 
 
-def render_default(slug):
+def render_default(slug, edge_margin=0.0):
     """Cypress elevation and depth. A hand-set facing is locked; otherwise auto."""
     global GEOM, DEM
     GEOM = Path(f"/tmp/{slug}-geom.json")
@@ -1367,6 +1437,7 @@ def render_default(slug):
         run_width=cam.get("run_width", 2.2),
         full_ground=cam.get("full_ground", False),
         frame_scale=cam.get("frame_scale", 1.0),
+        edge_margin=edge_margin,
     )
 
 
@@ -1398,7 +1469,7 @@ def render_cypress():
     )
 
 
-def render_views(slug):
+def render_views(slug, edge_margin=0.0):
     """Write one locked frontal SVG per hand-set view, named {slug}-{view}.svg."""
     global GEOM, DEM
     GEOM = Path(f"/tmp/{slug}-geom.json")
@@ -1430,6 +1501,7 @@ def render_views(slug):
             run_width=cam.get("run_width", 2.2),
             full_ground=cam.get("full_ground", False),
             frame_scale=cam.get("frame_scale", 1.0),
+            edge_margin=edge_margin,
         )
 
 
@@ -1454,14 +1526,19 @@ def main():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        for slug in sys.argv[1:]:
+    argv = sys.argv[1:]
+    edge_margin = 0.0
+    if argv and argv[0] == "--edge-margin":
+        edge_margin = float(argv[1])
+        argv = argv[2:]
+    if argv:
+        for slug in argv:
             cam = CAMERAS.get(slug) or {}
             if cam.get("views"):
-                render_views(slug)
+                render_views(slug, edge_margin=edge_margin)
             elif slug == "cypress-mountain":
                 render_cypress()
             else:
-                render_default(slug)
+                render_default(slug, edge_margin=edge_margin)
     else:
         main()

@@ -273,6 +273,45 @@ def clip_copernicus(box, dest):
     )
 
 
+def clip_copernicus_northup(box, dest):
+    """Same tiles as clip_copernicus, kept on lon/lat axes.
+
+    EPSG:3979 is centred on Canada. A US window warped into it is rotated
+    against the plan drawing, so the top-left and bottom-right of the
+    square fall outside the raster. An equirectangular clip lines the
+    raster up with the card.
+    """
+    minlon, minlat, maxlon, maxlat = box
+    urls = []
+    lat = math.floor(minlat)
+    while lat <= math.floor(maxlat):
+        lon = math.floor(minlon)
+        while lon <= math.floor(maxlon):
+            urls.append("/vsicurl/" + copernicus_url(lat, lon))
+            lon += 1
+        lat += 1
+    mid = (minlat + maxlat) / 2
+    cos = max(math.cos(mid * math.pi / 180), 0.2)
+    gdal.Warp(
+        str(dest),
+        urls,
+        format="GTiff",
+        outputBounds=[minlon, minlat, maxlon, maxlat],
+        outputBoundsSRS="EPSG:4326",
+        dstSRS="EPSG:4326",
+        xRes=30 / (111320 * cos),
+        yRes=30 / 110540,
+        resampleAlg="bilinear",
+    )
+
+
+def geographic():
+    srs = osr.SpatialReference()
+    srs.ImportFromEPSG(4326)
+    srs.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
+    return osr.CoordinateTransformation(srs, srs)
+
+
 def raster_range(path):
     ds = gdal.Open(str(path))
     if ds is None:
@@ -356,12 +395,65 @@ def store_lines(lines, to_px, window):
     return kept, points
 
 
+def render_us(task):
+    """North-up Copernicus contours for one US hill. Canada never calls this."""
+    slug = task["slug"]
+    to_px, to_ll, _span, _box = projection(task["runs"])
+    wide, pixel_window = square_frame(parse_stored(task["drawn"]), to_ll)
+    tif = Path("/tmp") / f"sh-dem-{slug}.tif"
+    back_hill = geographic()
+    try:
+        clip_copernicus_northup(wide, tif)
+        rng = raster_range(tif)
+    except RuntimeError as exc:
+        if tif.exists():
+            tif.unlink()
+        return {"slug": slug, "skipped": "no elevation", "error": str(exc)}
+    if rng is None:
+        if tif.exists():
+            tif.unlink()
+        return {"slug": slug, "skipped": "no elevation"}
+    recorded = task.get("recorded")
+    drop = task.get("drop")
+    if recorded in (20, 50):
+        interval = recorded
+    else:
+        interval = 50 if isinstance(drop, (int, float)) and drop > 1000 else 20
+    try:
+        raw = contour_lines(tif, interval, back_hill)
+    except RuntimeError as exc:
+        if tif.exists():
+            tif.unlink()
+        return {"slug": slug, "skipped": "contour failed", "error": str(exc)}
+    stored, npts = store_lines(raw, to_px, pixel_window)
+    if recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
+        interval = 50
+        raw = contour_lines(tif, interval, back_hill)
+        stored, npts = store_lines(raw, to_px, pixel_window)
+    if tif.exists():
+        tif.unlink()
+    if len(stored) < 2:
+        return {"slug": slug, "skipped": "flat"}
+    payload = {"m": interval, "src": "glo-30", "lines": stored}
+    dest = Path(task["dest"])
+    dest.write_text(json.dumps(payload, separators=(",", ":")))
+    return {
+        "slug": slug,
+        "m": interval,
+        "src": "glo-30",
+        "lines": len(stored),
+        "points": npts,
+        "bytes": dest.stat().st_size,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--src", default="/tmp/ski", help="Directory with runs.geojson and lifts.geojson")
     parser.add_argument("--hills", default="", help="Path to hills.json")
     parser.add_argument("--slug", default="", help="Build one hill, for a check")
     parser.add_argument("--index", default="", help="Index path. Default contours/index.json")
+    parser.add_argument("--jobs", type=int, default=1, help="Parallel US hills. Canada stays on one process.")
     args = parser.parse_args()
     root = Path(__file__).resolve().parent
     hills_path = Path(args.hills) if args.hills else root / "hills.json"
@@ -386,6 +478,7 @@ def main():
                 lift if isinstance(lift, str) else (lift.get("p") or "")
                 for lift in (hill.get("lifts") or [])
             ],
+            "province": hill.get("province") or "",
         }
     if not wanted:
         print("no hills", file=sys.stderr)
@@ -396,11 +489,15 @@ def main():
     print("runs", absorb(src / "runs.geojson", wanted, "runs"), flush=True)
 
     forward, back = lambert()
-    print("opening MRDEM", flush=True)
-    mrdem = gdal.Open(MRDEM)
-    if mrdem is None:
-        print("MRDEM did not open", file=sys.stderr)
-        return 1
+    geo_back = geographic()
+    us_only = all(hill.get("province") == "us" for hill in wanted.values())
+    mrdem = None
+    if not us_only:
+        print("opening MRDEM", flush=True)
+        mrdem = gdal.Open(MRDEM)
+        if mrdem is None:
+            print("MRDEM did not open", file=sys.stderr)
+            return 1
 
     index_path = Path(args.index) if args.index else out_dir / "index.json"
     prior = {}
@@ -408,6 +505,45 @@ def main():
         prior = json.loads(index_path.read_text()).get("hills") or {}
     index = {"source": "NRCan MRDEM-30 DTM", "fallback": "Copernicus GLO-30", "hills": {}, "skipped": []}
     checked = 0
+    if us_only and args.jobs > 1 and not args.slug:
+        from concurrent.futures import ProcessPoolExecutor
+
+        tasks = []
+        for hill in wanted.values():
+            if not hill["runs"]:
+                index["skipped"].append({"slug": hill["slug"], "reason": "no source runs"})
+                continue
+            to_px, _to_ll, _span, _box = projection(hill["runs"])
+            drawn = draw_lines(hill["runs"][:3], to_px)
+            if drawn != hill["stored"]:
+                print("projection mismatch", hill["slug"], file=sys.stderr)
+                return 1
+            checked += 1
+            tasks.append({
+                "slug": hill["slug"],
+                "runs": hill["runs"],
+                "drawn": hill["drawn"],
+                "drop": hill.get("drop"),
+                "recorded": (prior.get(hill["slug"]) or {}).get("m"),
+                "dest": str(out_dir / f"{hill['slug']}.json"),
+            })
+        print("us hills", len(tasks), "jobs", args.jobs, flush=True)
+        with ProcessPoolExecutor(max_workers=args.jobs) as pool:
+            for result in pool.map(render_us, tasks):
+                slug = result["slug"]
+                if result.get("skipped"):
+                    index["skipped"].append({"slug": slug, "reason": result["skipped"]})
+                    print("skip", slug, result["skipped"], result.get("error") or "", flush=True)
+                    continue
+                index["hills"][slug] = {"m": result["m"], "src": result["src"], "lines": result["lines"], "points": result["points"]}
+                print(
+                    f"{slug} {result['m']}m {result['src']} lines={result['lines']} pts={result['points']} bytes={result['bytes']}",
+                    flush=True,
+                )
+        if not args.slug:
+            index_path.write_text(json.dumps(index, separators=(",", ":")))
+        print("checked", checked, "contoured", len(index["hills"]), "skipped", len(index["skipped"]))
+        return 0
     for oid, hill in wanted.items():
         if not hill["runs"]:
             index["skipped"].append({"slug": hill["slug"], "reason": "no source runs"})
@@ -423,23 +559,35 @@ def main():
         wide, pixel_window = square_frame(parse_stored(hill["drawn"]), to_ll)
         if args.slug:
             print("frame", [round(v, 1) for v in pixel_window], "ll", [round(v, 5) for v in wide], "span", round(span), flush=True)
-        bounds = window_3979(forward, *wide, 0)
         tif = Path("/tmp") / f"sh-dem-{hill['slug']}.tif"
-        source = "mrdem-30"
-        try:
-            clip_mrdem(mrdem, bounds, tif)
-            rng = raster_range(tif)
-        except RuntimeError as exc:
-            print("mrdem failed", hill["slug"], exc, flush=True)
-            rng = None
-        if rng is None:
+        # US plan sheets stay north-up. The Canada path below is unchanged.
+        if hill.get("province") == "us":
             source = "glo-30"
+            back_hill = geo_back
             try:
-                clip_copernicus(wide, tif)
+                clip_copernicus_northup(wide, tif)
                 rng = raster_range(tif)
             except RuntimeError as exc:
                 print("glo-30 failed", hill["slug"], exc, flush=True)
                 rng = None
+        else:
+            back_hill = back
+            bounds = window_3979(forward, *wide, 0)
+            source = "mrdem-30"
+            try:
+                clip_mrdem(mrdem, bounds, tif)
+                rng = raster_range(tif)
+            except RuntimeError as exc:
+                print("mrdem failed", hill["slug"], exc, flush=True)
+                rng = None
+            if rng is None:
+                source = "glo-30"
+                try:
+                    clip_copernicus(wide, tif)
+                    rng = raster_range(tif)
+                except RuntimeError as exc:
+                    print("glo-30 failed", hill["slug"], exc, flush=True)
+                    rng = None
         if rng is None:
             index["skipped"].append({"slug": hill["slug"], "reason": "no elevation"})
             print("skip", hill["slug"], flush=True)
@@ -452,7 +600,7 @@ def main():
         else:
             interval = 50 if isinstance(hill["drop"], (int, float)) and hill["drop"] > 1000 else 20
         try:
-            raw = contour_lines(tif, interval, back)
+            raw = contour_lines(tif, interval, back_hill)
         except RuntimeError as exc:
             index["skipped"].append({"slug": hill["slug"], "reason": "contour failed"})
             print("contour failed", hill["slug"], exc, flush=True)
@@ -462,7 +610,7 @@ def main():
         stored, npts = store_lines(raw, to_px, pixel_window)
         if recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
             interval = 50
-            raw = contour_lines(tif, interval, back)
+            raw = contour_lines(tif, interval, back_hill)
             stored, npts = store_lines(raw, to_px, pixel_window)
         if tif.exists():
             tif.unlink()
