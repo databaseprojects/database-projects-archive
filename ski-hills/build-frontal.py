@@ -175,6 +175,24 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Big Sky Resort only. The automatic render faced 60.5 (the 240.5
+    # guess, flipped by orient()). 240.5 is 180° further and turns that
+    # bird's-eye drawing upside down. Edit this number.
+    "big-sky-resort": {
+        "facing": 240.5,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Mt. Bachelor only. The automatic render faced 7.9 (the 187.9
+    # guess, flipped by orient()). 187.9 is 180° further and turns that
+    # bird's-eye drawing upside down. Edit this number.
+    "mt-bachelor": {
+        "facing": 187.9,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Mount Shark only. Automatic facing was 172.4. 162.4 is 10° less,
     # which turns the drawing 10° clockwise on screen. full_ground fits
     # the whole DEM crop. The run window left the peak and the near slope
