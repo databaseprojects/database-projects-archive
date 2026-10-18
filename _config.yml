@@ -1,0 +1,15 @@
+# GitHub Pages builds this repo with Jekyll. The Trails page stays in the
+# repo and is left out of the published site.
+exclude:
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - trails
+  - js/trails.js
