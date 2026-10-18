@@ -281,6 +281,23 @@
   display: block;
   color: inherit;
   text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sh-hill::selection,
+.sh-hill *::selection {
+  background: transparent;
+}
+
+.sh-hill:focus {
+  outline: none;
+}
+
+.sh-hill:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
 }
 
 .sh-hill[hidden] {
@@ -477,6 +494,9 @@
   line-height: 1.3;
   white-space: nowrap;
   pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   opacity: 0;
   transition: opacity 0.1s ease;
 }
