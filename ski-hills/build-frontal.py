@@ -63,7 +63,7 @@ DEPTH_SCALE = 2.0
 DEPTH_BIAS = 40.0
 # Pixels under the near skyline. Screen y grows downward. Clipping only:
 # nothing is stroked along the skyline.
-RIDGE_MARGIN = 1.75
+RIDGE_MARGIN = 2.6
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
@@ -141,6 +141,15 @@ CAMERAS = {
     # to offer Front / Back.
     "mount-washington-alpine-resort": {
         "views": {"front": 6.7, "back": 190.6},
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Lake Louise only. Front faces the main run mass (west of centre) from
+    # the WSW. Back faces the Larch / Paradise / Ptarmigan / Saddleback bowls
+    # (east of centre) from the ENE. Same Front / Back toggle as Washington.
+    "lake-louise-ski-area": {
+        "views": {"front": 82.9, "back": 262.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -508,16 +517,23 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
                 continue
             crest, cdepth = horizon_at(yr)
             i = col_of(px)
-            top = crest[i]
-            # Only terrain DEPTH_BIAS metres in front can hide this point,
-            # and the line stops RIDGE_MARGIN px under that skyline. A nearer
-            # bump that is not that far in front used to flip vertex to vertex
-            # and draw the facing slope as dashes. Coordinates are not moved.
-            hide = (
-                top < 1e8
-                and yr - cdepth[i] >= DEPTH_BIAS
-                and py >= top - RIDGE_MARGIN
-            )
+            # A ridge that covers this column, or the column beside it, hides
+            # the point. One-column holes in the silhouette used to let the
+            # far slope show through. Only terrain DEPTH_BIAS metres in front
+            # counts, and the line stops RIDGE_MARGIN px under that skyline.
+            hide = False
+            nbin = len(crest)
+            for j in (i - 1, i, i + 1):
+                if j < 0 or j >= nbin:
+                    continue
+                top = crest[j]
+                if (
+                    top < 1e8
+                    and yr - cdepth[j] >= DEPTH_BIAS
+                    and py >= top - RIDGE_MARGIN
+                ):
+                    hide = True
+                    break
             if hide:
                 hidden += 1
             chunk.append((px, py, yr, hide))
@@ -814,6 +830,61 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         py = pad_y + (maxy - sy) * fit
         return px, py
 
+    # The caption covers the bottom 120px. Runs have to sit inside the
+    # square above that band, with a small margin. Shift the whole sheet
+    # when a translation is enough. Scale only when the run box is taller
+    # or wider than that opening, and only while the scale stays close to 1.
+    # Below 0.82 the drawing would shrink badly, so the sheet is left as-is.
+    safe_l, safe_t, safe_r, safe_b = 18.0, 18.0, 982.0, 862.0
+    run_pts = []
+    for run in runs:
+        for line in run["lines"]:
+            for lon, lat in line:
+                z = sample(arr, gt, lon, lat)
+                if z is None:
+                    continue
+                xr, yr = rot(*metres(lon, lat))
+                run_pts.append(paper(*project_xy(xr, yr, z + RUN_CLEAR)))
+    fit_label = "inside"
+    if len(run_pts) >= 2:
+        rx0 = min(p[0] for p in run_pts)
+        rx1 = max(p[0] for p in run_pts)
+        ry0 = min(p[1] for p in run_pts)
+        ry1 = max(p[1] for p in run_pts)
+        outside = rx0 < safe_l or rx1 > safe_r or ry0 < safe_t or ry1 > safe_b
+        box_w = rx1 - rx0
+        box_h = ry1 - ry0
+        safe_w = safe_r - safe_l
+        safe_h = safe_b - safe_t
+        if not outside:
+            fit_label = "inside"
+        elif box_w <= safe_w and box_h <= safe_h:
+            dx = safe_l - rx0 if rx0 < safe_l else (safe_r - rx1 if rx1 > safe_r else 0.0)
+            dy = safe_t - ry0 if ry0 < safe_t else (safe_b - ry1 if ry1 > safe_b else 0.0)
+            base_paper = paper
+
+            def paper(sx, sy, _base=base_paper, _dx=dx, _dy=dy):
+                px, py = _base(sx, sy)
+                return px + _dx, py + _dy
+
+            fit_label = "shift %.1f %.1f" % (dx, dy)
+        else:
+            scale_fit = min(safe_w / max(box_w, 1.0), safe_h / max(box_h, 1.0))
+            if scale_fit < 0.82:
+                fit_label = "clip %.3f" % scale_fit
+            else:
+                cx = (rx0 + rx1) / 2.0
+                cy = (ry0 + ry1) / 2.0
+                scx = (safe_l + safe_r) / 2.0
+                scy = (safe_t + safe_b) / 2.0
+                base_paper = paper
+
+                def paper(sx, sy, _base=base_paper, _cx=cx, _cy=cy, _scx=scx, _scy=scy, _s=scale_fit):
+                    px, py = _base(sx, sy)
+                    return _scx + (px - _cx) * _s, _scy + (py - _cy) * _s
+
+                fit_label = "scale %.3f" % scale_fit
+
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
     sun_dir = sun_vector(ang, sun)
@@ -859,7 +930,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 continue
             samples.append((yr, paper(*project_xy(xr, yr, z))))
     samples.sort()
-    step = 8.0
+    step = 6.0
     horizon_py = empty_py[:]
     horizon_depth = empty_depth[:]
     snap_yr = []
@@ -884,7 +955,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             paint(ax, ay, ayr)
             gap = bx - ax
             # Bridge one DEM cell. A wider gap is a real break in the ridge.
-            if gap <= 0 or gap > 18:
+            if gap <= 0 or gap > 26:
                 continue
             steps = max(1, int(gap))
             for k in range(1, steps):
@@ -904,36 +975,72 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     )
 
-    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None):
+    def covered(px, py, yr):
+        crest, cdepth = horizon_at(yr)
+        i = col_of(px)
+        nbin = len(crest)
+        for j in (i - 1, i, i + 1):
+            if j < 0 or j >= nbin:
+                continue
+            top = crest[j]
+            if top < 1e8 and yr - cdepth[j] >= DEPTH_BIAS and py >= top - RIDGE_MARGIN:
+                return True
+        return False
+
+    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False):
         parts = []
         # Dash lives on the element that asks for it. Everything else is
         # explicitly solid so a lift dash cannot inherit onto contours.
         dash_value = dash if dash else "none"
         klass = f' class="{css_class}"' if css_class else ""
+
+        def emit(chunk):
+            if len(chunk) < 2:
+                return
+            pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in chunk)
+            parts.append(
+                f'<polyline{klass} points="{pts}" fill="none" stroke="{colour}" '
+                f'style="fill:none;stroke:{colour};stroke-width:{width};'
+                f"stroke-dasharray:{dash_value};"
+                f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
+            )
+
         for line in lines:
             sampled = []
-            chunks = []
+
+            def flush_sampled():
+                nonlocal sampled
+                if len(sampled) < 2:
+                    sampled = []
+                    return
+                if not occlude:
+                    emit([(p[0], p[1]) for p in sampled])
+                    sampled = []
+                    return
+                flags = solid_flags(
+                    [p[2] for p in sampled],
+                    [(p[0], p[1]) for p in sampled],
+                )
+                part = []
+                for (px, py, _hide), hidden in zip(sampled, flags):
+                    if hidden:
+                        emit(part)
+                        part = []
+                    else:
+                        part.append((px, py))
+                emit(part)
+                sampled = []
+
             for lon, lat in line:
                 z = sample(arr, gt, lon, lat)
                 if z is None:
-                    if len(sampled) >= 2:
-                        chunks.append(sampled)
-                    sampled = []
+                    flush_sampled()
                     continue
                 xr, yr = rot(*metres(lon, lat))
-                # Lifts are not occlusion-tested against their own slope.
                 px, py = paper(*project_xy(xr, yr, z + z_add))
-                sampled.append((px, py))
-            if len(sampled) >= 2:
-                chunks.append(sampled)
-            for chunk in chunks:
-                pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in chunk)
-                parts.append(
-                    f'<polyline{klass} points="{pts}" fill="none" stroke="{colour}" '
-                    f'style="fill:none;stroke:{colour};stroke-width:{width};'
-                    f"stroke-dasharray:{dash_value};"
-                    f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
-                )
+                hide = covered(px, py, yr) if occlude else False
+                sampled.append((px, py, hide))
+            flush_sampled()
         return parts
 
     colours = {
@@ -948,11 +1055,21 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     run_parts = []
     for run in runs:
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
-        run_parts.extend(stroke(run["lines"], colour, 2.2, z_add=RUN_CLEAR, css_class="sh-frontal-run"))
+        run_parts.extend(
+            stroke(run["lines"], colour, 2.2, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
+        )
     lift_parts = []
     for lift in lifts:
         lift_parts.extend(
-            stroke(lift["lines"], "#111", 1.7, z_add=LIFT_CLEAR, dash="6 4", css_class="sh-frontal-lift")
+            stroke(
+                lift["lines"],
+                "#111",
+                1.7,
+                z_add=LIFT_CLEAR,
+                dash="6 4",
+                css_class="sh-frontal-lift",
+                occlude=True,
+            )
         )
 
     if not contours:
@@ -1045,6 +1162,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         round(20 * depth * math.cos(pitch_rad), 2),
         "contour_w",
         CONTOUR_W,
+        "fit",
+        fit_label,
         "contours",
         len(contours),
         "runs",
@@ -1175,6 +1294,12 @@ def main():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         for slug in sys.argv[1:]:
-            render_views(slug)
+            cam = CAMERAS.get(slug) or {}
+            if cam.get("views"):
+                render_views(slug)
+            elif slug == "cypress-mountain":
+                render_cypress()
+            else:
+                render_default(slug)
     else:
         main()

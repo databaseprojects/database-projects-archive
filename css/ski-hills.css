@@ -150,6 +150,11 @@
   margin: 0;
 }
 
+.sh-subslot {
+  position: relative;
+  width: 100%;
+}
+
 .sh-sub {
   margin-left: 0;
 }
@@ -301,11 +306,11 @@
 }
 
 .sh-hill line {
-  stroke-width: var(--sh-key, 0.85px);
+  stroke-width: var(--sh-key, 0.425px);
 }
 
 .sh-lb line {
-  stroke-width: 3.2;
+  stroke-width: 1.6;
 }
 
 .sh-hill polyline.sh-easy,
@@ -405,6 +410,11 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 
 .sh-credit {
   margin-top: 1.6rem;
+  color: #ccc;
+}
+
+.sh-credit a {
+  color: #ccc;
 }
 
 .sh-icon {
@@ -1024,8 +1034,8 @@ html.sh-prints-off .sh-cart-panel {
 .sh-mat {
   box-sizing: border-box;
   padding: 10.5%;
-  background: #f4f0e6;
-  box-shadow: none;
+  background: #fff;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.13);
 }
 
 .sh-frame-art {
@@ -1033,6 +1043,6 @@ html.sh-prints-off .sh-cart-panel {
   width: 100%;
   aspect-ratio: 1;
   background: #fff;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.92), inset 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 
