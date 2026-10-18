@@ -79,7 +79,7 @@
       label: "Northwest Territories"
     }
   };
-  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd"];
+  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma"];
   var US_STATE_NAMES = {
     wa: "Washington",
     or: "Oregon",
@@ -92,12 +92,22 @@
     co: "Colorado",
     az: "Arizona",
     nm: "New Mexico",
-    sd: "South Dakota"
+    sd: "South Dakota",
+    me: "Maine",
+    nh: "New Hampshire",
+    vt: "Vermont",
+    ma: "Massachusetts"
+  };
+  var US_FILE_VERSION = {
+    me: "20261018m",
+    nh: "20261018m",
+    vt: "20261018m",
+    ma: "20261018m"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
-      file: "usa/" + id + ".json?v=20261018l",
-      index: "contours/usa-index.json?v=20261018l",
+      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
+      index: "contours/usa-index.json?v=20261018m",
       label: US_STATE_NAMES[id]
     };
   });
@@ -513,7 +523,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018l";
+    return "frontal/" + file + ".svg?v=20261018m";
   }
 
   function frontalArt(hill) {
@@ -587,7 +597,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018l").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018m").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {

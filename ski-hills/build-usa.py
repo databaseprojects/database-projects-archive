@@ -18,6 +18,9 @@ import ijson
 
 
 WEST_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd"]
+NEW_ENGLAND_STATES = ["me", "nh", "vt", "ma"]
+MIDATLANTIC_STATES = ["ny", "pa", "nj", "md", "wv"]
+MIDWEST_STATES = ["mn", "wi", "mi"]
 STATE_NAMES = {
     "wa": "Washington",
     "or": "Oregon",
@@ -31,8 +34,25 @@ STATE_NAMES = {
     "az": "Arizona",
     "nm": "New Mexico",
     "sd": "South Dakota",
+    "me": "Maine",
+    "nh": "New Hampshire",
+    "vt": "Vermont",
+    "ma": "Massachusetts",
+    "ny": "New York",
+    "pa": "Pennsylvania",
+    "nj": "New Jersey",
+    "md": "Maryland",
+    "wv": "West Virginia",
+    "mn": "Minnesota",
+    "wi": "Wisconsin",
+    "mi": "Michigan",
 }
-BATCH_STATES = {"west": WEST_STATES}
+BATCH_STATES = {
+    "west": WEST_STATES,
+    "new england": NEW_ENGLAND_STATES,
+    "new york & mid-atlantic": MIDATLANTIC_STATES,
+    "midwest": MIDWEST_STATES,
+}
 
 # Members-only resorts already dropped from the list, plus the same names
 # if they show up again as a backfill.
@@ -91,11 +111,11 @@ def is_private(name):
 
 
 def clean_name(name, state, oid):
-    # Two Crystal Mountains. The Michigan hill is a later batch.
-    if oid == "89f555b5c8e0e0e0":
-        return name
+    # Two Crystal Mountains, one in Washington and one in Michigan.
     if name == "Crystal Mountain" and state == "wa":
         return "Crystal Mountain, Washington"
+    if name == "Crystal Mountain" and state == "mi":
+        return "Crystal Mountain, Michigan"
     return name
 
 
@@ -296,11 +316,8 @@ def main():
         hill = west[oid]
         row = by_row.get(oid)
         label = clean_name(row["Hill"].strip() if row else hill["osm_name"], hill["state"], oid)
-        if oid == "89f555b5":
-            label = "Crystal Mountain, Washington"
-        # full id check
-        if hill["osm_name"] == "Crystal Mountain" and hill["state"] == "wa":
-            label = "Crystal Mountain, Washington"
+        if hill["osm_name"] == "Crystal Mountain" and hill["state"] in ("wa", "mi"):
+            label = clean_name(hill["osm_name"], hill["state"], oid)
         run_lines = [item[1] for item in hill["runs"]]
         fr = ab.frame_of(run_lines, False)
         lifts_ll = ab.snap_terminals(hill["lifts"], run_lines, fr["cos"]) if fr else []
@@ -367,7 +384,8 @@ def main():
         "backfills": backfills,
         "remapped": remapped,
     }
-    (root / "usa-west-report.json").write_text(json.dumps(report, indent=2) + "\n")
+    report_name = "usa-%s-report.json" % batch.replace(" & ", "-").replace(" ", "-")
+    (root / report_name).write_text(json.dumps(report, indent=2) + "\n")
     print("kept", len(chosen), "skipped", len(skipped), "backfills", len(backfills), flush=True)
 
 
