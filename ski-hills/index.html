@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261018g">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261018h">
 </head>
 <body>
   <div class="sheet">
@@ -23,13 +23,22 @@
       <button type="button" class="sh-cart-btn" id="sh-cart-btn" aria-expanded="false" aria-controls="sh-cart-panel">Cart <span class="sh-cart-n">0</span></button>
     </span>
   </div>
-  <p class="sh-note">Line drawings of ski hills in British Columbia, Alberta, and Quebec. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
+  <p class="sh-note">Line drawings of ski hills across Canada. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
   <div class="sh-tags" role="group" aria-label="Place">
     <span class="sh-prov">
       <button type="button" class="sh-tag" data-sh-province="all" aria-pressed="false">All</button>
       <button type="button" class="sh-tag sh-on" data-sh-province="bc" aria-pressed="true">BC</button>
       <button type="button" class="sh-tag" data-sh-province="ab" aria-pressed="false">Alberta</button>
       <button type="button" class="sh-tag" data-sh-province="qc" aria-pressed="false">Québec</button>
+      <button type="button" class="sh-tag" data-sh-province="on" aria-pressed="false">Ontario</button>
+      <button type="button" class="sh-tag" data-sh-province="sk" aria-pressed="false">Saskatchewan</button>
+      <button type="button" class="sh-tag" data-sh-province="mb" aria-pressed="false">Manitoba</button>
+      <button type="button" class="sh-tag" data-sh-province="nb" aria-pressed="false">New Brunswick</button>
+      <button type="button" class="sh-tag" data-sh-province="nl" aria-pressed="false">Newfoundland</button>
+      <button type="button" class="sh-tag" data-sh-province="ns" aria-pressed="false">Nova Scotia</button>
+      <button type="button" class="sh-tag" data-sh-province="pe" aria-pressed="false">PEI</button>
+      <button type="button" class="sh-tag" data-sh-province="yt" aria-pressed="false">Yukon</button>
+      <button type="button" class="sh-tag" data-sh-province="nt" aria-pressed="false">NWT</button>
     </span>
     <span class="sh-sub" data-sh-for="bc">
       <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
@@ -53,11 +62,63 @@
       <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
       <button type="button" class="sh-tag" data-sh-region="outaouais" aria-pressed="false">Outaouais</button>
       <button type="button" class="sh-tag" data-sh-region="laurentides" aria-pressed="false">Laurentides</button>
-      <button type="button" class="sh-tag" data-sh-region="mauricie" aria-pressed="false">Mauricie</button>
       <button type="button" class="sh-tag" data-sh-region="cantons-de-lest" aria-pressed="false">Cantons-de-l'Est</button>
       <button type="button" class="sh-tag" data-sh-region="quebec" aria-pressed="false">Québec</button>
       <button type="button" class="sh-tag" data-sh-region="saguenay" aria-pressed="false">Saguenay–Lac-Saint-Jean</button>
       <button type="button" class="sh-tag" data-sh-region="bas-saint-laurent-gaspesie" aria-pressed="false">Bas-Saint-Laurent &amp; Gaspésie</button>
+    </span>
+    <span class="sh-sub" data-sh-for="on" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="georgian-bay" aria-pressed="false">Georgian Bay</button>
+      <button type="button" class="sh-tag" data-sh-region="golden-horseshoe" aria-pressed="false">Golden Horseshoe</button>
+      <button type="button" class="sh-tag" data-sh-region="ontario-highlands" aria-pressed="false">Ontario Highlands</button>
+      <button type="button" class="sh-tag" data-sh-region="northern-ontario" aria-pressed="false">Northern Ontario</button>
+    </span>
+    <span class="sh-sub" data-sh-for="sk" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="regina" aria-pressed="false">Regina</button>
+      <button type="button" class="sh-tag" data-sh-region="eastern-saskatchewan" aria-pressed="false">Eastern Saskatchewan</button>
+      <button type="button" class="sh-tag" data-sh-region="northern-saskatchewan" aria-pressed="false">Northern Saskatchewan</button>
+      <button type="button" class="sh-tag" data-sh-region="western-saskatchewan" aria-pressed="false">Western Saskatchewan</button>
+    </span>
+    <span class="sh-sub" data-sh-for="mb" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="pembina-valley" aria-pressed="false">Pembina Valley</button>
+      <button type="button" class="sh-tag" data-sh-region="westman" aria-pressed="false">Westman</button>
+      <button type="button" class="sh-tag" data-sh-region="parkland" aria-pressed="false">Parkland</button>
+      <button type="button" class="sh-tag" data-sh-region="northern-manitoba" aria-pressed="false">Northern Manitoba</button>
+    </span>
+    <span class="sh-sub" data-sh-for="nb" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="fredericton" aria-pressed="false">Fredericton</button>
+      <button type="button" class="sh-tag" data-sh-region="southeast" aria-pressed="false">Southeast</button>
+      <button type="button" class="sh-tag" data-sh-region="north" aria-pressed="false">North</button>
+    </span>
+    <span class="sh-sub" data-sh-for="nl" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="west-coast" aria-pressed="false">West Coast</button>
+      <button type="button" class="sh-tag" data-sh-region="east-coast" aria-pressed="false">East Coast</button>
+      <button type="button" class="sh-tag" data-sh-region="labrador" aria-pressed="false">Labrador</button>
+    </span>
+    <span class="sh-sub" data-sh-for="ns" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="mainland" aria-pressed="false">Mainland</button>
+      <button type="button" class="sh-tag" data-sh-region="cape-breton" aria-pressed="false">Cape Breton</button>
+    </span>
+    <span class="sh-sub" data-sh-for="pe" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="central" aria-pressed="false">Central</button>
+      <button type="button" class="sh-tag" data-sh-region="eastern" aria-pressed="false">Eastern</button>
+    </span>
+    <span class="sh-sub" data-sh-for="yt" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="whitehorse" aria-pressed="false">Whitehorse</button>
+      <button type="button" class="sh-tag" data-sh-region="dawson" aria-pressed="false">Dawson</button>
+      <button type="button" class="sh-tag" data-sh-region="watson-lake" aria-pressed="false">Watson Lake</button>
+    </span>
+    <span class="sh-sub" data-sh-for="nt" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="yellowknife" aria-pressed="false">Yellowknife</button>
     </span>
     <span class="sh-kinds" role="group" aria-label="Type">
       <button type="button" class="sh-tag" data-sh-type="downhill" aria-pressed="false">Downhill</button>
@@ -72,6 +133,6 @@
   </div>
   <script src="../js/shared.js?v=20261017g"></script>
   <script src="../js/prints.js?v=20261017c"></script>
-  <script src="../js/ski-hills.js?v=20261018g"></script>
+  <script src="../js/ski-hills.js?v=20261018h"></script>
 </body>
 </html>

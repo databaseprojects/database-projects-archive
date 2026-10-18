@@ -1,6 +1,6 @@
 {
   "source": "https://tiles.openskimap.org/geojson/ski_areas.geojson",
-  "rankedBy": "operating, named, has runs, total mapped run length",
+  "rankedBy": "The list Billy sent. Backfills are the next operating, named area in that province by mapped run length.",
   "swaps": [
     {
       "action": "skip",
@@ -8,8 +8,8 @@
       "name": "Mont Grand-Fonds",
       "id": "f5eaf0730cc6d9aa452aa1e417b2f9ec9e8186c5",
       "km": 14.579,
-      "reason": "Same resort as 9c684171 (La Malbaie). Kept the longer area and backfilled Quebec with Ski Garceau.",
-      "backfill": "Ski Garceau"
+      "reason": "Same resort as 9c684171 (La Malbaie). Kept the longer area and backfilled Quebec with Camp Mercier.",
+      "backfill": "Camp Mercier"
     },
     {
       "action": "skip",
@@ -17,8 +17,8 @@
       "name": "Terrain Park",
       "id": "acf98e56a3ab6ac1fdc702835ad737ae68622058",
       "km": 8.708,
-      "reason": "Generic terrain park at Searchmont, not its own hill. Backfilled Ontario with Loch Lomond.",
-      "backfill": "Loch Lomond"
+      "reason": "A Searchmont terrain park, not its own hill. Backfilled Ontario with Stokely Creek Lodge.",
+      "backfill": "Stokely Creek Lodge"
     },
     {
       "action": "skip",
@@ -26,7 +26,16 @@
       "name": "Bristol Pit",
       "id": "b027792d1a70e7aa203e3d4b54f0f249434aeff7",
       "km": 0.082,
-      "reason": "A few dozen metres of terrain in Yellowknife, not a ski area. It ranked below the Northwest Territories quota, so Yellowknife Ski Club stays."
+      "reason": "About 80 metres of mapped downhill in Yellowknife, not a ski area. Backfilled the Northwest Territories with Yellowknife Ski Club.",
+      "backfill": "Yellowknife Ski Club"
+    },
+    {
+      "action": "skip",
+      "province": "sk",
+      "name": "Ski Timber Ridge",
+      "id": "831478a48fc4808895ee7673567c87f076dc75e3",
+      "reason": "OpenSkiMap lists the area, but the run file has no geometry linked to it, so it cannot be drawn. Backfilled Saskatchewan with Foothills cross country ski trails.",
+      "backfill": "Foothills cross country ski trails"
     }
   ],
   "hills": [
@@ -34,901 +43,701 @@
       "province": "qc",
       "name": "Camp Fortune",
       "id": "99d183d639efdd0bbec46e0d9acf125ad46d6bdb",
-      "km": 171.604,
-      "lon": -75.87572875000001,
-      "lat": 45.54048395,
-      "locality": "Chelsea"
+      "lon": -75.87573,
+      "lat": 45.54048
     },
     {
       "province": "qc",
       "name": "Mont Grand-Fonds",
       "id": "9c6841718ba0c7f81e345f5eb89cd8eb88cd145e",
-      "km": 155.635,
-      "lon": -70.371481,
-      "lat": 47.80974215,
-      "locality": "La Malbaie"
+      "lon": -70.37148,
+      "lat": 47.80974
     },
     {
       "province": "qc",
       "name": "Ski de fond Mont-Tremblant",
       "id": "57ae08fed6a2d9f34bd70c4c3c06332bd44134a6",
-      "km": 95.271,
-      "lon": -74.56478175,
-      "lat": 46.16254035,
-      "locality": "Lac-Supérieur"
-    },
-    {
-      "province": "qc",
-      "name": "Camp Mercier",
-      "id": "57ef0781f9abba7a4180d6a7515769c6d106350a",
-      "km": 94.25,
-      "lon": -71.17201475,
-      "lat": 47.26959875,
-      "locality": null
+      "lon": -74.5723,
+      "lat": 46.17676
     },
     {
       "province": "qc",
       "name": "Mont Tremblant Resort, Station Mont Tremblant",
       "id": "b7cad93e857de92335debf15f4d0bfe9a04f4d1b",
-      "km": 78.241,
-      "lon": -74.55611365,
-      "lat": 46.2164668,
-      "locality": "Mont-Tremblant"
-    },
-    {
-      "province": "qc",
-      "name": "Parc national du Mont-Orford",
-      "id": "f8f4bd446abc519fc04b3b17caa76c58f7756577",
-      "km": 61.279,
-      "lon": -72.20393615,
-      "lat": 45.3588874,
-      "locality": "Orford"
+      "lon": -74.55611,
+      "lat": 46.21647
     },
     {
       "province": "qc",
       "name": "Mont-Sainte-Anne",
       "id": "3785c88c5ad57290cf36584e82109a458c554a54",
-      "km": 58.068,
-      "lon": -70.92601765,
-      "lat": 47.0874019,
-      "locality": "Beaupré"
+      "lon": -70.92602,
+      "lat": 47.0874
     },
     {
       "province": "qc",
       "name": "Le Massif",
       "id": "ef6c8dc160b9330d799cf95bf76ae29b58d33c5c",
-      "km": 50.913,
-      "lon": -70.5932101,
-      "lat": 47.279858149999995,
-      "locality": "Petite-Rivière-Saint-François"
+      "lon": -70.59321,
+      "lat": 47.27986
     },
     {
       "province": "qc",
       "name": "Bromont Montagne d'Expérience",
       "id": "a87ccf8c2949bc2ea5db0cf94c7c95fa6da0c874",
-      "km": 45.697,
-      "lon": -72.63699215,
-      "lat": 45.2908532,
-      "locality": "Bromont"
-    },
-    {
-      "province": "qc",
-      "name": "Les Sentiers du Moulin",
-      "id": "c41453c8b15fd82821c9c94294e05549d7e40475",
-      "km": 42.714,
-      "lon": -71.25460405,
-      "lat": 47.012125049999995,
-      "locality": "Lac-Beauport"
-    },
-    {
-      "province": "qc",
-      "name": "Station touristique Duchesnay",
-      "id": "f8a8413aeb9f11617715a1d0b9c6d8642a962301",
-      "km": 39.416,
-      "lon": -71.6704526,
-      "lat": 46.890538199999995,
-      "locality": "Lac-Saint-Joseph"
+      "lon": -72.63699,
+      "lat": 45.29085
     },
     {
       "province": "qc",
       "name": "Mont Sutton",
       "id": "67b5c6852f920dd04961d91ab13aa83a9b47c255",
-      "km": 38.153,
-      "lon": -72.55859625,
-      "lat": 45.09489465,
-      "locality": "Sutton"
-    },
-    {
-      "province": "qc",
-      "name": "Parc national de La Jacques-Cartier",
-      "id": "a3ca998828e54ee6f8439dc4e208b0908d98a18a",
-      "km": 35.018,
-      "lon": -71.3082383,
-      "lat": 47.18339045,
-      "locality": "Stoneham-et-Tewkesbury"
-    },
-    {
-      "province": "qc",
-      "name": "Sentier des caps (accueil Charlevoix)",
-      "id": "bd66f14ccb9092204829020853148f7cae096ffc",
-      "km": 33.348,
-      "lon": -70.63376755,
-      "lat": 47.27868075000001,
-      "locality": "Petite-Rivière-Saint-François"
-    },
-    {
-      "province": "qc",
-      "name": "Nakkertok",
-      "id": "da6c1d0b73b96e8ed278a507d8b1626d129fb2ce",
-      "km": 33.188,
-      "lon": -75.72184975,
-      "lat": 45.5383536,
-      "locality": "Cantley"
-    },
-    {
-      "province": "qc",
-      "name": "Centre de plein air Les sources joyeuses",
-      "id": "d87c2ce48479e6c5146b8d52dea75fdc2479c08e",
-      "km": 30.867,
-      "lon": -70.20616340000001,
-      "lat": 47.62570495,
-      "locality": "La Malbaie"
-    },
-    {
-      "province": "qc",
-      "name": "Centre Castor",
-      "id": "93b4ee8b4c4ace6c6bfb01a9471b5e352da64436",
-      "km": 29.019,
-      "lon": -71.4687318,
-      "lat": 46.9184903,
-      "locality": "Saint-Gabriel-de-Valcartier"
+      "lon": -72.5617,
+      "lat": 45.10466
     },
     {
       "province": "qc",
       "name": "Station touristique Stoneham",
       "id": "baa17f751db10c008667bd32ac5a284689e8e857",
-      "km": 28.562,
-      "lon": -71.39482185,
-      "lat": 47.03027135000001,
-      "locality": "Stoneham-et-Tewkesbury"
+      "lon": -71.39482,
+      "lat": 47.03027
     },
     {
       "province": "qc",
       "name": "Sommet Saint-Sauveur",
       "id": "78ac27731bb078db310933e9828665ca59858de2",
-      "km": 27.533,
-      "lon": -74.13887345,
-      "lat": 45.8820627,
-      "locality": "Piedmont"
-    },
-    {
-      "province": "qc",
-      "name": "Montagne Coupée",
-      "id": "0b669caa8627c8b2840570245ff2e1f9bda22e51",
-      "km": 26.999,
-      "lon": -73.51009085,
-      "lat": 46.196815,
-      "locality": "Saint-Félix-de-Valois"
+      "lon": -74.14328,
+      "lat": 45.88146
     },
     {
       "province": "qc",
       "name": "Mont Orford",
       "id": "443f083a450bb1a2f3beb7248d51c7c195c55a97",
-      "km": 24.579,
-      "lon": -72.22668254999999,
-      "lat": 45.315234950000004,
-      "locality": "Orford"
+      "lon": -72.22668,
+      "lat": 45.31523
     },
     {
       "province": "qc",
       "name": "Station touristique du Massif du Sud",
       "id": "7ac7509f0329dd89bb3912b2456e3178a52f2e8b",
-      "km": 23.234,
-      "lon": -70.4858567,
-      "lat": 46.6134335,
-      "locality": "Notre-Dame-Auxiliatrice-de-Buckland"
-    },
-    {
-      "province": "qc",
-      "name": "Base de plein air La Découverte (Val-Bélair)",
-      "id": "e0711d19e1a706f87e6fe51922c44b7ad58e47b1",
-      "km": 22.514,
-      "lon": -71.47829795,
-      "lat": 46.8303313,
-      "locality": "Quebec"
-    },
-    {
-      "province": "qc",
-      "name": "Les Sentiers La Balade de Lévis",
-      "id": "3b9a24002684aa63e1cacac9bc645692419b221e",
-      "km": 22.256,
-      "lon": -71.20299585000001,
-      "lat": 46.74548035,
-      "locality": "Levis"
+      "lon": -70.48586,
+      "lat": 46.61343
     },
     {
       "province": "qc",
       "name": "Le Valinouet",
       "id": "d07ab9fcb782b80a88c895a9aa3d8f1e803af18f",
-      "km": 21.831,
-      "lon": -70.89585220000001,
-      "lat": 48.6487795,
-      "locality": "Saint-David-de-Falardeau"
+      "lon": -70.89378,
+      "lat": 48.65514
     },
     {
       "province": "qc",
       "name": "Ski Mont Blanc",
       "id": "9ba1da0fcaef1c5a5d1ced87bfe780e1a4c6cc78",
-      "km": 21.78,
-      "lon": -74.4903856,
-      "lat": 46.10273855,
-      "locality": "Saint-Faustin - Lac-Carré"
-    },
-    {
-      "province": "qc",
-      "name": "Bois Duvernay",
-      "id": "cd5c404bbae7a4c1525d2def1e9c94c75335b9ef",
-      "km": 20.513,
-      "lon": -73.70577890000001,
-      "lat": 45.6344973,
-      "locality": "Laval"
+      "lon": -74.4884,
+      "lat": 46.10329
     },
     {
       "province": "qc",
       "name": "Mont Edouard",
       "id": "376ba1fb724275ccb68f0e6871c6fd0c9cfe97c0",
-      "km": 18.519,
-      "lon": -70.28847669999999,
-      "lat": 48.15982915,
-      "locality": "L'Anse-Saint-Jean"
+      "lon": -70.28848,
+      "lat": 48.15983
     },
     {
       "province": "qc",
       "name": "Pin Rouge",
       "id": "ea606308332a4b01a65298c7ada0574a6b33203e",
-      "km": 18.005,
-      "lon": -65.7195318,
-      "lat": 48.3175239,
-      "locality": null
-    },
-    {
-      "province": "qc",
-      "name": "Hors Limite",
-      "id": "6017a491e0e31708cf03776317a58304fe821eb2",
-      "km": 17.935,
-      "lon": -74.02248575,
-      "lat": 46.03125365,
-      "locality": "Chertsey"
+      "lon": -65.71964,
+      "lat": 48.31891
     },
     {
       "province": "qc",
       "name": "Owl's Head",
       "id": "bf2acdeaa2a1f3d3bd04ac406819c73b6165a33c",
-      "km": 17.271,
-      "lon": -72.29542965,
-      "lat": 45.07167175,
-      "locality": "Potton"
+      "lon": -72.29543,
+      "lat": 45.07167
     },
     {
       "province": "qc",
       "name": "Centre de Ski Le Relais",
       "id": "c0162b98d2d89579ec9999287922f88d8954b2ff",
-      "km": 15.941,
-      "lon": -71.2971865,
-      "lat": 46.93481885,
-      "locality": "Lac-Beauport"
+      "lon": -71.29719,
+      "lat": 46.93482
     },
     {
       "province": "qc",
       "name": "Val-d'Irène",
       "id": "f925374f52ee352c407a54b9a5f14f8f3f35696a",
-      "km": 15.198,
-      "lon": -67.5795516,
-      "lat": 48.477677850000006,
-      "locality": "Sainte-Irène"
+      "lon": -67.57911,
+      "lat": 48.47721
     },
     {
       "province": "qc",
       "name": "Mont Ste. Marie",
       "id": "d24745dc804b0fcdeb509d24a353f5f7a7947d63",
-      "km": 13.519,
-      "lon": -75.8645277,
-      "lat": 45.938427000000004,
-      "locality": "Lac-Sainte-Marie"
-    },
-    {
-      "province": "qc",
-      "name": "Énergie CMB",
-      "id": "c77d78da8bd41ea7ec9b872db681c37d446ce143",
-      "km": 13.394,
-      "lon": -72.63273685,
-      "lat": 46.32848425,
-      "locality": "Trois-Rivières"
+      "lon": -75.86453,
+      "lat": 45.93843
     },
     {
       "province": "qc",
       "name": "Sommet Olympia",
       "id": "8707cfba777ce41e7e7d47fa8013786a604c62e4",
-      "km": 12.586,
-      "lon": -74.11745685,
-      "lat": 45.91488875,
-      "locality": "Piedmont"
-    },
-    {
-      "province": "qc",
-      "name": "Plein air Charlesbourg",
-      "id": "342cd459a1c60249ef12f6bd095652883d79a100",
-      "km": 12.548,
-      "lon": -71.29479885,
-      "lat": 46.909213449999996,
-      "locality": "Quebec"
+      "lon": -74.11746,
+      "lat": 45.91489
     },
     {
       "province": "qc",
       "name": "Ski Morin Heights",
       "id": "443dd2dabb95a0b9fa2ee43fd1d407d1fe9a4c4c",
-      "km": 12.145,
-      "lon": -74.27343540000001,
-      "lat": 45.899530150000004,
-      "locality": "Morin-Heights"
+      "lon": -74.27344,
+      "lat": 45.89953
     },
     {
       "province": "qc",
       "name": "Station de ski Mont Miller",
       "id": "96b8deda5318bdf65091f81eab1ed3347dc62469",
-      "km": 11.823,
-      "lon": -65.48461395000001,
-      "lat": 48.96387675,
-      "locality": "Murdochville"
+      "lon": -65.48461,
+      "lat": 48.96388
     },
     {
       "province": "qc",
       "name": "Station touristique Val Saint-Côme",
       "id": "dcd0e25e4e6f8e48c1db18efaa6f6332b164aede",
-      "km": 11.026,
-      "lon": -73.87488175,
-      "lat": 46.275714199999996,
-      "locality": "Saint-Côme"
+      "lon": -73.87488,
+      "lat": 46.27571
     },
     {
       "province": "qc",
       "name": "Val Neigette",
       "id": "78afebf16c7ead347579076b7b116e60908c5c66",
-      "km": 11.018,
-      "lon": -68.47802659999999,
-      "lat": 48.36268835,
-      "locality": "Rimouski"
+      "lon": -68.4783,
+      "lat": 48.36248
     },
     {
       "province": "qc",
       "name": "Ski Chantecler",
       "id": "a32b10cbc755d832546615d19b1875d1f3b15639",
-      "km": 10.786,
-      "lon": -74.1717041,
-      "lat": 45.95716175,
-      "locality": "Sainte-Adèle"
-    },
-    {
-      "province": "qc",
-      "name": "Ski de fond Stoneham",
-      "id": "42397518ef91437837761b1b7f18a502a0d7cc47",
-      "km": 10.673,
-      "lon": -71.3762507,
-      "lat": 46.9919962,
-      "locality": "Stoneham-et-Tewkesbury"
+      "lon": -74.17194,
+      "lat": 45.95717
     },
     {
       "province": "qc",
       "name": "Parc du Mont-Comi",
       "id": "e51c914940658334ecf006a31a8c1a65386f0b0d",
-      "km": 10.315,
-      "lon": -68.1997487,
-      "lat": 48.4676343,
-      "locality": "Saint-Donat"
+      "lon": -68.19516,
+      "lat": 48.46809
     },
     {
       "province": "qc",
       "name": "Ski Garceau",
       "id": "b7967e9ed10cee4768e4620d25ed4375ec7b5587",
-      "km": 10.173,
-      "lon": -74.2141735,
-      "lat": 46.339724950000004,
-      "locality": "Saint-Donat"
+      "lon": -74.21417,
+      "lat": 46.33972
     },
     {
-      "province": "on",
-      "name": "Stokely Creek Lodge",
-      "id": "32d5c515b8c5a81095dfc563ffb698875abc86fa",
-      "km": 81.871,
-      "lon": -84.31474370000001,
-      "lat": 46.8051299,
-      "locality": null
+      "province": "qc",
+      "name": "Ski La Réserve",
+      "id": "8675986649eb90256a3d7fb679e81f2c50c0bf9f",
+      "lon": -74.18852,
+      "lat": 46.28208
     },
     {
-      "province": "on",
-      "name": "Sleeping Giant Provincial Park",
-      "id": "701022ef1346a98fb7d4f0755500b25e85944019",
-      "km": 68.998,
-      "lon": -88.77742885,
-      "lat": 48.4590527,
-      "locality": null
+      "province": "qc",
+      "name": "Sommet Edelweiss",
+      "id": "45c3c61887c56aea93e2563b6ee544703af01cd9",
+      "lon": -75.85013,
+      "lat": 45.64087
     },
     {
-      "province": "on",
-      "name": "Kawartha Nordic",
-      "id": "2fd6cf90a7719c3d181fce1c66332aeb85f6925b",
-      "km": 63.003,
-      "lon": -78.11374,
-      "lat": 44.651605,
-      "locality": "North Kawartha"
+      "province": "qc",
+      "name": "Mont Castor",
+      "id": "2825ade21c262b345790c509ee6dea69e880611f",
+      "lon": -67.54575,
+      "lat": 48.76671
     },
     {
-      "province": "on",
-      "name": "Hiawatha Highlands",
-      "id": "6b631417baac2629eb7c8f8c2a0c78c843325cf9",
-      "km": 46.196,
-      "lon": -84.26926215,
-      "lat": 46.58585015,
-      "locality": "Sault Ste. Marie"
+      "province": "qc",
+      "name": "Mont Orignal",
+      "id": "6dde52204783a077fa2f29b345bfe67c104ee3d1",
+      "lon": -70.58911,
+      "lat": 46.412
     },
     {
-      "province": "on",
-      "name": "Hardwood Ski and Bike",
-      "id": "12575967ebf9588932e386a5a43c2b8320a62ef0",
-      "km": 38.738,
-      "lon": -79.60091335,
-      "lat": 44.522997849999996,
-      "locality": "Oro-Medonte"
+      "province": "qc",
+      "name": "Mont Cascades Ski",
+      "id": "63b75cce88cfc42d7c7c6f6e7244b89144a395a6",
+      "lon": -75.84506,
+      "lat": 45.5889
     },
     {
-      "province": "on",
-      "name": "Kamview Nordic Centre",
-      "id": "f77bb63a2eba5ca93ecc496a373399d71da5e73e",
-      "km": 33.432,
-      "lon": -89.37472615,
-      "lat": 48.3258992,
-      "locality": "Oliver Paipoonge"
+      "province": "qc",
+      "name": "Ski Montcalm",
+      "id": "e78367f7b4ea224123ad43adc096689d9199c5c7",
+      "lon": -73.82971,
+      "lat": 46.03982
     },
     {
-      "province": "on",
-      "name": "Beaten Path Nordic Trails",
-      "id": "3ec814a888248ef8fbfbcd69fc55ed67f3f79beb",
-      "km": 30.364,
-      "lon": -91.56491439999999,
-      "lat": 48.71737795,
-      "locality": "Atikokan"
+      "province": "qc",
+      "name": "Mont-Bélu",
+      "id": "0a5ddf31de76950d11455bb3bfeb04d9df69574a",
+      "lon": -70.83916,
+      "lat": 48.32413
+    },
+    {
+      "province": "qc",
+      "name": "Mont Gleason",
+      "id": "e271579292665512cd525b30e3ac37b6a46e4cc5",
+      "lon": -71.96228,
+      "lat": 45.93131
+    },
+    {
+      "province": "qc",
+      "name": "Centre de ski Mont Béchervaise",
+      "id": "508011c1e4ce53f35bade0d9899fd6d9e43df766",
+      "lon": -64.54259,
+      "lat": 48.84196
+    },
+    {
+      "province": "qc",
+      "name": "Centre d’excellence acrobatique de Val Saint-Côme",
+      "id": "95f191700d1c3df56c5864ac0d60cf24b3178d33",
+      "lon": -73.87547,
+      "lat": 46.27734
+    },
+    {
+      "province": "qc",
+      "name": "Vallée Bleue",
+      "id": "78688106352077e2f6ad2f2a55e1be73e5380f1e",
+      "lon": -74.21924,
+      "lat": 46.02381
+    },
+    {
+      "province": "qc",
+      "name": "Belle Neige",
+      "id": "33802bf489d7fa59096dcde101307d682fd6b1ec",
+      "lon": -74.22002,
+      "lat": 46.00202
+    },
+    {
+      "province": "qc",
+      "name": "Mont Lac-Vert",
+      "id": "f542d80326d582774f4a1716f34ecf33b4a04561",
+      "lon": -71.60668,
+      "lat": 48.35585
+    },
+    {
+      "province": "qc",
+      "name": "Mont Habitant",
+      "id": "3a2b2195eb8c807db46ac3726b21c09efce6c2e7",
+      "lon": -74.17281,
+      "lat": 45.87711
+    },
+    {
+      "province": "qc",
+      "name": "Mont Adstock",
+      "id": "922446bf516f93a92ce09abc7f02313861f2fc59",
+      "lon": -71.18995,
+      "lat": 46.02939
+    },
+    {
+      "province": "qc",
+      "name": "Mont Kanasuta",
+      "id": "381c03a5b99ba84aec5abd3c81d01ee1d3b49e10",
+      "lon": -79.40309,
+      "lat": 48.17901
+    },
+    {
+      "province": "qc",
+      "name": "Camp Mercier",
+      "id": "57ef0781f9abba7a4180d6a7515769c6d106350a",
+      "lon": -71.22193,
+      "lat": 47.2321
     },
     {
       "province": "on",
       "name": "Blue Mountain Ski Resort",
       "id": "c5f70b639b76f6496d08a74e0691d5d71836cb4d",
-      "km": 30.152,
-      "lon": -80.3177619,
-      "lat": 44.49959725,
-      "locality": "The Blue Mountains"
-    },
-    {
-      "province": "on",
-      "name": "Porcupine Ski Runners",
-      "id": "ec9ab8f1b110f4f4bd700335ca92a18f197bbc14",
-      "km": 28.79,
-      "lon": -81.25722345,
-      "lat": 48.470774,
-      "locality": "Timmins"
-    },
-    {
-      "province": "on",
-      "name": "Crimson Ridge Golf Course",
-      "id": "b7d997f9f11a20285a4f2060327d1da344db32d9",
-      "km": 22.864,
-      "lon": -84.38291075,
-      "lat": 46.57993225,
-      "locality": "Sault Ste. Marie"
-    },
-    {
-      "province": "on",
-      "name": "North Bay Nordic Ski Club Cross Country Ski Trails",
-      "id": "c0ef076545d5d6a64adaa0f3072b70165699be13",
-      "km": 20.198,
-      "lon": -79.2867919,
-      "lat": 46.343844250000004,
-      "locality": "North Bay"
+      "lon": -80.31776,
+      "lat": 44.4996
     },
     {
       "province": "on",
       "name": "Osler Bluff Ski Club",
       "id": "7f911a40aab23eff6cf712233bd1b9b7f272aa48",
-      "km": 17.327,
-      "lon": -80.2839849,
-      "lat": 44.4581003,
-      "locality": "Clearview"
-    },
-    {
-      "province": "on",
-      "name": "Lappe Nordic Centre",
-      "id": "f4ca24ba93d1c2b6d2cb26030cb2e3ad5211377c",
-      "km": 16.272,
-      "lon": -89.4080115,
-      "lat": 48.56710615,
-      "locality": null
+      "lon": -80.28398,
+      "lat": 44.4581
     },
     {
       "province": "on",
       "name": "Craigleith Ski Club",
       "id": "3a4789dae9a8fb1f8b4d92d5b5bd49bdef9390cd",
-      "km": 15.943,
-      "lon": -80.3392815,
-      "lat": 44.5147013,
-      "locality": "The Blue Mountains"
+      "lon": -80.33928,
+      "lat": 44.5147
     },
     {
       "province": "on",
       "name": "Mount St. Louis Moonstone",
       "id": "59502ccf9594422399bf75afaa641f1943de0dc2",
-      "km": 15.517,
-      "lon": -79.66858355,
-      "lat": 44.62729755,
-      "locality": "Oro-Medonte"
-    },
-    {
-      "province": "on",
-      "name": "Marathon Cross Country Ski and Snowshoe Club",
-      "id": "15db5ab0c4507ad6daab457f48e39f4158acd596",
-      "km": 15.356,
-      "lon": -86.3696836,
-      "lat": 48.738758450000006,
-      "locality": "Marathon"
+      "lon": -79.66641,
+      "lat": 44.62296
     },
     {
       "province": "on",
       "name": "Calabogie Peaks",
       "id": "f6950418728474f314474e4a9f083b8928636181",
-      "km": 13.819,
-      "lon": -76.78660045000001,
-      "lat": 45.269460699999996,
-      "locality": "Greater Madawaska"
+      "lon": -76.7866,
+      "lat": 45.26946
     },
     {
       "province": "on",
       "name": "Beaver Valley",
       "id": "0d9126b0f39537f2e8ae5b4be473496996b0bb00",
-      "km": 12.957,
-      "lon": -80.5505856,
-      "lat": 44.35531585,
-      "locality": "Grey Highlands"
+      "lon": -80.55124,
+      "lat": 44.35636
     },
     {
       "province": "on",
       "name": "Alpine Ski Club",
       "id": "95cc5e1f6b9f78d45ffeb4c7826419a7415048f2",
-      "km": 12.613,
-      "lon": -80.3532219,
-      "lat": 44.521250699999996,
-      "locality": "The Blue Mountains"
+      "lon": -80.35322,
+      "lat": 44.52125
     },
     {
       "province": "on",
       "name": "Brimacombe",
       "id": "2d5c06eea65f3619ebb4dd2a81a49175e66f1c69",
-      "km": 11.062,
-      "lon": -78.57809929999999,
-      "lat": 44.0242347,
-      "locality": "Clarington"
+      "lon": -78.5777,
+      "lat": 44.02443
     },
     {
       "province": "on",
       "name": "Candy Mountain Ski Area",
       "id": "041d27a4072f1e53d7682707a47aeedd09090657",
-      "km": 10.443,
-      "lon": -89.52465860000001,
-      "lat": 48.3192031,
-      "locality": "Neebing"
+      "lon": -89.52518,
+      "lat": 48.31903
     },
     {
       "province": "on",
       "name": "Kamiskotia",
       "id": "96c84b264a2ce5bc7030399ba773185df3def0ec",
-      "km": 9.008,
-      "lon": -81.5417877,
-      "lat": 48.5371277,
-      "locality": "Timmins"
+      "lon": -81.54124,
+      "lat": 48.5368
     },
     {
       "province": "on",
       "name": "Horseshoe Valley Resort",
       "id": "e60a38601caaf68c3154b8092bc6be2b478fef69",
-      "km": 8.953,
-      "lon": -79.67358709999999,
-      "lat": 44.5464878,
-      "locality": "Oro-Medonte"
+      "lon": -79.67359,
+      "lat": 44.54649
     },
     {
       "province": "on",
       "name": "Snow Valley Ski Resort",
       "id": "894b95d4687e417cfe7c0f2bb534237dd082eef5",
-      "km": 8.494,
-      "lon": -79.78900155,
-      "lat": 44.40994475,
-      "locality": "Springwater"
+      "lon": -79.789,
+      "lat": 44.40994
     },
     {
       "province": "on",
       "name": "Loch Lomond",
       "id": "5795ddd47e05fd5a3d36ff4d9f8ae27b95c3efe1",
-      "km": 8.411,
-      "lon": -89.34613525,
-      "lat": 48.292658900000006,
-      "locality": "Fort William Indian Reserve No. 52"
+      "lon": -89.34683,
+      "lat": 48.29253
     },
     {
-      "province": "sk",
-      "name": "Duck Mountain Provincial Park Cross Country Ski Trails",
-      "id": "77b2e80ccf1d8f0813517445476fb51328121f0e",
-      "km": 52.542,
-      "lon": -101.63207589999999,
-      "lat": 51.598039549999996,
-      "locality": null
+      "province": "on",
+      "name": "Georgian Peaks Club",
+      "id": "07bf513724cfdf9c04741da36ad1f537c8b32f60",
+      "lon": -80.37697,
+      "lat": 44.52995
     },
     {
-      "province": "sk",
-      "name": "White Butte Cross Country ski trails",
-      "id": "b21ef795e847b052514b73a53e4f59322bd769d6",
-      "km": 16.941,
-      "lon": -104.37749554999999,
-      "lat": 50.47347605,
-      "locality": "Edenwold No. 158"
+      "province": "on",
+      "name": "Caledon Ski Club",
+      "id": "1f1286e5773321b2aeb9c779ade72a813e8444da",
+      "lon": -80.0109,
+      "lat": 43.8039
     },
     {
-      "province": "sk",
-      "name": "Foothills cross country ski trails",
-      "id": "b3c9430de047259c48b133defcc65053e882f5b1",
-      "km": 8.32,
-      "lon": -104.58926815000001,
-      "lat": 50.4285061,
-      "locality": "Regina"
+      "province": "on",
+      "name": "The Heights Ski & Country Club",
+      "id": "2cc476e8029cfdf456d8e261ff997c3fe57c8adf",
+      "lon": -79.68454,
+      "lat": 44.55248
+    },
+    {
+      "province": "on",
+      "name": "Devil's Glen Country Club",
+      "id": "72cd57e1c500830358e8e621305f30712e81577d",
+      "lon": -80.20429,
+      "lat": 44.35286
+    },
+    {
+      "province": "on",
+      "name": "Antoine Mountain",
+      "id": "20fb73569121820581158d68ceac2a576efe37d9",
+      "lon": -78.73916,
+      "lat": 46.36412
+    },
+    {
+      "province": "on",
+      "name": "Ski Lakeridge",
+      "id": "83470f9c617bd61f67b64ae1b16ecc44d6c6c5b3",
+      "lon": -79.0601,
+      "lat": 44.02973
+    },
+    {
+      "province": "on",
+      "name": "Mansfield Ski Club",
+      "id": "dce55b31a87b4bde8e7299c2081059c58a6bb346",
+      "lon": -80.05704,
+      "lat": 44.1987
+    },
+    {
+      "province": "on",
+      "name": "Madawaska Mountain",
+      "id": "40b65efa85967f2a651b4b9b05db7f479af54a47",
+      "lon": -77.6601,
+      "lat": 45.43354
+    },
+    {
+      "province": "on",
+      "name": "Devil's Elbow",
+      "id": "494b1b3e92235bd2c19c100e9e9411d9381d8b1c",
+      "lon": -78.57328,
+      "lat": 44.21829
+    },
+    {
+      "province": "on",
+      "name": "Tri Town Ski and Snowboard Village",
+      "id": "c3ecd8e7e4e7c20c3be8b0fb4546d02a01892b88",
+      "lon": -79.57372,
+      "lat": 47.36134
+    },
+    {
+      "province": "on",
+      "name": "Sir Sam's",
+      "id": "cd69fd6a8474e538f8292dcbefb3338147ca5b28",
+      "lon": -78.48498,
+      "lat": 45.12771
+    },
+    {
+      "province": "on",
+      "name": "Stokely Creek Lodge",
+      "id": "32d5c515b8c5a81095dfc563ffb698875abc86fa",
+      "lon": -84.31474,
+      "lat": 46.80513
     },
     {
       "province": "sk",
       "name": "The Duck",
       "id": "8eab5a99786a6063f4fe946a3592ee2c179a2f3a",
-      "km": 7.052,
-      "lon": -101.61182529999999,
-      "lat": 51.560745049999994,
-      "locality": null
-    },
-    {
-      "province": "sk",
-      "name": "Kinosoo Ridge",
-      "id": "68d662009a4ce993f6d73356a9d30d730c8667b4",
-      "km": 6.543,
-      "lon": -110.01243775,
-      "lat": 54.4383635,
-      "locality": null
-    },
-    {
-      "province": "sk",
-      "name": "Les Sherman Park cross country ski trails",
-      "id": "1627a064897a6c93431b9eb7abb03f669f51e48c",
-      "km": 6.258,
-      "lon": -104.62971925,
-      "lat": 50.43888165,
-      "locality": "Regina"
+      "lon": -101.61225,
+      "lat": 51.56077
     },
     {
       "province": "sk",
       "name": "Table Mountain Regional Park",
       "id": "bbd0783d1d5768642a8e0b55662f195ce6f7fd41",
-      "km": 5.272,
-      "lon": -108.60540355,
-      "lat": 52.81218605,
-      "locality": "Battle River No. 438"
+      "lon": -108.6041,
+      "lat": 52.81219
     },
     {
-      "province": "mb",
-      "name": "Birch",
-      "id": "813a8a16fa7e0b82ecb75b4688277c13108345cb",
-      "km": 13.729,
-      "lon": -98.38670335,
-      "lat": 49.474772200000004,
-      "locality": "Thompson"
+      "province": "sk",
+      "name": "Wapiti Valley",
+      "id": "bd0ab6501d3ebe375b91880f1026d405a44322bd",
+      "lon": -104.45667,
+      "lat": 53.23453
+    },
+    {
+      "province": "sk",
+      "name": "Mission Ridge",
+      "id": "2429c20ac5282e69f1fa5a65e640e598f0899a11",
+      "lon": -103.78065,
+      "lat": 50.75293
+    },
+    {
+      "province": "sk",
+      "name": "Foothills cross country ski trails",
+      "id": "b3c9430de047259c48b133defcc65053e882f5b1",
+      "lon": -104.58927,
+      "lat": 50.42851
+    },
+    {
+      "province": "sk",
+      "name": "Duck Mountain Provincial Park Cross Country Ski Trails",
+      "id": "77b2e80ccf1d8f0813517445476fb51328121f0e",
+      "lon": -101.62929,
+      "lat": 51.63587
+    },
+    {
+      "province": "sk",
+      "name": "White Butte Cross Country ski trails",
+      "id": "b21ef795e847b052514b73a53e4f59322bd769d6",
+      "lon": -104.3672,
+      "lat": 50.4766
     },
     {
       "province": "mb",
       "name": "Asessippi Ski Area and Resort",
       "id": "87b7df0dbae2a407504e46e102d8256f84fc81c1",
-      "km": 8.835,
-      "lon": -101.33248345000001,
-      "lat": 50.94814955,
-      "locality": "Shellmouth-Boulton"
+      "lon": -101.33822,
+      "lat": 50.95131
     },
     {
       "province": "mb",
       "name": "Mystery Mountain",
       "id": "268dccc6d47f6e5743dbc03b026ce71e03d1a3be",
-      "km": 6.383,
-      "lon": -97.776723,
-      "lat": 55.871432600000006,
-      "locality": "Mystery Lake"
+      "lon": -97.77693,
+      "lat": 55.86883
     },
     {
       "province": "mb",
       "name": "Thunderhill Ski Area",
       "id": "21073b5e0d0599cf8d04226a96be7d33d8fb4c94",
-      "km": 6.086,
-      "lon": -101.60322550000001,
-      "lat": 52.01520625,
-      "locality": "Swan River"
+      "lon": -101.60796,
+      "lat": 52.01722
     },
     {
       "province": "mb",
       "name": "Holiday Mountain",
       "id": "d8cc9b53dc62ceab7ecdcdfe839f14e91ba5b724",
-      "km": 3.586,
-      "lon": -98.69545215,
-      "lat": 49.2352285,
-      "locality": "Pembina"
+      "lon": -98.69546,
+      "lat": 49.2354
     },
     {
-      "province": "nb",
-      "name": "Wostawea - Killarney Lake Park Nordic Pulse",
-      "id": "086d50d5fef6b5f62e6e09b9eb0d198b24469b85",
-      "km": 23.043,
-      "lon": -66.6116679,
-      "lat": 46.016287500000004,
-      "locality": "Devon Indian Reserve No. 30"
-    },
-    {
-      "province": "nb",
-      "name": "Wostawea - Kingswood Nordic Pulse",
-      "id": "432d338f59dae7cbd2861fb0dd24183e765d4dd6",
-      "km": 19.169,
-      "lon": -66.69060164999999,
-      "lat": 45.92687425,
-      "locality": "Fredericton"
+      "province": "mb",
+      "name": "Minnedosa Ski Valley",
+      "id": "e2a235bb0b1854bb20960c9e2bf4eebdd72b1422",
+      "lon": -99.88182,
+      "lat": 50.31637
     },
     {
       "province": "nb",
       "name": "Crabbe Mountain",
       "id": "6d3108c0551f212c6c408aecae7d834707297d6b",
-      "km": 17.724,
-      "lon": -67.1076443,
-      "lat": 46.1236426,
-      "locality": null
+      "lon": -67.10681,
+      "lat": 46.1231
     },
     {
       "province": "nb",
       "name": "Poley Mountain Ski Area",
       "id": "61df0d3c316f7e8c3ebfb6f6eb83cc880366cf11",
-      "km": 12.867,
-      "lon": -65.3782217,
-      "lat": 45.67749685,
-      "locality": null
+      "lon": -65.37822,
+      "lat": 45.6775
     },
     {
       "province": "nb",
       "name": "Mont Farlagne",
       "id": "b03ad962c13a115d0bb263dc274af88448521f37",
-      "km": 10.45,
-      "lon": -68.3851087,
-      "lat": 47.410678000000004,
-      "locality": "Edmundston"
+      "lon": -68.38511,
+      "lat": 47.41068
     },
     {
-      "province": "nl",
-      "name": "Blow Me Down Cross Country Ski Trails",
-      "id": "84dc5573bcbfeffff7d6ec8ffd11ff4dac78cfa3",
-      "km": 37.39,
-      "lon": -58.00411715,
-      "lat": 48.913754600000004,
-      "locality": null
+      "province": "nb",
+      "name": "Sugarloaf Provincial Park",
+      "id": "36a712b1c210e248c2290923d2c5a81c65c33d47",
+      "lon": -66.6947,
+      "lat": 47.98224
+    },
+    {
+      "province": "nb",
+      "name": "Wostawea - Killarney Lake Park Nordic Pulse",
+      "id": "086d50d5fef6b5f62e6e09b9eb0d198b24469b85",
+      "lon": -66.62946,
+      "lat": 46.01321
     },
     {
       "province": "nl",
       "name": "Marble Mountain",
       "id": "3cd3dae98351a0c8d84257d5263926e5d557b028",
-      "km": 20.903,
-      "lon": -57.823670250000006,
-      "lat": 48.940691,
-      "locality": null
-    },
-    {
-      "province": "nl",
-      "name": "Whaleback Nordic Ski Club",
-      "id": "f7db794b6bc0f35c19b83fcfe8b832b88b0990d6",
-      "km": 16.332,
-      "lon": -58.52520475,
-      "lat": 48.58101145,
-      "locality": null
+      "lon": -57.82367,
+      "lat": 48.94069
     },
     {
       "province": "nl",
       "name": "Smokey Mountain Ski Club",
       "id": "5f049fa511ae919e1b009c8419f71067cf63427c",
-      "km": 9.969,
-      "lon": -66.92859155,
-      "lat": 52.9771777,
-      "locality": null
+      "lon": -66.92094,
+      "lat": 52.97795
+    },
+    {
+      "province": "nl",
+      "name": "White Hills",
+      "id": "12fac582d8fc0619fff0cf24aa9f41c2184ffbba",
+      "lon": -54.04647,
+      "lat": 48.16178
+    },
+    {
+      "province": "nl",
+      "name": "Northern Lights Ski Club",
+      "id": "3b0579a4718dde0be24ab2771a04385d4b029255",
+      "lon": -64.02009,
+      "lat": 53.52358
     },
     {
       "province": "ns",
       "name": "Ski Wentworth",
       "id": "5fd46514d94cc48da69ba024c4262f7c6dff3e6a",
-      "km": 16.16,
-      "lon": -63.55114005,
-      "lat": 45.6075619,
-      "locality": null
+      "lon": -63.56214,
+      "lat": 45.60851
     },
     {
       "province": "ns",
       "name": "Ben Eoin",
       "id": "bf04287461fb1a2b0937a830a6a389d7cb2c74e2",
-      "km": 10.903,
-      "lon": -60.4274726,
-      "lat": 45.969855949999996,
-      "locality": null
+      "lon": -60.42747,
+      "lat": 45.96986
     },
     {
       "province": "ns",
       "name": "Ski Martock",
       "id": "8e4a49e399da52b6d67b97fab26de72b202dc5c7",
-      "km": 8.059,
-      "lon": -64.17044935,
-      "lat": 44.93524375,
-      "locality": null
-    },
-    {
-      "province": "pe",
-      "name": "Souris Strider Ski Club",
-      "id": "d6515fdf8b36dc7eaf1f9e1336ffc25b8a8e5851",
-      "km": 9.41,
-      "lon": -62.26543015,
-      "lat": 46.40142665,
-      "locality": null
+      "lon": -64.17045,
+      "lat": 44.93524
     },
     {
       "province": "pe",
       "name": "Mark Arendz Provincial Ski Park at Brookvale",
       "id": "058a5f1d15dac801fd40a796a114c0524536813f",
-      "km": 3.504,
-      "lon": -63.4093568,
-      "lat": 46.2802442,
-      "locality": null
+      "lon": -63.40928,
+      "lat": 46.28028
+    },
+    {
+      "province": "pe",
+      "name": "Souris Strider Ski Club",
+      "id": "d6515fdf8b36dc7eaf1f9e1336ffc25b8a8e5851",
+      "lon": -62.26753,
+      "lat": 46.39928
     },
     {
       "province": "yt",
-      "name": "Whitehorse Nordic Centre",
-      "id": "a94d60aad2cf320fe7c8101929696934d9d9fa40",
-      "km": 89.996,
-      "lon": -135.16569375,
-      "lat": 60.6956294,
-      "locality": "Whitehorse"
+      "name": "Mount Sima",
+      "id": "1e88ea35f5d7c0805ba3cca2e14bd4b738bde074",
+      "lon": -135.05729,
+      "lat": 60.60866
     },
     {
       "province": "yt",
-      "name": "Marsh Lake Ski Trails",
-      "id": "e527d309305e5a13696731c0e9370c8753067729",
-      "km": 20.266,
-      "lon": -134.23292844999997,
-      "lat": 60.4406387,
-      "locality": "Kwanlin Dun First Nation"
+      "name": "Mount Maichen (Watson Lake)",
+      "id": "09e770c1a30d802641d21dca6ce74725c47d9a39",
+      "lon": -128.7517,
+      "lat": 60.11474
     },
     {
       "province": "yt",
-      "name": "Mt. Lorne Ski Trails",
-      "id": "2bee81c75d2f766054a684ecfe4c0a6e336eb8b6",
-      "km": 10.204,
-      "lon": -134.8651159,
-      "lat": 60.456096,
-      "locality": "Kwanlin Dun First Nation"
+      "name": "Moose Mountain",
+      "id": "430bb094807ade7daaeb4ba6965a0383b6296d33",
+      "lon": -139.40938,
+      "lat": 64.05106
     },
     {
       "province": "nt",
       "name": "Yellowknife Ski Club",
       "id": "f8f19d4b3494ee698123ca0ac2a9c287c8f45352",
-      "km": 12.475,
-      "lon": -114.36757135,
-      "lat": 62.47415645,
-      "locality": "Yellowknife"
+      "lon": -114.37227,
+      "lat": 62.47186
     }
   ]
 }
