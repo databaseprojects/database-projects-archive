@@ -313,7 +313,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018b";
+    return "frontal/" + file + ".svg?v=20261018c";
   }
 
   function frontalArt(hill) {
@@ -870,7 +870,7 @@
   function ensureAlberta() {
     if (albertaPromise) return albertaPromise;
     albertaPromise = Promise.all([
-      fetch("alberta.json?v=20261017w").then(function (res) {
+      fetch("alberta.json?v=20261018c").then(function (res) {
         if (!res.ok) throw new Error("alberta");
         return res.json();
       }),
@@ -2243,7 +2243,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
   Promise.all([
-    fetch("hills.json?v=20261017w").then(function (res) {
+    fetch("hills.json?v=20261018c").then(function (res) {
       if (!res.ok) throw new Error("hills");
       return res.json();
     }),
