@@ -154,6 +154,19 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
+    # guess, flipped by orient()). 187.6 is 180° further and turns that
+    # bird's-eye drawing upside down. Edit this number.
+    "caledonia-nordic-ski-center": {
+        "facing": 187.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Whistler only. Run strokes are 22% under the 2.2 used everywhere else.
+    # The plan map uses the same ratio in CSS. No facing here, so the
+    # automatic camera stays.
+    "whistler-blackcomb": {"run_width": 1.716},
 }
 
 
@@ -710,7 +723,7 @@ def hillshade_png(grid, paper, sun_dir, sun):
     return base64.b64encode(buf.getvalue()).decode("ascii"), min(greys), max(greys)
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -836,15 +849,20 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     # or wider than that opening, and only while the scale stays close to 1.
     # Below 0.82 the drawing would shrink badly, so the sheet is left as-is.
     safe_l, safe_t, safe_r, safe_b = 18.0, 18.0, 982.0, 862.0
-    run_pts = []
-    for run in runs:
-        for line in run["lines"]:
-            for lon, lat in line:
-                z = sample(arr, gt, lon, lat)
-                if z is None:
-                    continue
-                xr, yr = rot(*metres(lon, lat))
-                run_pts.append(paper(*project_xy(xr, yr, z + RUN_CLEAR)))
+
+    def run_paper_points():
+        pts = []
+        for run in runs:
+            for line in run["lines"]:
+                for lon, lat in line:
+                    z = sample(arr, gt, lon, lat)
+                    if z is None:
+                        continue
+                    xr, yr = rot(*metres(lon, lat))
+                    pts.append(paper(*project_xy(xr, yr, z + RUN_CLEAR)))
+        return pts
+
+    run_pts = run_paper_points()
     fit_label = "inside"
     if len(run_pts) >= 2:
         rx0 = min(p[0] for p in run_pts)
@@ -884,6 +902,29 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     return _scx + (px - _cx) * _s, _scy + (py - _cy) * _s
 
                 fit_label = "scale %.3f" % scale_fit
+
+    # The overflow fit only pushes a drawing back inside the box, so a low
+    # hill ends sitting on the caption. Centre the runs between the top
+    # margin and the caption band. Terrain and lifts move with the sheet.
+    # The shift is clamped so the runs stay inside that box.
+    centered = run_paper_points() if len(run_pts) >= 2 else []
+    if len(centered) >= 2:
+        y0 = min(p[1] for p in centered)
+        y1 = max(p[1] for p in centered)
+        want = (safe_t + safe_b) / 2.0 - (y0 + y1) / 2.0
+        dy_min = safe_t - y0
+        dy_max = safe_b - y1
+        vdy = min(max(want, dy_min), dy_max) if dy_min <= dy_max else 0.0
+        if abs(vdy) >= 0.5:
+            base_paper = paper
+
+            def paper(sx, sy, _base=base_paper, _dy=vdy):
+                px, py = _base(sx, sy)
+                return px, py + _dy
+
+            fit_label += " vcenter %.1f" % vdy
+        else:
+            fit_label += " vcenter 0"
 
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
@@ -1056,7 +1097,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     for run in runs:
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
         run_parts.extend(
-            stroke(run["lines"], colour, 2.2, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
+            stroke(run["lines"], colour, run_width, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
         )
     lift_parts = []
     for lift in lifts:
@@ -1209,6 +1250,7 @@ def render_default(slug):
         elevation=cam.get("elevation", 15.0),
         depth_scale=cam.get("depth_scale", DEPTH_SCALE),
         sun=cam.get("sun"),
+        run_width=cam.get("run_width", 2.2),
     )
 
 
@@ -1236,6 +1278,7 @@ def render_cypress():
         elevation=cam["elevation"],
         depth_scale=cam["depth_scale"],
         sun=cam.get("sun"),
+        run_width=cam.get("run_width", 2.2),
     )
 
 
@@ -1268,6 +1311,7 @@ def render_views(slug):
             elevation=cam.get("elevation", 15.0),
             depth_scale=cam.get("depth_scale", DEPTH_SCALE),
             sun=cam.get("sun"),
+            run_width=cam.get("run_width", 2.2),
         )
 
 
