@@ -19,7 +19,7 @@
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261018f",
+      file: "quebec.json?v=20261018g",
       names: "quebec-names.json?v=20261018f",
       index: "contours/quebec-index.json?v=20261018f",
       label: "Quebec"

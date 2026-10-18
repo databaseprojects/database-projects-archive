@@ -214,6 +214,7 @@ def main():
             ),
             "runs": runs,
             "lifts": lifts,
+            "stacked": True,
         }
         if hill["base"] is not None:
             record["base"] = hill["base"]
