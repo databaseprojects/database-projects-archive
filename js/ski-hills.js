@@ -19,12 +19,67 @@
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261018g",
-      names: "quebec-names.json?v=20261018f",
-      index: "contours/quebec-index.json?v=20261018f",
+      file: "quebec.json?v=20261018h",
+      names: "quebec-names.json?v=20261018h",
+      index: "contours/quebec-index.json?v=20261018h",
       label: "Quebec"
+    },
+    on: {
+      file: "ontario.json?v=20261018h",
+      names: "ontario-names.json?v=20261018h",
+      index: "contours/ontario-index.json?v=20261018h",
+      label: "Ontario"
+    },
+    sk: {
+      file: "saskatchewan.json?v=20261018h",
+      names: "saskatchewan-names.json?v=20261018h",
+      index: "contours/saskatchewan-index.json?v=20261018h",
+      label: "Saskatchewan"
+    },
+    mb: {
+      file: "manitoba.json?v=20261018h",
+      names: "manitoba-names.json?v=20261018h",
+      index: "contours/manitoba-index.json?v=20261018h",
+      label: "Manitoba"
+    },
+    nb: {
+      file: "new-brunswick.json?v=20261018h",
+      names: "new-brunswick-names.json?v=20261018h",
+      index: "contours/new-brunswick-index.json?v=20261018h",
+      label: "New Brunswick"
+    },
+    nl: {
+      file: "newfoundland.json?v=20261018h",
+      names: "newfoundland-names.json?v=20261018h",
+      index: "contours/newfoundland-index.json?v=20261018h",
+      label: "Newfoundland"
+    },
+    ns: {
+      file: "nova-scotia.json?v=20261018h",
+      names: "nova-scotia-names.json?v=20261018h",
+      index: "contours/nova-scotia-index.json?v=20261018h",
+      label: "Nova Scotia"
+    },
+    pe: {
+      file: "prince-edward-island.json?v=20261018h",
+      names: "prince-edward-island-names.json?v=20261018h",
+      index: "contours/prince-edward-island-index.json?v=20261018h",
+      label: "Prince Edward Island"
+    },
+    yt: {
+      file: "yukon.json?v=20261018h",
+      names: "yukon-names.json?v=20261018h",
+      index: "contours/yukon-index.json?v=20261018h",
+      label: "Yukon"
+    },
+    nt: {
+      file: "northwest-territories.json?v=20261018h",
+      names: "northwest-territories-names.json?v=20261018h",
+      index: "contours/northwest-territories-index.json?v=20261018h",
+      label: "Northwest Territories"
     }
   };
+  var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt"];
   var catalogReady = {};
   var catalogPromise = {};
   var SQUARE = 1000;
@@ -327,7 +382,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018f";
+    return "frontal/" + file + ".svg?v=20261018h";
   }
 
   function frontalArt(hill) {
@@ -401,7 +456,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018f").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018h").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -997,7 +1052,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261018f").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261018h").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -1056,7 +1111,7 @@
   function selectedRings() {
     if (!boundaries) return [];
     if (province === "all") {
-      return ["bc", "ab", "qc"].reduce(function (rings, prov) {
+      return PLACE_PROVINCES.reduce(function (rings, prov) {
         return rings.concat(ringsFrom(prov, "all"));
       }, []);
     }
@@ -1074,7 +1129,7 @@
       ringsByKey[key] = rings;
       boundsByKey[key] = boundsOfRings(rings);
     }
-    ["bc", "ab", "qc"].forEach(function (prov) {
+    PLACE_PROVINCES.forEach(function (prov) {
       var bag = boundaries[prov] || {};
       var all = [];
       Object.keys(bag).forEach(function (id) {
@@ -1084,7 +1139,7 @@
       });
       put(prov + "|all", all);
     });
-    put("all|all", ["bc", "ab", "qc"].reduce(function (rings, prov) {
+    put("all|all", PLACE_PROVINCES.reduce(function (rings, prov) {
       return rings.concat(ringsFrom(prov, "all"));
     }, []));
   }
@@ -1153,7 +1208,7 @@
   function openingBounds() {
     var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
-    if (province === "all") return [[-139.1, 45.0], [-57.1, 62.6]];
+    if (province === "all") return [[-141.2, 43.4], [-52.6, 65.6]];
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
   }
