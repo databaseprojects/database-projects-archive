@@ -132,11 +132,14 @@
   align-items: flex-start;
   gap: 0.2rem;
   margin-top: 0.9rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .sh-prov,
 .sh-sub,
-.sh-kinds {
+.sh-kinds,
+.sh-country {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -144,9 +147,56 @@
   row-gap: 0.35em;
 }
 
+.sh-scroll {
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-block: 2px;
+}
+
+.sh-scroll::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+.sh-scroll .sh-tag {
+  flex: 0 0 auto;
+}
+
+.sh-scroll.sh-fade-left {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 1.25rem);
+  mask-image: linear-gradient(to right, transparent, #000 1.25rem);
+}
+
+.sh-scroll.sh-fade-right {
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 1.25rem);
+  mask-image: linear-gradient(to left, transparent, #000 1.25rem);
+}
+
+.sh-scroll.sh-fade-left.sh-fade-right {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+}
+
+.sh-scroll .bk-subrow {
+  white-space: nowrap;
+}
+
+.sh-tags[data-country="us"] .sh-prov,
+.sh-tags[data-country="all"] .sh-prov {
+  display: none;
+}
+
 .sh-prov .sh-tag,
 .sh-sub .sh-tag,
-.sh-kinds .sh-tag {
+.sh-kinds .sh-tag,
+.sh-country .sh-tag {
   margin: 0;
 }
 
