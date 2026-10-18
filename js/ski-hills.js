@@ -1393,6 +1393,10 @@
     }
     var full = Math.max(640, Math.round(Math.max(280, width) * 100 / 120));
     var height = Math.round(full / 2);
+    var phone = window.Shared && Shared.isPhone();
+    var tablet = window.Shared && Shared.isTablet();
+    if (phone) height = Math.round(height * 1.35);
+    else if (!tablet) height = Math.round(height * 1.1);
     mapField.style.height = height + "px";
   }
 
