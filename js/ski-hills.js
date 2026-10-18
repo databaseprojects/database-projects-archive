@@ -6,7 +6,7 @@
   var hills = [];
   var byId = Object.create(null);
   var bySlug = Object.create(null);
-  var province = "bc";
+  var province = "ca";
   var region = "all";
   var kind = "all";
   var popular = false;
@@ -137,7 +137,7 @@
   });
   var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt", "us"];
   var CANADA_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt"];
-  var canadaProvince = "bc";
+  var canadaProvince = "ca";
   var canadaRegion = "all";
   var usaRegion = "all";
   var catalogReady = {};
@@ -1986,7 +1986,7 @@
             province = "us";
             region = usaRegion || "all";
           } else {
-            province = canadaProvince || "bc";
+            province = canadaProvince || "ca";
             region = province === "ca" ? "all" : (canadaRegion || "all");
           }
         }
