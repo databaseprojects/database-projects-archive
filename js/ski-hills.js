@@ -79,7 +79,7 @@
       label: "Northwest Territories"
     }
   };
-  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma"];
+  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv"];
   var US_STATE_NAMES = {
     wa: "Washington",
     or: "Oregon",
@@ -96,22 +96,33 @@
     me: "Maine",
     nh: "New Hampshire",
     vt: "Vermont",
-    ma: "Massachusetts"
+    ma: "Massachusetts",
+    ny: "New York",
+    pa: "Pennsylvania",
+    nj: "New Jersey",
+    md: "Maryland",
+    wv: "West Virginia"
   };
   var US_FILE_VERSION = {
     me: "20261018m",
     nh: "20261018m",
     vt: "20261018m",
-    ma: "20261018m"
+    ma: "20261018m",
+    ny: "20261018n",
+    pa: "20261018n",
+    nj: "20261018n",
+    md: "20261018n",
+    wv: "20261018n"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261018m",
+      index: "contours/usa-index.json?v=20261018n",
       label: US_STATE_NAMES[id]
     };
   });
   var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt", "us"];
+  var CANADA_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt"];
   var canadaProvince = "bc";
   var canadaRegion = "all";
   var usaRegion = "all";
@@ -157,14 +168,22 @@
 
   function rememberPlace() {
     if (province === "us") usaRegion = region;
+    else if (province === "ca") canadaProvince = "ca";
     else if (province !== "all") {
       canadaProvince = province;
       canadaRegion = region;
     }
   }
 
+  function canadaHill(hill) {
+    return (hill.province || "bc") !== "us";
+  }
+
   function placeCatalogs() {
     if (province === "all") return Object.keys(catalogs);
+    if (province === "ca") {
+      return CANADA_PROVINCES.filter(function (id) { return catalogs[id]; });
+    }
     if (province === "us") {
       if (region === "all") return US_STATES.map(function (id) { return "us-" + id; });
       return catalogs["us-" + region] ? ["us-" + region] : [];
@@ -304,8 +323,10 @@
   }
 
   function matches(hill) {
-    if (province !== "all" && (hill.province || "bc") !== province) return false;
-    if (province !== "all" && region !== "all" && hill.region !== region) return false;
+    if (province === "ca") {
+      if (!canadaHill(hill)) return false;
+    } else if (province !== "all" && (hill.province || "bc") !== province) return false;
+    if (province !== "all" && province !== "ca" && region !== "all" && hill.region !== region) return false;
     if (kind !== "all" && hill.type !== kind) return false;
     if (query && fold(hill.name).indexOf(query) === -1) return false;
     return true;
@@ -337,6 +358,7 @@
 
   function inPlace(hill) {
     if (province === "all") return true;
+    if (province === "ca") return canadaHill(hill);
     if ((hill.province || "bc") !== province) return false;
     if (region !== "all" && hill.region !== region) return false;
     return true;
@@ -367,7 +389,7 @@
     hills.forEach(function (hill) {
       var card = hill.el;
       if (!card) return;
-      var inProv = province === "all" || (hill.province || "bc") === province;
+      var inProv = province === "all" || (province === "ca" ? canadaHill(hill) : (hill.province || "bc") === province);
       var show = !!on[hill.id];
       card.hidden = !show;
       var marked = show && hill.slug === slug;
@@ -523,7 +545,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018m";
+    return "frontal/" + file + ".svg?v=20261018n";
   }
 
   function frontalArt(hill) {
@@ -597,7 +619,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018m").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018n").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1255,8 +1277,15 @@
     return rings;
   }
 
+  function canadaRings() {
+    return CANADA_PROVINCES.reduce(function (rings, prov) {
+      return rings.concat(ringsFrom(prov, "all"));
+    }, []);
+  }
+
   function selectedRings() {
     if (!boundaries) return [];
+    if (province === "ca") return canadaRings();
     if (province === "all") {
       return PLACE_PROVINCES.reduce(function (rings, prov) {
         return rings.concat(ringsFrom(prov, "all"));
@@ -1266,7 +1295,9 @@
   }
 
   function placeId() {
-    return province === "all" ? "all|all" : province + "|" + region;
+    if (province === "all") return "all|all";
+    if (province === "ca") return "ca|all";
+    return province + "|" + region;
   }
 
   function warmBoundaryCache() {
@@ -1289,6 +1320,7 @@
     put("all|all", PLACE_PROVINCES.reduce(function (rings, prov) {
       return rings.concat(ringsFrom(prov, "all"));
     }, []));
+    put("ca|all", canadaRings());
   }
 
   function boundsOfRings(rings) {
@@ -1315,7 +1347,9 @@
       return false;
     }
     var key = placeId();
-    var rings = key === "all|all" ? [] : (ringsByKey[key] || selectedRings());
+    // Country-wide Canada matches the USA all-states sheet: hill dots only.
+    // The fit still uses the province rings; they are not drawn.
+    var rings = (key === "all|all" || key === "ca|all") ? [] : (ringsByKey[key] || selectedRings());
     var data = {
       type: "FeatureCollection",
       features: rings.length ? [{
@@ -1355,6 +1389,7 @@
   function openingBounds() {
     var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
+    if (province === "ca") return [[-141.0, 41.7], [-52.6, 83.2]];
     if (province === "all") return [[-141.2, 24.4], [-52.6, 65.6]];
     if (province === "us") return [[-125.0, 24.4], [-66.9, 49.5]];
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
@@ -1832,7 +1867,7 @@
             region = usaRegion || "all";
           } else {
             province = canadaProvince || "bc";
-            region = canadaRegion || "all";
+            region = province === "ca" ? "all" : (canadaRegion || "all");
           }
         }
         setPressed();
