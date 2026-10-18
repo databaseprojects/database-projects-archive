@@ -79,7 +79,7 @@
       label: "Northwest Territories"
     }
   };
-  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv"];
+  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv", "mn", "wi", "mi"];
   var US_STATE_NAMES = {
     wa: "Washington",
     or: "Oregon",
@@ -101,7 +101,10 @@
     pa: "Pennsylvania",
     nj: "New Jersey",
     md: "Maryland",
-    wv: "West Virginia"
+    wv: "West Virginia",
+    mn: "Minnesota",
+    wi: "Wisconsin",
+    mi: "Michigan"
   };
   var US_FILE_VERSION = {
     me: "20261018m",
@@ -112,12 +115,15 @@
     pa: "20261018n",
     nj: "20261018n",
     md: "20261018n",
-    wv: "20261018n"
+    wv: "20261018n",
+    mn: "20261018o",
+    wi: "20261018o",
+    mi: "20261018o"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261018n",
+      index: "contours/usa-index.json?v=20261018o",
       label: US_STATE_NAMES[id]
     };
   });
@@ -545,7 +551,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018n";
+    return "frontal/" + file + ".svg?v=20261018o";
   }
 
   function frontalArt(hill) {
@@ -619,7 +625,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018n").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261018o").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
