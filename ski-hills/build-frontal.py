@@ -1184,9 +1184,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         opacity = 0.50 - t * 0.26
         pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in line)
         contour_xml.append(
-            f'<polyline class="sh-frontal-contour" points="{pts}" fill="none" stroke="#0a0a0a" '
+            f'<polyline class="sh-frontal-contour" points="{pts}" fill="none" stroke="#1a1a1a" '
             f'stroke-opacity="{opacity:.3f}" stroke-width="{CONTOUR_W}" '
-            f'style="fill:none;stroke:#0a0a0a;stroke-opacity:{opacity:.3f};'
+            f'style="fill:none;stroke:#1a1a1a;stroke-opacity:{opacity:.3f};'
             f'stroke-width:{CONTOUR_W};stroke-dasharray:none;'
             f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
         )
