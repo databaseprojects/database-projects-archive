@@ -602,7 +602,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018t";
+    return "frontal/" + file + ".svg?v=20261018u";
   }
 
   function frontalArt(hill) {
