@@ -584,7 +584,8 @@
   // frontal/{slug}-front.svg and frontal/{slug}-back.svg exist.
   var SIDE_VIEWS = {
     "mount-washington-alpine-resort": ["front", "back"],
-    "lake-louise-ski-area": ["front", "back"]
+    "lake-louise-ski-area": ["front", "back"],
+    "mt-spokane": ["front", "back"]
   };
 
   function sideViews(hill) {
@@ -602,7 +603,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018w";
+    return "frontal/" + file + ".svg?v=20261018x";
   }
 
   function frontalArt(hill) {
