@@ -195,6 +195,15 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Mt. Hood Skibowl only. The automatic render faced 26.5 (the 206.5
+    # guess, flipped by orient()). 106.5 is 80° further and turns that
+    # bird's-eye drawing. The sheet still frames the runs. Edit this number.
+    "mt-hood-skibowl": {
+        "facing": 106.5,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Mt. Bachelor only. The automatic render faced 7.9 (the 187.9
     # guess, flipped by orient()). 187.9 is 180° further and turns that
     # bird's-eye drawing upside down. Edit this number.
