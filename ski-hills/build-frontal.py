@@ -213,6 +213,47 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Crystal Mountain, Washington only. Not Crystal Mountain, Michigan.
+    # The automatic render faced 77.0 (the 257.0 guess, flipped by
+    # orient()). 257.0 is 180° further and turns that bird's-eye drawing
+    # upside down. The sheet still frames the runs. Edit this number.
+    "crystal-mountain-washington": {
+        "facing": 257.0,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Three Summits only. The automatic render faced 69.3 (the 249.3
+    # guess, flipped by orient()). 249.3 is 180° further and turns that
+    # bird's-eye drawing upside down. The sheet still frames the runs.
+    # Edit this number.
+    "three-summits": {
+        "facing": 249.3,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # 49° North only. The automatic render faced 25.3 (the 205.3 guess,
+    # flipped by orient()). 205.3 is 180° further and turns that bird's-eye
+    # drawing upside down. The sheet still frames the runs. Edit this number.
+    "49-north-mountain-resort": {
+        "facing": 205.3,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Mount Spokane only. The automatic render faced 95.0 (the 275.0
+    # guess, flipped by orient()). Front keeps 95.0. Back is 277.6, the
+    # bearing of the west-side runs (Yeti Crossing, Broken Thumb, Pinball,
+    # Big Timber and the trails with them), 2.6° off a straight opposite.
+    # Same Front / Back toggle as Mount Washington. The sheet still frames
+    # the runs. Edit these numbers.
+    "mt-spokane": {
+        "views": {"front": 95.0, "back": 277.6},
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Mount Shark only. Automatic facing was 172.4. 162.4 is 10° less,
     # which turns the drawing 10° clockwise on screen. full_ground fits
     # the whole DEM crop. The run window left the peak and the near slope
