@@ -1640,12 +1640,13 @@
       return false;
     }
     var key = placeId();
-    // Country-wide Canada, and every United States view, match Europe:
-    // hill dots on the basemap, no hard boundary line. The fit still uses
-    // the rings; they are not drawn. Canadian provinces keep their line.
-    var rings = (key === "all|all" || key === "ca|all" || province === "us")
-      ? []
-      : (ringsByKey[key] || selectedRings());
+    // Country-wide Canada, a Canadian province or region, and every
+    // United States view match Europe: hill dots on the basemap, no hard
+    // boundary line. The fit still uses the rings; they are not drawn.
+    var rings = (
+      key === "all|all" || key === "ca|all" || province === "us" ||
+      CANADA_PROVINCES.indexOf(province) !== -1
+    ) ? [] : (ringsByKey[key] || selectedRings());
     var data = {
       type: "FeatureCollection",
       features: rings.length ? [{
