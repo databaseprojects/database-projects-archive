@@ -82,11 +82,11 @@ DEPTH_GRIDS = {
 # its column is hidden. Runs and lifts skip it, and every other hill
 # skips it, including the Tignes depth grid.
 FLOATING_HORIZON = {
-    "aletsch-arena": 3.0,
-    "jasna-low-tatras": 3.0,
-    "bansko": 3.0,
-    "borovets": 3.0,
-    "skigebiet-garmisch-classic": 3.0,
+    "aletsch-arena": 3.0,  # Aletsch Arena, PR #210
+    "jasna-low-tatras": 3.0,  # Jasná Low Tatras, PR #211
+    "bansko": 3.0,  # Bansko, PR #211
+    "borovets": 3.0,  # Borovets, PR #211
+    "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, PR #211
 }
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
@@ -292,6 +292,15 @@ CAMERAS = {
     "mt-shark": {
         "facing": 162.4,
         "full_ground": True,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Grandvalira only. The automatic render faced 5.4 (the 185.4
+    # guess, flipped by orient()). 185.4 is 180° further and turns that
+    # bird's-eye drawing upside down. Edit this number.
+    "grandvalira": {
+        "facing": 185.4,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
