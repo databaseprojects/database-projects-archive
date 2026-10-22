@@ -571,15 +571,22 @@
     card.setAttribute("data-sh-id", hill.id);
     card.setAttribute("data-sh-region", hill.region || "");
     card.setAttribute("aria-label", hill.name || "Unnamed hill");
+    var art = document.createElement("span");
+    art.className = "sh-hill-art";
     var holder = document.createElementNS(NS, "svg");
     holder.setAttribute("viewBox", "0 0 1000 1000");
     holder.setAttribute("preserveAspectRatio", "xMidYMid slice");
     holder.setAttribute("aria-hidden", "true");
-    card.appendChild(holder);
+    art.appendChild(holder);
     var name = document.createElement("span");
     name.className = "sh-hill-name";
     name.textContent = hill.name || "Unnamed hill";
-    card.appendChild(name);
+    art.appendChild(name);
+    card.appendChild(art);
+    var caption = document.createElement("span");
+    caption.className = "sh-hill-caption";
+    caption.textContent = hill.name || "Unnamed hill";
+    card.appendChild(caption);
     card._hill = hill;
     card.addEventListener("pointerenter", function (e) {
       if (e.pointerType === "touch") return;
@@ -609,8 +616,12 @@
       if (!hill._geom || !hill.el || hill._drawn) return hill;
       var svg = drawingSvg(hill);
       var holder = hill.el.querySelector("svg");
-      if (holder) hill.el.replaceChild(svg, holder);
-      else hill.el.insertBefore(svg, hill.el.firstChild);
+      if (holder && holder.parentNode) holder.parentNode.replaceChild(svg, holder);
+      else {
+        var art = hill.el.querySelector(".sh-hill-art");
+        if (art) art.insertBefore(svg, art.firstChild);
+        else hill.el.insertBefore(svg, hill.el.firstChild);
+      }
       hill.el._shift = fitArt(svg, SQUARE, hill._bounds);
       hill._drawn = true;
       loadContour(hill.el);
@@ -1365,8 +1376,11 @@
       if (row && row.name) hill.name = row.name;
       if (!hill.el) return;
       hill.el.setAttribute("aria-label", hill.name || "Unnamed hill");
+      var label = hill.name || "Unnamed hill";
       var nameEl = hill.el.querySelector(".sh-hill-name");
-      if (nameEl) nameEl.textContent = hill.name || "Unnamed hill";
+      if (nameEl) nameEl.textContent = label;
+      var captionEl = hill.el.querySelector(".sh-hill-caption");
+      if (captionEl) captionEl.textContent = label;
     });
     Object.keys(index || {}).forEach(function (slug) {
       contourIndex[slug] = index[slug];
@@ -1626,9 +1640,12 @@
       return false;
     }
     var key = placeId();
-    // Country-wide Canada matches the USA all-states sheet: hill dots only.
-    // The fit still uses the province rings; they are not drawn.
-    var rings = (key === "all|all" || key === "ca|all") ? [] : (ringsByKey[key] || selectedRings());
+    // Country-wide Canada, and every United States view, match Europe:
+    // hill dots on the basemap, no hard boundary line. The fit still uses
+    // the rings; they are not drawn. Canadian provinces keep their line.
+    var rings = (key === "all|all" || key === "ca|all" || province === "us")
+      ? []
+      : (ringsByKey[key] || selectedRings());
     var data = {
       type: "FeatureCollection",
       features: rings.length ? [{
