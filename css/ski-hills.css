@@ -194,6 +194,7 @@
 }
 
 .sh-tags[data-country="us"] .sh-prov,
+.sh-tags[data-country="eu"] .sh-prov,
 .sh-tags[data-country="all"] .sh-prov {
   display: none;
 }
