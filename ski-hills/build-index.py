@@ -33,7 +33,7 @@ US_STATES = [
 
 # Appended after the United States so the first 503 rows stay put.
 # Later European batches add countries at the end of this list.
-EU_COUNTRIES = ["fr", "ch", "at", "it", "no", "se", "fi"]
+EU_COUNTRIES = ["fr", "ch", "at", "it", "no", "se", "fi", "es", "ad"]
 
 
 def points_of(run):
