@@ -76,6 +76,14 @@ DEPTH_GRIDS = {
         "tol": 15.0,
     },
 }
+# Aletsch Arena only. The skyline test leaves both faces of the jagged
+# peaks in front of the ski area, so those contours cross. Pixels.
+# Screen y grows downward. A farther sample more than this far below the
+# highest nearer sample in its column is hidden. Runs and lifts skip it,
+# and every other hill skips it, including the Tignes depth grid.
+FLOATING_HORIZON = {
+    "aletsch-arena": 3.0,
+}
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
@@ -732,7 +740,95 @@ class DepthGrid:
         return best
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None):
+def apply_floating_horizon(chunks, col_of, tol):
+    """Hide the far face where a nearer contour already crests that column.
+
+    Samples walk from the camera outward. Each column keeps the highest
+    drawn sample. A later sample more than tol pixels below it is hidden.
+    A drawn segment fills the columns between its vertices.
+    """
+    columns = col_of(1e9) + 1
+    horizon = [1e9] * columns
+    order = []
+    for ci, chunk in enumerate(chunks):
+        for pi, (_px, _py, yr, hide) in enumerate(chunk):
+            if not hide:
+                order.append((yr, ci, pi))
+    order.sort()
+    drawn_at = set()
+    for _yr, ci, pi in order:
+        px, py, yr, hide = chunks[ci][pi]
+        if hide:
+            continue
+        col = col_of(px)
+        top = horizon[col]
+        if top < 1e8 and py > top + tol:
+            chunks[ci][pi] = (px, py, yr, True)
+            continue
+        drawn_at.add((ci, pi))
+        if py < horizon[col]:
+            horizon[col] = py
+        chunk = chunks[ci]
+        for ni in (pi - 1, pi + 1):
+            if (ci, ni) not in drawn_at:
+                continue
+            ax, ay = chunk[ni][0], chunk[ni][1]
+            if math.hypot(px - ax, py - ay) > 26.0:
+                continue
+            span = col_of(ax) - col
+            if abs(span) < 2:
+                continue
+            step = 1 if span > 0 else -1
+            for k in range(1, abs(span)):
+                cy = py + (ay - py) * (k / abs(span))
+                c = col + step * k
+                if cy < horizon[c]:
+                    horizon[c] = cy
+
+
+def contour_lines(chunks):
+    """Visible runs after the short-gap hold. One entry per drawn stroke."""
+    drawn = []
+    seen = set()
+    kept = 0
+    for chunk in chunks:
+        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk)
+        part = []
+        depth = None
+
+        def flush_part():
+            nonlocal part, depth, kept
+            if len(part) >= 2:
+                length = 0.0
+                for a, b in zip(part, part[1:]):
+                    length += math.hypot(b[0] - a[0], b[1] - a[1])
+                # A piece shorter than the hold is the same flicker, drawn
+                # as a dot. A real visible run is longer and stays solid.
+                if length < MIN_RUN:
+                    part = []
+                    depth = None
+                    return
+                sig = tuple((round(p[0], 1), round(p[1], 1)) for p in part)
+                rev = tuple(reversed(sig))
+                if sig not in seen and rev not in seen:
+                    seen.add(sig)
+                    drawn.append((depth, part))
+                    kept += len(part)
+            part = []
+            depth = None
+
+        for (px, py, yr, _hide), flag in zip(chunk, flags):
+            if flag:
+                flush_part()
+                continue
+            if depth is None:
+                depth = yr
+            part.append((px, py))
+        flush_part()
+    return drawn, kept
+
+
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -744,6 +840,10 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     depth_grid, when set, also hides a point that sits tol metres behind
     the nearest terrain in its screen cell. Hills without an entry leave
     the grid unset, so this test does not run.
+
+    float_tol, when set, runs the floating horizon after the skyline.
+    The stroke-weight line count stays the pre-horizon count, so this
+    pass does not change run or lift width.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
     hidden = 0
@@ -796,45 +896,44 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             chunk.append((px, py, yr, hide))
         flush()
 
-    drawn = []
-    seen = set()
-    kept = 0
-    for chunk in chunks:
-        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk)
-        part = []
-        depth = None
-
-        def flush_part():
-            nonlocal part, depth, kept
-            if len(part) >= 2:
-                length = 0.0
-                for a, b in zip(part, part[1:]):
-                    length += math.hypot(b[0] - a[0], b[1] - a[1])
-                # A piece shorter than the hold is the same flicker, drawn
-                # as a dot. A real visible run is longer and stays solid.
-                if length < MIN_RUN:
-                    part = []
-                    depth = None
-                    return
-                sig = tuple((round(p[0], 1), round(p[1], 1)) for p in part)
-                rev = tuple(reversed(sig))
-                if sig not in seen and rev not in seen:
-                    seen.add(sig)
-                    drawn.append((depth, part))
-                    kept += len(part)
-            part = []
-            depth = None
-
-        for (px, py, yr, _hide), flag in zip(chunk, flags):
-            if flag:
-                flush_part()
-                continue
-            if depth is None:
-                depth = yr
-            part.append((px, py))
-        flush_part()
-    print("occlusion", "kept", kept, "hidden", hidden, "lines", len(drawn))
-    return drawn
+    before, before_kept = contour_lines(chunks)
+    print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
+    if float_tol is None:
+        return before, len(before)
+    apply_floating_horizon(chunks, col_of, float_tol)
+    drawn, kept = contour_lines(chunks)
+    before_bag = {}
+    for _yr, line in before:
+        for px, py in line:
+            key = (px, py)
+            before_bag[key] = before_bag.get(key, 0) + 1
+    after_bag = {}
+    for _yr, line in drawn:
+        for px, py in line:
+            key = (px, py)
+            after_bag[key] = after_bag.get(key, 0) + 1
+    # Lower third of the sheet. The jagged peaks sit here; the ski
+    # runs sit above it.
+    band = 1000.0 * 2.0 / 3.0
+    hid_low = hid_high = 0
+    for (px, py), n in before_bag.items():
+        gone = n - after_bag.get((px, py), 0)
+        if gone <= 0:
+            continue
+        if py >= band:
+            hid_low += gone
+        else:
+            hid_high += gone
+    print(
+        "floathorizon",
+        "tol", float_tol,
+        "before", before_kept,
+        "after", kept,
+        "hidden_low", hid_low,
+        "hidden_high", hid_high,
+        "band_y", round(band, 1),
+    )
+    return drawn, len(before)
 
 
 def resolve_sun(facing_deg, settings):
@@ -1371,8 +1470,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             "tol", depth_grid.tol,
         )
 
-    contours = project_contours(
-        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid
+    contours, stroke_lines = project_contours(
+        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
+        float_tol=FLOATING_HORIZON.get(slug),
     )
 
     def covered(px, py, yr):
@@ -1454,12 +1554,12 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     }
     run_stroke = run_width
     lift_stroke = LIFT_W
-    if len(contours) > CONTOUR_THIN_CUTOFF:
+    if stroke_lines > CONTOUR_THIN_CUTOFF:
         run_stroke = RUN_W_THIN
         lift_stroke = LIFT_W_THIN
     print(
         "strokes",
-        "contours", len(contours),
+        "contours", stroke_lines,
         "cutoff", CONTOUR_THIN_CUTOFF,
         "run", run_stroke,
         "lift", lift_stroke,
