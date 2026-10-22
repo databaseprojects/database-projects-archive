@@ -83,10 +83,17 @@ DEPTH_GRIDS = {
 # hill skips it, including the Tignes depth grid.
 FLOATING_HORIZON = {
     "aletsch-arena": 3.0,  # Aletsch Arena, 3.0 px, PR #210
-    "jasna-low-tatras": 5.0,  # Jasná Low Tatras, 5.0 px, PR #211
+    "jasna-low-tatras": 5.0,  # Jasná Low Tatras, 5.0 px, PR #211; short dips stay drawn
     "bansko": 3.0,  # Bansko, 3.0 px, PR #211
     "borovets": 3.0,  # Borovets, 3.0 px, PR #211
     "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, 3.0 px, PR #211
+}
+# Consecutive contour samples. A floating-horizon dip shorter than this
+# stays drawn, so a gentle slope does not break into dashes. A longer run
+# stays hidden, which is the steep face. Jasná only. Other hills hide each
+# sample on its own.
+HORIZON_MIN_RUN = {
+    "jasna-low-tatras": 80,
 }
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
@@ -753,12 +760,48 @@ class DepthGrid:
         return best
 
 
-def apply_floating_horizon(chunks, col_of, tol):
+def _horizon_runs(marked):
+    """Consecutive samples this pass hid, one run per contour."""
+    by_chunk = {}
+    for ci, pi in marked:
+        by_chunk.setdefault(ci, []).append(pi)
+    runs = []
+    for ci, pis in by_chunk.items():
+        pis.sort()
+        start = pis[0]
+        prev = pis[0]
+        for pi in pis[1:]:
+            if pi == prev + 1:
+                prev = pi
+                continue
+            runs.append((ci, start, prev))
+            start = prev = pi
+        runs.append((ci, start, prev))
+    return runs
+
+
+def _release_short_horizon_runs(chunks, marked, min_run):
+    """Put a dip back if it stayed below the crest for fewer than min_run samples."""
+    for ci, start, end in _horizon_runs(marked):
+        if end - start + 1 >= min_run:
+            continue
+        chunk = chunks[ci]
+        for pi in range(start, end + 1):
+            px, py, yr, _hide = chunk[pi]
+            chunk[pi] = (px, py, yr, False)
+
+
+def apply_floating_horizon(chunks, col_of, tol, min_run=None):
     """Hide the far face where a nearer contour already crests that column.
 
     Samples walk from the camera outward. Each column keeps the highest
     drawn sample. A later sample more than tol pixels below it is hidden.
     A drawn segment fills the columns between its vertices.
+
+    min_run, when set, keeps that hide only for a run of at least that
+    many consecutive samples. A shorter dip stays drawn. The crest is
+    unchanged: a sample below it never raises the horizon. Skyline hides
+    are left as they are.
     """
     columns = col_of(1e9) + 1
     horizon = [1e9] * columns
@@ -769,6 +812,8 @@ def apply_floating_horizon(chunks, col_of, tol):
                 order.append((yr, ci, pi))
     order.sort()
     drawn_at = set()
+    use_run = min_run is not None and min_run > 1
+    marked = [] if use_run else None
     for _yr, ci, pi in order:
         px, py, yr, hide = chunks[ci][pi]
         if hide:
@@ -777,6 +822,8 @@ def apply_floating_horizon(chunks, col_of, tol):
         top = horizon[col]
         if top < 1e8 and py > top + tol:
             chunks[ci][pi] = (px, py, yr, True)
+            if use_run:
+                marked.append((ci, pi))
             continue
         drawn_at.add((ci, pi))
         if py < horizon[col]:
@@ -797,6 +844,8 @@ def apply_floating_horizon(chunks, col_of, tol):
                 c = col + step * k
                 if cy < horizon[c]:
                     horizon[c] = cy
+    if use_run:
+        _release_short_horizon_runs(chunks, marked, min_run)
 
 
 def contour_lines(chunks):
@@ -841,7 +890,7 @@ def contour_lines(chunks):
     return drawn, kept
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None):
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -856,7 +905,8 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
 
     float_tol, when set, runs the floating horizon after the skyline.
     The stroke-weight line count stays the pre-horizon count, so this
-    pass does not change run or lift width.
+    pass does not change run or lift width. float_min_run, when set,
+    draws a horizon dip that is shorter than that many samples.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
     hidden = 0
@@ -913,7 +963,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
     if float_tol is None:
         return before, len(before)
-    apply_floating_horizon(chunks, col_of, float_tol)
+    apply_floating_horizon(chunks, col_of, float_tol, float_min_run)
     drawn, kept = contour_lines(chunks)
     before_bag = {}
     for _yr, line in before:
@@ -945,6 +995,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         "hidden_low", hid_low,
         "hidden_high", hid_high,
         "band_y", round(band, 1),
+        *(("min_run", float_min_run) if float_min_run else ()),
     )
     return drawn, len(before)
 
@@ -1486,6 +1537,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     contours, stroke_lines = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
         float_tol=FLOATING_HORIZON.get(slug),
+        float_min_run=HORIZON_MIN_RUN.get(slug),
     )
 
     def covered(px, py, yr):
