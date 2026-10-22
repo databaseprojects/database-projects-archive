@@ -223,6 +223,56 @@ def same_frame(source_lines, stored, to_px):
     return hits >= 3 and (hits >= 8 or hits / len(stored) >= 0.4)
 
 
+def drawn_geom_matches(hill, to_px):
+    """The plan pixels are this frame applied to the deduped run geometry."""
+    path = Path("/tmp/%s-geom.json" % hill.get("slug"))
+    if not path.exists():
+        return False
+    try:
+        geom = json.loads(path.read_text())
+    except Exception:
+        return False
+    lines = []
+    for feat in geom.get("runs") or []:
+        for line in feat.get("lines") or []:
+            if line:
+                lines.append(line)
+    stored = hill.get("stored_all") or hill.get("stored") or []
+    return bool(stored) and draw_lines(lines, to_px) == stored
+
+
+def frame_ok(hill, to_px):
+    """The stored plan uses this source frame.
+
+    Europe, and a deduped United States hill, can drop an outline ring
+    before the first stored line. An exact first-three match still wins.
+    A United States hill whose centreline was substituted for a ring still
+    passes when that drawn geometry projects to the stored pixels.
+    """
+    drawn = draw_lines(hill["runs"][:3], to_px)
+    if hill.get("province") == "eu":
+        return same_frame(hill["runs"], hill.get("stored_all") or hill["stored"], to_px)
+    if drawn == hill["stored"]:
+        return True
+    if hill.get("province") != "us":
+        return False
+    stored = hill.get("stored_all") or hill["stored"]
+    if same_frame(hill["runs"], stored, to_px):
+        return True
+    # A short hill can have every ring replaced, so no source string matches.
+    # One hit in the same frame is enough when most of the drawing is original.
+    if stored:
+        pool = set()
+        for line in hill["runs"]:
+            made = draw_lines([line], to_px)
+            if made:
+                pool.add(made[0])
+        hits = sum(1 for row in stored if row in pool)
+        if hits and (hits >= 8 or hits / len(stored) >= 0.4):
+            return True
+    return drawn_geom_matches(hill, to_px)
+
+
 def lambert():
     src = osr.SpatialReference()
     src.ImportFromEPSG(4326)
@@ -495,7 +545,7 @@ def main():
             "runs": [],
             "lifts": [],
             "stored": [run["p"] for run in hill["runs"][:3]],
-            "stored_all": [run["p"] for run in hill["runs"]] if (hill.get("province") or "") == "eu" else [],
+            "stored_all": [run["p"] for run in hill["runs"]] if (hill.get("province") or "") in ("eu", "us") else [],
             "drawn": [run["p"] for run in hill["runs"]] + [
                 lift if isinstance(lift, str) else (lift.get("p") or "")
                 for lift in (hill.get("lifts") or [])
@@ -547,13 +597,11 @@ def main():
                 index["skipped"].append({"slug": hill["slug"], "reason": "no source runs"})
                 continue
             to_px, _to_ll, _span, _box = projection(hill["runs"])
-            drawn = draw_lines(hill["runs"][:3], to_px)
-            if hill.get("province") == "eu":
-                if not same_frame(hill["runs"], hill.get("stored_all") or hill["stored"], to_px):
+            if not frame_ok(hill, to_px):
+                if hill.get("province") == "eu":
                     index["skipped"].append({"slug": hill["slug"], "reason": "projection mismatch"})
                     print("projection mismatch", hill["slug"], flush=True)
                     continue
-            elif drawn != hill["stored"]:
                 print("projection mismatch", hill["slug"], file=sys.stderr)
                 return 1
             checked += 1
@@ -587,16 +635,12 @@ def main():
             index["skipped"].append({"slug": hill["slug"], "reason": "no source runs"})
             continue
         to_px, to_ll, span, _box = projection(hill["runs"])
-        drawn = draw_lines(hill["runs"][:3], to_px)
-        if hill.get("province") == "eu":
-            if not same_frame(hill["runs"], hill.get("stored_all") or hill["stored"], to_px):
+        if not frame_ok(hill, to_px):
+            if hill.get("province") == "eu":
                 index["skipped"].append({"slug": hill["slug"], "reason": "projection mismatch"})
                 print("projection mismatch", hill["slug"], flush=True)
                 continue
-        elif drawn != hill["stored"]:
             print("projection mismatch", hill["slug"], file=sys.stderr)
-            print("stored", hill["stored"][0][:80] if hill["stored"] else None, file=sys.stderr)
-            print("drawn", drawn[0][:80] if drawn else None, file=sys.stderr)
             return 1
         checked += 1
         wide, pixel_window = square_frame(parse_stored(hill["drawn"]), to_ll)
