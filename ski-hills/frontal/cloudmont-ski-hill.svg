@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-cloudmont-ski-hill" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-cloudmont-ski-hill" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-cloudmont-ski-hill)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-cloudmont-ski-hill)">
+<polyline class="sh-frontal-contour" points="577.2,-169.8 742.1,-171.7" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="577.2,-169.8 547.9,-170.5 381.1,-197.8 320.2,-210.4" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1102.0,297.8 1056.9,286.7 911.0,247.5 790.9,192.2 767.8,183.8 577.8,148.1 470.1,163.5 432.2,168.3 367.2,192.5 310.8,211.4 191.7,256.8 70.3,299.9 -29.5,363.7" fill="none" stroke="#1a1a1a" stroke-opacity="0.439" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.439;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1051.2,572.2 991.5,565.2 847.8,537.3 771.1,523.2 629.9,488.6 532.3,486.4 465.1,490.5 336.4,526.7 217.3,572.1 212.4,576.5 110.3,629.0" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="533.9,74.5 533.9,810.0" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="466.1,724.7 481.3,70.0" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+</svg>
