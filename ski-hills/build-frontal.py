@@ -108,10 +108,11 @@ CONTOUR_M = 20
 # Runs stay 2.2 and lifts stay 1.7, unless the contour field is spread out.
 CONTOUR_W = 0.66
 LIFT_W = 1.7
-# A hill whose bird's eye has more contour polylines than this is spread
-# out. Its runs and lifts draw at 62% of the defaults: run 1.36 (of 2.2),
-# lift 1.05 (of 1.7). Colour, dash, and the line-only drawing stay put.
-CONTOUR_THIN_CUTOFF = 1800
+# Site-wide standing rule. A bird's eye with this many contour polylines
+# or more is spread out. Its runs and lifts draw at 62% of the defaults:
+# run 1.36 (of 2.2), lift 1.05 (of 1.7). Colour, dash, and the line-only
+# drawing stay put.
+CONTOUR_THIN_CUTOFF = 1400
 RUN_W_THIN = 1.36
 LIFT_W_THIN = 1.05
 COLS = 110
@@ -1620,7 +1621,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     }
     run_stroke = run_width
     lift_stroke = LIFT_W
-    if stroke_lines > CONTOUR_THIN_CUTOFF:
+    if stroke_lines >= CONTOUR_THIN_CUTOFF:
         run_stroke = RUN_W_THIN
         lift_stroke = LIFT_W_THIN
     print(
