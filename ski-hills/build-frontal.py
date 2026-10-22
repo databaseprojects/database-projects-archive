@@ -85,8 +85,15 @@ LIFT_CLEAR = 12.0
 RUN_CLEAR = 7.0
 CONTOUR_M = 20
 # Was 0.85. About 22% thinner, every contour including the 100 m steps.
-# Runs stay 2.2 and lifts stay 1.7.
+# Runs stay 2.2 and lifts stay 1.7, unless the contour field is spread out.
 CONTOUR_W = 0.66
+LIFT_W = 1.7
+# A hill whose bird's eye has more contour polylines than this is spread
+# out. Its runs and lifts draw at 62% of the defaults: run 1.36 (of 2.2),
+# lift 1.05 (of 1.7). Colour, dash, and the line-only drawing stay put.
+CONTOUR_THIN_CUTOFF = 1800
+RUN_W_THIN = 1.36
+LIFT_W_THIN = 1.05
 COLS = 110
 ROWS = 72
 # facing: look azimuth, degrees clockwise from north. 0 is due north.
@@ -1445,11 +1452,23 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         "freeride": "#111",
         "extreme": "#111",
     }
+    run_stroke = run_width
+    lift_stroke = LIFT_W
+    if len(contours) > CONTOUR_THIN_CUTOFF:
+        run_stroke = RUN_W_THIN
+        lift_stroke = LIFT_W_THIN
+    print(
+        "strokes",
+        "contours", len(contours),
+        "cutoff", CONTOUR_THIN_CUTOFF,
+        "run", run_stroke,
+        "lift", lift_stroke,
+    )
     run_parts = []
     for run in runs:
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
         run_parts.extend(
-            stroke(run["lines"], colour, run_width, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
+            stroke(run["lines"], colour, run_stroke, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
         )
     lift_parts = []
     for lift in lifts:
@@ -1457,7 +1476,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             stroke(
                 lift["lines"],
                 "#111",
-                1.7,
+                lift_stroke,
                 z_add=LIFT_CLEAR,
                 dash="6 4",
                 css_class="sh-frontal-lift",
