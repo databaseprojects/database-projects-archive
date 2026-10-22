@@ -87,6 +87,7 @@ FLOATING_HORIZON = {
     "bansko": 3.0,  # Bansko, 3.0 px, PR #211
     "borovets": 3.0,  # Borovets, 3.0 px, PR #211
     "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, 3.0 px, PR #211
+    "estacio-d-esqui-baqueira-beret": 3.0,  # Baqueira Beret, 3.0 px
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
