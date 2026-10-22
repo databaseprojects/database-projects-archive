@@ -143,7 +143,7 @@
       label: US_STATE_NAMES[id]
     };
   });
-  var EU_COUNTRIES = ["fr", "ch", "at", "it", "no", "se", "fi", "es", "ad"];
+  var EU_COUNTRIES = ["fr", "ch", "at", "it", "no", "se", "fi", "es", "ad", "rs", "ua", "sk", "bg", "de", "cz"];
   var EU_COUNTRY_NAMES = {
     fr: "France",
     ch: "Switzerland",
@@ -176,12 +176,18 @@
     se: "20261022b",
     fi: "20261022b",
     es: "20261022c",
-    ad: "20261022c"
+    ad: "20261022c",
+    rs: "20261022d",
+    ua: "20261022d",
+    sk: "20261022d",
+    bg: "20261022d",
+    de: "20261022d",
+    cz: "20261022d"
   };
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
-      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261022c"),
-      index: "contours/europe-index.json?v=20261022c",
+      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261022d"),
+      index: "contours/europe-index.json?v=20261022d",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -2760,7 +2766,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261022c").then(function (res) {
+  fetch("hill-index.json?v=20261022d").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
