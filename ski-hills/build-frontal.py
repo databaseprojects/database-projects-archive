@@ -76,17 +76,17 @@ DEPTH_GRIDS = {
         "tol": 15.0,
     },
 }
-# Same pass, same tolerance. The skyline test leaves both faces of the
-# jagged peaks, so those contours cross. Pixels. Screen y grows downward.
-# A farther sample more than this far below the highest nearer sample in
-# its column is hidden. Runs and lifts skip it, and every other hill
-# skips it, including the Tignes depth grid.
+# Each hill has its own tolerance, in pixels. The skyline test leaves
+# both faces of the jagged peaks, so those contours cross. Screen y grows
+# downward. A farther sample more than this far below the highest nearer
+# sample in its column is hidden. Runs and lifts skip it, and every other
+# hill skips it, including the Tignes depth grid.
 FLOATING_HORIZON = {
-    "aletsch-arena": 3.0,  # Aletsch Arena, PR #210
-    "jasna-low-tatras": 3.0,  # Jasná Low Tatras, PR #211
-    "bansko": 3.0,  # Bansko, PR #211
-    "borovets": 3.0,  # Borovets, PR #211
-    "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, PR #211
+    "aletsch-arena": 3.0,  # Aletsch Arena, 3.0 px, PR #210
+    "jasna-low-tatras": 5.0,  # Jasná Low Tatras, 5.0 px, PR #211
+    "bansko": 3.0,  # Bansko, 3.0 px, PR #211
+    "borovets": 3.0,  # Borovets, 3.0 px, PR #211
+    "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, 3.0 px, PR #211
 }
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
