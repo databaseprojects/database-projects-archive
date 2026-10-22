@@ -358,8 +358,12 @@
     });
   }
 
-  // One province or one state. All, Canada, and USA-wide stay on the index
-  // until a card actually needs its drawing.
+  // France, Austria, Switzerland, and Italy are one file per hill.
+  // A selected country still filters the list; each visible card fetches its own file.
+  var SPLIT_EU = { fr: true, at: true, ch: true, it: true };
+
+  // One province or one state. All, Canada, USA-wide, and Europe-wide stay
+  // on the index until a card actually needs its drawing.
   function selectedCatalogs() {
     if (province === "all" || province === "ca") return [];
     if (province === "us") {
@@ -367,7 +371,7 @@
       return catalogs["us-" + region] ? ["us-" + region] : [];
     }
     if (province === "eu") {
-      if (region === "all") return [];
+      if (region === "all" || SPLIT_EU[region]) return [];
       return catalogs["eu-" + region] ? ["eu-" + region] : [];
     }
     return catalogs[province] ? [province] : [];
@@ -609,10 +613,37 @@
     return hill.province || "bc";
   }
 
+  function splitEurope(hill) {
+    return !!(hill && hill.province === "eu" && SPLIT_EU[hill.region]);
+  }
+
+  function ensureHillFile(hill) {
+    if (hill._geom) return Promise.resolve();
+    if (hill._filePromise) return hill._filePromise;
+    var spec = catalogs[catalogCode(hill)];
+    hill._filePromise = Promise.all([
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261022p").then(function (res) {
+        if (!res.ok) throw new Error(hill.slug);
+        return res.json();
+      }),
+      ensureIndex(spec && spec.index)
+    ]).then(function (pair) {
+      var data = pair[0];
+      if (!data || !data.runs) throw new Error(hill.slug);
+      adopt({ hills: [data] }, {}, (pair[1] && pair[1].hills) || {});
+      if (!hill._geom) throw new Error(hill.slug);
+    }).catch(function (err) {
+      hill._filePromise = null;
+      throw err;
+    });
+    return hill._filePromise;
+  }
+
   function ensureDrawn(hill) {
     if (!hill || hill._drawn) return Promise.resolve(hill);
     if (hill._drawPromise) return hill._drawPromise;
-    hill._drawPromise = ensureCatalog(catalogCode(hill)).then(function () {
+    var ready = splitEurope(hill) ? ensureHillFile(hill) : ensureCatalog(catalogCode(hill));
+    hill._drawPromise = ready.then(function () {
       if (!hill._geom || !hill.el || hill._drawn) return hill;
       var svg = drawingSvg(hill);
       var holder = hill.el.querySelector("svg");
@@ -1387,6 +1418,17 @@
     });
   }
 
+  var indexReady = {};
+
+  function ensureIndex(url) {
+    if (!url) return Promise.resolve({ hills: {} });
+    if (indexReady[url]) return indexReady[url];
+    indexReady[url] = fetch(url).then(function (res) {
+      return res.ok ? res.json() : { hills: {} };
+    }).catch(function () { return { hills: {} }; });
+    return indexReady[url];
+  }
+
   function ensureCatalog(code) {
     if (catalogReady[code]) return Promise.resolve();
     if (catalogPromise[code]) return catalogPromise[code];
@@ -1403,9 +1445,7 @@
         return res.json();
       }),
       namesFetch,
-      fetch(spec.index).then(function (res) {
-        return res.ok ? res.json() : { hills: {} };
-      }).catch(function () { return { hills: {} }; })
+      ensureIndex(spec.index)
     ]).then(function (pair) {
       adopt(pair[0], pair[1] || {}, (pair[2] && pair[2].hills) || {});
       catalogReady[code] = true;
