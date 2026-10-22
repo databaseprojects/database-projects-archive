@@ -124,7 +124,7 @@
     ma: "20261022f",
     md: "20261018y",
     me: "20261022f",
-    mi: "20261018y",
+    mi: "20261022h",
     mt: "20261022e",
     nh: "20261022f",
     nj: "20261022g",
@@ -134,10 +134,10 @@
     pa: "20261022g",
     vt: "20261022f",
     wa: "20261022e",
-    wi: "20261018y",
+    wi: "20261022h",
     wv: "20261022g",
     wy: "20261022e",
-    mn: "20261018o",
+    mn: "20261022h",
     az: "20261022e",
     nv: "20261022e",
     sd: "20261022e",
@@ -149,7 +149,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261022g",
+      index: "contours/usa-index.json?v=20261022h",
       label: US_STATE_NAMES[id]
     };
   });
@@ -2776,7 +2776,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261022g").then(function (res) {
+  fetch("hill-index.json?v=20261022h").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
