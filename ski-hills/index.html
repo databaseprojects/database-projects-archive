@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261018v">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261022a">
 </head>
 <body>
   <div class="sheet">
@@ -23,12 +23,13 @@
       <button type="button" class="sh-cart-btn" id="sh-cart-btn" aria-expanded="false" aria-controls="sh-cart-panel">Cart <span class="sh-cart-n">0</span></button>
     </span>
   </div>
-  <p class="sh-note">Line drawings of ski hills across Canada and the United States. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
+  <p class="sh-note">Line drawings of ski hills across Canada, the United States, and Europe. Each hill is its own picture, drawn from its runs and lifts. Runs are coloured by difficulty.</p>
   <div class="sh-tags" data-country="ca" role="group" aria-label="Place">
     <span class="sh-country sh-scroll">
       <button type="button" class="sh-tag" data-sh-country="all" aria-pressed="false">All</button>
       <button type="button" class="sh-tag sh-on" data-sh-country="ca" aria-pressed="true">Canada</button>
       <button type="button" class="sh-tag" data-sh-country="us" data-sh-province="us" aria-pressed="false">USA</button>
+      <button type="button" class="sh-tag" data-sh-country="eu" data-sh-province="eu" aria-pressed="false">Europe</button>
     </span>
     <span class="sh-prov sh-scroll">
       <button type="button" class="sh-tag sh-on" data-sh-province="ca" aria-pressed="true">All</button>
@@ -152,6 +153,13 @@
       <button type="button" class="sh-tag" data-sh-region="wi" aria-pressed="false">Wisconsin</button>
       <button type="button" class="sh-tag" data-sh-region="mi" aria-pressed="false">Michigan</button>
     </span>
+    <span class="sh-sub sh-scroll" data-sh-for="eu" hidden>
+      <button type="button" class="sh-tag sh-on" data-sh-region="all" aria-pressed="true">All</button>
+      <button type="button" class="sh-tag" data-sh-region="fr" aria-pressed="false">France</button>
+      <button type="button" class="sh-tag" data-sh-region="ch" aria-pressed="false">Switzerland</button>
+      <button type="button" class="sh-tag" data-sh-region="at" aria-pressed="false">Austria</button>
+      <button type="button" class="sh-tag" data-sh-region="it" aria-pressed="false">Italy</button>
+    </span>
     <span class="sh-kinds sh-scroll" role="group" aria-label="Type">
       <button type="button" class="sh-tag" data-sh-type="downhill" aria-pressed="false">Downhill</button>
       <button type="button" class="sh-tag" data-sh-type="cross-country" aria-pressed="false">Cross-country</button>
@@ -165,6 +173,6 @@
   </div>
   <script src="../js/shared.js?v=20261017g"></script>
   <script src="../js/prints.js?v=20261017c"></script>
-  <script src="../js/ski-hills.js?v=20261018y"></script>
+  <script src="../js/ski-hills.js?v=20261022a"></script>
 </body>
 </html>

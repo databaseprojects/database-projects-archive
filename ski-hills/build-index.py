@@ -31,6 +31,10 @@ US_STATES = [
     "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv", "mn", "wi", "mi",
 ]
 
+# Appended after the United States so the first 503 rows stay put.
+# Later European batches add countries at the end of this list.
+EU_COUNTRIES = ["fr", "ch", "at", "it"]
+
 
 def points_of(run):
     if isinstance(run, dict):
@@ -83,7 +87,14 @@ def row_for(hill, catalog, names):
         return None
     override = names.get(hill.get("id")) or {}
     name = override.get("name") or hill.get("name") or ""
-    province = hill.get("province") or ("us" if catalog.startswith("us-") else "bc")
+    if hill.get("province"):
+        province = hill.get("province")
+    elif catalog.startswith("us-"):
+        province = "us"
+    elif catalog.startswith("eu-"):
+        province = "eu"
+    else:
+        province = "bc"
     row = {
         "id": hill["id"],
         "slug": hill.get("slug") or "",
@@ -107,6 +118,18 @@ def main():
     sources = list(SOURCES)
     for state in US_STATES:
         sources.append(("us-" + state, ROOT / "usa" / (state + ".json"), None))
+    for code in EU_COUNTRIES:
+        path = ROOT / "europe" / (code + ".json")
+        if path.exists():
+            sources.append(("eu-" + code, path, None))
+    # Canada and the United States rows stay as published. Rebuilding
+    # bounds from the deduped runs would move cards that were framed earlier.
+    frozen = {}
+    out = ROOT / "hill-index.json"
+    if out.exists():
+        for row in json.loads(out.read_text()).get("hills") or []:
+            if not str(row.get("catalog") or "").startswith("eu-"):
+                frozen[row["id"]] = row
     seen = set()
     rows = []
     for catalog, path, names_path in sources:
@@ -119,10 +142,15 @@ def main():
             row = row_for(hill, catalog, names)
             if not row:
                 continue
+            if ident in frozen:
+                row = frozen[ident]
             seen.add(ident)
             rows.append(row)
-    if len(rows) != 503:
-        raise SystemExit("expected 503 hills, got %s" % len(rows))
+    # 503 is Canada and the United States. Europe is appended after that.
+    if len(rows) < 503:
+        raise SystemExit("expected at least 503 hills, got %s" % len(rows))
+    if len(frozen) != 503:
+        raise SystemExit("expected 503 existing Canada/US rows, found %s" % len(frozen))
     missing = [row["slug"] for row in rows if not row["bounds"] or row["lat"] is None or row["lon"] is None]
     if missing:
         raise SystemExit("hills missing bounds or coordinates: %s" % ", ".join(missing))
