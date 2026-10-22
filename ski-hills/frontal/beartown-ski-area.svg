@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-beartown-ski-area" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-beartown-ski-area" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-beartown-ski-area)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-beartown-ski-area)">
+<polyline class="sh-frontal-contour" points="1180.5,90.4 1142.0,73.0 1057.7,36.5 1015.7,17.6 936.2,-24.2 908.2,-36.9 813.1,-76.7 766.9,-93.0 688.3,-119.4 561.6,-152.3 554.1,-152.7 435.5,-188.1 375.2,-210.7" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1113.2,552.5 981.9,544.5 850.6,536.6 720.1,524.5 590.9,505.5 461.4,487.8 413.6,479.8 333.2,463.2 208.1,421.9 200.8,420.1 85.5,366.7 78.3,364.9 -21.7,310.8 -34.9,300.3 -110.4,257.3 -152.1,215.9 -172.8,205.0" fill="none" stroke="#1a1a1a" stroke-opacity="0.342" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.342;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="743.4,1214.3 617.3,1178.6 613.5,1178.4 492.4,1135.9 457.2,1121.5 372.2,1068.1 372.5,1066.8 351.2,1018.0 379.0,970.2 392.8,956.8 436.9,923.9 457.2,875.8 415.5,834.4 402.3,823.9 291.4,787.5 197.1,764.6 164.3,757.4 35.8,734.1 -93.7,716.5" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="880.1,257.3 857.5,264.0 837.9,275.9 812.6,303.7 787.0,356.0 762.5,441.0 723.7,618.3 716.0,684.5 724.8,710.8 733.8,719.3 747.7,720.9 760.8,714.8" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="867.4,295.1 895.1,311.7 921.0,329.7 929.7,353.9 930.0,388.4 920.9,465.8 906.3,537.9 881.3,605.7 845.1,655.5 793.4,695.2 760.8,714.8" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="296.7,149.3 267.8,167.3 246.8,195.1 233.1,269.8 224.2,360.9 236.9,454.6 252.1,562.7 278.4,638.5 329.0,730.3 353.4,742.5 370.5,750.9 408.0,755.4 421.1,754.0" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="296.7,149.3 333.7,161.5 363.1,195.6 415.4,288.2 442.3,385.3 461.6,559.8 461.6,675.9 448.0,729.5 421.1,754.0" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="296.7,149.3 245.7,161.7 191.4,182.9 156.2,210.0 131.3,243.3 105.6,290.9 85.3,350.4 74.6,420.5 70.0,522.3 87.7,593.9 133.2,639.7 219.1,696.0 353.4,742.5" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="421.1,729.2 296.7,124.6" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="760.8,690.1 867.4,270.4 880.1,232.5 883.1,224.0" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+</svg>
