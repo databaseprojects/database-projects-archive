@@ -64,20 +64,6 @@ DEPTH_BIAS = 40.0
 # Pixels under the near skyline. Screen y grows downward. Clipping only:
 # nothing is stroked along the skyline.
 RIDGE_MARGIN = 2.6
-# Tignes – Val d'Isère only. Back-slope contours were drawing across the
-# crests: 40 m of depth bias left the slope just behind a ridge visible,
-# and the 2.6 px margin kept a line under the skyline. On this hill, a
-# point in the same column that sits on the skyline or up to under_px
-# below it is hidden once it is depth_bias metres behind that crest.
-# That hide is not given back by the short-gap hold. Points above the
-# skyline stay, and farther down the face the shared bias and margin
-# stay, so the near face remains. Runs and lifts do not use this.
-RIDGE_OVERRIDES = {
-    "tignes-val-d-isere": {
-        "depth_bias": 8.0,
-        "under_px": 2.6,
-    },
-}
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
@@ -679,7 +665,7 @@ def solid_flags(flags, pts):
     return flags
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, sky=None):
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -687,11 +673,6 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     skyline. Coordinates are not moved, and nothing is drawn along the
     skyline. Visibility is then held for MIN_RUN pixels so a facing
     contour stays one solid stroke.
-
-    sky, when set, adds a same-column test on the skyline and under_px
-    below it, using that hill's depth_bias. The hide is kept even when
-    the short-gap hold would draw it back. Hills without an entry keep
-    the shared bias and margin.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
     hidden = 0
@@ -720,7 +701,6 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             # far slope show through. Only terrain DEPTH_BIAS metres in front
             # counts, and the line stops RIDGE_MARGIN px under that skyline.
             hide = False
-            hard = False
             nbin = len(crest)
             for j in (i - 1, i, i + 1):
                 if j < 0 or j >= nbin:
@@ -733,34 +713,16 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
                 ):
                     hide = True
                     break
-            # Finer crest test, this column only. The shared test still
-            # starts 2.6 px above the skyline and needs 40 m. This band is
-            # the sliver just under the skyline, and it is not given back
-            # by the short-gap hold. Points above the skyline stay.
-            if sky is not None and 0 <= i < nbin:
-                top = crest[i]
-                if (
-                    top < 1e8
-                    and top <= py <= top + sky["under_px"]
-                    and yr - cdepth[i] >= sky["depth_bias"]
-                ):
-                    hide = True
-                    hard = True
             if hide:
                 hidden += 1
-            chunk.append((px, py, yr, hide, hard))
+            chunk.append((px, py, yr, hide))
         flush()
 
     drawn = []
     seen = set()
     kept = 0
     for chunk in chunks:
-        flags = solid_flags([hide for (_px, _py, _yr, hide, _hard) in chunk], chunk)
-        if sky is not None:
-            flags = [
-                True if hard else flag
-                for flag, (_px, _py, _yr, _hide, hard) in zip(flags, chunk)
-            ]
+        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk)
         part = []
         depth = None
 
@@ -785,7 +747,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             part = []
             depth = None
 
-        for (px, py, yr, _hide, _hard), flag in zip(chunk, flags):
+        for (px, py, yr, _hide), flag in zip(chunk, flags):
             if flag:
                 flush_part()
                 continue
@@ -1318,8 +1280,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         return snap_py[idx], snap_depth[idx]
 
     contours = project_contours(
-        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of,
-        sky=RIDGE_OVERRIDES.get(slug),
+        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     )
 
     def covered(px, py, yr):
