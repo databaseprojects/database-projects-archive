@@ -64,6 +64,18 @@ DEPTH_BIAS = 40.0
 # Pixels under the near skyline. Screen y grows downward. Clipping only:
 # nothing is stroked along the skyline.
 RIDGE_MARGIN = 2.6
+# Tignes – Val d'Isère only. The skyline test misses a slope behind a
+# mid-slope spur, so both contour families draw and cross. Screen cells
+# keep the nearest terrain. A contour point `tol` metres behind the
+# nearest sample within `reach` pixels is hidden. Other hills skip this,
+# and runs and lifts do not use it.
+DEPTH_GRIDS = {
+    "tignes-val-d-isere": {
+        "cell": 4.0,
+        "reach": 6.0,
+        "tol": 36.0,
+    },
+}
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
@@ -665,7 +677,55 @@ def solid_flags(flags, pts):
     return flags
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of):
+class DepthGrid:
+    """Nearest terrain depth in screen cells. One hill opts in."""
+
+    def __init__(self, cell, tol, reach):
+        self.cell = float(cell)
+        self.tol = float(tol)
+        self.reach = float(reach)
+        self.origin = -260.0
+        self.n = int((1000.0 + 520.0) / self.cell) + 3
+        self.near = [1e9] * (self.n * self.n)
+        self.filled = 0
+        self.rad = int(self.reach / self.cell)
+
+    def _idx(self, ix, iy):
+        if ix < 0 or iy < 0 or ix >= self.n or iy >= self.n:
+            return None
+        return iy * self.n + ix
+
+    def add(self, px, py, yr):
+        ix = int((px - self.origin) / self.cell)
+        iy = int((py - self.origin) / self.cell)
+        i = self._idx(ix, iy)
+        if i is None:
+            return
+        if yr < self.near[i]:
+            if self.near[i] >= 1e9:
+                self.filled += 1
+            self.near[i] = yr
+
+    def nearest(self, px, py):
+        ix = int((px - self.origin) / self.cell)
+        iy = int((py - self.origin) / self.cell)
+        best = 1e9
+        reach2 = self.reach * self.reach
+        for dy in range(-self.rad, self.rad + 1):
+            for dx in range(-self.rad, self.rad + 1):
+                cx = self.origin + (ix + dx + 0.5) * self.cell
+                cy = self.origin + (iy + dy + 0.5) * self.cell
+                if (cx - px) * (cx - px) + (cy - py) * (cy - py) > reach2:
+                    continue
+                i = self._idx(ix + dx, iy + dy)
+                if i is None:
+                    continue
+                if self.near[i] < best:
+                    best = self.near[i]
+        return best
+
+
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -673,6 +733,10 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     skyline. Coordinates are not moved, and nothing is drawn along the
     skyline. Visibility is then held for MIN_RUN pixels so a facing
     contour stays one solid stroke.
+
+    depth_grid, when set, also hides a point that sits tol metres behind
+    the nearest terrain in its screen cell. Hills without an entry leave
+    the grid unset, so this test does not run.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
     hidden = 0
@@ -713,6 +777,13 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
                 ):
                     hide = True
                     break
+            # Screen-cell test, this hill only. A spur that is not the
+            # skyline still owns the pixels it covers. The short-gap hold
+            # still applies, so a one-sample miss on the near face returns.
+            if depth_grid is not None and not hide:
+                near = depth_grid.nearest(px, py)
+                if near < 1e8 and yr - near >= depth_grid.tol:
+                    hide = True
             if hide:
                 hidden += 1
             chunk.append((px, py, yr, hide))
@@ -1279,8 +1350,22 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             return empty_py, empty_depth
         return snap_py[idx], snap_depth[idx]
 
+    depth_grid = None
+    spec = DEPTH_GRIDS.get(slug)
+    if spec:
+        depth_grid = DepthGrid(spec["cell"], spec["tol"], spec["reach"])
+        for yr, (px, py) in samples:
+            depth_grid.add(px, py, yr)
+        print(
+            "depthgrid",
+            "cells", depth_grid.filled,
+            "cell", depth_grid.cell,
+            "reach", depth_grid.reach,
+            "tol", depth_grid.tol,
+        )
+
     contours = project_contours(
-        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
+        arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid
     )
 
     def covered(px, py, yr):
