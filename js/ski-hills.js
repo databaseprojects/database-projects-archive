@@ -87,7 +87,7 @@
       label: "Northwest Territories"
     }
   };
-  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv", "mn", "wi", "mi", "ct", "ri"];
+  var US_STATES = ["wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd", "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv", "mn", "wi", "mi", "ct", "ri", "va"];
   var US_STATE_NAMES = {
     wa: "Washington",
     or: "Oregon",
@@ -114,7 +114,8 @@
     wi: "Wisconsin",
     mi: "Michigan",
     ct: "Connecticut",
-    ri: "Rhode Island"
+    ri: "Rhode Island",
+    va: "Virginia"
   };
   var US_FILE_VERSION = {
     ca: "20261022e",
@@ -126,15 +127,15 @@
     mi: "20261018y",
     mt: "20261022e",
     nh: "20261022f",
-    nj: "20261018y",
+    nj: "20261022g",
     nm: "20261022e",
-    ny: "20261018y",
+    ny: "20261022g",
     or: "20261022e",
-    pa: "20261018y",
+    pa: "20261022g",
     vt: "20261022f",
     wa: "20261022e",
     wi: "20261018y",
-    wv: "20261018y",
+    wv: "20261022g",
     wy: "20261022e",
     mn: "20261018o",
     az: "20261022e",
@@ -142,12 +143,13 @@
     sd: "20261022e",
     ut: "20261022e",
     ct: "20261022f",
-    ri: "20261022f"
+    ri: "20261022f",
+    va: "20261022g"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261022f",
+      index: "contours/usa-index.json?v=20261022g",
       label: US_STATE_NAMES[id]
     };
   });
@@ -2774,7 +2776,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261022f").then(function (res) {
+  fetch("hill-index.json?v=20261022g").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
