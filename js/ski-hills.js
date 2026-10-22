@@ -143,11 +143,44 @@
       label: US_STATE_NAMES[id]
     };
   });
+  var EU_COUNTRIES = ["fr", "ch", "at", "it"];
+  var EU_COUNTRY_NAMES = {
+    fr: "France",
+    ch: "Switzerland",
+    at: "Austria",
+    it: "Italy",
+    no: "Norway",
+    se: "Sweden",
+    fi: "Finland",
+    is: "Iceland",
+    dk: "Denmark",
+    es: "Spain",
+    ad: "Andorra",
+    de: "Germany",
+    si: "Slovenia",
+    sk: "Slovakia",
+    cz: "Czechia",
+    pl: "Poland",
+    bg: "Bulgaria",
+    ro: "Romania",
+    gb: "United Kingdom",
+    rs: "Serbia",
+    ua: "Ukraine"
+  };
+  var EU_FILE_VERSION = "20261022a";
+  EU_COUNTRIES.forEach(function (id) {
+    catalogs["eu-" + id] = {
+      file: "europe/" + id + ".json?v=" + EU_FILE_VERSION,
+      index: "contours/europe-index.json?v=" + EU_FILE_VERSION,
+      label: EU_COUNTRY_NAMES[id]
+    };
+  });
   var PLACE_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt", "us"];
   var CANADA_PROVINCES = ["bc", "ab", "qc", "on", "sk", "mb", "nb", "nl", "ns", "pe", "yt", "nt"];
   var canadaProvince = "ca";
   var canadaRegion = "all";
   var usaRegion = "all";
+  var euRegion = "all";
   var catalogReady = {};
   var catalogPromise = {};
   var SQUARE = 1000;
@@ -185,11 +218,13 @@
   function countryNow() {
     if (province === "all") return "all";
     if (province === "us") return "us";
+    if (province === "eu") return "eu";
     return "ca";
   }
 
   function rememberPlace() {
     if (province === "us") usaRegion = region;
+    else if (province === "eu") euRegion = region;
     else if (province === "ca") canadaProvince = "ca";
     else if (province !== "all") {
       canadaProvince = province;
@@ -198,7 +233,8 @@
   }
 
   function canadaHill(hill) {
-    return (hill.province || "bc") !== "us";
+    var code = hill.province || "bc";
+    return code !== "us" && code !== "eu";
   }
 
   function placeCatalogs() {
@@ -209,6 +245,10 @@
     if (province === "us") {
       if (region === "all") return US_STATES.map(function (id) { return "us-" + id; });
       return catalogs["us-" + region] ? ["us-" + region] : [];
+    }
+    if (province === "eu") {
+      if (region === "all") return EU_COUNTRIES.map(function (id) { return "eu-" + id; });
+      return catalogs["eu-" + region] ? ["eu-" + region] : [];
     }
     return catalogs[province] ? [province] : [];
   }
@@ -281,6 +321,10 @@
     if (province === "us") {
       if (region === "all") return [];
       return catalogs["us-" + region] ? ["us-" + region] : [];
+    }
+    if (province === "eu") {
+      if (region === "all") return [];
+      return catalogs["eu-" + region] ? ["eu-" + region] : [];
     }
     return catalogs[province] ? [province] : [];
   }
@@ -510,6 +554,7 @@
   function catalogCode(hill) {
     if (hill.catalog) return hill.catalog;
     if ((hill.province || "bc") === "us") return "us-" + (hill.region || "");
+    if ((hill.province || "bc") === "eu") return "eu-" + (hill.region || "");
     return hill.province || "bc";
   }
 
@@ -800,6 +845,7 @@
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
     if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
+    if (hill.province === "eu" && hill.region && EU_COUNTRY_NAMES[hill.region]) return EU_COUNTRY_NAMES[hill.region];
     return REGION_GAP[hill.slug] || "";
   }
 
@@ -1187,6 +1233,7 @@
       province = match.province;
       region = "all";
       if (province === "us") usaRegion = "all";
+      else if (province === "eu") euRegion = "all";
       else if (province !== "all") {
         canadaProvince = province;
         canadaRegion = "all";
@@ -1575,12 +1622,35 @@
     });
   }
 
+  function europeBounds() {
+    var west = Infinity;
+    var south = Infinity;
+    var east = -Infinity;
+    var north = -Infinity;
+    var n = 0;
+    hills.forEach(function (hill) {
+      if ((hill.province || "") !== "eu") return;
+      if (region !== "all" && hill.region !== region) return;
+      if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return;
+      n += 1;
+      if (hill.lon < west) west = hill.lon;
+      if (hill.lat < south) south = hill.lat;
+      if (hill.lon > east) east = hill.lon;
+      if (hill.lat > north) north = hill.lat;
+    });
+    if (!n) return [[-5.5, 43.2], [17.2, 47.6]];
+    var padLon = Math.max((east - west) * 0.12, 0.45);
+    var padLat = Math.max((north - south) * 0.12, 0.35);
+    return [[west - padLon, south - padLat], [east + padLon, north + padLat]];
+  }
+
   function openingBounds() {
     var box = boundsByKey[placeId()] || boundsOfRings(selectedRings());
     if (box) return box;
     if (province === "ca") return [[-141.0, 41.7], [-52.6, 83.2]];
     if (province === "all") return [[-141.2, 24.4], [-52.6, 65.6]];
     if (province === "us") return [[-125.0, 24.4], [-66.9, 49.5]];
+    if (province === "eu") return europeBounds();
     if (province === "ab") return [[-120.1, 48.95], [-109.95, 60]];
     return [[-139.1, 48.2], [-114, 60.05]];
   }
@@ -1591,6 +1661,7 @@
     paintOutline();
     if (key === placeKey) return;
     var box = boundsByKey[key] || boundsOfRings(selectedRings());
+    if (!box && province === "eu") box = openingBounds();
     if (!box) return;
     placeKey = key;
     var animate = didFit;
@@ -1994,6 +2065,9 @@
           } else if (nextCountry === "us") {
             province = "us";
             region = usaRegion || "all";
+          } else if (nextCountry === "eu") {
+            province = "eu";
+            region = euRegion || "all";
           } else {
             province = canadaProvince || "ca";
             region = province === "ca" ? "all" : (canadaRegion || "all");
@@ -2010,7 +2084,7 @@
       if (nextProvince) {
         province = nextProvince;
         region = "all";
-        if (province !== "all" && province !== "us") {
+        if (province !== "all" && province !== "us" && province !== "eu") {
           canadaProvince = province;
           canadaRegion = "all";
         }
@@ -2031,6 +2105,7 @@
       var id = btn.getAttribute("data-sh-region") || "all";
       region = (id === region && id !== "all") ? "all" : id;
       if (province === "us") usaRegion = region;
+      else if (province === "eu") euRegion = region;
       else if (province !== "all") canadaRegion = region;
       setPressed();
       loadPlace(function () {
@@ -2675,7 +2750,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261018y").then(function (res) {
+  fetch("hill-index.json?v=20261022a").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

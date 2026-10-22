@@ -354,25 +354,27 @@ def ensure_dem(box):
     if raster_has_relief(DEM):
         return
     minlon, minlat, maxlon, maxlat = box
-    src = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
-    try:
-        gdal.Warp(
-            str(DEM),
-            src,
-            format="GTiff",
-            outputBounds=[minlon, minlat, maxlon, maxlat],
-            outputBoundsSRS="EPSG:4326",
-            dstSRS="EPSG:4326",
-            xRes=0.00035,
-            yRes=0.00035,
-            resampleAlg="bilinear",
-        )
-        if raster_has_relief(DEM):
-            return
-    except Exception as err:
-        print("mrdem failed", err)
-    if DEM.exists():
-        DEM.unlink()
+    # Europe sits east of 35°W. Canada and the United States still try MRDEM first.
+    if minlon <= -35:
+        src = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
+        try:
+            gdal.Warp(
+                str(DEM),
+                src,
+                format="GTiff",
+                outputBounds=[minlon, minlat, maxlon, maxlat],
+                outputBoundsSRS="EPSG:4326",
+                dstSRS="EPSG:4326",
+                xRes=0.00035,
+                yRes=0.00035,
+                resampleAlg="bilinear",
+            )
+            if raster_has_relief(DEM):
+                return
+        except Exception as err:
+            print("mrdem failed", err)
+        if DEM.exists():
+            DEM.unlink()
     urls = copernicus_sources(box)
     if not urls:
         raise SystemExit("no dem tiles")

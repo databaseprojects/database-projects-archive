@@ -202,6 +202,27 @@ def draw_lines(lines, to_px):
     return drawn
 
 
+def same_frame(source_lines, stored, to_px):
+    """True when the stored drawing uses this source frame.
+
+    Outline rings are dropped before a run is stored, so the first stored
+    line is not always the first source line. A kept centreline still
+    matches one of the source lines in the same frame.
+    """
+    if not stored:
+        return False
+    made = draw_lines(source_lines[:3], to_px)
+    if made == stored[:3]:
+        return True
+    pool = set()
+    for line in source_lines:
+        drawn = draw_lines([line], to_px)
+        if drawn:
+            pool.add(drawn[0])
+    hits = sum(1 for row in stored if row in pool)
+    return hits >= 3 and (hits >= 8 or hits / len(stored) >= 0.4)
+
+
 def lambert():
     src = osr.SpatialReference()
     src.ImportFromEPSG(4326)
@@ -474,6 +495,7 @@ def main():
             "runs": [],
             "lifts": [],
             "stored": [run["p"] for run in hill["runs"][:3]],
+            "stored_all": [run["p"] for run in hill["runs"]] if (hill.get("province") or "") == "eu" else [],
             "drawn": [run["p"] for run in hill["runs"]] + [
                 lift if isinstance(lift, str) else (lift.get("p") or "")
                 for lift in (hill.get("lifts") or [])
@@ -490,9 +512,9 @@ def main():
 
     forward, back = lambert()
     geo_back = geographic()
-    us_only = all(hill.get("province") == "us" for hill in wanted.values())
+    northup = all((hill.get("province") or "") in ("us", "eu") for hill in wanted.values())
     mrdem = None
-    if not us_only:
+    if not northup:
         print("opening MRDEM", flush=True)
         mrdem = gdal.Open(MRDEM)
         if mrdem is None:
@@ -503,9 +525,20 @@ def main():
     prior = {}
     if index_path.exists():
         prior = json.loads(index_path.read_text()).get("hills") or {}
-    index = {"source": "NRCan MRDEM-30 DTM", "fallback": "Copernicus GLO-30", "hills": {}, "skipped": []}
+    if index_path.name == "europe-index.json":
+        index = {"source": "Copernicus GLO-30", "fallback": "Copernicus GLO-30", "hills": {}, "skipped": []}
+    else:
+        index = {"source": "NRCan MRDEM-30 DTM", "fallback": "Copernicus GLO-30", "hills": {}, "skipped": []}
     checked = 0
-    if us_only and args.jobs > 1 and not args.slug:
+
+    def finish_index():
+        if index_path.name == "europe-index.json":
+            for slug, row in prior.items():
+                if slug not in index["hills"]:
+                    index["hills"][slug] = row
+        index_path.write_text(json.dumps(index, separators=(",", ":")))
+
+    if northup and args.jobs > 1 and not args.slug:
         from concurrent.futures import ProcessPoolExecutor
 
         tasks = []
@@ -515,7 +548,12 @@ def main():
                 continue
             to_px, _to_ll, _span, _box = projection(hill["runs"])
             drawn = draw_lines(hill["runs"][:3], to_px)
-            if drawn != hill["stored"]:
+            if hill.get("province") == "eu":
+                if not same_frame(hill["runs"], hill.get("stored_all") or hill["stored"], to_px):
+                    index["skipped"].append({"slug": hill["slug"], "reason": "projection mismatch"})
+                    print("projection mismatch", hill["slug"], flush=True)
+                    continue
+            elif drawn != hill["stored"]:
                 print("projection mismatch", hill["slug"], file=sys.stderr)
                 return 1
             checked += 1
@@ -541,7 +579,7 @@ def main():
                     flush=True,
                 )
         if not args.slug:
-            index_path.write_text(json.dumps(index, separators=(",", ":")))
+            finish_index()
         print("checked", checked, "contoured", len(index["hills"]), "skipped", len(index["skipped"]))
         return 0
     for oid, hill in wanted.items():
@@ -550,7 +588,12 @@ def main():
             continue
         to_px, to_ll, span, _box = projection(hill["runs"])
         drawn = draw_lines(hill["runs"][:3], to_px)
-        if drawn != hill["stored"]:
+        if hill.get("province") == "eu":
+            if not same_frame(hill["runs"], hill.get("stored_all") or hill["stored"], to_px):
+                index["skipped"].append({"slug": hill["slug"], "reason": "projection mismatch"})
+                print("projection mismatch", hill["slug"], flush=True)
+                continue
+        elif drawn != hill["stored"]:
             print("projection mismatch", hill["slug"], file=sys.stderr)
             print("stored", hill["stored"][0][:80] if hill["stored"] else None, file=sys.stderr)
             print("drawn", drawn[0][:80] if drawn else None, file=sys.stderr)
@@ -561,7 +604,7 @@ def main():
             print("frame", [round(v, 1) for v in pixel_window], "ll", [round(v, 5) for v in wide], "span", round(span), flush=True)
         tif = Path("/tmp") / f"sh-dem-{hill['slug']}.tif"
         # US plan sheets stay north-up. The Canada path below is unchanged.
-        if hill.get("province") == "us":
+        if hill.get("province") in ("us", "eu"):
             source = "glo-30"
             back_hill = geo_back
             try:
@@ -627,7 +670,7 @@ def main():
             flush=True,
         )
     if not args.slug:
-        index_path.write_text(json.dumps(index, separators=(",", ":")))
+        finish_index()
     print("checked", checked, "contoured", len(index["hills"]), "skipped", len(index["skipped"]))
     return 0
 
