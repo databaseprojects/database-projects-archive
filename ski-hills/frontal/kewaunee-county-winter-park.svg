@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-kewaunee-county-winter-park" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-kewaunee-county-winter-park" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-kewaunee-county-winter-park)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-kewaunee-county-winter-park)">
+<polyline class="sh-frontal-contour" points="1061.0,1206.7 1150.7,780.6 1168.6,754.7" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="692.5,732.9 666.1,772.0 660.5,771.1 660.2,769.3 660.0,767.3 657.8,758.9 655.6,751.0 653.6,744.2 650.7,762.7 651.6,762.0 652.5,767.6 643.1,766.1 666.0,749.5 662.0,750.8 692.5,732.9" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="367.1,300.4 365.3,301.2 418.7,246.1 420.9,234.7 399.9,195.0 367.8,141.6 362.1,126.5 361.9,116.9 361.5,108.0 347.4,146.1 333.4,186.3 319.6,226.0 307.5,270.3 309.6,276.7 323.3,286.2 357.2,309.9 367.1,300.4" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="-1272.2,716.9 -1229.0,713.3 3805.7,-263.3" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="-1699.3,-1158.5 84.3,-2125.5" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-nutt-hill" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-nutt-hill" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-nutt-hill)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-nutt-hill)">
+<polyline class="sh-frontal-contour" points="1150.9,253.6 1107.0,260.7 986.9,274.4 858.0,272.0 757.2,268.6 655.7,252.4 516.7,191.1 477.9,155.4 464.2,72.5 465.4,63.0 530.8,2.2 604.5,-55.3" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1135.0,558.5 1091.6,560.9 946.3,569.4 844.9,570.7 708.3,560.2 642.7,551.0 470.9,511.3 296.7,473.2 277.4,472.8 80.5,480.3 52.4,481.4 -124.6,484.5 -177.9,480.3" fill="none" stroke="#1a1a1a" stroke-opacity="0.381" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.381;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="1113.6,836.3 1061.5,840.1 869.3,844.6 860.5,846.0 646.0,838.8 610.2,831.8 460.2,808.4 302.5,794.4 243.9,798.1 134.4,813.5 1.9,804.7 -165.2,779.4" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="597.6,266.2 583.0,328.4 600.8,444.5 609.5,498.6 612.6,545.4 612.0,621.1 593.4,699.4" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="353.9,196.6 347.2,251.4 363.3,316.1 409.4,366.7 458.6,392.4" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="168.1,104.2 216.4,109.8 264.0,129.9 302.1,146.4 378.6,176.9 578.5,259.2 597.6,266.2 631.6,283.4 705.8,320.4 740.4,351.5 771.9,402.9 776.6,439.8 759.3,486.9 721.8,583.5 696.6,640.6 683.7,660.4 633.6,731.4 584.6,781.0 523.7,810.0" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="740.4,351.5 801.8,396.9 831.9,444.5 829.6,523.3 793.6,592.3 730.5,645.8 683.7,660.4" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="302.1,146.4 353.9,196.6 410.3,237.9 441.3,289.6 456.4,349.6 458.6,392.4 474.8,448.6 512.3,524.3 565.1,610.1 593.4,699.4 565.7,766.9 523.7,810.0" fill="none" stroke="#1a4f9c" style="fill:none;stroke:#1a4f9c;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-lift" points="523.7,775.8 168.1,70.0" fill="none" stroke="#111" style="fill:none;stroke:#111;stroke-width:1.7;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+</svg>

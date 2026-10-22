@@ -150,10 +150,11 @@ def main():
     # 503 is Canada and the United States. Europe is appended after that.
     if len(rows) < 503:
         raise SystemExit("expected at least 503 hills, got %s" % len(rows))
-    # 503 is the original Canada and United States list. West added 53
-    # and New England added 44, so a published index now holds 600.
-    if len(frozen) != 600:
-        raise SystemExit("expected 600 existing Canada/US rows, found %s" % len(frozen))
+    # 503 is the original Canada and United States list. West added 53,
+    # New England added 44, and the Mid-Atlantic added 60, so a published
+    # index now holds 660 Canada and United States rows.
+    if len(frozen) != 660:
+        raise SystemExit("expected 660 existing Canada/US rows, found %s" % len(frozen))
     missing = [row["slug"] for row in rows if not row["bounds"] or row["lat"] is None or row["lon"] is None]
     if missing:
         raise SystemExit("hills missing bounds or coordinates: %s" % ", ".join(missing))
