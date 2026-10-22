@@ -72,8 +72,8 @@ RIDGE_MARGIN = 2.6
 DEPTH_GRIDS = {
     "tignes-val-d-isere": {
         "cell": 4.0,
-        "reach": 6.0,
-        "tol": 36.0,
+        "reach": 10.0,
+        "tol": 15.0,
     },
 }
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
