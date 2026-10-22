@@ -913,7 +913,7 @@ def edge_fit(pts, margin, right=1000.0, bottom=880.0):
     return scale, cx, cy, tcx, tcy
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -971,8 +971,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         orient(ang)
 
     # Ground window from the runs, so the resort fills the square.
+    # frame_runs keeps the sheet where it was when some runs are not drawn.
+    window_runs = frame_runs if frame_runs is not None else runs
     run_xy = []
-    for run in runs:
+    for run in window_runs:
         for line in run["lines"]:
             for lon, lat in line:
                 run_xy.append(rot(*metres(lon, lat)))
@@ -1058,7 +1060,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
 
     def run_paper_points():
         pts = []
-        for run in runs:
+        for run in window_runs:
             for line in run["lines"]:
                 for lon, lat in line:
                     z = sample(arr, gt, lon, lat)
@@ -1155,7 +1157,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         run_box = []
         lift_box = []
         for group, z_add, bucket in (
-            (runs, RUN_CLEAR, run_box),
+            (window_runs, RUN_CLEAR, run_box),
             (lifts, LIFT_CLEAR, lift_box),
         ):
             for item in group:
@@ -1481,14 +1483,19 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     return az
 
 
-def render_default(slug, edge_margin=0.0):
-    """Cypress elevation and depth. A hand-set facing is locked; otherwise auto."""
+def render_default(slug, edge_margin=0.0, frame_runs=None):
+    """Cypress elevation and depth. A hand-set facing is locked; otherwise auto.
+
+    frame_runs is the run set the sheet was fitted to. Pass it when `runs`
+    in the geom file is a subset, so the crop, facing, and frame stay put.
+    """
     global GEOM, DEM
     GEOM = Path(f"/tmp/{slug}-geom.json")
     DEM = Path(f"/tmp/{slug}-dem-wide.tif")
     cam = CAMERAS.get(slug) or {}
     runs, lifts = load_geom()
-    box = wide_box(runs, lifts)
+    sheet = frame_runs if frame_runs is not None else runs
+    box = wide_box(sheet, lifts)
     print(slug, "bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
@@ -1498,7 +1505,7 @@ def render_default(slug, edge_margin=0.0):
         lock = True
         print(slug, "hand_facing_deg", cam["facing"])
     else:
-        guess = default_facing(arr, gt, runs)
+        guess = default_facing(arr, gt, sheet)
         lock = False
         print(slug, "default_facing_deg", round(math.degrees(guess) % 360, 1))
     build(
@@ -1517,10 +1524,11 @@ def render_default(slug, edge_margin=0.0):
         full_ground=cam.get("full_ground", False),
         frame_scale=cam.get("frame_scale", 1.0),
         edge_margin=edge_margin,
+        frame_runs=frame_runs,
     )
 
 
-def render_cypress():
+def render_cypress(frame_runs=None):
     """Hand-set facing 0. Same sheet as before, plus the default sun."""
     global GEOM, DEM
     slug = "cypress-mountain"
@@ -1528,7 +1536,8 @@ def render_cypress():
     DEM = Path("/tmp/cypress-dem-wide.tif")
     cam = CAMERAS[slug]
     runs, lifts = load_geom()
-    box = wide_box(runs, lifts)
+    sheet = frame_runs if frame_runs is not None else runs
+    box = wide_box(sheet, lifts)
     print(slug, "bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
@@ -1545,10 +1554,11 @@ def render_cypress():
         depth_scale=cam["depth_scale"],
         sun=cam.get("sun"),
         run_width=cam.get("run_width", 2.2),
+        frame_runs=frame_runs,
     )
 
 
-def render_views(slug, edge_margin=0.0):
+def render_views(slug, edge_margin=0.0, frame_runs=None):
     """Write one locked frontal SVG per hand-set view, named {slug}-{view}.svg."""
     global GEOM, DEM
     GEOM = Path(f"/tmp/{slug}-geom.json")
@@ -1558,7 +1568,8 @@ def render_views(slug, edge_margin=0.0):
     if not views:
         raise SystemExit(slug + " has no views")
     runs, lifts = load_geom()
-    box = wide_box(runs, lifts)
+    sheet = frame_runs if frame_runs is not None else runs
+    box = wide_box(sheet, lifts)
     print(slug, "bbox", tuple(round(v, 4) for v in box))
     ensure_dem(box)
     arr, gt = read_grid()
@@ -1581,6 +1592,7 @@ def render_views(slug, edge_margin=0.0):
             full_ground=cam.get("full_ground", False),
             frame_scale=cam.get("frame_scale", 1.0),
             edge_margin=edge_margin,
+            frame_runs=frame_runs,
         )
 
 

@@ -15,31 +15,31 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261018c",
+      file: "hills.json?v=20261018y",
       names: "names.json?v=20261016f",
       index: "contours/index.json?v=20261016w",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261018j",
+      file: "alberta.json?v=20261018y",
       names: "alberta-names.json?v=20261016i",
       index: "contours/alberta-index.json?v=20261017c",
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261018h",
+      file: "quebec.json?v=20261018y",
       names: "quebec-names.json?v=20261018h",
       index: "contours/quebec-index.json?v=20261018h",
       label: "Quebec"
     },
     on: {
-      file: "ontario.json?v=20261018h",
+      file: "ontario.json?v=20261018y",
       names: "ontario-names.json?v=20261018h",
       index: "contours/ontario-index.json?v=20261018h",
       label: "Ontario"
     },
     sk: {
-      file: "saskatchewan.json?v=20261018h",
+      file: "saskatchewan.json?v=20261018y",
       names: "saskatchewan-names.json?v=20261018h",
       index: "contours/saskatchewan-index.json?v=20261018h",
       label: "Saskatchewan"
@@ -57,13 +57,13 @@
       label: "New Brunswick"
     },
     nl: {
-      file: "newfoundland.json?v=20261018h",
+      file: "newfoundland.json?v=20261018y",
       names: "newfoundland-names.json?v=20261018h",
       index: "contours/newfoundland-index.json?v=20261018h",
       label: "Newfoundland"
     },
     ns: {
-      file: "nova-scotia.json?v=20261018h",
+      file: "nova-scotia.json?v=20261018y",
       names: "nova-scotia-names.json?v=20261018h",
       index: "contours/nova-scotia-index.json?v=20261018h",
       label: "Nova Scotia"
@@ -75,7 +75,7 @@
       label: "Prince Edward Island"
     },
     yt: {
-      file: "yukon.json?v=20261018h",
+      file: "yukon.json?v=20261018y",
       names: "yukon-names.json?v=20261018h",
       index: "contours/yukon-index.json?v=20261018h",
       label: "Yukon"
@@ -115,18 +115,26 @@
     mi: "Michigan"
   };
   var US_FILE_VERSION = {
-    me: "20261018m",
-    nh: "20261018m",
-    vt: "20261018m",
-    ma: "20261018m",
-    ny: "20261018n",
-    pa: "20261018n",
-    nj: "20261018n",
-    md: "20261018n",
-    wv: "20261018n",
-    mn: "20261018o",
-    wi: "20261018o",
-    mi: "20261018o"
+    ca: "20261018y",
+    co: "20261018y",
+    id: "20261018y",
+    ma: "20261018y",
+    md: "20261018y",
+    me: "20261018y",
+    mi: "20261018y",
+    mt: "20261018y",
+    nh: "20261018y",
+    nj: "20261018y",
+    nm: "20261018y",
+    ny: "20261018y",
+    or: "20261018y",
+    pa: "20261018y",
+    vt: "20261018y",
+    wa: "20261018y",
+    wi: "20261018y",
+    wv: "20261018y",
+    wy: "20261018y",
+    mn: "20261018o"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
@@ -603,7 +611,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261018x";
+    return "frontal/" + file + ".svg?v=20261018y";
   }
 
   function frontalArt(hill) {
@@ -2667,7 +2675,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261018q").then(function (res) {
+  fetch("hill-index.json?v=20261018y").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
