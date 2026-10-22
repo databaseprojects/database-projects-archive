@@ -305,12 +305,35 @@
   display: none;
 }
 
+.sh-hill-art {
+  position: relative;
+  display: block;
+}
+
 .sh-hill svg {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   background: transparent;
+}
+
+.sh-hill-caption {
+  display: block;
+  margin: 0.32rem 0 0;
+  padding: 0 0.1rem;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sh-hill polyline,
