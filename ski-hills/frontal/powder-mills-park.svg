@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<g class="sh-frontal-art">
+<defs>
+<filter id="sh-fade-powder-mills-park" x="-25%" y="-25%" width="150%" height="150%">
+<feGaussianBlur stdDeviation="42"/>
+</filter>
+<mask id="sh-contour-fade-powder-mills-park" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+<rect x="0" y="0" width="1000" height="1000" fill="#000"/>
+<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#sh-fade-powder-mills-park)"/>
+</mask>
+</defs>
+
+<g mask="url(#sh-contour-fade-powder-mills-park)">
+<polyline class="sh-frontal-contour" points="355.2,444.2 328.4,518.8 422.1,595.9 492.2,646.4 680.7,708.1 837.7,752.5 928.7,796.4 1122.1,760.9" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="355.2,444.2 527.4,360.8 749.0,389.2 967.0,409.6" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="823.4,1031.5 813.4,1049.4 681.1,1182.7 670.7,1213.3" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-contour" points="823.4,1031.5 1020.3,1004.0" fill="none" stroke="#1a1a1a" stroke-opacity="0.500" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.500;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+</g>
+<polyline class="sh-frontal-run" points="397.8,704.1 426.9,710.0 470.2,723.1 513.7,736.3 557.3,748.8 568.4,749.5 579.3,750.2 560.6,777.2 561.0,797.0 568.3,810.0 553.3,801.7 538.5,793.6 524.2,785.8 509.9,778.1 495.2,770.2 473.0,755.8 448.0,738.5 422.9,721.3 397.8,704.1" fill="none" stroke="#8a8a8a" style="fill:none;stroke:#8a8a8a;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+<polyline class="sh-frontal-run" points="602.2,70.0 602.2,392.5" fill="none" stroke="#1b7a32" style="fill:none;stroke:#1b7a32;stroke-width:2.2;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
+
+</g>
+</svg>

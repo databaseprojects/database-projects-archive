@@ -29,7 +29,7 @@ SOURCES = [
 US_STATES = [
     "wa", "or", "ca", "nv", "id", "mt", "wy", "ut", "co", "az", "nm", "sd",
     "me", "nh", "vt", "ma", "ny", "pa", "nj", "md", "wv", "mn", "wi", "mi",
-    "ct", "ri",
+    "ct", "ri", "va",
 ]
 
 # Appended after the United States so the first 503 rows stay put.
@@ -150,10 +150,10 @@ def main():
     # 503 is Canada and the United States. Europe is appended after that.
     if len(rows) < 503:
         raise SystemExit("expected at least 503 hills, got %s" % len(rows))
-    # 503 is the original Canada and United States list. The West
-    # downhill batch added 53, so a published index now holds 556.
-    if len(frozen) != 556:
-        raise SystemExit("expected 556 existing Canada/US rows, found %s" % len(frozen))
+    # 503 is the original Canada and United States list. West added 53
+    # and New England added 44, so a published index now holds 600.
+    if len(frozen) != 600:
+        raise SystemExit("expected 600 existing Canada/US rows, found %s" % len(frozen))
     missing = [row["slug"] for row in rows if not row["bounds"] or row["lat"] is None or row["lon"] is None]
     if missing:
         raise SystemExit("hills missing bounds or coordinates: %s" % ", ".join(missing))
