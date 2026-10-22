@@ -115,31 +115,35 @@
     mi: "Michigan"
   };
   var US_FILE_VERSION = {
-    ca: "20261018y",
-    co: "20261018y",
-    id: "20261018y",
+    ca: "20261022e",
+    co: "20261022e",
+    id: "20261022e",
     ma: "20261018y",
     md: "20261018y",
     me: "20261018y",
     mi: "20261018y",
-    mt: "20261018y",
+    mt: "20261022e",
     nh: "20261018y",
     nj: "20261018y",
-    nm: "20261018y",
+    nm: "20261022e",
     ny: "20261018y",
-    or: "20261018y",
+    or: "20261022e",
     pa: "20261018y",
     vt: "20261018y",
-    wa: "20261018y",
+    wa: "20261022e",
     wi: "20261018y",
     wv: "20261018y",
-    wy: "20261018y",
-    mn: "20261018o"
+    wy: "20261022e",
+    mn: "20261018o",
+    az: "20261022e",
+    nv: "20261022e",
+    sd: "20261022e",
+    ut: "20261022e"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261018o",
+      index: "contours/usa-index.json?v=20261022e",
       label: US_STATE_NAMES[id]
     };
   });
@@ -2766,7 +2770,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261022d").then(function (res) {
+  fetch("hill-index.json?v=20261022e").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
