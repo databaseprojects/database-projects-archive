@@ -594,6 +594,8 @@
     card._hill = hill;
     card.addEventListener("pointerenter", function (e) {
       if (e.pointerType === "touch") return;
+      // Row of cards. The name is the caption under the card.
+      if (view === "grid") return;
       card.classList.add("sh-name-on");
     });
     card.addEventListener("pointerleave", function (e) {
@@ -742,7 +744,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261022w";
+    return "frontal/" + file + ".svg?v=20261022x";
   }
 
   function frontalArt(hill) {
