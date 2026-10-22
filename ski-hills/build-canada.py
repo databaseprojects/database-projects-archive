@@ -320,6 +320,7 @@ def build_province(code, src_dir):
                     name = name.strip() or None
                 else:
                     name = None
+                kind = (feat.get("geometry") or {}).get("type") or ""
                 buckets = ab.use_buckets(props.get("uses")) if keep_diff else set()
                 dist = sum(ab.line_metres(line) for line in lines) if buckets else 0
                 for oid in ids:
@@ -327,7 +328,7 @@ def build_province(code, src_dir):
                         for line in lines:
                             hills[oid]["runs"].append((diff, line))
                         hills[oid]["geom_runs"].append(
-                            {"name": name, "difficulty": diff, "lines": lines}
+                            {"name": name, "difficulty": diff, "kind": kind, "lines": lines}
                         )
                         for bucket in buckets:
                             hills[oid]["use_m"][bucket] += dist
@@ -365,11 +366,12 @@ def emit_province(code, wanted_rows, hills, ab, root, dest, kept_slugs, used):
     geom_dir_note = 0
     for row in wanted_rows:
         hill = hills[row["id"]]
-        run_lines = [item[1] for item in hill["runs"]]
-        fr = ab.frame_of(run_lines, False)
-        lifts_ll = ab.snap_terminals(hill["lifts"], run_lines, fr["cos"]) if fr else []
-        runs = ab.project_in(hill["runs"], fr, True)
-        lifts = ab.project_in(lifts_ll, fr, False)
+        runs, lifts, geom_runs, stats, run_lines = ab.framed_parts(
+            hill["runs"], hill["lifts"], hill["geom_runs"]
+        )
+        hill["geom_runs"] = geom_runs
+        if stats["dropped"] or stats["replaced"] or stats["dupes"]:
+            print("dedupe", hill["name"], stats, flush=True)
         if not runs:
             omitted += 1
             print("omit", hill["name"], flush=True)
