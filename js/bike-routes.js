@@ -199,11 +199,11 @@
   function setStep(lb, step, animate) {
     var track = lb.querySelector(".br-track");
     if (!track) return;
-    step = Math.max(0, Math.min(2, step));
+    step = Math.max(0, Math.min(1, step));
     lb._step = step;
     lb.setAttribute("data-step", String(step));
     track.style.transition = animate === false ? "none" : "transform 400ms ease-out";
-    track.style.transform = "translateX(" + (-step * 100 / 3).toFixed(4) + "%)";
+    track.style.transform = "translateX(" + (-step * 50).toFixed(4) + "%)";
   }
 
   function closeLb() {
@@ -230,10 +230,6 @@
       if (lb.parentNode) lb.parentNode.removeChild(lb);
       if (!document.getElementById("br-lb")) document.documentElement.classList.remove("br-lb-open");
     }, 340);
-  }
-
-  function shirtMarkup() {
-    return '<svg class="br-shirt-shape" viewBox="0 0 200 228" aria-hidden="true"><path fill="#f7f7f7" stroke="#dedede" stroke-width="1.2" stroke-linejoin="round" d="M78 42C86 40 92 50 100 50C108 50 114 40 122 42L146 52L176 86L160 100L142 88L142 200C142 208 136 214 128 214L72 214C64 214 58 208 58 200L58 88L40 100L24 86L54 52Z"/></svg>';
   }
 
   function mountEdges(lb, stage) {
@@ -311,7 +307,7 @@
       e.preventDefault();
       var trackOn = deck.querySelector(".br-track");
       if (!trackOn) return;
-      var x = Math.max(-2 * drag.w, Math.min(0, -drag.step * drag.w + dx));
+      var x = Math.max(-drag.w, Math.min(0, -drag.step * drag.w + dx));
       trackOn.style.transform = "translateX(" + x.toFixed(1) + "px)";
     });
     function endDrag(e) {
@@ -344,7 +340,7 @@
       var delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
       if (Math.abs(delta) < 4) return;
       var next = (lb._step || 0) + (delta > 0 ? 1 : -1);
-      if (next < 0 || next > 2) return;
+      if (next < 0 || next > 1) return;
       lb._wheelUntil = now + 460;
       setStep(lb, next, true);
     }, { passive: false });
@@ -364,9 +360,7 @@
       var thumb = art.getBoundingClientRect();
       var big = svg;
       var framed = svg.cloneNode(true);
-      var worn = svg.cloneNode(true);
       bindRouteTip(framed);
-      bindRouteTip(worn);
       var lb = document.createElement("div");
       lb.id = "br-lb";
       lb.className = "br-lb";
@@ -394,16 +388,8 @@
       wall.innerHTML = '<div class="sh-hang"><div class="sh-mould"><div class="sh-mat"><div class="sh-frame-art"></div></div></div></div>';
       wall.querySelector(".sh-frame-art").appendChild(framed);
       frame.appendChild(wall);
-      var shirtSlide = document.createElement("div");
-      shirtSlide.className = "br-slide br-slide-shirt";
-      var shirt = document.createElement("div");
-      shirt.className = "br-shirt";
-      shirt.innerHTML = shirtMarkup() + '<div class="br-shirt-print"></div>';
-      shirt.querySelector(".br-shirt-print").appendChild(worn);
-      shirtSlide.appendChild(shirt);
       track.appendChild(print);
       track.appendChild(frame);
-      track.appendChild(shirtSlide);
       deck.appendChild(track);
       mountEdges(lb, deck);
       lb.appendChild(deck);
