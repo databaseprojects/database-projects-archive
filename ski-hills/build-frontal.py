@@ -44,7 +44,7 @@ import sys
 from pathlib import Path
 
 from osgeo import gdal
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 gdal.SetConfigOption("GDAL_HTTP_TIMEOUT", "60")
 gdal.SetConfigOption("GDAL_HTTP_MAX_RETRY", "1")
@@ -335,8 +335,9 @@ CAMERAS = {
     "kicking-horse-resort": {"frame_scale": 0.86},
     # Whistler only. Run and lift strokes are 22% under the defaults
     # (2.2 and 1.7). Automatic facing was 155.4. 168.4 is 13° further,
-    # which turns the drawing 13° counter-clockwise on screen. Tiny run
-    # names sit in the drawing and stay hidden until the page asks for them.
+    # which turns the drawing 13° counter-clockwise on screen. Run names
+    # sit beside the line at the largest size that clears the strokes,
+    # and stay hidden until the page asks for them.
     "whistler-blackcomb": {
         "facing": 168.4,
         "run_width": 1.716,
@@ -1319,6 +1320,220 @@ def edge_fit(pts, margin, right=1000.0, bottom=880.0):
     return scale, cx, cy, tcx, tcy
 
 
+# Run-name labels. Tried largest first. Ink includes the white halo.
+# A label is kept only when that ink clears every run and lift stroke
+# and every name already placed. Contours stay out of the test: they
+# are the ground, not trail geometry.
+LABEL_FONT_SIZES = (6.0, 5.2, 4.5, 4.0, 3.5)
+LABEL_TRACK = 0.02
+LABEL_CAP = 0.72
+LABEL_DESC = 0.25
+# Pixels between the host stroke's edge and the label ink.
+LABEL_CLEAR = 0.85
+# Pixels between label ink and any other stroke edge, and between labels.
+LABEL_GAP = 0.40
+LABEL_LABEL_GAP = 0.65
+LABEL_CELL = 48.0
+
+
+def label_halo(size):
+    return max(0.34, size * 0.08)
+
+
+_LABEL_FONT = None
+
+
+def label_measure_font():
+    """Arial-bold metrics. font-weight 600 falls back to bold, and
+    Liberation Sans matches Arial, which is wider than Helvetica."""
+    global _LABEL_FONT
+    if _LABEL_FONT is False:
+        return None
+    if _LABEL_FONT is not None:
+        return _LABEL_FONT
+    path = Path("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf")
+    if not path.exists():
+        _LABEL_FONT = False
+        return None
+    _LABEL_FONT = ImageFont.truetype(str(path), 100)
+    return _LABEL_FONT
+
+
+def label_width(name, size):
+    n = len(name)
+    if n <= 0:
+        return 0.0
+    tracking = (n - 1) * size * LABEL_TRACK
+    font = label_measure_font()
+    if font is None:
+        return n * size * 0.72 + tracking
+    # A few percent over the measured advance covers Helvetica Neue
+    # versus Arial and the halo at the last letter.
+    return font.getlength(name) * (size / 100.0) * 1.04 + tracking
+
+
+def cumulative(pts):
+    acc = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        acc.append(acc[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+    return acc
+
+
+def point_along(pts, acc, dist):
+    if dist <= 0.0:
+        return pts[0]
+    if dist >= acc[-1]:
+        return pts[-1]
+    i = bisect.bisect_right(acc, dist) - 1
+    span = acc[i + 1] - acc[i]
+    t = (dist - acc[i]) / span if span else 0.0
+    ax, ay = pts[i]
+    bx, by = pts[i + 1]
+    return (ax + (bx - ax) * t, ay + (by - ay) * t)
+
+
+def slice_along(pts, acc, s0, s1):
+    out = [point_along(pts, acc, s0)]
+    for i in range(1, len(acc) - 1):
+        if s0 < acc[i] < s1:
+            out.append(pts[i])
+    end = point_along(pts, acc, s1)
+    if math.hypot(end[0] - out[-1][0], end[1] - out[-1][1]) > 0.05:
+        out.append(end)
+    elif len(out) < 2:
+        out.append(end)
+    return out
+
+
+def label_ribbon(pts, size, host_half, halo, side=1.0):
+    """OBBs of the glyph ink, offset beside `pts`.
+
+    side > 0 is the left normal of the path (uy, -ux): negative SVG dy,
+    above a left-to-right baseline. side < 0 is the other side. The
+    ribbon is the ink, halo included.
+    """
+    acc = cumulative(pts)
+    length = acc[-1]
+    if length < 0.5:
+        return [], 0.0
+    desc = size * LABEL_DESC
+    cap = size * LABEL_CAP
+    halo_out = halo / 2.0
+    baseline = host_half + LABEL_CLEAR + desc + halo_out
+    near = baseline - desc - halo_out
+    far = baseline + cap + halo_out
+    mid_off = (near + far) * 0.5
+    half_h = (far - near) * 0.5
+    step = max(2.8, size * 0.55)
+    boxes = []
+    s = 0.0
+    while s < length - 0.05:
+        e = min(length, s + step)
+        if e - s < 0.35:
+            break
+        p0 = point_along(pts, acc, s)
+        p1 = point_along(pts, acc, e)
+        dx = p1[0] - p0[0]
+        dy = p1[1] - p0[1]
+        hyp = math.hypot(dx, dy)
+        if hyp < 0.05:
+            s = e
+            continue
+        ux, uy = dx / hyp, dy / hyp
+        nx, ny = uy * side, -ux * side
+        cx = (p0[0] + p1[0]) * 0.5 + nx * mid_off
+        cy = (p0[1] + p1[1]) * 0.5 + ny * mid_off
+        boxes.append((cx, cy, ux, uy, nx, ny, hyp * 0.5 + 0.12, half_h))
+        if e >= length - 0.05:
+            break
+        s = e
+    return boxes, baseline
+
+
+def _cs_code(x, y, hw, hh):
+    code = 0
+    if x < -hw:
+        code |= 1
+    elif x > hw:
+        code |= 2
+    if y < -hh:
+        code |= 4
+    elif y > hh:
+        code |= 8
+    return code
+
+
+def segment_hits_obb(ax, ay, bx, by, cx, cy, ux, uy, nx, ny, hw, hh):
+    """True when segment AB meets the oriented box, edge included."""
+    def loc(x, y):
+        dx = x - cx
+        dy = y - cy
+        return dx * ux + dy * uy, dx * nx + dy * ny
+
+    x0, y0 = loc(ax, ay)
+    x1, y1 = loc(bx, by)
+    c0 = _cs_code(x0, y0, hw, hh)
+    c1 = _cs_code(x1, y1, hw, hh)
+    for _ in range(12):
+        if c0 == 0 or c1 == 0:
+            return True
+        if c0 & c1:
+            return False
+        code = c0 or c1
+        dx = x1 - x0
+        dy = y1 - y0
+        if code & 1:
+            if dx == 0.0:
+                return False
+            t = (-hw - x0) / dx
+            x, y = -hw, y0 + t * dy
+        elif code & 2:
+            if dx == 0.0:
+                return False
+            t = (hw - x0) / dx
+            x, y = hw, y0 + t * dy
+        elif code & 4:
+            if dy == 0.0:
+                return False
+            t = (-hh - y0) / dy
+            x, y = x0 + t * dx, -hh
+        else:
+            if dy == 0.0:
+                return False
+            t = (hh - y0) / dy
+            x, y = x0 + t * dx, hh
+        if code == c0:
+            x0, y0 = x, y
+            c0 = _cs_code(x0, y0, hw, hh)
+        else:
+            x1, y1 = x, y
+            c1 = _cs_code(x1, y1, hw, hh)
+    return False
+
+
+def _obb_corners(box, extra):
+    cx, cy, ux, uy, nx, ny, hw, hh = box
+    hw += extra
+    hh += extra
+    return [
+        (cx + ux * sx + nx * sy, cy + uy * sx + ny * sy)
+        for sx in (-hw, hw)
+        for sy in (-hh, hh)
+    ]
+
+
+def obbs_overlap(a, b, gap):
+    axes = ((a[2], a[3]), (a[4], a[5]), (b[2], b[3]), (b[4], b[5]))
+    ca = _obb_corners(a, gap)
+    cb = _obb_corners(b, 0.0)
+    for ax, ay in axes:
+        pa = [p[0] * ax + p[1] * ay for p in ca]
+        pb = [p[0] * ax + p[1] * ay for p in cb]
+        if max(pa) < min(pb) or max(pb) < min(pa):
+            return False
+    return True
+
+
 def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
@@ -1715,7 +1930,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 return True
         return False
 
-    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False, fade_opacity=None):
+    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False, fade_opacity=None, chunks_out=None):
         parts = []
         # Dash lives on the element that asks for it. Everything else is
         # explicitly solid so a lift dash cannot inherit onto contours.
@@ -1725,6 +1940,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         def emit(chunk, opacity=None):
             if len(chunk) < 2:
                 return
+            if chunks_out is not None:
+                chunks_out.append([(p[0], p[1]) for p in chunk])
             pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in chunk)
             op_attr = f' stroke-opacity="{opacity:.2f}"' if opacity is not None else ""
             op_style = f"stroke-opacity:{opacity:.2f};" if opacity is not None else ""
@@ -1815,8 +2032,14 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         "lift", lift_stroke,
     )
     run_parts = []
+    # Visible trail ink, copied while the strokes are emitted so a label
+    # test uses the same pieces the drawing does. Names stay with the run
+    # they were emitted from; unnamed glades still block labels.
+    obstacle_runs = []
+    named_runs = []
     for run in runs:
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
+        pieces = [] if run_labels else None
         run_parts.extend(
             stroke(
                 run["lines"],
@@ -1826,9 +2049,16 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 css_class="sh-frontal-run",
                 occlude=True,
                 fade_opacity=ridge_fade,
+                chunks_out=pieces,
             )
         )
+        if pieces:
+            obstacle_runs.extend(pieces)
+            raw_name = run.get("name")
+            if isinstance(raw_name, str) and raw_name.strip():
+                named_runs.append((raw_name.strip(), pieces))
     lift_parts = []
+    lift_pieces = []
     for lift in lifts:
         lift_parts.extend(
             stroke(
@@ -1839,152 +2069,199 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 dash="6 4",
                 css_class="sh-frontal-lift",
                 occlude=True,
+                chunks_out=lift_pieces if run_labels else None,
             )
         )
 
     label_xml = ""
     if run_labels:
-        # One tiny name per run, on the longest visible piece that can hold
-        # it, reading left to right. A later name yields if it would sit on
-        # one already placed.
-        def label_width(name):
-            n = len(name)
-            if n <= 0:
-                return 0.0
-            size = 2.2
-            return n * size * 0.52 + (n - 1) * size * 0.04
-
-        def poly_len(pts):
-            total = 0.0
+        # One name per run, on a visible piece long enough to hold it,
+        # reading left to right. The largest size that clears the trail
+        # ink wins. A later name yields when it would touch a line or a
+        # name already placed.
+        segments = []
+        for pts in obstacle_runs:
+            half = run_stroke / 2.0 + LABEL_GAP
             for a, b in zip(pts, pts[1:]):
-                total += math.hypot(b[0] - a[0], b[1] - a[1])
-            return total
-
-        def visible_chunks(lines):
-            chunks = []
-            for line in lines:
-                sampled = []
-
-                def flush_visible():
-                    nonlocal sampled
-                    if len(sampled) < 2:
-                        sampled = []
-                        return
-                    flags = solid_flags(
-                        [p[2] for p in sampled],
-                        [(p[0], p[1]) for p in sampled],
-                    )
-                    part = []
-                    for (px, py, _hide), hidden in zip(sampled, flags):
-                        if hidden:
-                            if len(part) >= 2:
-                                chunks.append(part)
-                            part = []
-                        else:
-                            part.append((px, py))
-                    if len(part) >= 2:
-                        chunks.append(part)
-                    sampled = []
-
-                for lon, lat in line:
-                    z = sample(arr, gt, lon, lat)
-                    if z is None:
-                        flush_visible()
-                        continue
-                    xr, yr = rot(*metres(lon, lat))
-                    px, py = paper(*project_xy(xr, yr, z + RUN_CLEAR))
-                    sampled.append((px, py, covered(px, py, yr)))
-                flush_visible()
-            return chunks
-
-        def read_left_to_right(pts):
-            if pts[-1][0] < pts[0][0]:
-                return list(reversed(pts))
-            return pts
-
-        def label_box(pts, text_w):
-            dx = pts[-1][0] - pts[0][0]
-            dy = pts[-1][1] - pts[0][1]
-            hyp = math.hypot(dx, dy) or 1.0
-            ux, uy = dx / hyp, dy / hyp
-            # Negative dy sits above a left-to-right baseline.
-            nx, ny = uy, -ux
-            walked = 0.0
-            target = poly_len(pts) * 0.5
-            cx, cy = pts[0]
+                if a[0] == b[0] and a[1] == b[1]:
+                    continue
+                segments.append((a[0], a[1], b[0], b[1], half))
+        for pts in lift_pieces:
+            half = lift_stroke / 2.0 + LABEL_GAP
             for a, b in zip(pts, pts[1:]):
-                step = math.hypot(b[0] - a[0], b[1] - a[1])
-                if walked + step >= target:
-                    t = (target - walked) / step if step else 0.0
-                    cx = a[0] + (b[0] - a[0]) * t
-                    cy = a[1] + (b[1] - a[1]) * t
-                    break
-                walked += step
-            cx += nx * 1.4
-            cy += ny * 1.4
-            half_w = text_w * 0.5 + 0.8
-            half_h = 1.6
-            xs = []
-            ys = []
-            for sx in (-half_w, half_w):
-                for sy in (-half_h, half_h):
-                    xs.append(cx + ux * sx + nx * sy)
-                    ys.append(cy + uy * sx + ny * sy)
-            return min(xs), min(ys), max(xs), max(ys)
+                if a[0] == b[0] and a[1] == b[1]:
+                    continue
+                segments.append((a[0], a[1], b[0], b[1], half))
+        grid = {}
+        for index, seg in enumerate(segments):
+            pad = seg[4]
+            minx = min(seg[0], seg[2]) - pad
+            maxx = max(seg[0], seg[2]) + pad
+            miny = min(seg[1], seg[3]) - pad
+            maxy = max(seg[1], seg[3]) + pad
+            ix0 = int(math.floor(minx / LABEL_CELL))
+            ix1 = int(math.floor(maxx / LABEL_CELL))
+            iy0 = int(math.floor(miny / LABEL_CELL))
+            iy1 = int(math.floor(maxy / LABEL_CELL))
+            for ix in range(ix0, ix1 + 1):
+                for iy in range(iy0, iy1 + 1):
+                    grid.setdefault((ix, iy), []).append(index)
+        stamp = [0] * len(segments)
+        token = 1
 
-        def hits(box, placed):
-            x0, y0, x1, y1 = box
-            for other in placed:
-                if x0 < other[2] and x1 > other[0] and y0 < other[3] and y1 > other[1]:
-                    return True
+        def hits_geometry(boxes):
+            nonlocal token
+            for box in boxes:
+                cx, cy, ux, uy, nx, ny, hw, hh = box
+                xs = []
+                ys = []
+                for sx in (-hw, hw):
+                    for sy in (-hh, hh):
+                        xs.append(cx + ux * sx + nx * sy)
+                        ys.append(cy + uy * sx + ny * sy)
+                ix0 = int(math.floor(min(xs) / LABEL_CELL))
+                ix1 = int(math.floor(max(xs) / LABEL_CELL))
+                iy0 = int(math.floor(min(ys) / LABEL_CELL))
+                iy1 = int(math.floor(max(ys) / LABEL_CELL))
+                token += 1
+                if token == 2_000_000_000:
+                    stamp[:] = [0] * len(segments)
+                    token = 1
+                for ix in range(ix0, ix1 + 1):
+                    for iy in range(iy0, iy1 + 1):
+                        for index in grid.get((ix, iy), ()):
+                            if stamp[index] == token:
+                                continue
+                            stamp[index] = token
+                            seg = segments[index]
+                            pad = seg[4]
+                            if segment_hits_obb(
+                                seg[0], seg[1], seg[2], seg[3],
+                                cx, cy, ux, uy, nx, ny,
+                                hw + pad, hh + pad,
+                            ):
+                                return True
+            return False
+
+        def hits_labels(boxes, placed):
+            for box in boxes:
+                for other in placed:
+                    if obbs_overlap(box, other, LABEL_LABEL_GAP):
+                        return True
             return False
 
         by_name = {}
-        for run in runs:
-            raw_name = run.get("name")
-            if not isinstance(raw_name, str):
-                continue
-            name = raw_name.strip()
-            if not name:
-                continue
-            width = label_width(name)
-            for chunk in visible_chunks(run["lines"]):
-                length = poly_len(chunk)
-                if length < width + 1.0:
+        for name, pieces in named_runs:
+            bucket = by_name.setdefault(name, [])
+            for pts in pieces:
+                if len(pts) < 2:
                     continue
-                by_name.setdefault(name, []).append((length, chunk, width))
-        ordered = sorted(by_name.items(), key=lambda item: -max(seg[0] for seg in item[1]))
+                ordered_pts = list(reversed(pts)) if pts[-1][0] < pts[0][0] else pts
+                acc = cumulative(ordered_pts)
+                if acc[-1] >= 4.0:
+                    bucket.append((acc[-1], ordered_pts, acc))
+        prepared = []
+        for name, chunks in by_name.items():
+            if not chunks:
+                continue
+            chunks.sort(key=lambda item: -item[0])
+            prepared.append((chunks[0][0], name, chunks))
+        prepared.sort(key=lambda item: -item[0])
+        host_half = run_stroke / 2.0
         placed = []
         bits = []
-        for index, (name, segs) in enumerate(ordered):
-            segs.sort(key=lambda item: -item[0])
+        size_counts = {}
+
+        def stations(length, span):
+            if length < span + 1.2:
+                return []
+            mid = length * 0.5
+            half = span * 0.5
+            lo = half
+            hi = length - half
+            found = [mid]
+            step = max(6.0, span * 0.4)
+            k = 1
+            while len(found) < 14:
+                hit = False
+                for dist in (mid - k * step, mid + k * step):
+                    if lo <= dist <= hi:
+                        found.append(dist)
+                        hit = True
+                if not hit:
+                    break
+                k += 1
+            return found
+
+        for name, _longest, chunks in ((item[1], item[0], item[2]) for item in prepared):
             chosen = None
-            box = None
-            for _length, chunk, width in segs:
-                pts = read_left_to_right(chunk)
-                box = label_box(pts, width)
-                if not hits(box, placed):
-                    chosen = pts
+            chosen_boxes = None
+            chosen_size = None
+            chosen_dy = None
+            for size in LABEL_FONT_SIZES:
+                width = label_width(name, size)
+                halo = label_halo(size)
+                found = False
+                # Above the left-to-right line first. The other side is
+                # used only when that size does not clear above.
+                for side in (1.0, -1.0):
+                    for length, pts, acc in chunks:
+                        for dist in stations(length, width):
+                            window = slice_along(pts, acc, dist - width * 0.5, dist + width * 0.5)
+                            rounded = [(round(p[0], 1), round(p[1], 1)) for p in window]
+                            clean = [rounded[0]]
+                            for pt in rounded[1:]:
+                                if pt != clean[-1]:
+                                    clean.append(pt)
+                            if len(clean) < 2:
+                                continue
+                            mid = clean[len(clean) // 2]
+                            if mid[0] < 2.0 or mid[0] > 998.0 or mid[1] < 2.0 or mid[1] > 998.0:
+                                continue
+                            boxes, baseline = label_ribbon(clean, size, host_half, halo, side)
+                            if not boxes:
+                                continue
+                            if hits_geometry(boxes) or hits_labels(boxes, placed):
+                                continue
+                            chosen = clean
+                            chosen_boxes = boxes
+                            chosen_size = size
+                            chosen_dy = -baseline * side
+                            found = True
+                            break
+                        if found:
+                            break
+                    if found:
+                        break
+                if found:
                     break
             if not chosen:
                 continue
-            placed.append(box)
+            placed.extend(chosen_boxes)
+            size_counts[chosen_size] = size_counts.get(chosen_size, 0) + 1
             safe = name.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            path_id = "sh-run-label-%s-%d" % (slug, index)
+            path_id = "sh-run-label-%s-%d" % (slug, len(bits))
             path_d = "M " + " L ".join("%.1f,%.1f" % (px, py) for px, py in chosen)
+            halo = label_halo(chosen_size)
             bits.append(
-                f'<path id="{path_id}" d="{path_d}" fill="none"/>\n'
-                f'<text dy="-1.4"><textPath href="#{path_id}" startOffset="50%" text-anchor="middle">{safe}</textPath></text>'
+                f'<path id="{path_id}" d="{path_d}" fill="none" stroke="none"/>\n'
+                f'<text font-size="{chosen_size:.1f}" dy="{chosen_dy:.2f}" stroke-width="{halo:.2f}">'
+                f'<textPath href="#{path_id}" startOffset="50%" text-anchor="middle">{safe}</textPath></text>'
             )
         if bits:
             label_xml = (
-                '<g class="sh-frontal-run-labels" fill="#111" fill-opacity="0.32" '
-                'font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="2.2" '
-                'letter-spacing="0.04em">\n'
+                '<g class="sh-frontal-run-labels" fill="#111" fill-opacity="0.92" '
+                'font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="600" '
+                'stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" '
+                'paint-order="stroke fill" letter-spacing="0.02em">\n'
                 + "\n".join(bits)
                 + "\n</g>\n"
             )
-        print("run_labels", len(bits))
+        print(
+            "run_labels", len(bits),
+            "sizes", dict(sorted(size_counts.items(), reverse=True)),
+            "obstacles", len(segments),
+        )
 
     if not contours:
         raise SystemExit("no contours")
