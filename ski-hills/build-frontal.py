@@ -335,11 +335,11 @@ CAMERAS = {
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
     # Whistler only. Run and lift strokes are 22% under the defaults
-    # (2.2 and 1.7). Automatic facing was 155.4. 161.4 is 6° further,
-    # which turns the drawing 6° counter-clockwise on screen. Tiny run
+    # (2.2 and 1.7). Automatic facing was 155.4. 168.4 is 13° further,
+    # which turns the drawing 13° counter-clockwise on screen. Tiny run
     # names sit in the drawing and stay hidden until the page asks for them.
     "whistler-blackcomb": {
-        "facing": 161.4,
+        "facing": 168.4,
         "run_width": 1.716,
         "lift_width": 1.33,
         "run_labels": True,
