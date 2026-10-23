@@ -66,16 +66,29 @@ DEPTH_BIAS = 40.0
 # Pixels under the near skyline. Screen y grows downward. Clipping only:
 # nothing is stroked along the skyline.
 RIDGE_MARGIN = 2.6
-# Tignes – Val d'Isère only. The skyline test misses a slope behind a
-# mid-slope spur, so both contour families draw and cross. Screen cells
-# keep the nearest terrain. A contour point `tol` metres behind the
-# nearest sample within `reach` pixels is hidden. Other hills skip this,
-# and runs and lifts do not use it.
+# Standing rule for every new bird's-eye build. A run that passes behind
+# a ridge stays on the sheet at 10% opacity, so the line still reads
+# around the ridge instead of being clipped out. A hill sets ridge_fade
+# to None when those segments should be clipped instead.
+RIDGE_FADE = 0.10
+# The skyline test misses a slope behind a mid-slope spur, so both
+# contour families draw and cross. Screen cells keep the nearest terrain.
+# A contour point `tol` metres behind the nearest sample within `reach`
+# pixels is hidden. Runs and lifts do not use it. `y`, when set, limits
+# the hide to that screen band. Samples outside the band still fill the grid.
 DEPTH_GRIDS = {
     "tignes-val-d-isere": {
         "cell": 4.0,
         "reach": 10.0,
         "tol": 15.0,
+    },
+    # Castle, bottom third. The column horizon left the near ridge stacked.
+    # The middle ski area and the top third are not tested.
+    "castle-mountain-resort": {
+        "cell": 5.0,
+        "reach": 12.0,
+        "tol": 20.0,
+        "y": (2000.0 / 3.0, 1400.0),
     },
 }
 # Each hill has its own tolerance, in pixels. The skyline test leaves
@@ -106,6 +119,13 @@ FLOATING_HORIZON = {
     "apex-mountain-resort": 3.0,
     # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
     "red-mountain-resort": 3.0,
+    # Left half only. The right side of Sunshine stays on the skyline test.
+    "banff-sunshine-village": 3.5,
+    # Left half only. Bottom-left and top-left back slopes were stacking
+    # on the front face. The right side stays on the skyline test.
+    "whitewater-ski-resort": 2.0,
+    # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
+    "mt-bachelor": 3.5,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -113,14 +133,21 @@ FLOATING_HORIZON = {
 # on its own.
 HORIZON_MIN_RUN = {
     "jasna-low-tatras": 80,
-    # Fernie. Short grazes along the ridge crest stay one solid stroke.
-    # The occluded back face is a longer run and stays hidden.
+    # Fernie, below the top band. Short crest grazes stay one stroke.
+    # The top third uses CONTOUR_TIGHT instead: 70 samples here was
+    # letting the bowls draw through the upper ridges.
     "fernie-alpine-resort": 70,
     # Marmot. Only a real back-ridge run is hidden. Facing contours stay solid.
     "marmot-basin": 40,
     # Kicking Horse. Grazes along the top ridge stay one stroke. A longer
     # run behind the crest stays hidden, so the clip does not come back.
     "kicking-horse-resort": 65,
+    # Sunshine, left half. A short graze stays one stroke.
+    "banff-sunshine-village": 80,
+    # Bachelor. Medium grazes stay drawn so the elevation lines join.
+    "mt-bachelor": 80,
+    # Whitewater corners. A graze shorter than 12 samples stays drawn.
+    "whitewater-ski-resort": 12,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -140,6 +167,16 @@ HORIZON_REGION = {
     # top-right corner. The slopes under that band are not tested.
     "red-mountain-resort": {
         "y": ((-400.0, 1000.0 / 3.0),),
+    },
+    # Sunshine. Only the left half, where the elevation lines were breaking.
+    "banff-sunshine-village": {
+        "x": ((-400.0, 500.0),),
+    },
+    # Whitewater. Top-left and bottom-left corners. The middle of the
+    # left side, and the whole right side, stay on the skyline test.
+    "whitewater-ski-resort": {
+        "x": ((-400.0, 500.0),),
+        "y": ((-400.0, 380.0), (2000.0 / 3.0, 1400.0)),
     },
 }
 
@@ -175,7 +212,72 @@ MIN_RUN = 12.0
 # stroke. A real occluded run is longer and still ends where it goes
 # behind the slope. Runs and lifts keep MIN_RUN. Other hills do too.
 CONTOUR_HOLD = {
-    "mt-bachelor": 40.0,
+    # Bachelor. 40 px still left medium gaps. 100 px joins those grazes.
+    "mt-bachelor": 100.0,
+    # Sunshine. The left and top-left slopes were shattering on short dips.
+    "banff-sunshine-village": 100.0,
+    # Revelstoke. Keeps the top-left ridge line one stroke between real hides.
+    "revelstoke-mountain-resort": 60.0,
+}
+# A stricter floating horizon inside one screen band, applied before the
+# sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
+# top-left ridge were drawing the far slope through the crest. The later
+# pass does not put these marks back.
+CONTOUR_TIGHT = {
+    "fernie-alpine-resort": {
+        "tol": 1.2,
+        "min_run": 12,
+        "y": (-400.0, 420.0),
+    },
+    "revelstoke-mountain-resort": {
+        "tol": 1.2,
+        "min_run": 12,
+        "x": (-400.0, 550.0),
+        "y": (-400.0, 420.0),
+    },
+    # Marmot. Summit crest, full width, and the top-left corner under it.
+    # The rest of the sheet stays at 4.5 px.
+    "marmot-basin": {
+        "tol": 2.2,
+        "min_run": 16,
+        "regions": (
+            {"y": (-400.0, 200.0)},
+            {"x": (-400.0, 500.0), "y": (-400.0, 380.0)},
+        ),
+    },
+    # Castle. Bottom third only, tighter than the 3.0 px pass. The top
+    # third stays at 3.0 and the middle ski area stays drawn.
+    "castle-mountain-resort": {
+        "tol": 1.5,
+        "min_run": 12,
+        "y": (2000.0 / 3.0, 1400.0),
+    },
+    # Whitewater peaks, top-left only. The bottom-left corner stays on
+    # the 2.0 px pass.
+    "whitewater-ski-resort": {
+        "tol": 1.2,
+        "min_run": 12,
+        "x": (-400.0, 500.0),
+        "y": (-400.0, 380.0),
+    },
+}
+# Runs only, and only where a hill asks. Tol is pixels below a nearer
+# skyline. A marked stretch shorter than min_run samples stays solid.
+# 1.2 px and 12 samples is the strict pair: a run behind the ridge fades
+# at 10% instead of cutting through solid. The usual skyline test still
+# runs everywhere else.
+RUN_HORIZON = {
+    "fernie-alpine-resort": {
+        "tol": 1.2,
+        "min_run": 12,
+        "y": (-400.0, 420.0),
+    },
+    "revelstoke-mountain-resort": {
+        "tol": 1.2,
+        "min_run": 12,
+        "x": (-400.0, 550.0),
+        "y": (-400.0, 420.0),
+    },
 }
 LIFT_CLEAR = 12.0
 # Runs clear the contour ink, and stay under the lifts.
@@ -220,10 +322,10 @@ CONTRAST_GREY_HI = 252
 SOFT_GREY_LO = 156
 SOFT_GREY_HI = 250
 CAMERAS = {
-    # Cypress only. 0 looks due north. 10.0 is 10° further, which turns
-    # the drawing 10° counter-clockwise on screen.
+    # Cypress only. 0 looks due north. 25.0 is 25° further, which turns
+    # the drawing 25° counter-clockwise on screen.
     "cypress-mountain": {
-        "facing": 10.0,
+        "facing": 25.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -430,11 +532,11 @@ CAMERAS = {
         "lift_width": 1.51,
         "ridge_fade": 0.10,
     },
-    # Revelstoke only. Automatic facing was 103.8. 86.8 is 17° less,
-    # which turns the drawing 17° clockwise on screen. 0.86 pulls the
+    # Revelstoke only. Automatic facing was 103.8. 76.8 is 27° less,
+    # which turns the drawing 27° clockwise on screen. 0.86 pulls the
     # sheet back 14% around the centre. Edit the facing.
     "revelstoke-mountain-resort": {
-        "facing": 86.8,
+        "facing": 76.8,
         "frame_scale": 0.86,
     },
     # SilverStar only. Run and lift strokes are 22% under the defaults.
@@ -468,6 +570,15 @@ CAMERAS = {
     # 58.5 is 30° less, which turns the drawing 30° clockwise on screen.
     "whitewater-ski-resort": {
         "facing": 58.5,
+    },
+    # Castle only. Elevation 18 looks down a little more steeply than the
+    # usual 15, the same bump as Panorama, so the ski lines clear the
+    # ridges in front. Runs behind a ridge stay at 10% opacity. The
+    # automatic facing stays.
+    "castle-mountain-resort": {
+        "elevation": 18.0,
+        "depth_scale": DEPTH_SCALE,
+        "ridge_fade": 0.10,
     },
 }
 
@@ -1155,7 +1266,7 @@ def contour_lines(chunks, min_run=None):
     return drawn, kept
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None):
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -1216,7 +1327,11 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             # Screen-cell test, this hill only. A spur that is not the
             # skyline still owns the pixels it covers. The short-gap hold
             # still applies, so a one-sample miss on the near face returns.
-            if depth_grid is not None and not hide:
+            if (
+                depth_grid is not None
+                and not hide
+                and (depth_hide is None or depth_hide(px, py))
+            ):
                 near = depth_grid.nearest(px, py)
                 if near < 1e8 and yr - near >= depth_grid.tol:
                     hide = True
@@ -1227,9 +1342,33 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
 
     before, before_kept = contour_lines(chunks, contour_hold)
     print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
-    if float_tol is None:
+
+    def tight_hide(px, py, spec=tight):
+        if not spec:
+            return False
+
+        def inside(region):
+            xb = region.get("x")
+            yb = region.get("y")
+            if xb and not (xb[0] <= px <= xb[1]):
+                return False
+            if yb and not (yb[0] <= py <= yb[1]):
+                return False
+            return True
+
+        regions = spec.get("regions")
+        if regions:
+            return any(inside(region) for region in regions)
+        return inside(spec)
+
+    if tight:
+        apply_floating_horizon(
+            chunks, col_of, tight["tol"], tight.get("min_run"), tight_hide
+        )
+    if float_tol is None and not tight:
         return before, len(before)
-    apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
+    if float_tol is not None:
+        apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
     drawn, kept = contour_lines(chunks, contour_hold)
     before_bag = {}
     for _yr, line in before:
@@ -1255,7 +1394,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             hid_high += gone
     print(
         "floathorizon",
-        "tol", float_tol,
+        "tol", float_tol if float_tol is not None else tight["tol"],
         "before", before_kept,
         "after", kept,
         "hidden_low", hid_low,
@@ -2001,11 +2140,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         return snap_py[idx], snap_depth[idx]
 
     depth_grid = None
+    depth_hide = None
     spec = DEPTH_GRIDS.get(slug)
     if spec:
         depth_grid = DepthGrid(spec["cell"], spec["tol"], spec["reach"])
         for yr, (px, py) in samples:
             depth_grid.add(px, py, yr)
+        band = spec.get("y")
+        if band:
+            depth_hide = lambda px, py, lohi=band: lohi[0] <= py <= lohi[1]
         print(
             "depthgrid",
             "cells", depth_grid.filled,
@@ -2023,6 +2166,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         if _hkey in HORIZON_REGION
         else None,
         contour_hold=CONTOUR_HOLD.get(_hkey),
+        tight=CONTOUR_TIGHT.get(_hkey),
+        depth_hide=depth_hide,
     )
 
     def covered(px, py, yr):
@@ -2062,6 +2207,55 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         for line in lines:
             sampled = []
 
+            run_spec = RUN_HORIZON.get(horizon_key(slug)) if fade_opacity is not None else None
+
+            def tighten_run(samples):
+                """Hide a run that sits behind a nearer ridge in this hill's band."""
+                if not run_spec:
+                    return
+                tol = run_spec["tol"]
+                min_run = run_spec.get("min_run") or 12
+                xb = run_spec.get("x")
+                yb = run_spec.get("y")
+                marked = []
+                for i, (px, py, yr, hide) in enumerate(samples):
+                    if hide:
+                        continue
+                    if xb and not (xb[0] <= px <= xb[1]):
+                        continue
+                    if yb and not (yb[0] <= py <= yb[1]):
+                        continue
+                    crest, _depth = horizon_at(yr)
+                    best = 1e9
+                    col = col_of(px)
+                    nbin = len(crest)
+                    for j in (col - 1, col, col + 1):
+                        if 0 <= j < nbin and crest[j] < best:
+                            best = crest[j]
+                    if best < 1e8 and py > best + tol:
+                        samples[i] = (px, py, yr, True)
+                        marked.append(i)
+                if min_run <= 1 or len(marked) < 2:
+                    if min_run > 1 and len(marked) == 1:
+                        px, py, yr, _hide = samples[marked[0]]
+                        samples[marked[0]] = (px, py, yr, False)
+                    return
+                groups = []
+                start = prev = marked[0]
+                for idx in marked[1:]:
+                    if idx == prev + 1:
+                        prev = idx
+                        continue
+                    groups.append((start, prev))
+                    start = prev = idx
+                groups.append((start, prev))
+                for a, b in groups:
+                    if b - a + 1 >= min_run:
+                        continue
+                    for i in range(a, b + 1):
+                        px, py, yr, _hide = samples[i]
+                        samples[i] = (px, py, yr, False)
+
             def flush_sampled():
                 nonlocal sampled
                 if len(sampled) < 2:
@@ -2071,13 +2265,14 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     emit([(p[0], p[1]) for p in sampled])
                     sampled = []
                     return
+                tighten_run(sampled)
                 flags = solid_flags(
-                    [p[2] for p in sampled],
+                    [p[3] for p in sampled],
                     [(p[0], p[1]) for p in sampled],
                 )
                 if fade_opacity is None:
                     part = []
-                    for (px, py, _hide), hidden in zip(sampled, flags):
+                    for (px, py, _yr, _hide), hidden in zip(sampled, flags):
                         if hidden:
                             emit(part)
                             part = []
@@ -2090,7 +2285,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 # where the line crosses the ridge, drawn in both pieces.
                 part = []
                 part_hidden = None
-                for (px, py, _hide), hidden in zip(sampled, flags):
+                for (px, py, _yr, _hide), hidden in zip(sampled, flags):
                     if part and hidden != part_hidden:
                         part.append((px, py))
                         emit(part, fade_opacity if part_hidden else None)
@@ -2109,7 +2304,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 xr, yr = rot(*metres(lon, lat))
                 px, py = paper(*project_xy(xr, yr, z + z_add))
                 hide = covered(px, py, yr) if occlude else False
-                sampled.append((px, py, hide))
+                sampled.append((px, py, yr, hide))
             flush_sampled()
         return parts
 
@@ -2519,7 +2714,7 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
         frame_scale=cam.get("frame_scale", 1.0),
         edge_margin=edge_margin,
         frame_runs=frame_runs,
-        ridge_fade=cam.get("ridge_fade"),
+        ridge_fade=cam.get("ridge_fade", RIDGE_FADE),
         lift_width=cam.get("lift_width", LIFT_W),
         run_labels=bool(cam.get("run_labels")),
     )
@@ -2552,6 +2747,7 @@ def render_cypress(frame_runs=None):
         sun=cam.get("sun"),
         run_width=cam.get("run_width", 2.2),
         frame_runs=frame_runs,
+        ridge_fade=cam.get("ridge_fade", RIDGE_FADE),
         lift_width=cam.get("lift_width", LIFT_W),
     )
 
@@ -2591,6 +2787,7 @@ def render_views(slug, edge_margin=0.0, frame_runs=None):
             frame_scale=cam.get("frame_scale", 1.0),
             edge_margin=edge_margin,
             frame_runs=frame_runs,
+            ridge_fade=cam.get("ridge_fade", RIDGE_FADE),
             lift_width=cam.get("lift_width", LIFT_W),
         )
 

@@ -450,10 +450,12 @@
   }
 
   function matches(hill) {
-    if (province === "ca") {
-      if (!canadaHill(hill)) return false;
-    } else if (province !== "all" && (hill.province || "bc") !== province) return false;
-    if (province !== "all" && province !== "ca" && region !== "all" && hill.region !== region) return false;
+    if (!query) {
+      if (province === "ca") {
+        if (!canadaHill(hill)) return false;
+      } else if (province !== "all" && (hill.province || "bc") !== province) return false;
+      if (province !== "all" && province !== "ca" && region !== "all" && hill.region !== region) return false;
+    }
     if (kind !== "all" && hill.type !== kind) return false;
     if (query && fold(hill.name).indexOf(query) === -1) return false;
     return true;
@@ -744,7 +746,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023i";
+    return "frontal/" + file + ".svg?v=20261023j";
   }
 
   function frontalArt(hill) {
@@ -1299,7 +1301,7 @@
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-labels-toggle, .sh-trees-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
+      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-stack-btn, .sh-labels-toggle, .sh-trees-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
       closeLb();
     });
   }
@@ -2142,9 +2144,26 @@
     });
   }
 
+  function useAllRegions() {
+    if (province === "all" && region === "all") return;
+    rememberPlace();
+    province = "all";
+    region = "all";
+    setPressed();
+  }
+
   var find = document.querySelector(".sh-find");
   if (find) {
+    find.addEventListener("focus", function () {
+      useAllRegions();
+      apply(false);
+    });
+    find.addEventListener("click", function () {
+      useAllRegions();
+      apply(false);
+    });
     find.addEventListener("input", function () {
+      useAllRegions();
       query = fold(find.value).trim();
       apply(false);
     });
@@ -2721,25 +2740,24 @@
     var trees = null;
     if (hill.slug === "kimberley-alpine-resort") {
       hill._treesOn = true;
-      trees = document.createElement("label");
+      trees = document.createElement("button");
+      trees.type = "button";
       trees.className = "sh-tag sh-trees-toggle sh-on";
-      var treeBox = document.createElement("input");
-      treeBox.type = "checkbox";
-      treeBox.className = "sh-trees-check";
-      treeBox.checked = true;
-      var treeCaption = document.createElement("span");
-      treeCaption.textContent = "Trees";
-      trees.appendChild(treeBox);
-      trees.appendChild(treeCaption);
+      trees.textContent = "Trees";
+      trees.setAttribute("aria-pressed", "true");
       trees.addEventListener("click", function (e) {
+        e.preventDefault();
         e.stopPropagation();
-      });
-      treeBox.addEventListener("change", function () {
-        hill._treesOn = treeBox.checked;
-        trees.classList.toggle("sh-on", treeBox.checked);
-        var lb = document.getElementById("sh-lb");
-        if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", treeBox.checked);
-        refreshMockArt(hill.el);
+        hill._treesOn = !hill._treesOn;
+        var goBird = !hill._stackOn;
+        if (goBird) hill._stackOn = true;
+        sync();
+        if (goBird) applyStack(hill);
+        else {
+          var lb = document.getElementById("sh-lb");
+          if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+          refreshMockArt(hill.el);
+        }
       });
     }
     var views = sideViews(hill);
@@ -2775,7 +2793,11 @@
       bird.classList.toggle("sh-on", on);
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
-      if (trees) trees.hidden = !on;
+      if (trees) {
+        var treesOn = !!hill._treesOn;
+        trees.classList.toggle("sh-on", treesOn);
+        trees.setAttribute("aria-pressed", treesOn ? "true" : "false");
+      }
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;
