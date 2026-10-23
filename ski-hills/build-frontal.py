@@ -92,18 +92,91 @@ FLOATING_HORIZON = {
     "estacio-d-esqui-baqueira-beret": 3.0,  # Baqueira Beret, 3.0 px, PR #217
     "fernie-alpine-resort": 3.0,  # Fernie Alpine Resort, 3.0 px
     "kicking-horse-resort": 3.0,  # Kicking Horse, 3.0 px
+    "panorama-mountain-resort": 3.0,  # Panorama, 3.0 px
+    "cypress-mountain": 3.0,  # Cypress, 3.0 px
+    "grouse-mountain": 3.0,  # Grouse, 3.0 px
+    # Gentle. A 4.5 px dip is the small bleed at the top of the ski line
+    # and the top-left corner. Shorter grazes stay drawn.
+    "marmot-basin": 4.5,
+    # Front and back sheets share this. Only the right third may hide.
+    "mount-washington-alpine-resort": 3.0,
+    # Top third and bottom third only. The middle ski area stays drawn.
+    "castle-mountain-resort": 3.0,
+    # Bottom third only. The upper two thirds stay drawn.
+    "apex-mountain-resort": 3.0,
+    # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
+    "red-mountain-resort": 3.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
-# stays hidden, which is the steep face. Jasná only. Other hills hide each
-# sample on its own.
+# stays hidden, which is the steep face. Other hills hide each sample
+# on its own.
 HORIZON_MIN_RUN = {
     "jasna-low-tatras": 80,
+    # Fernie. Short grazes along the ridge crest stay one solid stroke.
+    # The occluded back face is a longer run and stays hidden.
+    "fernie-alpine-resort": 70,
+    # Marmot. Only a real back-ridge run is hidden. Facing contours stay solid.
+    "marmot-basin": 40,
+    # Kicking Horse. Grazes along the top ridge stay one stroke. A longer
+    # run behind the crest stays hidden, so the clip does not come back.
+    "kicking-horse-resort": 65,
 }
+# Screen bands where the floating horizon may hide a sample. y grows
+# downward, x grows to the right. A sample outside the band stays drawn
+# and can still raise the crest. Hills not listed hide across the sheet.
+# Front and back sheets use the hill name, without the -front / -back suffix.
+HORIZON_REGION = {
+    "castle-mountain-resort": {
+        "y": ((-400.0, 1000.0 / 3.0), (2000.0 / 3.0, 1400.0)),
+    },
+    "apex-mountain-resort": {
+        "y": ((2000.0 / 3.0, 1400.0),),
+    },
+    "mount-washington-alpine-resort": {
+        "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
+    },
+    # Top third, which includes the thin line on the top edge and the
+    # top-right corner. The slopes under that band are not tested.
+    "red-mountain-resort": {
+        "y": ((-400.0, 1000.0 / 3.0),),
+    },
+}
+
+
+def horizon_key(slug):
+    """Hill name for a frontal sheet. Front and back share the hill's pass."""
+    for suffix in ("-front", "-back"):
+        if slug.endswith(suffix):
+            base = slug[: -len(suffix)]
+            if base in FLOATING_HORIZON or base in HORIZON_MIN_RUN or base in HORIZON_REGION:
+                return base
+    return slug
+
+
+def horizon_hides(slug, px, py):
+    """True when this screen point is inside the hill's floating-horizon band."""
+    region = HORIZON_REGION.get(horizon_key(slug))
+    if not region:
+        return True
+    xs = region.get("x")
+    ys = region.get("y")
+    if xs and not any(lo <= px <= hi for lo, hi in xs):
+        return False
+    if ys and not any(lo <= py <= hi for lo, hi in ys):
+        return False
+    return True
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
 MIN_RUN = 12.0
+# Pixels. Mt. Bachelor's peak and the left-middle ridge graze the skyline
+# for short stretches and break. A longer hold joins those dips into one
+# stroke. A real occluded run is longer and still ends where it goes
+# behind the slope. Runs and lifts keep MIN_RUN. Other hills do too.
+CONTOUR_HOLD = {
+    "mt-bachelor": 40.0,
+}
 LIFT_CLEAR = 12.0
 # Runs clear the contour ink, and stay under the lifts.
 RUN_CLEAR = 7.0
@@ -148,13 +221,18 @@ CONTRAST_GREY_HI = 252
 SOFT_GREY_LO = 156
 SOFT_GREY_HI = 250
 CAMERAS = {
+    # Cypress only. 0 looks due north. 10.0 is 10° further, which turns
+    # the drawing 10° counter-clockwise on screen.
     "cypress-mountain": {
-        "facing": 0.0,
+        "facing": 10.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # Grouse only. 0.95 pulls the sheet back 5% around the centre.
+    # The automatic camera stays.
     "grouse-mountain": {
+        "frame_scale": 0.95,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     "mt-seymour": {
@@ -162,11 +240,11 @@ CAMERAS = {
     },
     "grass-mountain": {"facing": 0.0, "elevation": 73.0, "depth_scale": 1.0},
     # Banff only. Automatic facing was 311.9. 41.9 is 90° further clockwise,
-    # which turns the bird's-eye drawing 90° counter-clockwise. 11.9 is 30°
-    # less than 41.9, which turns the drawing 30° clockwise on screen.
+    # which turns the bird's-eye drawing 90° counter-clockwise. 1.9 is 40°
+    # less than 41.9, which turns the drawing 40° clockwise on screen.
     # Edit this number.
     "banff-sunshine-village": {
-        "facing": 11.9,
+        "facing": 1.9,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -335,12 +413,12 @@ CAMERAS = {
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
     # Whistler only. Run and lift strokes are 22% under the defaults
-    # (2.2 and 1.7). Automatic facing was 155.4. 168.4 is 13° further,
-    # which turns the drawing 13° counter-clockwise on screen. Run names
-    # sit beside the line at the largest size that clears the strokes,
-    # and stay hidden until the page asks for them.
+    # (2.2 and 1.7). Automatic facing was 155.4. 135.4 is 20° less, which
+    # turns the drawing 20° clockwise on screen. Run names sit beside the
+    # line at the largest size that clears the strokes, and stay hidden
+    # until the page asks for them.
     "whistler-blackcomb": {
-        "facing": 168.4,
+        "facing": 135.4,
         "run_width": 1.716,
         "lift_width": 1.33,
         "run_labels": True,
@@ -356,11 +434,11 @@ CAMERAS = {
         "lift_width": 1.51,
         "ridge_fade": 0.10,
     },
-    # Revelstoke only. Automatic facing was 103.8. 96.8 is 7° less,
-    # which turns the drawing 7° clockwise on screen. 0.86 pulls the
+    # Revelstoke only. Automatic facing was 103.8. 86.8 is 17° less,
+    # which turns the drawing 17° clockwise on screen. 0.86 pulls the
     # sheet back 14% around the centre. Edit the facing.
     "revelstoke-mountain-resort": {
-        "facing": 96.8,
+        "facing": 86.8,
         "frame_scale": 0.86,
     },
     # SilverStar only. Run and lift strokes are 22% under the defaults.
@@ -379,6 +457,21 @@ CAMERAS = {
     "red-mountain-resort": {
         "run_width": 1.84,
         "lift_width": 1.42,
+    },
+    # Panorama only. The sheet sits 10% smaller. Strokes match RED
+    # Mountain, about 16.4% under the defaults. Elevation 18 looks down
+    # a little more steeply than the usual 15. The automatic camera stays.
+    "panorama-mountain-resort": {
+        "frame_scale": 0.9,
+        "run_width": 1.84,
+        "lift_width": 1.42,
+        "elevation": 18.0,
+        "depth_scale": DEPTH_SCALE,
+    },
+    # Whitewater only. Automatic facing was 88.5 and orient() kept it.
+    # 58.5 is 30° less, which turns the drawing 30° clockwise on screen.
+    "whitewater-ski-resort": {
+        "facing": 58.5,
     },
 }
 
@@ -495,14 +588,19 @@ def load_geom():
 
 
 def wide_box(runs, lifts):
-    """DEM crop about 3x the run extent, so topo continues past the frame."""
+    """DEM crop about 3x the run extent, so topo continues past the frame.
+
+    Fernie's camera leaves the top-right corner empty at 1x span padding.
+    1.8x reaches that corner, up to the edge fade.
+    """
     pts = [p for item in runs + lifts for line in item["lines"] for p in line]
     lons = [p[0] for p in pts]
     lats = [p[1] for p in pts]
     span_lon = max(lons) - min(lons)
     span_lat = max(lats) - min(lats)
-    pad_lon = span_lon * 1.0
-    pad_lat = span_lat * 1.0
+    pad = 1.8 if GEOM is not None and GEOM.name.startswith("fernie-alpine-resort") else 1.0
+    pad_lon = span_lon * pad
+    pad_lat = span_lat * pad
     return min(lons) - pad_lon, min(lats) - pad_lat, max(lons) + pad_lon, max(lats) + pad_lat
 
 
@@ -822,14 +920,16 @@ def _path_dist(pts):
     return dist
 
 
-def solid_flags(flags, pts):
+def solid_flags(flags, pts, min_run=None):
     """Hold visibility so a contour is not chopped into dashes.
 
     A one-sample spike is skyline noise. A hidden gap or a visible piece
-    shorter than MIN_RUN pixels is not a real change either: short gaps
-    stay drawn, short pieces stay hidden, and a long occluded run ends
-    where it actually goes behind the nearer slope.
+    shorter than the hold is not a real change either: short gaps stay
+    drawn, short pieces stay hidden, and a long occluded run ends where
+    it actually goes behind the nearer slope. The hold is MIN_RUN unless
+    a hill asks for a longer contour join.
     """
+    hold = MIN_RUN if min_run is None else min_run
     n = len(flags)
     if n < 2:
         return flags
@@ -853,7 +953,7 @@ def solid_flags(flags, pts):
         changed = False
         new = flags[:]
         for ri, (s, e, flag, length) in enumerate(runs):
-            if length >= MIN_RUN:
+            if length >= hold:
                 continue
             left = runs[ri - 1] if ri else None
             right = runs[ri + 1] if ri + 1 < len(runs) else None
@@ -861,9 +961,9 @@ def solid_flags(flags, pts):
                 adopt = left[2]
             elif left and right:
                 adopt = left[2] if left[3] >= right[3] else right[2]
-            elif left and left[3] >= MIN_RUN:
+            elif left and left[3] >= hold:
                 adopt = left[2]
-            elif right and right[3] >= MIN_RUN:
+            elif right and right[3] >= hold:
                 adopt = right[2]
             else:
                 continue
@@ -956,7 +1056,7 @@ def _release_short_horizon_runs(chunks, marked, min_run):
             chunk[pi] = (px, py, yr, False)
 
 
-def apply_floating_horizon(chunks, col_of, tol, min_run=None):
+def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None):
     """Hide the far face where a nearer contour already crests that column.
 
     Samples walk from the camera outward. Each column keeps the highest
@@ -967,6 +1067,9 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None):
     many consecutive samples. A shorter dip stays drawn. The crest is
     unchanged: a sample below it never raises the horizon. Skyline hides
     are left as they are.
+
+    hide_at(px, py), when set, limits the hide to that screen band. A
+    sample outside the band stays drawn and can still raise the crest.
     """
     columns = col_of(1e9) + 1
     horizon = [1e9] * columns
@@ -985,7 +1088,7 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None):
             continue
         col = col_of(px)
         top = horizon[col]
-        if top < 1e8 and py > top + tol:
+        if top < 1e8 and py > top + tol and (hide_at is None or hide_at(px, py)):
             chunks[ci][pi] = (px, py, yr, True)
             if use_run:
                 marked.append((ci, pi))
@@ -1013,13 +1116,14 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None):
         _release_short_horizon_runs(chunks, marked, min_run)
 
 
-def contour_lines(chunks):
+def contour_lines(chunks, min_run=None):
     """Visible runs after the short-gap hold. One entry per drawn stroke."""
+    hold = MIN_RUN if min_run is None else min_run
     drawn = []
     seen = set()
     kept = 0
     for chunk in chunks:
-        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk)
+        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk, hold)
         part = []
         depth = None
 
@@ -1031,7 +1135,7 @@ def contour_lines(chunks):
                     length += math.hypot(b[0] - a[0], b[1] - a[1])
                 # A piece shorter than the hold is the same flicker, drawn
                 # as a dot. A real visible run is longer and stays solid.
-                if length < MIN_RUN:
+                if length < hold:
                     part = []
                     depth = None
                     return
@@ -1055,7 +1159,7 @@ def contour_lines(chunks):
     return drawn, kept
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None):
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -1072,6 +1176,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     The stroke-weight line count stays the pre-horizon count, so this
     pass does not change run or lift width. float_min_run, when set,
     draws a horizon dip that is shorter than that many samples.
+    float_hide(px, py), when set, keeps the hide inside that screen band.
     """
     raw = marching_contours(arr, gt, CONTOUR_M)
     hidden = 0
@@ -1124,12 +1229,12 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             chunk.append((px, py, yr, hide))
         flush()
 
-    before, before_kept = contour_lines(chunks)
+    before, before_kept = contour_lines(chunks, contour_hold)
     print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
     if float_tol is None:
         return before, len(before)
-    apply_floating_horizon(chunks, col_of, float_tol, float_min_run)
-    drawn, kept = contour_lines(chunks)
+    apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
+    drawn, kept = contour_lines(chunks, contour_hold)
     before_bag = {}
     for _yr, line in before:
         for px, py in line:
@@ -1913,10 +2018,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             "tol", depth_grid.tol,
         )
 
+    _hkey = horizon_key(slug)
     contours, stroke_lines = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
-        float_tol=FLOATING_HORIZON.get(slug),
-        float_min_run=HORIZON_MIN_RUN.get(slug),
+        float_tol=FLOATING_HORIZON.get(_hkey),
+        float_min_run=HORIZON_MIN_RUN.get(_hkey),
+        float_hide=(lambda px, py, key=_hkey: horizon_hides(key, px, py))
+        if _hkey in HORIZON_REGION
+        else None,
+        contour_hold=CONTOUR_HOLD.get(_hkey),
     )
 
     def covered(px, py, yr):
@@ -2420,7 +2530,7 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
 
 
 def render_cypress(frame_runs=None):
-    """Hand-set facing 0. Same sheet as before, plus the default sun."""
+    """Hand-set Cypress facing. Same sheet as before, plus the default sun."""
     global GEOM, DEM
     slug = "cypress-mountain"
     GEOM = Path("/tmp/cypress-geom.json")
