@@ -158,12 +158,18 @@ CAMERAS = {
     },
     "grass-mountain": {"facing": 0.0, "elevation": 73.0, "depth_scale": 1.0},
     # Banff only. Automatic facing was 311.9. 41.9 is 90° further clockwise,
-    # which turns the bird's-eye drawing 90° counter-clockwise. Edit this number.
+    # which turns the bird's-eye drawing 90° counter-clockwise. 11.9 is 30°
+    # less than 41.9, which turns the drawing 30° clockwise on screen.
+    # Edit this number.
     "banff-sunshine-village": {
-        "facing": 41.9,
+        "facing": 11.9,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+        # Run strokes are 22% under the 2.2 used everywhere else.
+        "run_width": 1.716,
     },
     # Mt Norquay only. Automatic facing was 68.6. 248.6 was 180° further,
     # which turns the bird's-eye drawing upside down. 238.6 is 10° less
