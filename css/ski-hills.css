@@ -27,8 +27,9 @@
 .sh-find {
   -webkit-appearance: none;
   appearance: none;
+  display: block;
   width: 9.5rem;
-  margin: 0;
+  margin: 0.85rem 0 0.4rem;
   padding: 0.22em 0.55em;
   border: 1px solid rgba(0, 0, 0, 0.55);
   border-radius: 0;
@@ -131,7 +132,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.2rem;
-  margin-top: 0.9rem;
+  margin-top: 0;
   max-width: 100%;
   min-width: 0;
 }
@@ -266,7 +267,6 @@
   }
 
   .sh-find {
-    flex: 0 0 8.2rem;
     width: 8.2rem;
   }
 
@@ -465,12 +465,14 @@
   padding: 24px;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0);
+  opacity: 0;
   overflow: hidden;
-  transition: background 0.32s ease;
+  transition: background 0.32s ease, opacity 0.32s ease;
   cursor: zoom-out;
 }
 
 .sh-lb.sh-lb-on {
+  opacity: 1;
   background: rgba(0, 0, 0, 0.82);
 }
 
@@ -483,7 +485,6 @@
   outline: 0;
   box-shadow: none;
   transform-origin: center center;
-  transition: transform 0.4s ease-out;
   cursor: default;
 }
 
@@ -493,11 +494,8 @@
 }
 
 .sh-lb.sh-lb-closing {
+  opacity: 0;
   background: rgba(0, 0, 0, 0);
-}
-
-.sh-lb.sh-lb-closing svg {
-  transition: transform 0.32s ease-out;
 }
 
 .sh-hill-name {
@@ -778,8 +776,22 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   gap: 0.45rem;
   width: 100%;
   margin: 0.45rem 0 0;
-  pointer-events: auto;
+  opacity: 0;
+  pointer-events: none;
   transform: none;
+  transition: opacity 0.18s ease 0s;
+}
+
+.sh-lb.sh-lb-on:not(.sh-lb-closing) .sh-stack-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.2s ease 0.34s;
+}
+
+.sh-lb.sh-lb-closing .sh-stack-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease 0s;
 }
 
 .sh-stack-btn .sh-tag {
@@ -972,26 +984,41 @@ html.sh-prints-off .sh-cart-panel {
   overflow: visible;
 }
 
-.sh-lb:not(.sh-lb-on) .sh-slide-frame {
+.sh-lb:not(.sh-lb-on):not(.sh-lb-closing) .sh-slide-frame {
   visibility: hidden;
 }
 
 .sh-track {
-  display: flex;
-  width: 200%;
-  transition: transform 400ms ease-out;
-}
-
-.sh-lb.sh-framed .sh-track {
-  transform: translateX(-50%);
+  position: relative;
+  display: block;
+  width: 100%;
 }
 
 .sh-slide {
   display: flex;
-  flex: 0 0 50%;
   flex-direction: column;
   align-items: center;
-  width: 50%;
+  width: 100%;
+  transition: opacity 260ms ease;
+}
+
+.sh-slide-plain {
+  position: relative;
+  opacity: 1;
+}
+
+.sh-slide-frame {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.sh-lb.sh-framed .sh-slide-plain {
+  opacity: 0;
+}
+
+.sh-lb.sh-framed .sh-slide-frame {
+  opacity: 1;
 }
 
 .sh-slide-art,
@@ -1214,6 +1241,17 @@ html.sh-prints-off .sh-cart-panel {
 .sh-trees-on .sh-plan-tree-wash { display: inline; }
 
 .sh-trees-toggle {
+  margin-left: auto;
+  color: #fff;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
