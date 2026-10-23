@@ -16,7 +16,9 @@ The paper stays white around it. There is no silhouette and no dark box.
 A far contour loses to terrain a short depth in front of it, and stops
 just under that ridge. Visibility has to hold for a few pixels, so a
 contour stays one solid stroke. Runs sit a few metres above the surface.
-Lifts sit higher and are the only dashed strokes. No labels.
+Lifts sit higher and are the only dashed strokes. Run names are drawn
+only when a hill asks for them, and the page hides that layer until it
+is switched on.
 
 Facing is the compass bearing the camera looks, in degrees clockwise from
 north. 0 looks due north: the viewer stands south of the hill, west is on the
@@ -88,6 +90,8 @@ FLOATING_HORIZON = {
     "borovets": 3.0,  # Borovets, 3.0 px, PR #211
     "skigebiet-garmisch-classic": 3.0,  # Garmisch-Classic, 3.0 px, PR #211
     "estacio-d-esqui-baqueira-beret": 3.0,  # Baqueira Beret, 3.0 px, PR #217
+    "fernie-alpine-resort": 3.0,  # Fernie Alpine Resort, 3.0 px
+    "kicking-horse-resort": 3.0,  # Kicking Horse, 3.0 px
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -157,12 +161,19 @@ CAMERAS = {
     },
     "grass-mountain": {"facing": 0.0, "elevation": 73.0, "depth_scale": 1.0},
     # Banff only. Automatic facing was 311.9. 41.9 is 90° further clockwise,
-    # which turns the bird's-eye drawing 90° counter-clockwise. Edit this number.
+    # which turns the bird's-eye drawing 90° counter-clockwise. 11.9 is 30°
+    # less than 41.9, which turns the drawing 30° clockwise on screen.
+    # Edit this number.
     "banff-sunshine-village": {
-        "facing": 41.9,
+        "facing": 11.9,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+        # Run and lift strokes are 22% under the defaults (2.2 and 1.7).
+        "run_width": 1.716,
+        "lift_width": 1.33,
     },
     # Mt Norquay only. Automatic facing was 68.6. 248.6 was 180° further,
     # which turns the bird's-eye drawing upside down. 238.6 is 10° less
@@ -319,11 +330,48 @@ CAMERAS = {
     # Plan views of Marmot and Nakiska are scaled in the catalog instead.
     "marmot-basin": {"frame_scale": 0.91},
     "nakiska": {"frame_scale": 0.95},
-    "kicking-horse-resort": {"frame_scale": 0.95},
-    # Whistler only. Run strokes are 22% under the 2.2 used everywhere else.
-    # The plan map uses the same ratio in CSS. No facing here, so the
-    # automatic camera stays.
-    "whistler-blackcomb": {"run_width": 1.716},
+    # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
+    # the same pull-back as Revelstoke.
+    "kicking-horse-resort": {"frame_scale": 0.86},
+    # Whistler only. Run and lift strokes are 22% under the defaults
+    # (2.2 and 1.7). Automatic facing was 155.4. 161.4 is 6° further,
+    # which turns the drawing 6° counter-clockwise on screen. Tiny run
+    # names sit in the drawing and stay hidden until the page asks for them.
+    "whistler-blackcomb": {
+        "facing": 161.4,
+        "run_width": 1.716,
+        "lift_width": 1.33,
+        "run_labels": True,
+    },
+    # Big White only. Run and lift strokes are 38% under the defaults
+    # (2.2 and 1.7). No facing here, so the automatic camera stays.
+    "big-white-ski-resort": {"run_width": 1.36, "lift_width": 1.05},
+    # Sun Peaks only. Run and lift strokes are 11% under the defaults
+    # (2.2 and 1.7), halfway to Whistler's 22%. Runs that pass behind a
+    # ridge stay on the line at 10% opacity. The automatic camera stays.
+    "sun-peaks-resort": {
+        "run_width": 1.96,
+        "lift_width": 1.51,
+        "ridge_fade": 0.10,
+    },
+    # Revelstoke only. Automatic facing was 103.8. 96.8 is 7° less,
+    # which turns the drawing 7° clockwise on screen. 0.86 pulls the
+    # sheet back 14% around the centre. Edit the facing.
+    "revelstoke-mountain-resort": {
+        "facing": 96.8,
+        "frame_scale": 0.86,
+    },
+    # SilverStar only. Run and lift strokes are 22% under the defaults.
+    # Automatic facing was 274.3. 279.3 is 5° further, which turns the
+    # drawing 5° counter-clockwise on screen. Elevation 26 looks down
+    # more steeply than the usual 15. Edit the facing.
+    "silver-star-mountain-resort": {
+        "facing": 279.3,
+        "elevation": 26.0,
+        "depth_scale": DEPTH_SCALE,
+        "run_width": 1.716,
+        "lift_width": 1.33,
+    },
 }
 
 
@@ -1159,7 +1207,7 @@ def edge_fit(pts, margin, right=1000.0, bottom=880.0):
     return scale, cx, cy, tcx, tcy
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -1639,10 +1687,14 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         "extreme": "#111",
     }
     run_stroke = run_width
-    lift_stroke = LIFT_W
+    lift_stroke = LIFT_W if lift_width is None else lift_width
+    # A spread-out sheet steps down from the site-wide defaults. A hill
+    # that sets its own run or lift width keeps that width.
     if stroke_lines > CONTOUR_THIN_CUTOFF:
-        run_stroke = RUN_W_THIN
-        lift_stroke = LIFT_W_THIN
+        if run_width == 2.2:
+            run_stroke = RUN_W_THIN
+        if lift_width is None or lift_width == LIFT_W:
+            lift_stroke = LIFT_W_THIN
     print(
         "strokes",
         "contours", stroke_lines,
@@ -1677,6 +1729,150 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 occlude=True,
             )
         )
+
+    label_xml = ""
+    if run_labels:
+        # One tiny name per run, on the longest visible piece that can hold
+        # it, reading left to right. A later name yields if it would sit on
+        # one already placed.
+        def label_width(name):
+            n = len(name)
+            if n <= 0:
+                return 0.0
+            size = 2.2
+            return n * size * 0.52 + (n - 1) * size * 0.04
+
+        def poly_len(pts):
+            total = 0.0
+            for a, b in zip(pts, pts[1:]):
+                total += math.hypot(b[0] - a[0], b[1] - a[1])
+            return total
+
+        def visible_chunks(lines):
+            chunks = []
+            for line in lines:
+                sampled = []
+
+                def flush_visible():
+                    nonlocal sampled
+                    if len(sampled) < 2:
+                        sampled = []
+                        return
+                    flags = solid_flags(
+                        [p[2] for p in sampled],
+                        [(p[0], p[1]) for p in sampled],
+                    )
+                    part = []
+                    for (px, py, _hide), hidden in zip(sampled, flags):
+                        if hidden:
+                            if len(part) >= 2:
+                                chunks.append(part)
+                            part = []
+                        else:
+                            part.append((px, py))
+                    if len(part) >= 2:
+                        chunks.append(part)
+                    sampled = []
+
+                for lon, lat in line:
+                    z = sample(arr, gt, lon, lat)
+                    if z is None:
+                        flush_visible()
+                        continue
+                    xr, yr = rot(*metres(lon, lat))
+                    px, py = paper(*project_xy(xr, yr, z + RUN_CLEAR))
+                    sampled.append((px, py, covered(px, py, yr)))
+                flush_visible()
+            return chunks
+
+        def read_left_to_right(pts):
+            if pts[-1][0] < pts[0][0]:
+                return list(reversed(pts))
+            return pts
+
+        def label_box(pts, text_w):
+            dx = pts[-1][0] - pts[0][0]
+            dy = pts[-1][1] - pts[0][1]
+            hyp = math.hypot(dx, dy) or 1.0
+            ux, uy = dx / hyp, dy / hyp
+            # Negative dy sits above a left-to-right baseline.
+            nx, ny = uy, -ux
+            walked = 0.0
+            target = poly_len(pts) * 0.5
+            cx, cy = pts[0]
+            for a, b in zip(pts, pts[1:]):
+                step = math.hypot(b[0] - a[0], b[1] - a[1])
+                if walked + step >= target:
+                    t = (target - walked) / step if step else 0.0
+                    cx = a[0] + (b[0] - a[0]) * t
+                    cy = a[1] + (b[1] - a[1]) * t
+                    break
+                walked += step
+            cx += nx * 1.4
+            cy += ny * 1.4
+            half_w = text_w * 0.5 + 0.8
+            half_h = 1.6
+            xs = []
+            ys = []
+            for sx in (-half_w, half_w):
+                for sy in (-half_h, half_h):
+                    xs.append(cx + ux * sx + nx * sy)
+                    ys.append(cy + uy * sx + ny * sy)
+            return min(xs), min(ys), max(xs), max(ys)
+
+        def hits(box, placed):
+            x0, y0, x1, y1 = box
+            for other in placed:
+                if x0 < other[2] and x1 > other[0] and y0 < other[3] and y1 > other[1]:
+                    return True
+            return False
+
+        by_name = {}
+        for run in runs:
+            raw_name = run.get("name")
+            if not isinstance(raw_name, str):
+                continue
+            name = raw_name.strip()
+            if not name:
+                continue
+            width = label_width(name)
+            for chunk in visible_chunks(run["lines"]):
+                length = poly_len(chunk)
+                if length < width + 1.0:
+                    continue
+                by_name.setdefault(name, []).append((length, chunk, width))
+        ordered = sorted(by_name.items(), key=lambda item: -max(seg[0] for seg in item[1]))
+        placed = []
+        bits = []
+        for index, (name, segs) in enumerate(ordered):
+            segs.sort(key=lambda item: -item[0])
+            chosen = None
+            box = None
+            for _length, chunk, width in segs:
+                pts = read_left_to_right(chunk)
+                box = label_box(pts, width)
+                if not hits(box, placed):
+                    chosen = pts
+                    break
+            if not chosen:
+                continue
+            placed.append(box)
+            safe = name.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            path_id = "sh-run-label-%s-%d" % (slug, index)
+            path_d = "M " + " L ".join("%.1f,%.1f" % (px, py) for px, py in chosen)
+            bits.append(
+                f'<path id="{path_id}" d="{path_d}" fill="none"/>\n'
+                f'<text dy="-1.4"><textPath href="#{path_id}" startOffset="50%" text-anchor="middle">{safe}</textPath></text>'
+            )
+        if bits:
+            label_xml = (
+                '<g class="sh-frontal-run-labels" fill="#111" fill-opacity="0.32" '
+                'font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="2.2" '
+                'letter-spacing="0.04em">\n'
+                + "\n".join(bits)
+                + "\n</g>\n"
+            )
+        print("run_labels", len(bits))
 
     if not contours:
         raise SystemExit("no contours")
@@ -1726,7 +1922,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         + "\n".join(run_parts)
         + "\n"
         + "\n".join(lift_parts)
-        + "\n</g>\n</svg>\n"
+        + "\n"
+        + label_xml
+        + "</g>\n</svg>\n"
     )
     dest = Path(out_path) if out_path else (ROOT / "frontal" / f"{slug}.svg")
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -1826,6 +2024,8 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
         edge_margin=edge_margin,
         frame_runs=frame_runs,
         ridge_fade=cam.get("ridge_fade"),
+        lift_width=cam.get("lift_width", LIFT_W),
+        run_labels=bool(cam.get("run_labels")),
     )
 
 
@@ -1856,6 +2056,7 @@ def render_cypress(frame_runs=None):
         sun=cam.get("sun"),
         run_width=cam.get("run_width", 2.2),
         frame_runs=frame_runs,
+        lift_width=cam.get("lift_width", LIFT_W),
     )
 
 
@@ -1894,6 +2095,7 @@ def render_views(slug, edge_margin=0.0, frame_runs=None):
             frame_scale=cam.get("frame_scale", 1.0),
             edge_margin=edge_margin,
             frame_runs=frame_runs,
+            lift_width=cam.get("lift_width", LIFT_W),
         )
 
 

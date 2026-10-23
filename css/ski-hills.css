@@ -1171,3 +1171,16 @@ html.sh-prints-off .sh-cart-panel {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.92), inset 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 
+.sh-frontal-run-labels { display: none; }
+.sh-labels-on .sh-frontal-run-labels { display: inline; }
+
+.sh-labels-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.sh-labels-toggle[hidden] {
+  display: none;
+}
+
