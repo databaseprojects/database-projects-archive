@@ -73,10 +73,52 @@
 
 .br-credit {
   margin-top: 0.8rem;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.br-cities {
+  margin-top: 2.4rem;
+}
+
+.br-cities-title,
+.br-prov {
+  margin: 1.1rem 0 0.35rem;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.br-citylist {
+  margin: 0 0 0.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.br-citylist li {
+  margin: 0.15rem 0;
+}
+
+.br-citylist a {
+  color: #000;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.br-map {
+  display: block;
+  width: min(100%, calc(100vh - 12rem));
+  min-width: 280px;
+  height: auto;
+  background: #fff;
 }
 
 @media (max-width: 767px) {
-  .br-print {
+  .br-print,
+  .br-map {
     width: 100%;
   }
 }

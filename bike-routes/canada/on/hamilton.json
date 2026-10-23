@@ -1,0 +1,85 @@
+{
+  "slug": "hamilton",
+  "name": "Hamilton",
+  "province": "on",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 200.4,
+  "bbox": [
+    -80.13975,
+    43.1068,
+    -79.62656,
+    43.41348
+  ],
+  "routes": [
+    {
+      "name": "Chedoke Rail Trail/Radial Trail",
+      "km": 8.1,
+      "network": "lcn",
+      "osm": 7383174,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Dofasco 2000 Trail",
+      "km": 9.5,
+      "network": "lcn",
+      "osm": 8483088,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "East Mountain Trail Loop",
+      "km": 9.9,
+      "network": "lcn",
+      "osm": 21365570,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenbelt Route (GTA West-Hamilton)",
+      "km": 47.2,
+      "network": "rcn",
+      "osm": 4517591,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenbelt Route (Hamilton-Niagara)",
+      "km": 43.3,
+      "network": "rcn",
+      "osm": 7382470,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Hamilton-Brantford Rail Trail",
+      "km": 23.6,
+      "network": "ncn",
+      "osm": 3656338,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Red Hill Valley Trail",
+      "km": 10.2,
+      "network": "lcn",
+      "osm": 7383170,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Canada Trail (Chippewa/Escarpment Rail Trail)",
+      "km": 21.3,
+      "network": "ncn",
+      "osm": 9501846,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Waterfront Trail: Hamilton Harbour",
+      "km": 6.2,
+      "network": "ncn",
+      "osm": 9501707,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Waterfront Trail: Hamilton to Niagara",
+      "km": 21.1,
+      "network": "rcn",
+      "osm": 3066722,
+      "source": "OpenStreetMap"
+    }
+  ]
+}

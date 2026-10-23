@@ -1,0 +1,568 @@
+{
+  "slug": "edmonton",
+  "name": "Edmonton",
+  "province": "ab",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 506.2,
+  "routes": [
+    {
+      "name": "Cycle: 101 St Shared lane and muiltiuse Cycle Route",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 16191709,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 104 St Multiuse pathway cycle route",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 14988204,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 105Ave Protected Bike Lane, multiuse, shared lane",
+      "km": 5.4,
+      "network": "lcn",
+      "osm": 14916302,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 106 St Protected Bike Lane",
+      "km": 9.1,
+      "network": "lcn",
+      "osm": 14923906,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 109Ave shared lane cycle route",
+      "km": 6.9,
+      "network": "lcn",
+      "osm": 14984873,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 111St Multiuse Pathway",
+      "km": 12.7,
+      "network": "rcn",
+      "osm": 14959233,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 112 St Shared lane Cycle way",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 14923907,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 112/113/116 Ave Shared Lane Cycle Route",
+      "km": 6.6,
+      "network": "lcn",
+      "osm": 15029350,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 113/114 St Multiuse Pathway Cycle Route",
+      "km": 2.6,
+      "network": "lcn",
+      "osm": 15027674,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 114 Ave Multiuse and shared lane bike route",
+      "km": 3.2,
+      "network": "lcn",
+      "osm": 14988205,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 114 Ave, multiuse and shared lane cycle route",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 14984872,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 114/115 St Shared Lane Cycle Route",
+      "km": 4.1,
+      "network": "lcn",
+      "osm": 15025470,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 115St Multiuse pathway and Shared lane bike Route",
+      "km": 3.5,
+      "network": "lcn",
+      "osm": 15027672,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 119 Ave Protected and shared lane Cycle Route",
+      "km": 5.0,
+      "network": "lcn",
+      "osm": 16191708,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 119 Ave Shared Lane Cycle Route",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 15029352,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 119 St Multiuse Pathway Cycle Route",
+      "km": 6.4,
+      "network": "lcn",
+      "osm": 15025471,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 121 St greenway and painted lanes cycle route",
+      "km": 4.0,
+      "network": "lcn",
+      "osm": 14982499,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 122Ave shared lane cycle route",
+      "km": 3.6,
+      "network": "lcn",
+      "osm": 14984871,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 128 Avenue Shared Lane and Multiuse Path Cycle Route",
+      "km": 2.0,
+      "network": "lcn",
+      "osm": 21290796,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 130 Ave Multiuse Pathway Cycle Route",
+      "km": 4.7,
+      "network": "lcn",
+      "osm": 15075008,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 135/136 st Shared roadway route",
+      "km": 4.4,
+      "network": "lcn",
+      "osm": 14909742,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 137 Ave Cyling route",
+      "km": 18.1,
+      "network": "rcn",
+      "osm": 14936312,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 140/135 Street shared lane cycle route",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 15009133,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 141St Multiuse Pathway Cycle Route",
+      "km": 2.8,
+      "network": "lcn",
+      "osm": 15021615,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 142 St Shared Lane and multiuse pathway",
+      "km": 3.5,
+      "network": "lcn",
+      "osm": 14958789,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 142St Shared Lane and Multiuse Cycle Route",
+      "km": 3.0,
+      "network": "lcn",
+      "osm": 15025468,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 153 Ave Multiuse Pathway Cycle Route",
+      "km": 15.4,
+      "network": "rcn",
+      "osm": 15067429,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 153 St shared lane cycle route",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 14990904,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 163 Ave Multiuse Powerline Greenway Cycle Route",
+      "km": 8.2,
+      "network": "lcn",
+      "osm": 15067428,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 165 St shared lane cycle route",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 14990903,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 167 Ave multiuse cycle way",
+      "km": 11.4,
+      "network": "rcn",
+      "osm": 14950331,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 17 St Multiuse Pathway Cycle Route",
+      "km": 6.0,
+      "network": "lcn",
+      "osm": 15099743,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 23 Ave (east) Multiuse Pathway Cycle Route",
+      "km": 4.6,
+      "network": "lcn",
+      "osm": 15099742,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 23Ave Multiuse Pathway Cycle Route",
+      "km": 12.2,
+      "network": "rcn",
+      "osm": 15015335,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 25Ave SW Multiuse Pathway Cycle Route",
+      "km": 2.7,
+      "network": "lcn",
+      "osm": 15015528,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 28 St Greenway Multiuse Pathway Cycle Route",
+      "km": 5.0,
+      "network": "lcn",
+      "osm": 15096449,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 34Ave Multiuse Path cycle route",
+      "km": 10.7,
+      "network": "rcn",
+      "osm": 15011655,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 39 Ave Multiuse Pathway Cycle Route",
+      "km": 2.8,
+      "network": "lcn",
+      "osm": 15099741,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 40 St shared and painted Lane Cycle Route",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 16622567,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 41 Ave SW Multiuse Pathway Bike Route",
+      "km": 7.1,
+      "network": "lcn",
+      "osm": 15021616,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 50 St Multiuse Pathway Cycle Route",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 15314522,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 62 Ave / Callingwood Multiuse path bike route",
+      "km": 5.1,
+      "network": "lcn",
+      "osm": 15001424,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 69 Ave cycle lane route",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 14992993,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 76 Ave Protected Bike Lane & multiuse",
+      "km": 4.9,
+      "network": "lcn",
+      "osm": 14923908,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 76 Ave Shared Lane Cycle Route",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 15314525,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 76Ave Rio Terrace Shared lane bike route",
+      "km": 3.6,
+      "network": "lcn",
+      "osm": 14992994,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 79 St Shared Lane Cycle Route",
+      "km": 4.1,
+      "network": "lcn",
+      "osm": 15314524,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 81 St Shared lane Cycle Route",
+      "km": 2.3,
+      "network": "lcn",
+      "osm": 16191707,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 83Ave Garsconstrasse Protected Bike Lane",
+      "km": 3.7,
+      "network": "lcn",
+      "osm": 14923838,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 87 Ave Multiuse Pathway Cycle Route",
+      "km": 4.1,
+      "network": "lcn",
+      "osm": 15228618,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 88st Greenway Cycle Route",
+      "km": 3.4,
+      "network": "lcn",
+      "osm": 15015529,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 91 St Multiuse cycle path",
+      "km": 13.4,
+      "network": "rcn",
+      "osm": 14956343,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 92 St shared lane bike route",
+      "km": 2.7,
+      "network": "lcn",
+      "osm": 14988206,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 95 Ave Shared Lane Cycle Route",
+      "km": 3.6,
+      "network": "lcn",
+      "osm": 15314523,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 96 St shared lane Cycle Route",
+      "km": 4.8,
+      "network": "lcn",
+      "osm": 14988207,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 97 St Shared Lane & Multiuse Path bike route",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 14972900,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Ada Blvd Multiuse Tr and Shared Lane Cycle Route",
+      "km": 4.9,
+      "network": "lcn",
+      "osm": 14988907,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Argyll Rd / 63 Ave Multiuse Pathway Cycle Route",
+      "km": 3.9,
+      "network": "lcn",
+      "osm": 15314526,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Ellerslie Rd multiuse pathway",
+      "km": 11.4,
+      "network": "rcn",
+      "osm": 14959387,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Greater Highlands Multiuse Tr and Shared Lane Cycle Route",
+      "km": 6.8,
+      "network": "lcn",
+      "osm": 19509297,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Hermitage Protected bike Lanes",
+      "km": 5.1,
+      "network": "lcn",
+      "osm": 18057093,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: High Level Bridge and Greenway",
+      "km": 2.6,
+      "network": "lcn",
+      "osm": 14920233,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: MacKinnon Ravine multiuse pathway route",
+      "km": 2.8,
+      "network": "lcn",
+      "osm": 15082637,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: MacTaggart / Whitemud Ravine Greenway Route",
+      "km": 4.6,
+      "network": "lcn",
+      "osm": 15024193,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Maskêkosihk Tr multiuse pathway route",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 15083355,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: NE Greenway Multiuse Pathway Cycle Route",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 15067427,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: NSR Valley Cent North Bank Multiuse Pathway Cycle Route",
+      "km": 15.3,
+      "network": "rcn",
+      "osm": 15080344,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: NSR Valley Cent South Bank Multiuse Pathway Cycle Route",
+      "km": 12.9,
+      "network": "rcn",
+      "osm": 15080161,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: NSR Valley NE Multiuse Pathway Cycle Route",
+      "km": 18.4,
+      "network": "rcn",
+      "osm": 15075009,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: NSR Valley West Multiuse Pathway Cycle Route",
+      "km": 10.5,
+      "network": "rcn",
+      "osm": 15083280,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Parsons Rd Multiuse Pathway Cyle Route",
+      "km": 3.5,
+      "network": "lcn",
+      "osm": 15015530,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Rabbit Hill Road Multiuse Pathway Cycle Route",
+      "km": 11.0,
+      "network": "rcn",
+      "osm": 15024196,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Saskdrive multiuse and shared lane bike route",
+      "km": 7.4,
+      "network": "lcn",
+      "osm": 14978170,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: South Terwillegar Greenway Cycle Route",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 15024194,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: SW Henday crossing multiuse pathway route",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 15083279,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Whitemud Dr Multiuse Pathway Bike Route",
+      "km": 3.5,
+      "network": "lcn",
+      "osm": 15025469,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Windermere Blv Multiuse Pathway Cycle Route",
+      "km": 3.0,
+      "network": "lcn",
+      "osm": 15024195,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Winterburn Rd Multiuse Pathway Cycle Route",
+      "km": 3.2,
+      "network": "lcn",
+      "osm": 15228617,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Canada Trail (Edmonton)",
+      "km": 76.3,
+      "network": "ncn",
+      "osm": 7726718,
+      "source": "OpenStreetMap"
+    }
+  ],
+  "bbox": [
+    -113.71141,
+    53.33767,
+    -113.29518,
+    53.62918
+  ]
+}

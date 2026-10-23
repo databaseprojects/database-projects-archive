@@ -1,0 +1,197 @@
+{
+  "slug": "ottawa",
+  "name": "Ottawa",
+  "province": "on",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 271.6,
+  "routes": [
+    {
+      "name": "Aviation Pathway",
+      "km": 4.5,
+      "network": "lcn",
+      "osm": 7369758,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Byron-Richmond path",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 7370934,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Confederation Pathway",
+      "km": 5.1,
+      "network": "lcn",
+      "osm": 10155166,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Crosstown Bikeway 2",
+      "km": 7.2,
+      "network": "lcn",
+      "osm": 10986223,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Crosstown Bikeway 3",
+      "km": 14.1,
+      "network": "lcn",
+      "osm": 10985930,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "East–West Crosstown Bikeway",
+      "km": 8.0,
+      "network": "lcn",
+      "osm": 7234399,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Experimental Farm Pathway",
+      "km": 11.1,
+      "network": "rcn",
+      "osm": 7206821,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenbelt Pathway East",
+      "km": 13.6,
+      "network": "lcn",
+      "osm": 7369775,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenbelt Pathway West (Barrhaven)",
+      "km": 16.9,
+      "network": "rcn",
+      "osm": 11009279,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenboro Pathway",
+      "km": 5.0,
+      "network": "lcn",
+      "osm": 10434447,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Hospital Link Multi Use Pathway",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 21136039,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Nepean Trail",
+      "km": 16.2,
+      "network": "lcn",
+      "osm": 9599180,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Osgoode Link Pathway",
+      "km": 20.8,
+      "network": "lcn",
+      "osm": 7364422,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Ottawa River Pathway (east)",
+      "km": 22.7,
+      "network": "rcn",
+      "osm": 7174864,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Ottawa River Pathway (Trans Canada Trail)",
+      "km": 14.9,
+      "network": "ncn",
+      "osm": 9502633,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Ottawa Valley Recreation Trail",
+      "km": 4.5,
+      "network": "rcn",
+      "osm": 9351876,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Ottawa-Carleton Trailway",
+      "km": 23.2,
+      "network": "ncn",
+      "osm": 9502449,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Pinecrest Creek Pathway",
+      "km": 5.1,
+      "network": "lcn",
+      "osm": 7206822,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Prescott Russell Trail Link",
+      "km": 24.5,
+      "network": "rcn",
+      "osm": 3461068,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Rideau River Eastern Pathway",
+      "km": 11.6,
+      "network": "lcn",
+      "osm": 7369735,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Sawmill Creek Pathway",
+      "km": 4.8,
+      "network": "lcn",
+      "osm": 7369960,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Stonebridge Trail - Beryl Gaffney Park",
+      "km": 4.8,
+      "network": "lcn",
+      "osm": 18537716,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "The Greely Loop",
+      "km": 10.8,
+      "network": "lcn",
+      "osm": 8186590,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Canada Trail (Bells Corners/Watts Creek)",
+      "km": 10.7,
+      "network": "ncn",
+      "osm": 7371889,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Orléans Pathway",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 9334473,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trillium Pathway",
+      "km": 2.9,
+      "network": "lcn",
+      "osm": 7175029,
+      "source": "OpenStreetMap"
+    }
+  ],
+  "bbox": [
+    -76.34237,
+    45.1347,
+    -75.28233,
+    45.49723
+  ]
+}
