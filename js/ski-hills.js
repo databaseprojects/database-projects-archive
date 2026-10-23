@@ -746,7 +746,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023m";
+    return "frontal/" + file + ".svg?v=20261023n";
   }
 
   function frontalArt(hill) {
@@ -886,7 +886,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261023m").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261023n").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -2503,7 +2503,9 @@
       mock.classList.toggle("sh-on", !!on);
       mock.setAttribute("aria-pressed", on ? "true" : "false");
     }
-    if (track) track.style.transform = "none";
+    if (!track) return;
+    track.style.transition = "transform 400ms ease-out";
+    track.style.transform = on ? "translateX(-50%)" : "translateX(0)";
   }
 
   function mountCartAdd(hill) {
@@ -2609,6 +2611,11 @@
         stage.classList.add("sh-dragging");
       }
       e.preventDefault();
+      var x = Math.max(-drag.w, Math.min(0, drag.base + dx));
+      var track = stage.querySelector(".sh-track");
+      if (!track) return;
+      track.style.transition = "none";
+      track.style.transform = "translateX(" + x.toFixed(1) + "px)";
     });
     function endDrag(e) {
       if (!drag || e.pointerId !== drag.id) return;
@@ -2745,6 +2752,30 @@
     } else paint();
   }
 
+  var TREE_SLUGS = {
+    "whistler-blackcomb": 1,
+    "lake-louise-ski-area": 1,
+    "big-white-ski-resort": 1,
+    "banff-sunshine-village": 1,
+    "sun-peaks-resort": 1,
+    "revelstoke-mountain-resort": 1,
+    "fernie-alpine-resort": 1,
+    "silver-star-mountain-resort": 1,
+    "kicking-horse-resort": 1,
+    "red-mountain-resort": 1,
+    "panorama-mountain-resort": 1,
+    "cypress-mountain": 1,
+    "grouse-mountain": 1,
+    "whitewater-ski-resort": 1,
+    "marmot-basin": 1,
+    "mount-washington-alpine-resort": 1,
+    "nakiska": 1,
+    "kimberley-alpine-resort": 1,
+    "castle-mountain-resort": 1,
+    "apex-mountain-resort": 1,
+    "mt-bachelor": 1
+  };
+
   function mountStackButton(hill) {
     var wrap = document.createElement("div");
     wrap.className = "sh-stack-btn";
@@ -2752,34 +2783,53 @@
     group.className = "sh-stack";
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", "View");
-    function side(label, bird) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "sh-tag";
-      btn.textContent = label;
-      btn.setAttribute("aria-pressed", "false");
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
+    function viewToggle(label) {
+      var wrap = document.createElement("label");
+      wrap.className = "sh-view-toggle";
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.className = "sh-view-check";
+      var text = document.createElement("span");
+      text.textContent = label;
+      wrap.appendChild(box);
+      wrap.appendChild(text);
+      wrap.addEventListener("click", function (e) {
         e.stopPropagation();
-        if (!!hill._stackOn === bird) return;
-        hill._stackOn = bird;
-        sync();
-        applyStack(hill);
       });
-      return btn;
+      return { wrap: wrap, box: box };
     }
-    var plan = side("Plan view", false);
-    var bird = side("Bird's eye view", true);
+    var plan = viewToggle("Plan view");
+    var bird = viewToggle("Bird's eye view");
+    plan.box.addEventListener("change", function () {
+      if (!plan.box.checked) {
+        plan.box.checked = true;
+        return;
+      }
+      if (!hill._stackOn) return;
+      hill._stackOn = false;
+      sync();
+      applyStack(hill);
+    });
+    bird.box.addEventListener("change", function () {
+      if (!bird.box.checked) {
+        bird.box.checked = true;
+        return;
+      }
+      if (hill._stackOn) return;
+      hill._stackOn = true;
+      sync();
+      applyStack(hill);
+    });
     var trees = null;
     var treesBox = null;
-    if (hill.slug === "kimberley-alpine-resort") {
-      hill._treesOn = true;
+    if (TREE_SLUGS[hill.slug] || (hill.el && hill.el._treeWash)) {
+      if (hill._treesOn == null) hill._treesOn = true;
       trees = document.createElement("label");
       trees.className = "sh-trees-toggle";
       treesBox = document.createElement("input");
       treesBox.type = "checkbox";
       treesBox.className = "sh-trees-check";
-      treesBox.checked = true;
+      treesBox.checked = !!hill._treesOn;
       var treesText = document.createElement("span");
       treesText.textContent = "Trees";
       trees.appendChild(treesBox);
@@ -2803,46 +2853,40 @@
       sideRow.setAttribute("role", "group");
       sideRow.setAttribute("aria-label", "Side");
       views.forEach(function (name) {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "sh-tag";
-        btn.textContent = name.charAt(0).toUpperCase() + name.slice(1);
-        btn.setAttribute("aria-pressed", "false");
-        btn.addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
+        var sideToggle = viewToggle(name.charAt(0).toUpperCase() + name.slice(1));
+        sideToggle.box.addEventListener("change", function () {
+          if (!sideToggle.box.checked) {
+            sideToggle.box.checked = true;
+            return;
+          }
           if (sideName(hill) === name && hill._stackOn) return;
           hill._side = name;
           if (!hill._stackOn) hill._stackOn = true;
           sync();
           applyStack(hill);
         });
-        sideBtns.push(btn);
-        sideRow.appendChild(btn);
+        sideBtns.push(sideToggle.box);
+        sideRow.appendChild(sideToggle.wrap);
       });
     }
     function sync() {
       var on = !!hill._stackOn;
-      plan.classList.toggle("sh-on", !on);
-      bird.classList.toggle("sh-on", on);
-      plan.setAttribute("aria-pressed", on ? "false" : "true");
-      bird.setAttribute("aria-pressed", on ? "true" : "false");
+      plan.box.checked = !on;
+      bird.box.checked = on;
       if (treesBox) treesBox.checked = !!hill._treesOn;
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;
         sideRow.classList.toggle("sh-side-on", show);
         var current = sideName(hill);
-        sideBtns.forEach(function (btn, i) {
-          var picked = views[i] === current;
-          btn.classList.toggle("sh-on", picked);
-          btn.setAttribute("aria-pressed", picked ? "true" : "false");
+        sideBtns.forEach(function (box, i) {
+          box.checked = views[i] === current;
         });
       }
     }
     sync();
-    group.appendChild(plan);
-    group.appendChild(bird);
+    group.appendChild(plan.wrap);
+    group.appendChild(bird.wrap);
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
     if (trees) wrap.appendChild(trees);
