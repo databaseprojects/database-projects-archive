@@ -466,19 +466,73 @@
     return hill._runCount || 0;
   }
 
-  // popularBoost changes Most popular order only. Captions still count runs.
-  function rankTotal(hill) {
-    var boost = Number(hill.popularBoost);
-    if (!isFinite(boost)) boost = 0;
-    return runTotal(hill) + boost;
+  function liftTotal(hill) {
+    if (hill.lifts && hill.lifts.length) return hill.lifts.length;
+    var n = Number(hill.lift_count);
+    if (!isFinite(n)) n = Number(hill._liftCount);
+    return isFinite(n) ? n : 0;
   }
+
+  function kmTotal(hill) {
+    var km = Number(hill.total_km);
+    if (!isFinite(km)) km = Number(hill.km);
+    return isFinite(km) ? km : 0;
+  }
+
+  // Run count plus three times the lift count. Kilometres, then name,
+  // break the ties. Captions still count runs on their own.
+  function popularMetric(hill) {
+    return runTotal(hill) + liftTotal(hill) * 3;
+  }
+
+  // Most popular will be driven by actual sales per item once sales
+  // tracking is wired up. Until then these twenty lead the list.
+  var TARGET_20_POPULAR_ORDER = [
+    "whistler-blackcomb",
+    "lake-louise-ski-area",
+    "big-white-ski-resort",
+    "banff-sunshine-village",
+    "sun-peaks-resort",
+    "revelstoke-mountain-resort",
+    "fernie-alpine-resort",
+    "silver-star-mountain-resort",
+    "kicking-horse-resort",
+    "red-mountain-resort",
+    "panorama-mountain-resort",
+    "cypress-mountain",
+    "grouse-mountain",
+    "whitewater-ski-resort",
+    "kimberley-alpine-resort",
+    "mt-norquay",
+    "nakiska",
+    "apex-mountain-resort",
+    "mount-washington-alpine-resort",
+    "castle-mountain-resort"
+  ];
+  var TARGET_20_RANK = {};
+  TARGET_20_POPULAR_ORDER.forEach(function (slug, i) { TARGET_20_RANK[slug] = i; });
 
   function visibleHills() {
     var list = hills.filter(matches);
     if (!popular) return list;
     return list.slice().sort(function (a, b) {
-      return rankTotal(b) - rankTotal(a) || a._ord - b._ord;
-    }).slice(0, 15);
+      var ar = TARGET_20_RANK[a.slug];
+      var br = TARGET_20_RANK[b.slug];
+      var aSet = ar != null;
+      var bSet = br != null;
+      if (aSet || bSet) {
+        if (!aSet) return 1;
+        if (!bSet) return -1;
+        return ar - br;
+      }
+      var score = popularMetric(b) - popularMetric(a);
+      if (score) return score;
+      var km = kmTotal(b) - kmTotal(a);
+      if (km) return km;
+      var name = (a.name || "").localeCompare(b.name || "");
+      if (name) return name;
+      return a._ord - b._ord;
+    });
   }
 
   function isShown(hill) {
