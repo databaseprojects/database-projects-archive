@@ -226,6 +226,11 @@ CONTOUR_HOLD = {
     # Fernie. 60 px pulls the upper ridge back into one stroke. The tight
     # pass on that ridge stays loose enough that the crest does not gap.
     "fernie-alpine-resort": 60.0,
+    # Heavenly. The skyline was nicking the contours on every ridge.
+    # 869 hidden runs, median 5 px, and the 12 px hold left 746 strokes.
+    # 60 px joins those grazes into one line. A longer hide is a real
+    # ridge and still ends the stroke. Runs and lifts stay on MIN_RUN.
+    "heavenly-mountain-resort": 60.0,
 }
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
