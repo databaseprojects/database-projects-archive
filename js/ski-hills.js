@@ -801,7 +801,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023p";
+    return "frontal/" + file + ".svg?v=20261023r";
   }
 
   function frontalArt(hill) {
@@ -839,54 +839,8 @@
     g.setAttribute("class", "sh-contours");
     g.setAttribute("clip-path", "url(#" + id + ")");
     if (treeWash) {
-      var xId = "sh-plan-tree-x-" + clipSerial;
-      var yId = "sh-plan-tree-y-" + clipSerial;
-      var maskId = "sh-plan-tree-mask-" + clipSerial;
-      function fadeGradient(gradId, vertical) {
-        var grad = document.createElementNS(NS, "linearGradient");
-        grad.setAttribute("id", gradId);
-        grad.setAttribute("class", "sh-plan-tree-fade");
-        grad.setAttribute("gradientUnits", "objectBoundingBox");
-        grad.setAttribute("x1", "0");
-        grad.setAttribute("y1", "0");
-        grad.setAttribute("x2", vertical ? "0" : "1");
-        grad.setAttribute("y2", vertical ? "1" : "0");
-        var edge = vertical ? 0.07 : 0.06;
-        [[0, "#000"], [edge, "#fff"], [1 - edge, "#fff"], [1, "#000"]].forEach(function (pair) {
-          var stop = document.createElementNS(NS, "stop");
-          stop.setAttribute("offset", Math.round(pair[0] * 100) + "%");
-          stop.setAttribute("stop-color", pair[1]);
-          grad.appendChild(stop);
-        });
-        defs.appendChild(grad);
-      }
-      fadeGradient(xId, false);
-      fadeGradient(yId, true);
-      var mask = document.createElementNS(NS, "mask");
-      mask.setAttribute("id", maskId);
-      mask.setAttribute("class", "sh-plan-tree-fade");
-      mask.setAttribute("maskUnits", "userSpaceOnUse");
-      mask.setAttribute("mask-type", "luminance");
-      mask.setAttribute("x", "0");
-      mask.setAttribute("y", "0");
-      mask.setAttribute("width", String(SQUARE));
-      mask.setAttribute("height", String(frame));
-      function fadeRect(fill, blend) {
-        var band = document.createElementNS(NS, "rect");
-        band.setAttribute("x", "0");
-        band.setAttribute("y", "0");
-        band.setAttribute("width", String(SQUARE));
-        band.setAttribute("height", String(frame));
-        band.setAttribute("fill", fill);
-        if (blend) band.setAttribute("style", "mix-blend-mode:" + blend);
-        return band;
-      }
-      mask.appendChild(fadeRect("url(#" + xId + ")"));
-      mask.appendChild(fadeRect("url(#" + yId + ")", "multiply"));
-      defs.appendChild(mask);
       var wash = document.createElementNS(NS, "g");
       wash.setAttribute("class", "sh-plan-tree-wash");
-      wash.setAttribute("mask", "url(#" + maskId + ")");
       var path = document.createElementNS(NS, "path");
       path.setAttribute("d", treeWash);
       var scaleTo = shift.s == null ? 1 : shift.s;
@@ -994,57 +948,57 @@
   window.shSyncStroke = syncStroke;
 
   var REGIONS = {
-    "vancouver-island": "Vancouver Island, Canada",
-    "vancouver-coast-and-mountains": "Vancouver, Coast and Mountains, Canada",
-    "thompson-okanagan": "Thompson Okanagan, Canada",
-    "kootenay-rockies": "Kootenay Rockies, Canada",
-    "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast, Canada",
-    "northern-british-columbia": "Northern British Columbia, Canada",
-    "canadian-rockies": "Canadian Rockies, Canada",
-    "alberta-south": "Alberta South, Canada",
-    "calgary-area": "Calgary & Area, Canada",
-    "alberta-central": "Alberta Central, Canada",
-    "edmonton-area": "Edmonton & Area, Canada",
-    "alberta-north": "Alberta North, Canada",
-    "outaouais": "Outaouais, Canada",
-    "laurentides": "Laurentides, Canada",
-    "mauricie": "Mauricie, Canada",
-    "cantons-de-lest": "Cantons-de-l'Est, Canada",
-    "quebec": "Québec, Canada",
-    "saguenay": "Saguenay–Lac-Saint-Jean, Canada",
-    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie, Canada",
-    "georgian-bay": "Georgian Bay, Canada",
-    "golden-horseshoe": "Golden Horseshoe, Canada",
-    "ontario-highlands": "Ontario Highlands, Canada",
-    "northern-ontario": "Northern Ontario, Canada",
-    "regina": "Regina, Canada",
-    "eastern-saskatchewan": "Eastern Saskatchewan, Canada",
-    "northern-saskatchewan": "Northern Saskatchewan, Canada",
-    "western-saskatchewan": "Western Saskatchewan, Canada",
-    "pembina-valley": "Pembina Valley, Canada",
-    "westman": "Westman, Canada",
-    "parkland": "Parkland, Canada",
-    "northern-manitoba": "Northern Manitoba, Canada",
-    "fredericton": "Fredericton, Canada",
-    "southeast": "Southeast, Canada",
-    "north": "North, Canada",
-    "west-coast": "West Coast, Canada",
-    "east-coast": "East Coast, Canada",
-    "labrador": "Labrador, Canada",
-    "mainland": "Mainland, Canada",
-    "cape-breton": "Cape Breton, Canada",
-    "central": "Central, Canada",
-    "eastern": "Eastern, Canada",
-    "whitehorse": "Whitehorse, Canada",
-    "dawson": "Dawson, Canada",
-    "watson-lake": "Watson Lake, Canada",
-    "yellowknife": "Yellowknife, Canada"
+    "vancouver-island": "Vancouver Island",
+    "vancouver-coast-and-mountains": "Vancouver, Coast and Mountains",
+    "thompson-okanagan": "Thompson Okanagan",
+    "kootenay-rockies": "Kootenay Rockies",
+    "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast",
+    "northern-british-columbia": "Northern British Columbia",
+    "canadian-rockies": "Canadian Rockies",
+    "alberta-south": "Alberta South",
+    "calgary-area": "Calgary & Area",
+    "alberta-central": "Alberta Central",
+    "edmonton-area": "Edmonton & Area",
+    "alberta-north": "Alberta North",
+    "outaouais": "Outaouais",
+    "laurentides": "Laurentides",
+    "mauricie": "Mauricie",
+    "cantons-de-lest": "Cantons-de-l'Est",
+    "quebec": "Québec",
+    "saguenay": "Saguenay–Lac-Saint-Jean",
+    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie",
+    "georgian-bay": "Georgian Bay",
+    "golden-horseshoe": "Golden Horseshoe",
+    "ontario-highlands": "Ontario Highlands",
+    "northern-ontario": "Northern Ontario",
+    "regina": "Regina",
+    "eastern-saskatchewan": "Eastern Saskatchewan",
+    "northern-saskatchewan": "Northern Saskatchewan",
+    "western-saskatchewan": "Western Saskatchewan",
+    "pembina-valley": "Pembina Valley",
+    "westman": "Westman",
+    "parkland": "Parkland",
+    "northern-manitoba": "Northern Manitoba",
+    "fredericton": "Fredericton",
+    "southeast": "Southeast",
+    "north": "North",
+    "west-coast": "West Coast",
+    "east-coast": "East Coast",
+    "labrador": "Labrador",
+    "mainland": "Mainland",
+    "cape-breton": "Cape Breton",
+    "central": "Central",
+    "eastern": "Eastern",
+    "whitehorse": "Whitehorse",
+    "dawson": "Dawson",
+    "watson-lake": "Watson Lake",
+    "yellowknife": "Yellowknife"
   };
 
   // These two BC hills have no stored region. Canadian Rockies is the caption only.
   var REGION_GAP = {
-    "unnamed-hill": "Canadian Rockies, Canada",
-    "unnamed-hill-12": "Canadian Rockies, Canada"
+    "unnamed-hill": "Canadian Rockies",
+    "unnamed-hill-12": "Canadian Rockies"
   };
 
   var TYPES = {
@@ -1055,7 +1009,7 @@
   function locationText(hill) {
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
-    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region] + ", USA";
+    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
     if (hill.province === "eu" && hill.region && EU_COUNTRY_NAMES[hill.region]) return EU_COUNTRY_NAMES[hill.region];
     return REGION_GAP[hill.slug] || "";
   }
@@ -1232,21 +1186,27 @@
   function placeRow(parent, fields, y, startSize, alignRight) {
     var rowH = BAND / 2;
     var inset = 18;
-    var size = startSize;
+    var sizes = fields.map(function (field) { return field.size || startSize; });
     var widths = [];
-    function measure(sz) {
-      return fields.map(function (field) {
+    function measure() {
+      return fields.map(function (field, i) {
+        var sz = sizes[i];
         var valueW = field.keys ? keysWidth(field.keys, sz) : textWidth(field.text, sz);
         return Math.max(labelWidth(field.label), valueW) + inset * 2;
       });
     }
-    while (size >= 12) {
-      widths = measure(size);
-      var used = widths.reduce(function (sum, w) { return sum + w; }, 0);
-      if (used <= SQUARE || size === 12) break;
-      size -= 1;
+    widths = measure();
+    function usedWidth() {
+      return widths.reduce(function (sum, w) { return sum + w; }, 0);
     }
-    var extra = SQUARE - widths.reduce(function (sum, w) { return sum + w; }, 0);
+    while (usedWidth() > SQUARE) {
+      var max = 0;
+      sizes.forEach(function (sz) { if (sz > max) max = sz; });
+      if (max <= 12) break;
+      sizes = sizes.map(function (sz) { return sz === max ? sz - 1 : sz; });
+      widths = measure();
+    }
+    var extra = SQUARE - usedWidth();
     var lead = 0;
     if (extra > 0) {
       if (alignRight) lead = extra;
@@ -1255,6 +1215,7 @@
     var x = lead;
     var valueY = y + rowH - 16;
     fields.forEach(function (field, i) {
+      var size = sizes[i];
       if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
       var inner = x + inset;
       parent.appendChild(fieldLabel(field.label, inner, y + 20));
@@ -1293,15 +1254,20 @@
     if (hill.type && TYPES[hill.type]) top.push({ label: "TYPE", text: TYPES[hill.type] });
     if (typeof hill.drop === "number") top.push({ label: "DROP", text: hill.drop + " m" });
     if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
-    var bottom = [{ label: "NAME", text: hill.name || "Unnamed hill" }];
     var loc = locationText(hill);
     var gps = gpsText(hill);
-    if (loc) bottom.push({ label: "REGION", text: loc });
-    if (gps) bottom.push({ label: "GPS", text: gps });
     hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
-    if (top.length) placeRow(cap, top, DRAW, 16, true);
-    placeRow(cap, bottom, DRAW + BAND / 2, 20);
+    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: 20 }].concat(top), DRAW, 16);
+    var second = [];
+    if (hill.province === "eu") {
+      if (loc) second.push({ label: "REGION", text: loc, size: 20 });
+    } else {
+      if (loc) second.push({ label: "REGION", text: loc, size: 20 });
+      second.push({ label: "COUNTRY", text: hill.province === "us" ? "USA" : "Canada", size: 20 });
+    }
+    if (gps) second.push({ label: "GPS", text: gps, size: 20 });
+    if (second.length) placeRow(cap, second, DRAW + BAND / 2, 20);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
     return SQUARE;
