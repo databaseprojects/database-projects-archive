@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Bike Routes — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/bike-routes.css?v=20261022b">
+  <link rel="stylesheet" href="../css/bike-routes.css?v=20261022c">
 </head>
 <body>
   <div class="sheet">
@@ -17,35 +17,27 @@
     <h1 class="br-name">Bike Routes</h1>
     <p class="br-count" aria-live="polite"></p>
   </div>
-  <p class="br-note">Bike routes in Vancouver, drawn from the City's bikeways.</p>
-  <div class="br-stage">
-    <div class="br-print" id="br-print"></div>
+  <div class="br-tags" role="group" aria-label="Place">
+    <button type="button" class="br-tag br-on" data-br-country="all" aria-pressed="true">All</button>
+    <button type="button" class="br-tag" data-br-country="ca" aria-pressed="false">Canada</button>
   </div>
-  <p class="br-credit">Contains information licensed under the Open Government Licence – Vancouver.</p>
+  <p class="br-note">Bike routes in Vancouver, drawn from the City's bikeways.</p>
 <!-- br-cities:start -->
-<section class="br-cities" aria-label="Cities">
-<h2 class="br-cities-title">Cities</h2>
-<h3 class="br-prov">British Columbia</h3>
-<ul class="br-citylist">
-<li><a href="city.html#victoria">Victoria</a></li>
-</ul>
-<h3 class="br-prov">Alberta</h3>
-<ul class="br-citylist">
-<li><a href="city.html#calgary">Calgary</a></li>
-<li><a href="city.html#edmonton">Edmonton</a></li>
-</ul>
-<h3 class="br-prov">Ontario</h3>
-<ul class="br-citylist">
-<li><a href="city.html#toronto">Toronto</a></li>
-<li><a href="city.html#ottawa">Ottawa</a></li>
-<li><a href="city.html#hamilton">Hamilton</a></li>
-</ul>
-<p class="br-credit">© OpenStreetMap contributors</p>
-</section>
+<div class="br-row" id="br-row">
+<article class="br-city" data-country="ca" data-slug="vancouver"><div class="br-city-art" id="br-print"></div><p class="br-city-caption">Vancouver</p></article>
+<article class="br-city" data-country="ca" data-slug="victoria"><img class="br-city-art" src="prints/victoria.svg" alt="Victoria cycle routes"><p class="br-city-caption">Victoria</p></article>
+<article class="br-city" data-country="ca" data-slug="calgary"><img class="br-city-art" src="prints/calgary.svg" alt="Calgary cycle routes"><p class="br-city-caption">Calgary</p></article>
+<article class="br-city" data-country="ca" data-slug="edmonton"><img class="br-city-art" src="prints/edmonton.svg" alt="Edmonton cycle routes"><p class="br-city-caption">Edmonton</p></article>
+<article class="br-city" data-country="ca" data-slug="toronto"><img class="br-city-art" src="prints/toronto.svg" alt="Toronto cycle routes"><p class="br-city-caption">Toronto</p></article>
+<article class="br-city" data-country="ca" data-slug="ottawa"><img class="br-city-art" src="prints/ottawa.svg" alt="Ottawa cycle routes"><p class="br-city-caption">Ottawa</p></article>
+<article class="br-city" data-country="ca" data-slug="hamilton"><img class="br-city-art" src="prints/hamilton.svg" alt="Hamilton cycle routes"><p class="br-city-caption">Hamilton</p></article>
+</div>
 <!-- br-cities:end -->
+  <p class="br-credit">Contains information licensed under the Open Government Licence – Vancouver.</p>
+  <p class="br-credit">© OpenStreetMap contributors</p>
 </main>
 
   </div>
-  <script src="../js/bike-routes.js?v=20261017h"></script>
+  <script src="../js/bike-routes.js?v=20261022c"></script>
 </body>
 </html>
