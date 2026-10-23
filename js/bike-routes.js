@@ -202,9 +202,8 @@
     step = Math.max(0, Math.min(1, step));
     lb._step = step;
     lb.setAttribute("data-step", String(step));
-    if (animate === false) track.style.transition = "none";
-    else track.style.transition = "";
-    track.style.transform = "none";
+    track.style.transition = animate === false ? "none" : "transform 400ms ease-out";
+    track.style.transform = "translateX(" + (-step * 50).toFixed(4) + "%)";
   }
 
   function closeLb() {
@@ -291,8 +290,14 @@
         }
         drag.active = true;
         deck.classList.add("sh-dragging");
+        var track = deck.querySelector(".br-track");
+        if (track) track.style.transition = "none";
       }
       e.preventDefault();
+      var trackOn = deck.querySelector(".br-track");
+      if (!trackOn) return;
+      var x = Math.max(-drag.w, Math.min(0, -drag.step * drag.w + dx));
+      trackOn.style.transform = "translateX(" + x.toFixed(1) + "px)";
     });
     function endDrag(e) {
       if (!drag || e.pointerId !== drag.id) return;
