@@ -484,30 +484,38 @@ def write_svg(path, routes):
     return [round(v, 5) for v in bbox]
 
 
+def city_card(slug, name, art):
+    return (
+        '<article class="br-city" data-country="ca" data-slug="%s">%s'
+        '<p class="br-city-caption">%s</p></article>'
+        % (xml(slug), art, xml(name))
+    )
+
+
 def write_index_html(cities):
+    """One row of city maps. Vancouver stays first. No text-link list."""
     page = ROOT / "index.html"
     text = page.read_text()
     start = text.find(INDEX_START)
     end = text.find(INDEX_END)
     if start < 0 or end < 0:
         raise SystemExit("index markers missing")
-    blocks = ['<section class="br-cities" aria-label="Cities">', '<h2 class="br-cities-title">Cities</h2>']
-    by_prov = []
+    cards = [
+        city_card(
+            "vancouver",
+            "Vancouver",
+            '<div class="br-city-art" id="br-print"></div>',
+        )
+    ]
     for city in cities:
-        if not by_prov or by_prov[-1]["province"] != city["province"]:
-            by_prov.append({"province": city["province"], "name": city["province_name"], "cities": []})
-        by_prov[-1]["cities"].append(city)
-    for group in by_prov:
-        blocks.append('<h3 class="br-prov">%s</h3>' % xml(group["name"]))
-        blocks.append('<ul class="br-citylist">')
-        for city in group["cities"]:
-            blocks.append(
-                '<li><a href="city.html#%s">%s</a></li>' % (xml(city["slug"]), xml(city["name"]))
-            )
-        blocks.append("</ul>")
-    blocks.append('<p class="br-credit">%s</p>' % xml(CREDIT))
-    blocks.append("</section>")
-    body = "\n".join(blocks)
+        slug = city["slug"]
+        name = city["name"]
+        art = '<img class="br-city-art" src="prints/%s.svg" alt="%s cycle routes">' % (
+            xml(slug),
+            xml(name),
+        )
+        cards.append(city_card(slug, name, art))
+    body = '<div class="br-row" id="br-row">\n' + "\n".join(cards) + "\n</div>"
     page.write_text(text[:start] + INDEX_START + "\n" + body + "\n" + text[end:])
 
 
