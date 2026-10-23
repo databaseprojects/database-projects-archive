@@ -71,6 +71,11 @@ RIDGE_MARGIN = 2.6
 # around the ridge instead of being clipped out. A hill sets ridge_fade
 # to None when those segments should be clipped instead.
 RIDGE_FADE = 0.10
+# Standing rule for the tree overlay. The wash is 10 m ESA WorldCover
+# tree cover, drawn as a 10% #3a6b42 green. A 2.0 px corridor around each
+# run and lift is left clear, so the tree edge sits against the trail
+# and a narrow run stays distinct.
+TREE_CLEAR = 2.0
 # The skyline test misses a slope behind a mid-slope spur, so both
 # contour families draw and cross. Screen cells keep the nearest terrain.
 # A contour point `tol` metres behind the nearest sample within `reach`
