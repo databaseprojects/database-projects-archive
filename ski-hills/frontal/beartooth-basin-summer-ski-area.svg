@@ -10,6 +10,7 @@
 </mask>
 </defs>
 
+<g class="sh-frontal-trees"><path class="sh-frontal-tree-wash" d="" fill="#3a6b42" fill-opacity="0.10" fill-rule="evenodd" stroke="none"/></g>
 <g mask="url(#sh-contour-fade-beartooth-basin-summer-ski-area)">
 <polyline class="sh-frontal-contour" points="-219.6,-56.2 -196.2,-71.9" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
 <polyline class="sh-frontal-contour" points="1198.1,-31.4 1180.7,-44.1" fill="none" stroke="#1a1a1a" stroke-opacity="0.247" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.247;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>

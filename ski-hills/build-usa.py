@@ -54,6 +54,246 @@ BATCH_STATES = {
     "midwest": MIDWEST_STATES,
 }
 
+def mountain_range(state, lat, lon, slug=""):
+    """Mountain range for a US hill, from its coordinates.
+
+    State filters keep the postal code on ``region``. This is the caption
+    REGION: the range itself, with the broader name (Cascades, Sierra
+    Nevada, Rockies, Appalachians) where the hill is not in a tighter one.
+    """
+    state = (state or "").lower()
+    slug = slug or ""
+    if slug in RANGE_OVERRIDES:
+        return RANGE_OVERRIDES[slug]
+    if state == "wa":
+        if lon < -123.0 and lat > 47.6:
+            return "Olympic Mountains"
+        if lon > -118.2 and lat > 47.6:
+            return "Selkirk Mountains"
+        if lat > 48.5 and -119.6 < lon < -118.5:
+            return "Kettle River Range"
+        if lat < 46.4 and lon > -118.3:
+            return "Blue Mountains"
+        return "Cascades"
+    if state == "or":
+        if lon > -117.8:
+            return "Wallowa Mountains"
+        if lon > -118.6 and lat > 44.6:
+            return "Blue Mountains"
+        if lat < 42.5 and lon > -121.0:
+            return "Warner Mountains"
+        if lat < 42.5:
+            return "Siskiyou Mountains"
+        return "Cascades"
+    if state == "ca":
+        if lat > 41.1 and lon < -121.6:
+            return "Cascades"
+        if lat > 41.2 and lon > -120.8:
+            return "Warner Mountains"
+        if 40.2 < lat < 40.6 and -121.2 < lon < -120.6:
+            return "Diamond Mountains"
+        if lat < 34.55 and lon > -117.2:
+            return "San Bernardino Mountains"
+        if lat < 34.55:
+            return "San Gabriel Mountains"
+        return "Sierra Nevada"
+    if state == "nv":
+        if lat < 37.5:
+            return "Spring Mountains"
+        if lat > 40.4:
+            return "Ruby Mountains"
+        return "Sierra Nevada"
+    if state == "id":
+        if lat > 47.9:
+            return "Selkirk Mountains"
+        if lat > 46.8 and lon < -115.2:
+            return "Bitterroot Range"
+        if 45.5 < lat < 46.0 and -114.3 < lon < -113.6:
+            return "Bitterroot Range"
+        if 43.3 < lat < 43.9 and -115.0 < lon < -114.1:
+            return "Sawtooth Range"
+        if 44.2 < lat < 44.8 and -114.7 < lon < -113.9:
+            return "Lost River Range"
+        if 42.1 < lat < 42.5 and -113.9 < lon < -113.3:
+            return "Albion Range"
+        if 45.8 < lat < 46.8 and lon < -115.4:
+            return "Clearwater Mountains"
+        return "Rockies"
+    if state == "mt":
+        if 45.5 < lat < 46.0 and -114.3 < lon < -113.6:
+            return "Bitterroot Range"
+        if 44.9 < lat < 45.5 and -109.8 < lon < -109.1:
+            return "Beartooth Mountains"
+        if lat > 47.9 and -110.2 < lon < -109.2:
+            return "Bear Paw Mountains"
+        return "Rockies"
+    if state == "wy":
+        if 43.2 < lat < 44.1 and -111.2 < lon < -110.5:
+            return "Teton Range"
+        if lat > 44.7 and lon < -109.1:
+            return "Beartooth Mountains"
+        if 42.7 < lat < 43.3 and -110.2 < lon < -109.4:
+            return "Wind River Range"
+        if 44.2 < lat < 44.8 and -110.3 < lon < -109.6:
+            return "Absaroka Range"
+        if 44.0 < lat < 45.2 and -108.0 < lon < -106.8:
+            return "Bighorn Mountains"
+        if lat < 41.6 and lon > -106.6:
+            return "Medicine Bow Mountains"
+        return "Rockies"
+    if state == "ut":
+        if lat < 38.0:
+            return "Markagunt Plateau"
+        if lat < 39.0 and lon < -112.0:
+            return "Tushar Mountains"
+        return "Wasatch Range"
+    if state == "co":
+        if lat < 37.6 and -105.6 < lon < -104.6:
+            return "Sangre de Cristo Mountains"
+        if lat > 38.5 and lon < -108.0:
+            return "Grand Mesa"
+        if lat < 38.05 and lon < -106.4:
+            return "San Juan Mountains"
+        return "Rockies"
+    if state == "az":
+        if lat > 34.5 and lon < -111.2:
+            return "San Francisco Peaks"
+        if lat < 33.5:
+            return "Santa Catalina Mountains"
+        return "White Mountains"
+    if state == "nm":
+        if 35.6 < lat < 36.2 and lon < -106.1:
+            return "Jemez Mountains"
+        if lat < 35.6 and lon < -106.0:
+            return "Sandia Mountains"
+        if lat < 34.0:
+            return "Sacramento Mountains"
+        return "Sangre de Cristo Mountains"
+    if state == "sd":
+        if lon > -100.0:
+            return "Coteau des Prairies"
+        return "Black Hills"
+    if state == "me":
+        if 44.15 < lat < 44.85 and -71.05 < lon < -70.35:
+            return "White Mountains"
+        if lat > 44.9 and lon < -69.4:
+            return "Longfellow Mountains"
+        if lat < 44.4 and lon > -69.5:
+            return "Camden Hills"
+        return "Appalachians"
+    if state == "nh":
+        if lat >= 43.70:
+            return "White Mountains"
+        return "Appalachians"
+    if state == "vt":
+        return "Green Mountains"
+    if state == "ma":
+        if lon < -72.75:
+            return "Berkshires"
+        return "Appalachians"
+    if state == "ny":
+        if 42.0 < lat < 42.4 and -73.7 < lon < -73.2:
+            return "Berkshires"
+        if 41.45 < lat < 42.45 and -75.2 < lon < -74.05:
+            return "Catskills"
+        if -76.2 < lon < -75.2 and 43.15 < lat < 44.3:
+            return "Tug Hill"
+        if lat > 43.0 and lon < -76.5:
+            return "Central Lowland"
+        if lat > 43.05 and lon < -73.45:
+            return "Adirondacks"
+        return "Appalachians"
+    if state == "pa":
+        if 40.75 < lat < 42.0 and -76.0 < lon < -74.85:
+            return "Poconos"
+        if lat > 41.6 and lon < -79.8:
+            return "Central Lowland"
+        return "Appalachians"
+    if state in ("nj", "md", "wv", "va", "al", "oh", "in"):
+        if state == "va" and lat < 38.1 and lon > -79.3:
+            return "Blue Ridge Mountains"
+        if state == "oh" and lon < -83.2:
+            return "Central Lowland"
+        return "Appalachians"
+    if state == "nc":
+        return "Blue Ridge Mountains"
+    if state == "tn":
+        return "Great Smoky Mountains"
+    if state == "ct":
+        if lon < -73.1:
+            return "Berkshires"
+        return "Appalachians"
+    if state == "ri":
+        return "Appalachians"
+    if state == "mn":
+        if lat > 47.4 and -91.3 < lon < -90.2:
+            return "Sawtooth Mountains"
+        if 47.3 < lat < 47.9 and -92.8 < lon < -91.8:
+            return "Laurentian Upland"
+        if lat > 46.2 and lon > -94.5:
+            return "Superior Upland"
+        return "Central Lowland"
+    if state == "wi":
+        if 46.15 < lat < 46.6 and -90.8 < lon < -90.0:
+            return "Penokee Range"
+        if slug == "devil-s-head-ski-area":
+            return "Baraboo Range"
+        if lat < 44.3 and -91.6 < lon < -89.0:
+            return "Driftless Area"
+        if lat < 43.9 and lon > -89.3:
+            return "Kettle Moraine"
+        if lat >= 45.0 or (lat >= 44.4 and lon < -89.5):
+            return "Superior Upland"
+        return "Central Lowland"
+    if state == "mi":
+        if lat > 46.6 and lon < -89.3:
+            return "Porcupine Mountains"
+        if 46.35 < lat < 46.65 and -90.4 < lon < -89.85:
+            return "Penokee Range"
+        if 46.4 < lat < 46.7 and -87.7 < lon < -87.1:
+            return "Huron Mountains"
+        if lat > 46.9 and lon > -89.0:
+            return "Keweenaw Peninsula"
+        if lat >= 44.0:
+            return "Superior Upland"
+        return "Central Lowland"
+    if state == "il":
+        if lon < -89.5:
+            return "Driftless Area"
+        return "Central Lowland"
+    if state == "ia":
+        if lon < -95.3:
+            return "Loess Hills"
+        if lon > -91.6:
+            return "Driftless Area"
+        return "Central Lowland"
+    if state == "mo":
+        if lon > -91.5:
+            return "Ozark Mountains"
+        return "Loess Hills"
+    if state == "nd":
+        if lat > 48.7 and lon < -99.5:
+            return "Turtle Mountains"
+        if lat > 48.5 and lon > -99.0:
+            return "Pembina Hills"
+        if lon < -100.0:
+            return "Missouri Coteau"
+        return "Coteau des Prairies"
+    return "Rockies"
+
+
+# A few hills sit on the wrong side of a box edge.
+RANGE_OVERRIDES = {
+    "storrs-hill-ski-area": "Appalachians",
+    "whaleback-mountain": "Appalachians",
+    "teton-pass-ski-resort": "Rockies",
+    "hoedown-hill": "Rockies",
+    "val-bialas-ski-center": "Appalachians",
+    "cascade-mountain": "Central Lowland",
+    "devil-s-head-ski-area": "Baraboo Range",
+}
+
+
 # Members-only resorts already dropped from the list, plus the same names
 # if they show up again as a backfill.
 PRIVATE_NAMES = {
@@ -339,6 +579,7 @@ def main():
             "slug": slug,
             "name": label,
             "region": hill["state"],
+            "range": mountain_range(hill["state"], hill["lat"], hill["lon"], slug),
             "province": "us",
             "lon": hill["lon"],
             "lat": hill["lat"],
