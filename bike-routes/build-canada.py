@@ -32,19 +32,20 @@ CREDIT = "© OpenStreetMap contributors"
 INDEX_START = "<!-- br-cities:start -->"
 INDEX_END = "<!-- br-cities:end -->"
 
-# admin is the OSM admin_level. names are tried in order. fallback is a
-# second boundary used only when it covers more ground than the first.
+# admin is the OSM admin_level of the municipality. Single-tier cities are
+# level 6. The others are level 8. Halifax is the city, not the regional
+# municipality. names are tried in order.
 CITIES = (
     {"slug": "victoria", "name": "Victoria", "province": "bc", "province_name": "British Columbia", "iso": "CA-BC", "admin": "8", "names": ("Victoria",)},
-    {"slug": "calgary", "name": "Calgary", "province": "ab", "province_name": "Alberta", "iso": "CA-AB", "admin": "8", "names": ("Calgary",)},
-    {"slug": "edmonton", "name": "Edmonton", "province": "ab", "province_name": "Alberta", "iso": "CA-AB", "admin": "8", "names": ("Edmonton",)},
-    {"slug": "toronto", "name": "Toronto", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "8", "names": ("Toronto",)},
-    {"slug": "ottawa", "name": "Ottawa", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "8", "names": ("Ottawa",)},
-    {"slug": "hamilton", "name": "Hamilton", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "8", "names": ("Hamilton",)},
+    {"slug": "calgary", "name": "Calgary", "province": "ab", "province_name": "Alberta", "iso": "CA-AB", "admin": "6", "names": ("Calgary",)},
+    {"slug": "edmonton", "name": "Edmonton", "province": "ab", "province_name": "Alberta", "iso": "CA-AB", "admin": "6", "names": ("Edmonton",)},
+    {"slug": "toronto", "name": "Toronto", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "6", "names": ("Toronto",)},
+    {"slug": "ottawa", "name": "Ottawa", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "6", "names": ("Ottawa",)},
+    {"slug": "hamilton", "name": "Hamilton", "province": "on", "province_name": "Ontario", "iso": "CA-ON", "admin": "6", "names": ("Hamilton",)},
     {"slug": "montreal", "name": "Montréal", "province": "qc", "province_name": "Québec", "iso": "CA-QC", "admin": "8", "names": ("Montréal", "Montreal")},
     {"slug": "quebec-city", "name": "Québec", "province": "qc", "province_name": "Québec", "iso": "CA-QC", "admin": "8", "names": ("Québec", "Quebec", "Ville de Québec")},
-    {"slug": "winnipeg", "name": "Winnipeg", "province": "mb", "province_name": "Manitoba", "iso": "CA-MB", "admin": "8", "names": ("Winnipeg",)},
-    {"slug": "halifax", "name": "Halifax", "province": "ns", "province_name": "Nova Scotia", "iso": "CA-NS", "admin": "8", "names": ("Halifax",), "fallback_admin": "6", "fallback_names": ("Halifax Regional Municipality", "Halifax")},
+    {"slug": "winnipeg", "name": "Winnipeg", "province": "mb", "province_name": "Manitoba", "iso": "CA-MB", "admin": "6", "names": ("Winnipeg",)},
+    {"slug": "halifax", "name": "Halifax", "province": "ns", "province_name": "Nova Scotia", "iso": "CA-NS", "admin": "8", "names": ("Halifax",)},
 )
 
 
@@ -233,8 +234,9 @@ def overpass(query, cache_path):
                 remark = data.get("remark") or data.get("error") or "no elements"
                 raise RuntimeError(remark)
             cache_path.parent.mkdir(parents=True, exist_ok=True)
-            cache_path.write_bytes(raw)
-            print("fetched", cache_path.name, "bytes", len(raw), flush=True)
+            if data["elements"]:
+                cache_path.write_bytes(raw)
+            print("fetched", cache_path.name, "bytes", len(raw), "elements", len(data["elements"]), flush=True)
             time.sleep(DELAY)
             return data
         except Exception as err:
@@ -534,6 +536,7 @@ def build_city(city):
         "province": city["province"],
         "attribution": CREDIT,
         "km": total,
+        "bbox": bbox,
         "routes": [public_route(route) for route in routes],
     }
     dest = ROOT / "canada" / city["province"] / (city["slug"] + ".json")
@@ -551,12 +554,57 @@ def build_city(city):
     }
 
 
+def finished_row(city):
+    """A city already written to disk. No network and no geometry work."""
+    dest = ROOT / "canada" / city["province"] / (city["slug"] + ".json")
+    svg = ROOT / "prints" / (city["slug"] + ".svg")
+    if not dest.exists() or not svg.exists() or svg.stat().st_size < 200:
+        return None
+    text = svg.read_text(errors="replace")
+    if "<svg" not in text[:200] or 'stroke="#000"' not in text[:500]:
+        return None
+    record = json.loads(dest.read_text())
+    routes = record.get("routes") or []
+    if not routes:
+        return None
+    bbox = record.get("bbox") if isinstance(record.get("bbox"), list) else []
+    return {
+        "slug": city["slug"],
+        "name": record.get("name") or city["name"],
+        "province": city["province"],
+        "province_name": city["province_name"],
+        "routes": len(routes),
+        "km": record.get("km"),
+        "bbox": bbox,
+        "status": "built",
+    }
+
+
+def write_index_from_disk():
+    built = []
+    for city in CITIES:
+        row = finished_row(city)
+        if not row:
+            print("absent", city["slug"], flush=True)
+            continue
+        built.append(row)
+        print("index", row["slug"], "routes", row["routes"], "km", row["km"], flush=True)
+    index = {"attribution": CREDIT, "cities": built}
+    (ROOT / "city-index.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n")
+    write_index_html(built)
+    return built
+
+
 def main():
     CACHE.mkdir(parents=True, exist_ok=True)
     built = []
     failed = []
     for city in CITIES:
         print("city", city["slug"], flush=True)
+        row = finished_row(city)
+        if row:
+            built.append(row)
+            continue
         try:
             row = build_city(city)
         except Exception as err:

@@ -1,0 +1,78 @@
+{
+  "slug": "victoria",
+  "name": "Victoria",
+  "province": "bc",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 34.3,
+  "routes": [
+    {
+      "name": "AAA Cook",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 20579564,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "AAA Fort St",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 17325148,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "AAA Kings - Haultain - Estevan",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 17309025,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "AAA Richardson",
+      "km": 2.9,
+      "network": "lcn",
+      "osm": 17314556,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "AAA Vancouver - Graham",
+      "km": 4.6,
+      "network": "lcn",
+      "osm": 17302946,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Galloping Goose Regional Trail",
+      "km": 3.2,
+      "network": "rcn",
+      "osm": 2202881,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Gorge Road East AAA",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 18457561,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans-Canada Trail (Vancouver Island)",
+      "km": 10.3,
+      "network": "ncn",
+      "osm": 13256756,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Victoria AAA Cycling Network",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 17275962,
+      "source": "OpenStreetMap"
+    }
+  ],
+  "bbox": [
+    -123.39052,
+    48.40426,
+    -123.3225,
+    48.45018
+  ]
+}
