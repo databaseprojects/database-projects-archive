@@ -744,7 +744,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023c";
+    return "frontal/" + file + ".svg?v=20261023d";
   }
 
   function frontalArt(hill) {
@@ -1298,7 +1298,7 @@
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
+      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-labels-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
       closeLb();
     });
   }
@@ -2716,6 +2716,30 @@
     }
     var plan = side("Plan view", false);
     var bird = side("Bird's eye view", true);
+    var labels = null;
+    if (hill.slug === "whistler-blackcomb") {
+      hill._labelsOn = false;
+      labels = document.createElement("label");
+      labels.className = "sh-tag sh-labels-toggle";
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.className = "sh-labels-check";
+      box.checked = false;
+      var caption = document.createElement("span");
+      caption.textContent = "Labels";
+      labels.appendChild(box);
+      labels.appendChild(caption);
+      labels.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      box.addEventListener("change", function () {
+        hill._labelsOn = box.checked;
+        labels.classList.toggle("sh-on", box.checked);
+        var lb = document.getElementById("sh-lb");
+        if (lb && lb._svg) lb._svg.classList.toggle("sh-labels-on", box.checked);
+        refreshMockArt(hill.el);
+      });
+    }
     var views = sideViews(hill);
     var sideRow = null;
     var sideBtns = [];
@@ -2749,6 +2773,7 @@
       bird.classList.toggle("sh-on", on);
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
+      if (labels) labels.hidden = !on;
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;
@@ -2766,6 +2791,7 @@
     group.appendChild(bird);
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
+    if (labels) wrap.appendChild(labels);
     wrap._sync = sync;
     return wrap;
   }
@@ -2820,6 +2846,7 @@
     if (!slot) return;
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
+    if (card._hill && card._hill._labelsOn) svg.classList.add("sh-labels-on");
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
