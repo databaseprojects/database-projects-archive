@@ -60,16 +60,44 @@
     return Math.min(maxW, maxH);
   }
 
+  function cloneArt(art) {
+    var svg = art.querySelector ? art.querySelector("svg") : null;
+    var img = art.tagName === "IMG" ? art : null;
+    if (svg) {
+      var copy = svg.cloneNode(true);
+      copy.removeAttribute("id");
+      bindRouteTip(copy);
+      return copy;
+    }
+    if (!img) return null;
+    var el = document.createElement("img");
+    el.alt = img.alt || "";
+    el.draggable = false;
+    el.src = img.getAttribute("src") || "";
+    return el;
+  }
+
+  function setStep(lb, step, animate) {
+    var track = lb.querySelector(".br-track");
+    if (!track) return;
+    step = Math.max(0, Math.min(2, step));
+    lb._step = step;
+    track.style.transition = animate === false ? "none" : "transform 400ms ease-out";
+    track.style.transform = "translateY(" + (-step * 100 / 3).toFixed(4) + "%)";
+  }
+
   function closeLb() {
     var lb = document.getElementById("br-lb");
     if (!lb || lb._closing) return;
     lb._closing = true;
-    var big = lb.querySelector(":scope > .br-lb-art");
+    var big = lb.querySelector(".br-lb-art");
     var from = lb._from;
+    if (lb._step) setStep(lb, 0, false);
     lb.classList.add("br-lb-closing");
     lb.classList.remove("br-lb-on");
     showTip("", 0, 0);
     if (big && from) {
+      void big.offsetWidth;
       var r = big.getBoundingClientRect();
       if (r.width && r.height) {
         var s = Math.min(from.w / r.width, from.h / r.height);
@@ -84,13 +112,94 @@
     }, 340);
   }
 
+  function shirtMarkup() {
+    return '<svg class="br-shirt-shape" viewBox="0 0 200 228" aria-hidden="true"><path fill="#f7f7f7" stroke="#dedede" stroke-width="1.2" stroke-linejoin="round" d="M78 42C86 40 92 50 100 50C108 50 114 40 122 42L146 52L176 86L160 100L142 88L142 200C142 208 136 214 128 214L72 214C64 214 58 208 58 200L58 88L40 100L24 86L54 52Z"/></svg>';
+  }
+
+  function bindDeck(lb, deck) {
+    var drag = null;
+    deck.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    deck.addEventListener("pointerdown", function (e) {
+      if (e.button != null && e.button !== 0) return;
+      e.preventDefault();
+      var h = deck.clientHeight || 1;
+      drag = {
+        id: e.pointerId,
+        y0: e.clientY,
+        x0: e.clientX,
+        lastY: e.clientY,
+        lastT: performance.now(),
+        vy: 0,
+        h: h,
+        step: lb._step || 0,
+        active: false
+      };
+      try { deck.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    deck.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x0;
+      var dy = e.clientY - drag.y0;
+      var now = performance.now();
+      var dt = now - drag.lastT;
+      if (dt >= 16) {
+        drag.vy = (e.clientY - drag.lastY) / dt;
+        drag.lastY = e.clientY;
+        drag.lastT = now;
+      }
+      if (!drag.active) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          drag = null;
+          return;
+        }
+        drag.active = true;
+        var track = deck.querySelector(".br-track");
+        if (track) track.style.transition = "none";
+      }
+      e.preventDefault();
+      var trackOn = deck.querySelector(".br-track");
+      if (!trackOn) return;
+      var y = Math.max(-2 * drag.h, Math.min(0, -drag.step * drag.h + dy));
+      trackOn.style.transform = "translateY(" + y.toFixed(1) + "px)";
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var info = drag;
+      drag = null;
+      if (!info.active) return;
+      var dy = e.clientY - info.y0;
+      var progress = Math.abs(dy) / info.h;
+      var flick = Math.abs(dy) > 18 && Math.abs(info.vy) > 0.45 && ((info.vy < 0) === (dy < 0));
+      var step = info.step;
+      if (progress > 0.25 || flick) step += dy < 0 ? 1 : -1;
+      setStep(lb, step, true);
+    }
+    deck.addEventListener("pointerup", endDrag);
+    deck.addEventListener("pointercancel", endDrag);
+    lb.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var now = performance.now();
+      if (now < (lb._wheelUntil || 0)) return;
+      var dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 16;
+      else if (e.deltaMode === 2) dy *= deck.clientHeight || 1;
+      if (Math.abs(dy) < 4) return;
+      var next = (lb._step || 0) + (dy > 0 ? 1 : -1);
+      if (next < 0 || next > 2) return;
+      lb._wheelUntil = now + 460;
+      setStep(lb, next, true);
+    }, { passive: false });
+  }
+
   function openLb(card) {
     if (document.getElementById("br-lb") || !card || card.hidden) return;
     var art = card.querySelector(".br-city-art");
     if (!art) return;
-    var svg = art.querySelector ? art.querySelector("svg") : null;
-    var img = art.tagName === "IMG" ? art : null;
-    if (!svg && !img) return;
+    var big = cloneArt(art);
+    var framed = cloneArt(art);
+    var worn = cloneArt(art);
+    if (!big || !framed || !worn) return;
     var thumb = art.getBoundingClientRect();
     var lb = document.createElement("div");
     lb.id = "br-lb";
@@ -98,23 +207,38 @@
     lb.setAttribute("role", "dialog");
     lb.setAttribute("aria-modal", "true");
     lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
-    var big;
-    if (svg) {
-      big = svg.cloneNode(true);
-      bindRouteTip(big);
-    } else {
-      big = document.createElement("img");
-      big.alt = img.alt || "";
-      big.draggable = false;
-      big.src = img.getAttribute("src") || "";
-    }
+    lb._step = 0;
     big.classList.add("br-lb-art");
     big.style.opacity = "0";
+    var deck = document.createElement("div");
+    deck.className = "br-deck";
     var side = gallerySide().toFixed(2) + "px";
-    big.style.width = side;
-    big.style.height = side;
-    big.style.maxWidth = "none";
-    big.style.maxHeight = "none";
+    deck.style.width = side;
+    deck.style.height = side;
+    var track = document.createElement("div");
+    track.className = "br-track";
+    var print = document.createElement("div");
+    print.className = "br-slide br-slide-print";
+    print.appendChild(big);
+    var frame = document.createElement("div");
+    frame.className = "br-slide br-slide-frame";
+    var wall = document.createElement("div");
+    wall.className = "sh-wall";
+    wall.innerHTML = '<div class="sh-hang"><div class="sh-mould"><div class="sh-mat"><div class="sh-frame-art"></div></div></div></div>';
+    wall.querySelector(".sh-frame-art").appendChild(framed);
+    frame.appendChild(wall);
+    var shirtSlide = document.createElement("div");
+    shirtSlide.className = "br-slide br-slide-shirt";
+    var shirt = document.createElement("div");
+    shirt.className = "br-shirt";
+    shirt.innerHTML = shirtMarkup() + '<div class="br-shirt-print"></div>';
+    shirt.querySelector(".br-shirt-print").appendChild(worn);
+    shirtSlide.appendChild(shirt);
+    track.appendChild(print);
+    track.appendChild(frame);
+    track.appendChild(shirtSlide);
+    deck.appendChild(track);
+    lb.appendChild(deck);
     function measureAndZoom() {
       var r = big.getBoundingClientRect();
       if (!r.width || !r.height) return false;
@@ -133,9 +257,9 @@
       });
       return true;
     }
-    lb.appendChild(big);
     document.body.appendChild(lb);
     document.documentElement.classList.add("br-lb-open");
+    bindDeck(lb, deck);
     if (big.tagName === "IMG") {
       var kick = function () {
         if (lb._closing || lb._opened) return;
@@ -209,6 +333,12 @@
   }).then(function (data) {
     var routes = data.routes || [];
     if (count) count.textContent = String(routes.length);
+    var stats = document.getElementById("br-van-stats");
+    if (stats) {
+      var n = routes.length;
+      var km = routes.reduce(function (sum, route) { return sum + Number(route.km || 0); }, 0);
+      stats.textContent = n + (n === 1 ? " route · " : " routes · ") + km.toFixed(1) + " km";
+    }
   }).catch(function () {
     if (count) count.textContent = "The routes did not load.";
   });

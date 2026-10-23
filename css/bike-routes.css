@@ -152,6 +152,33 @@
   background: #fff;
 }
 
+.br-city-banner {
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  text-align: center;
+}
+
+.br-city-banner-name,
+.br-city-banner-stats {
+  margin: 0;
+  padding: 0.22rem 0.4rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.br-city-banner-name {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.br-city-banner-stats {
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
 .br-city-caption {
   display: block;
   margin: 0.32rem 0 0;
@@ -237,12 +264,54 @@
   opacity: 1;
 }
 
-.br-lb > .br-lb-art {
+.br-deck {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  cursor: default;
+}
+
+.br-lb:not(.br-lb-on) .br-deck {
+  overflow: visible;
+}
+
+.br-lb:not(.br-lb-on) .br-slide-frame,
+.br-lb:not(.br-lb-on) .br-slide-shirt {
+  visibility: hidden;
+}
+
+.br-lb.br-lb-on .br-deck {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+}
+
+.br-lb.br-lb-on .br-lb-art {
+  box-shadow: none;
+}
+
+.br-track {
+  display: flex;
+  flex-direction: column;
+  height: 300%;
+  transition: transform 400ms ease-out;
+}
+
+.br-slide {
+  display: flex;
+  flex: 0 0 33.3333%;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 33.3333%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.br-lb .br-lb-art {
   display: block;
-  max-width: min(96vw, 1600px);
-  max-height: 92vh;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
   background: #fff;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
@@ -259,6 +328,103 @@
   transition: opacity 0.28s ease;
 }
 
-.br-lb.br-lb-closing > .br-lb-art {
+.br-lb.br-lb-closing .br-lb-art {
   transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
+}
+
+/* Wall frame. Same proportions as the Ski Hills framed print. */
+.br-lb .sh-wall {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-width: 0;
+  background:
+    radial-gradient(130% 95% at 0% 0%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 56%),
+    linear-gradient(180deg, #f7f6f3 0%, #e6e3dc 100%);
+}
+
+.br-lb .sh-wall::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+.br-lb .sh-hang {
+  position: relative;
+  z-index: 1;
+  width: 88%;
+  filter: drop-shadow(9px 16px 14px rgba(0, 0, 0, 0.28));
+}
+
+.br-lb .sh-mould {
+  box-sizing: border-box;
+  padding: 1.8%;
+  background: #111;
+  box-shadow: none;
+}
+
+.br-lb .sh-mat {
+  box-sizing: border-box;
+  padding: 10.5%;
+  background: #f2f2f2;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.13);
+}
+
+.br-lb .sh-frame-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.92), inset 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.br-lb .sh-frame-art img,
+.br-lb .sh-frame-art svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+.br-shirt {
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 200 / 228;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.35));
+}
+
+.br-shirt-shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.br-shirt-print {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 34%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+  transform: translate(-50%, -42%);
+}
+
+.br-shirt-print img,
+.br-shirt-print svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
 }
