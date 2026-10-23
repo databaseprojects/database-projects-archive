@@ -15,7 +15,7 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261018y",
+      file: "hills.json?v=20261023e",
       names: "names.json?v=20261016f",
       index: "contours/index.json?v=20261016w",
       label: "British Columbia"
@@ -744,7 +744,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023d";
+    return "frontal/" + file + ".svg?v=20261023e";
   }
 
   function frontalArt(hill) {
