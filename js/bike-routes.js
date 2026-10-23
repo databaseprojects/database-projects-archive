@@ -1,8 +1,10 @@
-/* Bike Routes. One static drawing of every signed Vancouver route. */
+/* Bike Routes. One row of city maps. Vancouver keeps its route hover. */
 (function () {
   var count = document.querySelector(".br-count");
   var print = document.getElementById("br-print");
   var tip = null;
+  var tags = document.querySelectorAll(".br-tag");
+  var cards = document.querySelectorAll(".br-city");
 
   function ensureTip() {
     if (tip) return tip;
@@ -38,17 +40,34 @@
     print.addEventListener("pointerleave", function () { showTip("", 0, 0); });
   }
 
-  fetch("city.svg?v=20261017h").then(function (res) {
-    if (!res.ok) throw new Error("svg");
-    return res.text();
-  }).then(function (text) {
-    var doc = new DOMParser().parseFromString(text, "image/svg+xml");
-    var svg = doc.documentElement;
-    if (!svg || svg.tagName.toLowerCase() !== "svg") throw new Error("svg");
-    mount(document.importNode(svg, true));
-  }).catch(function () {
-    if (count && !count.textContent) count.textContent = "The drawing did not load.";
+  tags.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var country = btn.getAttribute("data-br-country") || "all";
+      tags.forEach(function (other) {
+        var on = other === btn;
+        other.classList.toggle("br-on", on);
+        other.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      cards.forEach(function (card) {
+        var place = card.getAttribute("data-country") || "";
+        card.hidden = country !== "all" && place !== country;
+      });
+    });
   });
+
+  if (print) {
+    fetch("city.svg?v=20261017h").then(function (res) {
+      if (!res.ok) throw new Error("svg");
+      return res.text();
+    }).then(function (text) {
+      var doc = new DOMParser().parseFromString(text, "image/svg+xml");
+      var svg = doc.documentElement;
+      if (!svg || svg.tagName.toLowerCase() !== "svg") throw new Error("svg");
+      mount(document.importNode(svg, true));
+    }).catch(function () {
+      if (count && !count.textContent) count.textContent = "The drawing did not load.";
+    });
+  }
 
   fetch("routes.json?v=20261017d").then(function (res) {
     if (!res.ok) throw new Error("routes");
