@@ -127,42 +127,42 @@
     tn: "Tennessee"
   };
   var US_FILE_VERSION = {
-    ca: "20261022e",
-    co: "20261022e",
-    id: "20261022e",
-    ma: "20261022f",
-    md: "20261018y",
-    me: "20261022f",
-    mi: "20261022h",
-    mt: "20261022e",
-    nh: "20261022f",
-    nj: "20261022g",
-    nm: "20261022e",
-    ny: "20261022g",
-    or: "20261022e",
-    pa: "20261022g",
-    vt: "20261022f",
-    wa: "20261022e",
-    wi: "20261022h",
-    wv: "20261022g",
-    wy: "20261022e",
-    mn: "20261022h",
-    az: "20261022e",
-    nv: "20261022e",
-    sd: "20261022e",
-    ut: "20261022e",
-    ct: "20261022f",
-    ri: "20261022f",
-    va: "20261022g",
-    oh: "20261022i",
-    il: "20261022i",
-    in: "20261022i",
-    ia: "20261022i",
-    nd: "20261022i",
-    mo: "20261022i",
-    nc: "20261022i",
-    al: "20261022i",
-    tn: "20261022i"
+    ca: "20261023t",
+    co: "20261023t",
+    id: "20261023t",
+    ma: "20261023t",
+    md: "20261023t",
+    me: "20261023t",
+    mi: "20261023t",
+    mt: "20261023t",
+    nh: "20261023t",
+    nj: "20261023t",
+    nm: "20261023t",
+    ny: "20261023t",
+    or: "20261023t",
+    pa: "20261023t",
+    vt: "20261023t",
+    wa: "20261023t",
+    wi: "20261023t",
+    wv: "20261023t",
+    wy: "20261023t",
+    mn: "20261023t",
+    az: "20261023t",
+    nv: "20261023t",
+    sd: "20261023t",
+    ut: "20261023t",
+    ct: "20261023t",
+    ri: "20261023t",
+    va: "20261023t",
+    oh: "20261023t",
+    il: "20261023t",
+    in: "20261023t",
+    ia: "20261023t",
+    nd: "20261023t",
+    mo: "20261023t",
+    nc: "20261023t",
+    al: "20261023t",
+    tn: "20261023t"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
@@ -454,6 +454,12 @@
     if (hill.province === "eu") {
       if (hill.admin) parts.push(hill.admin);
       if (hill.region && EU_COUNTRY_NAMES[hill.region]) parts.push(EU_COUNTRY_NAMES[hill.region]);
+    } else if (hill.province === "us") {
+      if (hill.range) parts.push(hill.range);
+      if (hill.state) parts.push(hill.state);
+      if (hill.region && US_STATE_NAMES[hill.region]) parts.push(US_STATE_NAMES[hill.region]);
+      parts.push("USA");
+      parts.push("United States");
     }
     return fold(parts.join("\n"));
   }
@@ -810,7 +816,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023s";
+    return "frontal/" + file + ".svg?v=20261023t";
   }
 
   function frontalArt(hill) {
@@ -1017,9 +1023,13 @@
 
   function locationText(hill) {
     if (hill.province === "eu") return hill.admin || "";
+    if (hill.province === "us") {
+      if (hill.range) return hill.range;
+      if (hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
+      return "";
+    }
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
-    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
     return REGION_GAP[hill.slug] || "";
   }
 
@@ -1427,6 +1437,8 @@
         name: row.name,
         region: row.region || null,
         admin: row.admin || "",
+        state: row.state || "",
+        range: row.range || "",
         province: row.province || "bc",
         lat: row.lat,
         lon: row.lon,
@@ -3007,7 +3019,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261023s").then(function (res) {
+  fetch("hill-index.json?v=20261023t").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

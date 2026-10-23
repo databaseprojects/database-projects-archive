@@ -245,6 +245,8 @@ def prepare(args, ab, usa):
             "slug": slug,
             "name": label,
             "region": hill["state"],
+            "state": hill["state"].upper(),
+            "range": usa.mountain_range(hill["state"], hill["lat"], hill["lon"], slug),
             "province": "us",
             "lon": hill["lon"],
             "lat": hill["lat"],
