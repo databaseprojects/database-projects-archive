@@ -744,7 +744,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023h";
+    return "frontal/" + file + ".svg?v=20261023i";
   }
 
   function frontalArt(hill) {
@@ -2718,30 +2718,6 @@
     }
     var plan = side("Plan view", false);
     var bird = side("Bird's eye view", true);
-    var labels = null;
-    if (hill.slug === "whistler-blackcomb") {
-      hill._labelsOn = false;
-      labels = document.createElement("label");
-      labels.className = "sh-tag sh-labels-toggle";
-      var box = document.createElement("input");
-      box.type = "checkbox";
-      box.className = "sh-labels-check";
-      box.checked = false;
-      var caption = document.createElement("span");
-      caption.textContent = "Labels";
-      labels.appendChild(box);
-      labels.appendChild(caption);
-      labels.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-      box.addEventListener("change", function () {
-        hill._labelsOn = box.checked;
-        labels.classList.toggle("sh-on", box.checked);
-        var lb = document.getElementById("sh-lb");
-        if (lb && lb._svg) lb._svg.classList.toggle("sh-labels-on", box.checked);
-        refreshMockArt(hill.el);
-      });
-    }
     var trees = null;
     if (hill.slug === "kimberley-alpine-resort") {
       hill._treesOn = true;
@@ -2799,7 +2775,6 @@
       bird.classList.toggle("sh-on", on);
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
-      if (labels) labels.hidden = !on;
       if (trees) trees.hidden = !on;
       if (sideRow) {
         var show = on;
@@ -2818,7 +2793,6 @@
     group.appendChild(bird);
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
-    if (labels) wrap.appendChild(labels);
     if (trees) wrap.appendChild(trees);
     wrap._sync = sync;
     return wrap;
@@ -2874,7 +2848,6 @@
     if (!slot) return;
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
-    if (card._hill && card._hill._labelsOn) svg.classList.add("sh-labels-on");
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
