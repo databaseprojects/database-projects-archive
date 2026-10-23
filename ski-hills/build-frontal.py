@@ -457,6 +457,17 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Mount Rose Ski Tahoe only. The automatic render faced 18.8 (the 198.8
+    # guess, flipped by orient()). 198.8 is 180° further and turns that
+    # bird's-eye drawing upside down. Edit this number.
+    "mount-rose-ski-tahoe": {
+        "facing": 198.8,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     # Crystal Mountain, Washington only. Not Crystal Mountain, Michigan.
     # The automatic render faced 77.0 (the 257.0 guess, flipped by
     # orient()). 257.0 is 180° further and turns that bird's-eye drawing
