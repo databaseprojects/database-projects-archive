@@ -53,7 +53,7 @@
 
 .br-tip {
   position: fixed;
-  z-index: 80;
+  z-index: 100000;
   margin: 0;
   padding: 3px 6px;
   border: 1px solid rgba(0, 0, 0, 0.4);
@@ -211,4 +211,130 @@
   .br-map {
     width: 100%;
   }
+}
+
+.br-views {
+  margin-top: 0.15rem;
+}
+
+.br-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0);
+  overflow: hidden;
+  transition: background 0.32s ease;
+  cursor: zoom-out;
+}
+
+.br-lb.br-lb-on {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.br-lb.br-lb-closing {
+  background: rgba(0, 0, 0, 0);
+}
+
+.br-lb-panel {
+  width: min(100%, calc(100vh - 8rem));
+  max-width: 920px;
+  cursor: default;
+}
+
+.br-lb-stage {
+  position: relative;
+  background: #fff;
+}
+
+.br-lb-art,
+.br-lb-art svg,
+.br-lb-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.br-lb-art {
+  transform-origin: center center;
+  transition: transform 0.4s ease-out;
+}
+
+.br-lb.br-lb-closing .br-lb-art {
+  transition: transform 0.32s ease-out;
+}
+
+.br-lb-caption {
+  margin: 0.5rem 0 0;
+  color: #fff;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.br-lb-count {
+  margin: 0.15rem 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.br-edge {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #111;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.br-edge svg {
+  display: block;
+  width: 11px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.br-edge-next { right: 8px; }
+.br-edge-prev { left: 8px; }
+
+.br-lb-stage:hover .br-edge:not(:disabled),
+.br-edge:focus-visible {
+  opacity: 0.55;
+  pointer-events: auto;
+}
+
+.br-edge:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.br-edge:disabled {
+  visibility: hidden;
+}
+
+.br-edge:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
 }
