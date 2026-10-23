@@ -29,7 +29,7 @@
     }
     if (mapEl) {
       mapEl.alt = city.name + " cycle routes";
-      mapEl.src = "prints/" + city.slug + ".svg?v=20261022a";
+      mapEl.src = "prints/" + city.slug + ".svg?v=20261022f";
     }
   }).catch(function () {
     if (countEl) countEl.textContent = "This city map did not load.";
