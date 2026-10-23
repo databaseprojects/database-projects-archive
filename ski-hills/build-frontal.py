@@ -223,15 +223,21 @@ CONTOUR_HOLD = {
     "banff-sunshine-village": 100.0,
     # Revelstoke. Keeps the top-left ridge line one stroke between real hides.
     "revelstoke-mountain-resort": 60.0,
+    # Fernie. 60 px pulls the upper ridge back into one stroke. The tight
+    # pass on that ridge stays loose enough that the crest does not gap.
+    "fernie-alpine-resort": 60.0,
 }
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
 # top-left ridge were drawing the far slope through the crest. The later
 # pass does not put these marks back.
 CONTOUR_TIGHT = {
+    # Fernie upper ridge. 1.2 px / 12 samples left gaps along the crest.
+    # 2.2 px / 28 samples pulls those contours back in without stacking
+    # the back bowl.
     "fernie-alpine-resort": {
-        "tol": 1.2,
-        "min_run": 12,
+        "tol": 2.2,
+        "min_run": 28,
         "y": (-400.0, 420.0),
     },
     "revelstoke-mountain-resort": {
@@ -277,11 +283,11 @@ RUN_HORIZON = {
         "min_run": 12,
         "y": (-400.0, 420.0),
     },
+    # Whole sheet. A run behind a ridge fades at 10% everywhere, not only
+    # the top-left corner.
     "revelstoke-mountain-resort": {
         "tol": 1.2,
-        "min_run": 12,
-        "x": (-400.0, 550.0),
-        "y": (-400.0, 420.0),
+        "min_run": 10,
     },
 }
 LIFT_CLEAR = 12.0
@@ -327,10 +333,11 @@ CONTRAST_GREY_HI = 252
 SOFT_GREY_LO = 156
 SOFT_GREY_HI = 250
 CAMERAS = {
-    # Cypress only. 0 looks due north. 25.0 is 25° further, which turns
-    # the drawing 25° counter-clockwise on screen.
+    # Cypress only. 0 looks due north. 45.0 is 45° further, which turns
+    # the drawing 45° counter-clockwise on screen. 45.0 is 20° more than
+    # 25.0, another 20° counter-clockwise.
     "cypress-mountain": {
-        "facing": 25.0,
+        "facing": 45.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -519,10 +526,11 @@ CAMERAS = {
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
     # Whistler only. Run and lift strokes are 22% under the defaults
-    # (2.2 and 1.7). Automatic facing was 155.4. 128.4 is 27° less, which
-    # turns the drawing 27° clockwise on screen.
+    # (2.2 and 1.7). Automatic facing was 155.4. 143.4 is 12° less, which
+    # turns the drawing 12° clockwise on screen. 143.4 is 15° more than
+    # 128.4, another 15° counter-clockwise.
     "whistler-blackcomb": {
-        "facing": 128.4,
+        "facing": 143.4,
         "run_width": 1.716,
         "lift_width": 1.33,
     },
@@ -543,6 +551,10 @@ CAMERAS = {
     "revelstoke-mountain-resort": {
         "facing": 76.8,
         "frame_scale": 0.86,
+        # Runs that pass behind a ridge stay on the line at 10% opacity
+        # across the whole mountain, the same treatment as Sunshine
+        # through Castle.
+        "ridge_fade": 0.10,
     },
     # SilverStar only. Run and lift strokes are 22% under the defaults.
     # Automatic facing was 274.3. 279.3 is 5° further, which turns the
