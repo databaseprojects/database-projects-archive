@@ -486,7 +486,7 @@
   }
 
   // Most popular will be driven by actual sales per item once sales
-  // tracking is wired up. Until then these twenty lead the list.
+  // tracking is wired up. Until then this priority list leads the catalog.
   var TARGET_20_POPULAR_ORDER = [
     "whistler-blackcomb",
     "lake-louise-ski-area",
@@ -502,6 +502,7 @@
     "cypress-mountain",
     "grouse-mountain",
     "whitewater-ski-resort",
+    "marmot-basin",
     "kimberley-alpine-resort",
     "mt-norquay",
     "nakiska",
@@ -800,7 +801,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023n";
+    return "frontal/" + file + ".svg?v=20261023p";
   }
 
   function frontalArt(hill) {
@@ -940,7 +941,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261023n").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261023p").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
