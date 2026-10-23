@@ -746,7 +746,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023k";
+    return "frontal/" + file + ".svg?v=20261023l";
   }
 
   function frontalArt(hill) {
@@ -754,12 +754,15 @@
     return (hill._frontalCache && hill._frontalCache[url]) || "";
   }
 
-  function paintContours(svg, lines, shift, stack) {
+  function paintContours(svg, lines, shift, stack, treeWash) {
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
     if (old) old.parentNode.removeChild(old);
     var oldClip = svg.querySelector("clipPath.sh-frame");
     if (oldClip && oldClip.parentNode) oldClip.parentNode.removeChild(oldClip);
+    Array.prototype.forEach.call(svg.querySelectorAll(".sh-plan-tree-fade"), function (node) {
+      if (node.parentNode) node.parentNode.removeChild(node);
+    });
     var defs = svg.querySelector("defs");
     if (!defs) {
       defs = document.createElementNS(NS, "defs");
@@ -780,6 +783,68 @@
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
     g.setAttribute("clip-path", "url(#" + id + ")");
+    if (treeWash) {
+      var xId = "sh-plan-tree-x-" + clipSerial;
+      var yId = "sh-plan-tree-y-" + clipSerial;
+      var maskId = "sh-plan-tree-mask-" + clipSerial;
+      function fadeGradient(gradId, vertical) {
+        var grad = document.createElementNS(NS, "linearGradient");
+        grad.setAttribute("id", gradId);
+        grad.setAttribute("class", "sh-plan-tree-fade");
+        grad.setAttribute("gradientUnits", "objectBoundingBox");
+        grad.setAttribute("x1", "0");
+        grad.setAttribute("y1", "0");
+        grad.setAttribute("x2", vertical ? "0" : "1");
+        grad.setAttribute("y2", vertical ? "1" : "0");
+        var edge = vertical ? 0.07 : 0.06;
+        [[0, "#000"], [edge, "#fff"], [1 - edge, "#fff"], [1, "#000"]].forEach(function (pair) {
+          var stop = document.createElementNS(NS, "stop");
+          stop.setAttribute("offset", Math.round(pair[0] * 100) + "%");
+          stop.setAttribute("stop-color", pair[1]);
+          grad.appendChild(stop);
+        });
+        defs.appendChild(grad);
+      }
+      fadeGradient(xId, false);
+      fadeGradient(yId, true);
+      var mask = document.createElementNS(NS, "mask");
+      mask.setAttribute("id", maskId);
+      mask.setAttribute("class", "sh-plan-tree-fade");
+      mask.setAttribute("maskUnits", "userSpaceOnUse");
+      mask.setAttribute("mask-type", "luminance");
+      mask.setAttribute("x", "0");
+      mask.setAttribute("y", "0");
+      mask.setAttribute("width", String(SQUARE));
+      mask.setAttribute("height", String(frame));
+      function fadeRect(fill, blend) {
+        var band = document.createElementNS(NS, "rect");
+        band.setAttribute("x", "0");
+        band.setAttribute("y", "0");
+        band.setAttribute("width", String(SQUARE));
+        band.setAttribute("height", String(frame));
+        band.setAttribute("fill", fill);
+        if (blend) band.setAttribute("style", "mix-blend-mode:" + blend);
+        return band;
+      }
+      mask.appendChild(fadeRect("url(#" + xId + ")"));
+      mask.appendChild(fadeRect("url(#" + yId + ")", "multiply"));
+      defs.appendChild(mask);
+      var wash = document.createElementNS(NS, "g");
+      wash.setAttribute("class", "sh-plan-tree-wash");
+      wash.setAttribute("mask", "url(#" + maskId + ")");
+      var path = document.createElementNS(NS, "path");
+      path.setAttribute("d", treeWash);
+      var scaleTo = shift.s == null ? 1 : shift.s;
+      var dx = shift.dx || 0;
+      var dy = shift.dy || 0;
+      path.setAttribute("transform", "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")");
+      path.setAttribute("fill", "#3a6b42");
+      path.setAttribute("fill-opacity", "0.10");
+      path.setAttribute("fill-rule", "evenodd");
+      path.setAttribute("stroke", "none");
+      wash.appendChild(path);
+      g.appendChild(wash);
+    }
     var scale = 1;
     if (stack) {
       var laid = svg.getBoundingClientRect && svg.getBoundingClientRect().width;
@@ -821,17 +886,18 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261018o").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261023l").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
       card._contourState = "in";
       card._contourLines = data.lines || [];
-      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false);
+      card._treeWash = data.treeWash || "";
+      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash);
       var lb = document.getElementById("sh-lb");
       if (lb && lb._card === card && lb._shift && lb._svg) {
         if (stackWanted(card._hill)) applyStack(card._hill);
-        else paintContours(lb._svg, card._contourLines, lb._shift, false);
+        else paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash);
       }
       refreshMockArt(card);
     }).catch(function () {
@@ -1268,7 +1334,7 @@
     var shift = fitArt(big, DRAW, card._hill && card._hill._bounds);
     writeCaption(big, card._hill);
     lb._shift = shift;
-    if (card._contourLines) paintContours(big, card._contourLines, shift, false);
+    if (card._contourLines) paintContours(big, card._contourLines, shift, false, card._treeWash);
     var maxW = frameLimit();
     var maxH = window.innerHeight * 0.86 - (sideViews(card._hill) ? 112 : 72);
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
@@ -2447,7 +2513,7 @@
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
     var art = raised ? frontalArt(hill) : "";
-    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art);
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art, card._treeWash);
     if (raised && art) {
       mountFrontal(svg, art, hill);
       setPlanHidden(svg, true);
@@ -2646,11 +2712,12 @@
   function paintPlan(svg, hill, lines, shift) {
     clearFrontal(svg);
     setPlanHidden(svg, false);
-    if (lines && shift) paintContours(svg, lines, shift, false);
+    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash);
+    if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
   }
 
   function paintRaised(svg, hill, lines, shift) {
-    if (lines && shift) paintContours(svg, lines, shift, false);
+    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash);
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
@@ -2701,7 +2768,7 @@
         else if (failed && card._contourLines) {
           clearFrontal(lb._svg);
           setPlanHidden(lb._svg, false);
-          paintContours(lb._svg, card._contourLines, lb._shift, true);
+          paintContours(lb._svg, card._contourLines, lb._shift, true, card._treeWash);
         } else if (!on) paintPlan(lb._svg, hill, card._contourLines, lb._shift);
       }
       if (card) refreshMockArt(card);
@@ -2749,15 +2816,10 @@
         e.preventDefault();
         e.stopPropagation();
         hill._treesOn = !hill._treesOn;
-        var goBird = !hill._stackOn;
-        if (goBird) hill._stackOn = true;
         sync();
-        if (goBird) applyStack(hill);
-        else {
-          var lb = document.getElementById("sh-lb");
-          if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
-          refreshMockArt(hill.el);
-        }
+        var lb = document.getElementById("sh-lb");
+        if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+        refreshMockArt(hill.el);
       });
     }
     var views = sideViews(hill);

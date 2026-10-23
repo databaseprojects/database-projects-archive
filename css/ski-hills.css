@@ -767,20 +767,23 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-stack-btn {
   position: absolute;
   left: 0;
+  right: 0;
   top: 100%;
   z-index: 5;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
   gap: 0.45rem;
+  width: 100%;
   margin: 0.45rem 0 0;
   pointer-events: auto;
   transform: none;
 }
 
 .sh-stack-btn .sh-tag {
+  margin: 0;
   background: #fff;
   color: #111;
   border-color: #111;
@@ -1207,6 +1210,8 @@ html.sh-prints-off .sh-cart-panel {
 
 .sh-frontal-tree-wash { display: none; }
 .sh-trees-on .sh-frontal-tree-wash { display: inline; }
+.sh-plan-tree-wash { display: none; }
+.sh-trees-on .sh-plan-tree-wash { display: inline; }
 
 .sh-trees-toggle {
   display: inline-flex;
