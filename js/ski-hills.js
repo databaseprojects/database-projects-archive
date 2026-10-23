@@ -6,7 +6,7 @@
   var hills = [];
   var byId = Object.create(null);
   var bySlug = Object.create(null);
-  var province = "ca";
+  var province = "all";
   var region = "all";
   var kind = "all";
   var popular = false;
