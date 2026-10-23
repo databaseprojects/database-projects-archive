@@ -994,57 +994,57 @@
   window.shSyncStroke = syncStroke;
 
   var REGIONS = {
-    "vancouver-island": "Vancouver Island",
-    "vancouver-coast-and-mountains": "Vancouver, Coast and Mountains",
-    "thompson-okanagan": "Thompson Okanagan",
-    "kootenay-rockies": "Kootenay Rockies",
-    "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast",
-    "northern-british-columbia": "Northern British Columbia",
-    "canadian-rockies": "Canadian Rockies",
-    "alberta-south": "Alberta South",
-    "calgary-area": "Calgary & Area",
-    "alberta-central": "Alberta Central",
-    "edmonton-area": "Edmonton & Area",
-    "alberta-north": "Alberta North",
-    "outaouais": "Outaouais",
-    "laurentides": "Laurentides",
-    "mauricie": "Mauricie",
-    "cantons-de-lest": "Cantons-de-l'Est",
-    "quebec": "Québec",
-    "saguenay": "Saguenay–Lac-Saint-Jean",
-    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie",
-    "georgian-bay": "Georgian Bay",
-    "golden-horseshoe": "Golden Horseshoe",
-    "ontario-highlands": "Ontario Highlands",
-    "northern-ontario": "Northern Ontario",
-    "regina": "Regina",
-    "eastern-saskatchewan": "Eastern Saskatchewan",
-    "northern-saskatchewan": "Northern Saskatchewan",
-    "western-saskatchewan": "Western Saskatchewan",
-    "pembina-valley": "Pembina Valley",
-    "westman": "Westman",
-    "parkland": "Parkland",
-    "northern-manitoba": "Northern Manitoba",
-    "fredericton": "Fredericton",
-    "southeast": "Southeast",
-    "north": "North",
-    "west-coast": "West Coast",
-    "east-coast": "East Coast",
-    "labrador": "Labrador",
-    "mainland": "Mainland",
-    "cape-breton": "Cape Breton",
-    "central": "Central",
-    "eastern": "Eastern",
-    "whitehorse": "Whitehorse",
-    "dawson": "Dawson",
-    "watson-lake": "Watson Lake",
-    "yellowknife": "Yellowknife"
+    "vancouver-island": "Vancouver Island, Canada",
+    "vancouver-coast-and-mountains": "Vancouver, Coast and Mountains, Canada",
+    "thompson-okanagan": "Thompson Okanagan, Canada",
+    "kootenay-rockies": "Kootenay Rockies, Canada",
+    "cariboo-chilcotin-coast": "Cariboo Chilcotin Coast, Canada",
+    "northern-british-columbia": "Northern British Columbia, Canada",
+    "canadian-rockies": "Canadian Rockies, Canada",
+    "alberta-south": "Alberta South, Canada",
+    "calgary-area": "Calgary & Area, Canada",
+    "alberta-central": "Alberta Central, Canada",
+    "edmonton-area": "Edmonton & Area, Canada",
+    "alberta-north": "Alberta North, Canada",
+    "outaouais": "Outaouais, Canada",
+    "laurentides": "Laurentides, Canada",
+    "mauricie": "Mauricie, Canada",
+    "cantons-de-lest": "Cantons-de-l'Est, Canada",
+    "quebec": "Québec, Canada",
+    "saguenay": "Saguenay–Lac-Saint-Jean, Canada",
+    "bas-saint-laurent-gaspesie": "Bas-Saint-Laurent & Gaspésie, Canada",
+    "georgian-bay": "Georgian Bay, Canada",
+    "golden-horseshoe": "Golden Horseshoe, Canada",
+    "ontario-highlands": "Ontario Highlands, Canada",
+    "northern-ontario": "Northern Ontario, Canada",
+    "regina": "Regina, Canada",
+    "eastern-saskatchewan": "Eastern Saskatchewan, Canada",
+    "northern-saskatchewan": "Northern Saskatchewan, Canada",
+    "western-saskatchewan": "Western Saskatchewan, Canada",
+    "pembina-valley": "Pembina Valley, Canada",
+    "westman": "Westman, Canada",
+    "parkland": "Parkland, Canada",
+    "northern-manitoba": "Northern Manitoba, Canada",
+    "fredericton": "Fredericton, Canada",
+    "southeast": "Southeast, Canada",
+    "north": "North, Canada",
+    "west-coast": "West Coast, Canada",
+    "east-coast": "East Coast, Canada",
+    "labrador": "Labrador, Canada",
+    "mainland": "Mainland, Canada",
+    "cape-breton": "Cape Breton, Canada",
+    "central": "Central, Canada",
+    "eastern": "Eastern, Canada",
+    "whitehorse": "Whitehorse, Canada",
+    "dawson": "Dawson, Canada",
+    "watson-lake": "Watson Lake, Canada",
+    "yellowknife": "Yellowknife, Canada"
   };
 
   // These two BC hills have no stored region. Canadian Rockies is the caption only.
   var REGION_GAP = {
-    "unnamed-hill": "Canadian Rockies",
-    "unnamed-hill-12": "Canadian Rockies"
+    "unnamed-hill": "Canadian Rockies, Canada",
+    "unnamed-hill-12": "Canadian Rockies, Canada"
   };
 
   var TYPES = {
@@ -1055,7 +1055,7 @@
   function locationText(hill) {
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
-    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
+    if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region] + ", USA";
     if (hill.province === "eu" && hill.region && EU_COUNTRY_NAMES[hill.region]) return EU_COUNTRY_NAMES[hill.region];
     return REGION_GAP[hill.slug] || "";
   }
