@@ -251,6 +251,8 @@ CAMERAS = {
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
     },
     # Crystal Mountain, Washington only. Not Crystal Mountain, Michigan.
     # The automatic render faced 77.0 (the 257.0 guess, flipped by
@@ -1157,7 +1159,7 @@ def edge_fit(pts, margin, right=1000.0, bottom=880.0):
     return scale, cx, cy, tcx, tcy
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -1553,20 +1555,22 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 return True
         return False
 
-    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False):
+    def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False, fade_opacity=None):
         parts = []
         # Dash lives on the element that asks for it. Everything else is
         # explicitly solid so a lift dash cannot inherit onto contours.
         dash_value = dash if dash else "none"
         klass = f' class="{css_class}"' if css_class else ""
 
-        def emit(chunk):
+        def emit(chunk, opacity=None):
             if len(chunk) < 2:
                 return
             pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in chunk)
+            op_attr = f' stroke-opacity="{opacity:.2f}"' if opacity is not None else ""
+            op_style = f"stroke-opacity:{opacity:.2f};" if opacity is not None else ""
             parts.append(
-                f'<polyline{klass} points="{pts}" fill="none" stroke="{colour}" '
-                f'style="fill:none;stroke:{colour};stroke-width:{width};'
+                f'<polyline{klass} points="{pts}" fill="none" stroke="{colour}"{op_attr} '
+                f'style="fill:none;stroke:{colour};{op_style}stroke-width:{width};'
                 f"stroke-dasharray:{dash_value};"
                 f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
             )
@@ -1587,14 +1591,30 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     [p[2] for p in sampled],
                     [(p[0], p[1]) for p in sampled],
                 )
+                if fade_opacity is None:
+                    part = []
+                    for (px, py, _hide), hidden in zip(sampled, flags):
+                        if hidden:
+                            emit(part)
+                            part = []
+                        else:
+                            part.append((px, py))
+                    emit(part)
+                    sampled = []
+                    return
+                # Keep the run continuous. The shared sample is the point
+                # where the line crosses the ridge, drawn in both pieces.
                 part = []
+                part_hidden = None
                 for (px, py, _hide), hidden in zip(sampled, flags):
-                    if hidden:
-                        emit(part)
-                        part = []
+                    if part and hidden != part_hidden:
+                        part.append((px, py))
+                        emit(part, fade_opacity if part_hidden else None)
+                        part = [(px, py)]
                     else:
                         part.append((px, py))
-                emit(part)
+                    part_hidden = hidden
+                emit(part, fade_opacity if part_hidden else None)
                 sampled = []
 
             for lon, lat in line:
@@ -1634,7 +1654,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     for run in runs:
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
         run_parts.extend(
-            stroke(run["lines"], colour, run_stroke, z_add=RUN_CLEAR, css_class="sh-frontal-run", occlude=True)
+            stroke(
+                run["lines"],
+                colour,
+                run_stroke,
+                z_add=RUN_CLEAR,
+                css_class="sh-frontal-run",
+                occlude=True,
+                fade_opacity=ridge_fade,
+            )
         )
     lift_parts = []
     for lift in lifts:
@@ -1797,6 +1825,7 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
         frame_scale=cam.get("frame_scale", 1.0),
         edge_margin=edge_margin,
         frame_runs=frame_runs,
+        ridge_fade=cam.get("ridge_fade"),
     )
 
 
