@@ -746,7 +746,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023l";
+    return "frontal/" + file + ".svg?v=20261023m";
   }
 
   function frontalArt(hill) {
@@ -886,7 +886,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261023l").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261023m").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1261,25 +1261,10 @@
     var lb = document.getElementById("sh-lb");
     if (!lb || lb._closing) return;
     lb._closing = true;
-    var track = lb.querySelector(".sh-track");
-    if (track) {
-      track.style.transition = "none";
-      track.style.transform = "translateX(0)";
-    }
-    lb.classList.remove("sh-framed");
     var big = lb._svg;
-    var from = lb._from;
+    if (big) big.style.transform = "none";
     lb.classList.add("sh-lb-closing");
     lb.classList.remove("sh-lb-on");
-    if (big && from) {
-      var r = big.getBoundingClientRect();
-      if (r.width && r.height && from.w) {
-        var s = Math.min(from.w / r.width, from.h / r.height);
-        var dx = from.x + from.w / 2 - (r.left + r.width / 2);
-        var dy = from.y + from.h / 2 - (r.top + r.height / 2);
-        big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-      }
-    }
     setTimeout(function () {
       if (lb.parentNode) lb.parentNode.removeChild(lb);
       if (!document.getElementById("sh-lb")) {
@@ -1316,8 +1301,6 @@
     if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
     var src = card.querySelector("svg");
     if (!src) return;
-    var from = rectBox(origin) || rectBox(src.getBoundingClientRect()) || { x: 0, y: 0, w: 0, h: 0 };
-    var thumb = { left: from.x, top: from.y, width: from.w, height: from.h };
     var name = card.querySelector(".sh-hill-name");
     var lb = document.createElement("div");
     lb.id = "sh-lb";
@@ -1326,7 +1309,6 @@
     lb.setAttribute("aria-modal", "true");
     lb.setAttribute("aria-label", name ? name.textContent : "Ski hill");
     lb._card = card;
-    lb._from = from;
     if (card._hill && card._hill.slug) lb.setAttribute("data-sh-hill", card._hill.slug);
     loadContour(card);
     var big = drawingSvg(card._hill);
@@ -1350,20 +1332,11 @@
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
     fitFrameArt(lb);
-    var r = big.getBoundingClientRect();
-    if (r.width && thumb.width) {
-      var s = Math.min(thumb.width / r.width, thumb.height / r.height);
-      var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
-      var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
-      big.style.transition = "none";
-      big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-    }
-    void big.offsetWidth;
+    big.style.transform = "none";
     requestAnimationFrame(function () {
       if (lb._closing) return;
       window.scrollTo(window.scrollX, scrollHold);
       lb.classList.add("sh-lb-on");
-      big.style.transition = "";
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
@@ -2530,9 +2503,7 @@
       mock.classList.toggle("sh-on", !!on);
       mock.setAttribute("aria-pressed", on ? "true" : "false");
     }
-    if (!track) return;
-    track.style.transition = "transform 400ms ease-out";
-    track.style.transform = on ? "translateX(-50%)" : "translateX(0)";
+    if (track) track.style.transform = "none";
   }
 
   function mountCartAdd(hill) {
@@ -2638,11 +2609,6 @@
         stage.classList.add("sh-dragging");
       }
       e.preventDefault();
-      var x = Math.max(-drag.w, Math.min(0, drag.base + dx));
-      var track = stage.querySelector(".sh-track");
-      if (!track) return;
-      track.style.transition = "none";
-      track.style.transform = "translateX(" + x.toFixed(1) + "px)";
     });
     function endDrag(e) {
       if (!drag || e.pointerId !== drag.id) return;
@@ -2805,18 +2771,24 @@
     var plan = side("Plan view", false);
     var bird = side("Bird's eye view", true);
     var trees = null;
+    var treesBox = null;
     if (hill.slug === "kimberley-alpine-resort") {
       hill._treesOn = true;
-      trees = document.createElement("button");
-      trees.type = "button";
-      trees.className = "sh-tag sh-trees-toggle sh-on";
-      trees.textContent = "Trees";
-      trees.setAttribute("aria-pressed", "true");
+      trees = document.createElement("label");
+      trees.className = "sh-trees-toggle";
+      treesBox = document.createElement("input");
+      treesBox.type = "checkbox";
+      treesBox.className = "sh-trees-check";
+      treesBox.checked = true;
+      var treesText = document.createElement("span");
+      treesText.textContent = "Trees";
+      trees.appendChild(treesBox);
+      trees.appendChild(treesText);
       trees.addEventListener("click", function (e) {
-        e.preventDefault();
         e.stopPropagation();
-        hill._treesOn = !hill._treesOn;
-        sync();
+      });
+      treesBox.addEventListener("change", function () {
+        hill._treesOn = !!treesBox.checked;
         var lb = document.getElementById("sh-lb");
         if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
         refreshMockArt(hill.el);
@@ -2855,11 +2827,7 @@
       bird.classList.toggle("sh-on", on);
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
-      if (trees) {
-        var treesOn = !!hill._treesOn;
-        trees.classList.toggle("sh-on", treesOn);
-        trees.setAttribute("aria-pressed", treesOn ? "true" : "false");
-      }
+      if (treesBox) treesBox.checked = !!hill._treesOn;
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;

@@ -202,8 +202,9 @@
     step = Math.max(0, Math.min(1, step));
     lb._step = step;
     lb.setAttribute("data-step", String(step));
-    track.style.transition = animate === false ? "none" : "transform 400ms ease-out";
-    track.style.transform = "translateX(" + (-step * 50).toFixed(4) + "%)";
+    if (animate === false) track.style.transition = "none";
+    else track.style.transition = "";
+    track.style.transform = "none";
   }
 
   function closeLb() {
@@ -211,21 +212,10 @@
     if (!lb || lb._closing) return;
     lb._closing = true;
     var big = lb.querySelector(".br-lb-art");
-    var from = lb._from;
-    if (lb._step) setStep(lb, 0, false);
+    if (big) big.style.transform = "none";
     lb.classList.add("br-lb-closing");
     lb.classList.remove("br-lb-on");
     showTip("", 0, 0);
-    if (big && from) {
-      void big.offsetWidth;
-      var r = big.getBoundingClientRect();
-      if (r.width && r.height) {
-        var s = Math.min(from.w / r.width, from.h / r.height);
-        var dx = from.x + from.w / 2 - (r.left + r.width / 2);
-        var dy = from.y + from.h / 2 - (r.top + r.height / 2);
-        big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-      }
-    }
     setTimeout(function () {
       if (lb.parentNode) lb.parentNode.removeChild(lb);
       if (!document.getElementById("br-lb")) document.documentElement.classList.remove("br-lb-open");
@@ -301,14 +291,8 @@
         }
         drag.active = true;
         deck.classList.add("sh-dragging");
-        var track = deck.querySelector(".br-track");
-        if (track) track.style.transition = "none";
       }
       e.preventDefault();
-      var trackOn = deck.querySelector(".br-track");
-      if (!trackOn) return;
-      var x = Math.max(-drag.w, Math.min(0, -drag.step * drag.w + dx));
-      trackOn.style.transform = "translateX(" + x.toFixed(1) + "px)";
     });
     function endDrag(e) {
       if (!drag || e.pointerId !== drag.id) return;
@@ -357,7 +341,6 @@
       if (!svg || document.getElementById("br-lb") || card.hidden) return;
       paintPrint(svg, slug);
       bindRouteTip(svg);
-      var thumb = art.getBoundingClientRect();
       var big = svg;
       var framed = svg.cloneNode(true);
       bindRouteTip(framed);
@@ -367,10 +350,9 @@
       lb.setAttribute("role", "dialog");
       lb.setAttribute("aria-modal", "true");
       lb.setAttribute("data-step", "0");
-      lb._from = { x: thumb.left, y: thumb.top, w: thumb.width, h: thumb.height };
       lb._step = 0;
       big.classList.add("br-lb-art");
-      big.style.opacity = "0";
+      big.style.transform = "none";
       var deck = document.createElement("div");
       deck.className = "br-deck br-stage";
       var side = gallerySide().toFixed(2) + "px";
@@ -393,33 +375,14 @@
       deck.appendChild(track);
       mountEdges(lb, deck);
       lb.appendChild(deck);
-      function measureAndZoom() {
-        var r = big.getBoundingClientRect();
-        if (!r.width || !r.height) return false;
-        var s = Math.min(thumb.width / r.width, thumb.height / r.height);
-        var dx = thumb.left + thumb.width / 2 - (r.left + r.width / 2);
-        var dy = thumb.top + thumb.height / 2 - (r.top + r.height / 2);
-        big.style.transition = "none";
-        big.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(4) + ")";
-        big.style.opacity = "1";
-        void big.offsetWidth;
-        big.style.transition = "";
-        requestAnimationFrame(function () {
-          if (lb._closing) return;
-          lb.classList.add("br-lb-on");
-          big.style.transform = "none";
-        });
-        return true;
-      }
       document.body.appendChild(lb);
       document.documentElement.classList.add("br-lb-open");
       bindDeck(lb, deck);
+      big.style.transform = "none";
       requestAnimationFrame(function () {
         if (lb._closing) return;
-        if (!measureAndZoom()) {
-          lb.classList.add("br-lb-on");
-          big.style.opacity = "1";
-        }
+        lb.classList.add("br-lb-on");
+        big.style.transform = "none";
       });
       lb.addEventListener("click", function (e) {
         if (e.target === lb) closeLb();
