@@ -196,21 +196,21 @@
     ua: "Ukraine"
   };
   var EU_FILE_VERSION = {
-    fr: "20261022a",
-    ch: "20261022a",
-    at: "20261022a",
-    it: "20261022a",
-    no: "20261022b",
-    se: "20261022b",
-    fi: "20261022b",
-    es: "20261022c",
-    ad: "20261022c",
-    rs: "20261022d",
-    ua: "20261022d",
-    sk: "20261022d",
-    bg: "20261022d",
-    de: "20261022d",
-    cz: "20261022d"
+    fr: "20261023s",
+    ch: "20261023s",
+    at: "20261023s",
+    it: "20261023s",
+    no: "20261023s",
+    se: "20261023s",
+    fi: "20261023s",
+    es: "20261023s",
+    ad: "20261023s",
+    rs: "20261023s",
+    ua: "20261023s",
+    sk: "20261023s",
+    bg: "20261023s",
+    de: "20261023s",
+    cz: "20261023s"
   };
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
@@ -449,6 +449,15 @@
     return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
+  function searchHay(hill) {
+    var parts = [hill.name || ""];
+    if (hill.province === "eu") {
+      if (hill.admin) parts.push(hill.admin);
+      if (hill.region && EU_COUNTRY_NAMES[hill.region]) parts.push(EU_COUNTRY_NAMES[hill.region]);
+    }
+    return fold(parts.join("\n"));
+  }
+
   function matches(hill) {
     if (!query) {
       if (province === "ca") {
@@ -457,7 +466,7 @@
       if (province !== "all" && province !== "ca" && region !== "all" && hill.region !== region) return false;
     }
     if (kind !== "all" && hill.type !== kind) return false;
-    if (query && fold(hill.name).indexOf(query) === -1) return false;
+    if (query && searchHay(hill).indexOf(query) === -1) return false;
     return true;
   }
 
@@ -554,7 +563,7 @@
   function onMap(hill) {
     if (typeof hill.lat !== "number" || typeof hill.lon !== "number") return false;
     if (kind !== "all" && hill.type !== kind) return false;
-    if (query && fold(hill.name).indexOf(query) === -1) return false;
+    if (query && searchHay(hill).indexOf(query) === -1) return false;
     if (popular) return isShown(hill);
     return true;
   }
@@ -681,7 +690,7 @@
     if (hill._filePromise) return hill._filePromise;
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
-      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261022p").then(function (res) {
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261023s").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
       }),
@@ -801,7 +810,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023r";
+    return "frontal/" + file + ".svg?v=20261023s";
   }
 
   function frontalArt(hill) {
@@ -1007,10 +1016,10 @@
   };
 
   function locationText(hill) {
+    if (hill.province === "eu") return hill.admin || "";
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
     if (hill.province === "us" && hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
-    if (hill.province === "eu" && hill.region && EU_COUNTRY_NAMES[hill.region]) return EU_COUNTRY_NAMES[hill.region];
     return REGION_GAP[hill.slug] || "";
   }
 
@@ -1260,12 +1269,9 @@
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
     placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: 20 }].concat(top), DRAW, 16);
     var second = [];
-    if (hill.province === "eu") {
-      if (loc) second.push({ label: "REGION", text: loc, size: 20 });
-    } else {
-      if (loc) second.push({ label: "REGION", text: loc, size: 20 });
-      second.push({ label: "COUNTRY", text: hill.province === "us" ? "USA" : "Canada", size: 20 });
-    }
+    if (loc) second.push({ label: "REGION", text: loc, size: 20 });
+    var country = hill.province === "us" ? "USA" : hill.province === "eu" ? ((hill.region && EU_COUNTRY_NAMES[hill.region]) || "") : "Canada";
+    if (country) second.push({ label: "COUNTRY", text: country, size: 20 });
     if (gps) second.push({ label: "GPS", text: gps, size: 20 });
     if (second.length) placeRow(cap, second, DRAW + BAND / 2, 20);
     svg.appendChild(cap);
@@ -1420,6 +1426,7 @@
         slug: row.slug,
         name: row.name,
         region: row.region || null,
+        admin: row.admin || "",
         province: row.province || "bc",
         lat: row.lat,
         lon: row.lon,
@@ -3000,7 +3007,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261022i").then(function (res) {
+  fetch("hill-index.json?v=20261023s").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
