@@ -502,30 +502,11 @@ def write_svg(path, routes, roads=None):
     return [round(v, 5) for v in bbox]
 
 
-def stats_banner(name, routes, km, stats_id=""):
-    n = int(routes)
-    word = "route" if n == 1 else "routes"
-    stats_attr = (' id="%s"' % xml(stats_id)) if stats_id else ""
+def city_card(slug, name, art):
     return (
-        '<div class="br-city-banner"><p class="br-city-banner-name">%s</p>'
-        '<p class="br-city-banner-stats"%s>%d %s · %.1f km</p></div>'
-        % (xml(name), stats_attr, n, word, float(km))
-    )
-
-
-def vancouver_banner():
-    """Name, route count, and summed kilometres from the Vancouver file on disk."""
-    data = json.loads((ROOT / "routes.json").read_text())
-    routes = data.get("routes") or []
-    km = sum(float(route.get("km") or 0) for route in routes)
-    return stats_banner("Vancouver", len(routes), round(km + 1e-9, 1), "br-van-stats")
-
-
-def city_card(slug, name, art, banner):
-    return (
-        '<article class="br-city" data-country="ca" data-slug="%s">%s%s'
+        '<article class="br-city" data-country="ca" data-slug="%s">%s'
         '<p class="br-city-caption">%s</p></article>'
-        % (xml(slug), art, banner, xml(name))
+        % (xml(slug), art, xml(name))
     )
 
 
@@ -542,7 +523,6 @@ def write_index_html(cities):
             "vancouver",
             "Vancouver",
             '<div class="br-city-art" id="br-print"></div>',
-            vancouver_banner(),
         )
     ]
     for city in cities:
@@ -553,7 +533,7 @@ def write_index_html(cities):
             PRINT_VERSION,
             xml(name),
         )
-        cards.append(city_card(slug, name, art, stats_banner(name, city["routes"], city["km"])))
+        cards.append(city_card(slug, name, art))
     body = '<div class="br-row" id="br-row">\n' + "\n".join(cards) + "\n</div>"
     page.write_text(text[:start] + INDEX_START + "\n" + body + "\n" + text[end:])
 

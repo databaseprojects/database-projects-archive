@@ -152,33 +152,6 @@
   background: #fff;
 }
 
-.br-city-banner {
-  background: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.4);
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  text-align: center;
-}
-
-.br-city-banner-name,
-.br-city-banner-stats {
-  margin: 0;
-  padding: 0.22rem 0.4rem;
-  font-weight: 400;
-  line-height: 1.25;
-}
-
-.br-city-banner-name {
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-}
-
-.br-city-banner-stats {
-  font-size: 11px;
-  letter-spacing: 0.03em;
-}
-
 .br-city-caption {
   display: block;
   margin: 0.32rem 0 0;
@@ -268,7 +241,8 @@
   position: relative;
   overflow: hidden;
   touch-action: none;
-  cursor: default;
+  cursor: grab;
+  user-select: none;
 }
 
 .br-lb:not(.br-lb-on) .br-deck {
@@ -290,8 +264,9 @@
 
 .br-track {
   display: flex;
-  flex-direction: column;
-  height: 300%;
+  flex-direction: row;
+  width: 300%;
+  height: 100%;
   transition: transform 400ms ease-out;
 }
 
@@ -300,10 +275,76 @@
   flex: 0 0 33.3333%;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 33.3333%;
+  width: 33.3333%;
+  height: 100%;
   min-width: 0;
   min-height: 0;
+}
+
+.br-stage.sh-dragging {
+  cursor: grabbing;
+}
+
+.br-lb .sh-edge {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #111;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.br-lb .sh-edge svg {
+  display: block;
+  width: 11px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.br-lb .sh-edge-next { right: 8px; }
+.br-lb .sh-edge-prev { left: 8px; }
+
+.br-lb[data-step="0"] .sh-edge-prev,
+.br-lb[data-step="2"] .sh-edge-next {
+  visibility: hidden;
+}
+
+.br-lb .br-stage:hover .sh-edge {
+  opacity: 0.4;
+  pointer-events: auto;
+}
+
+.br-lb[data-step="0"] .br-stage:hover .sh-edge-prev,
+.br-lb[data-step="2"] .br-stage:hover .sh-edge-next {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.br-lb .br-stage .sh-edge:hover {
+  opacity: 0.7;
+}
+
+.br-lb .br-stage.sh-touch-hint .sh-edge {
+  opacity: 0.4;
+  pointer-events: auto;
+}
+
+.br-lb[data-step="0"] .br-stage.sh-touch-hint .sh-edge-prev,
+.br-lb[data-step="2"] .br-stage.sh-touch-hint .sh-edge-next {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .br-lb .br-lb-art {
