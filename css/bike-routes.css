@@ -245,12 +245,16 @@
   user-select: none;
 }
 
+.br-lb .br-deck {
+  display: block;
+  margin: 0;
+}
+
 .br-lb:not(.br-lb-on) .br-deck {
   overflow: visible;
 }
 
-.br-lb:not(.br-lb-on) .br-slide-frame,
-.br-lb:not(.br-lb-on) .br-slide-shirt {
+.br-lb:not(.br-lb-on) .br-slide-frame {
   visibility: hidden;
 }
 
@@ -265,17 +269,18 @@
 .br-track {
   display: flex;
   flex-direction: row;
-  width: 300%;
+  flex-shrink: 0;
+  width: 200%;
   height: 100%;
   transition: transform 400ms ease-out;
 }
 
 .br-slide {
   display: flex;
-  flex: 0 0 33.3333%;
+  flex: 0 0 50%;
   align-items: center;
   justify-content: center;
-  width: 33.3333%;
+  width: 50%;
   height: 100%;
   min-width: 0;
   min-height: 0;
@@ -317,7 +322,7 @@
 .br-lb .sh-edge-prev { left: 8px; }
 
 .br-lb[data-step="0"] .sh-edge-prev,
-.br-lb[data-step="2"] .sh-edge-next {
+.br-lb[data-step="1"] .sh-edge-next {
   visibility: hidden;
 }
 
@@ -327,7 +332,7 @@
 }
 
 .br-lb[data-step="0"] .br-stage:hover .sh-edge-prev,
-.br-lb[data-step="2"] .br-stage:hover .sh-edge-next {
+.br-lb[data-step="1"] .br-stage:hover .sh-edge-next {
   opacity: 0;
   pointer-events: none;
 }
@@ -342,7 +347,7 @@
 }
 
 .br-lb[data-step="0"] .br-stage.sh-touch-hint .sh-edge-prev,
-.br-lb[data-step="2"] .br-stage.sh-touch-hint .sh-edge-next {
+.br-lb[data-step="1"] .br-stage.sh-touch-hint .sh-edge-next {
   opacity: 0;
   pointer-events: none;
 }
@@ -435,37 +440,5 @@
   display: block;
   width: 100%;
   height: 100%;
-  background: #fff;
-}
-
-.br-shirt {
-  position: relative;
-  height: 100%;
-  max-width: 100%;
-  aspect-ratio: 200 / 228;
-  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.35));
-}
-
-.br-shirt-shape {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.br-shirt-print {
-  position: absolute;
-  left: 50%;
-  top: 47%;
-  width: 34%;
-  background: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
-  transform: translate(-50%, -42%);
-}
-
-.br-shirt-print img,
-.br-shirt-print svg {
-  display: block;
-  width: 100%;
-  height: auto;
   background: #fff;
 }
