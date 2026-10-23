@@ -456,8 +456,6 @@
       if (hill.region && EU_COUNTRY_NAMES[hill.region]) parts.push(EU_COUNTRY_NAMES[hill.region]);
     } else if (hill.province === "us") {
       if (hill.range) parts.push(hill.range);
-      if (hill.state) parts.push(hill.state);
-      if (hill.region && US_STATE_NAMES[hill.region]) parts.push(US_STATE_NAMES[hill.region]);
       parts.push("USA");
       parts.push("United States");
     }
@@ -1023,11 +1021,7 @@
 
   function locationText(hill) {
     if (hill.province === "eu") return hill.admin || "";
-    if (hill.province === "us") {
-      if (hill.range) return hill.range;
-      if (hill.region && US_STATE_NAMES[hill.region]) return US_STATE_NAMES[hill.region];
-      return "";
-    }
+    if (hill.province === "us") return hill.range || "";
     var named = hill.region && REGIONS[hill.region];
     if (named) return named;
     return REGION_GAP[hill.slug] || "";
@@ -1437,7 +1431,6 @@
         name: row.name,
         region: row.region || null,
         admin: row.admin || "",
-        state: row.state || "",
         range: row.range || "",
         province: row.province || "bc",
         lat: row.lat,

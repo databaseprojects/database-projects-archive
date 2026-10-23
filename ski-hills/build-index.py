@@ -112,8 +112,6 @@ def row_for(hill, catalog, names):
     }
     if hill.get("admin"):
         row["admin"] = hill["admin"]
-    if hill.get("state"):
-        row["state"] = hill["state"]
     if hill.get("range"):
         row["range"] = hill["range"]
     boost = hill.get("popularBoost")

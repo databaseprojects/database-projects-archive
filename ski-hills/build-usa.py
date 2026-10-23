@@ -579,7 +579,6 @@ def main():
             "slug": slug,
             "name": label,
             "region": hill["state"],
-            "state": hill["state"].upper(),
             "range": mountain_range(hill["state"], hill["lat"], hill["lon"], slug),
             "province": "us",
             "lon": hill["lon"],
