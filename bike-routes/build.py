@@ -187,15 +187,29 @@ def project_city(routes, pad=64):
     return xy
 
 
-def write_city(routes, path):
+def road_layer(lines, xy):
+    """Light road underlay. It sits under the bike routes and ignores the pointer."""
+    parts = [
+        '<g fill="none" stroke="#e6e6e6" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round" pointer-events="none">',
+    ]
+    for line in lines:
+        pts = " ".join("%.1f,%.1f" % xy(*p) for p in line)
+        parts.append('<polyline points="%s"/>' % pts)
+    parts.append("</g>")
+    return parts
+
+
+def write_city(routes, path, roads=None):
     xy = project_city(routes)
     rank = {name: i for i, name in enumerate(TYPES)}
     ordered = sorted(routes, key=lambda route: (max(rank.get(line["t"], 0) for line in route["lines"]), route["name"].lower()))
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">',
         '<rect width="1000" height="1000" fill="#fff"/>',
-        '<g fill="none" stroke-linejoin="round" stroke-linecap="round">',
     ]
+    if roads:
+        parts.extend(road_layer(roads, xy))
+    parts.append('<g fill="none" stroke-linejoin="round" stroke-linecap="round">')
     for route in ordered:
         parts.append('<g class="br-route" data-name="%s">' % xml(route["name"]))
         for line in route["lines"]:

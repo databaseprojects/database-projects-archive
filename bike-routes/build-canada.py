@@ -2,12 +2,14 @@
 """Flat north-up maps of named OSM cycle routes for Canadian cities.
 
 One city at a time. Overpass answers are cached under /tmp/bike-canada.
-A city that still fails after retries is skipped. Vancouver's files are
-not touched.
+A city that still fails after retries is skipped. main() does not touch
+Vancouver. --roads paints a light road underlay on the seven city maps
+from cached bike routes, and queries roads by bounding box only.
 """
 
 import json
 import math
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -29,6 +31,8 @@ ENDPOINTS = (
 )
 UA = "databaseprojects-bike-routes/1.0 (city maps; contact via github.com/databaseprojects)"
 CREDIT = "© OpenStreetMap contributors"
+PRINT_VERSION = "20261022f"
+ROAD_PAD = 0.005
 INDEX_START = "<!-- br-cities:start -->"
 INDEX_END = "<!-- br-cities:end -->"
 
@@ -468,13 +472,27 @@ def project(routes):
     return xy, [min(p[0] for p in pts), miny, max(p[0] for p in pts), max(p[1] for p in pts)]
 
 
-def write_svg(path, routes):
+def road_layer(lines, xy):
+    """Light road underlay, drawn under the bike routes. It ignores the pointer."""
+    parts = [
+        '<g fill="none" stroke="#e6e6e6" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round" pointer-events="none">',
+    ]
+    for line in lines:
+        pts = " ".join("%.1f,%.1f" % xy(*p) for p in line)
+        parts.append('<polyline points="%s"/>' % pts)
+    parts.append("</g>")
+    return parts
+
+
+def write_svg(path, routes, roads=None):
     xy, bbox = project(routes)
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">',
         '<rect width="1000" height="1000" fill="#fff"/>',
-        '<g fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">',
     ]
+    if roads:
+        parts.extend(road_layer(roads, xy))
+    parts.append('<g fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">')
     for route in routes:
         for line in route["lines"]:
             pts = " ".join("%.1f,%.1f" % xy(*p) for p in line)
@@ -510,8 +528,9 @@ def write_index_html(cities):
     for city in cities:
         slug = city["slug"]
         name = city["name"]
-        art = '<img class="br-city-art" src="prints/%s.svg" alt="%s cycle routes">' % (
+        art = '<img class="br-city-art" src="prints/%s.svg?v=%s" alt="%s cycle routes">' % (
             xml(slug),
+            PRINT_VERSION,
             xml(name),
         )
         cards.append(city_card(slug, name, art))
@@ -536,7 +555,8 @@ def build_city(city):
     routes = collect(city, poly, data)
     if not routes:
         raise RuntimeError("no qualifying routes")
-    bbox = write_svg(ROOT / "prints" / (city["slug"] + ".svg"), routes)
+    roads = load_roads(city["slug"], poly)
+    bbox = write_svg(ROOT / "prints" / (city["slug"] + ".svg"), routes, roads)
     total = round(sum(route["km"] for route in routes), 1)
     record = {
         "slug": city["slug"],
@@ -569,7 +589,9 @@ def finished_row(city):
     if not dest.exists() or not svg.exists() or svg.stat().st_size < 200:
         return None
     text = svg.read_text(errors="replace")
-    if "<svg" not in text[:200] or 'stroke="#000"' not in text[:500]:
+    # The road underlay is the first <g>, so the bike stroke may sit far past
+    # the old 500-character sniff.
+    if "<svg" not in text[:200] or 'stroke="#000"' not in text:
         return None
     record = json.loads(dest.read_text())
     routes = record.get("routes") or []
@@ -627,5 +649,222 @@ def main():
     print("SUMMARY", json.dumps({"built": built, "failed": failed}, ensure_ascii=False), flush=True)
 
 
+def cached_route_data(city):
+    """Bike routes already on disk. Never hits the network."""
+    slug = city["slug"]
+    for name in ("%s-routes.json" % slug, "%s-routes-map.json" % slug):
+        path = CACHE / name
+        if not path.exists() or path.stat().st_size <= 40:
+            continue
+        try:
+            data = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if data.get("elements"):
+            print("routes", path.name, flush=True)
+            return data
+    raise RuntimeError("cached routes missing")
+
+
+def envelope_bbox(poly):
+    minx, maxx, miny, maxy = poly.GetEnvelope()
+    south = miny - ROAD_PAD
+    west = minx - ROAD_PAD
+    north = maxy + ROAD_PAD
+    east = maxx + ROAD_PAD
+    return south, west, north, east
+
+
+def road_query(south, west, north, east):
+    return (
+        "[out:json][timeout:180][bbox:%.6f,%.6f,%.6f,%.6f];\n"
+        'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|unclassified)$"];\n'
+        "out geom;\n" % (south, west, north, east)
+    )
+
+
+def load_roads(slug, poly):
+    south, west, north, east = envelope_bbox(poly)
+    print("roads bbox", slug, "%.4f %.4f %.4f %.4f" % (south, west, north, east), flush=True)
+    data = overpass(road_query(south, west, north, east), CACHE / ("%s-roads.json" % slug))
+    lines = clip_roads(data, poly)
+    print("roads", slug, "lines", len(lines), flush=True)
+    if not lines:
+        raise RuntimeError("no roads inside the boundary")
+    return lines
+
+
+def clip_roads(data, city_poly):
+    sys.setrecursionlimit(10000)
+    hold = city_poly.Clone()
+    if not hold.IsValid():
+        fixed = hold.MakeValid()
+        if fixed is not None:
+            hold = fixed
+    minx, maxx, miny, maxy = hold.GetEnvelope()
+    lines = []
+    elements = data.get("elements") or []
+    for n, el in enumerate(elements):
+        if n and n % 5000 == 0:
+            print("clip", n, "of", len(elements), "kept", len(lines), flush=True)
+        if el.get("type") != "way":
+            continue
+        coords = way_coords(el)
+        if len(coords) < 2:
+            continue
+        xs = [p[0] for p in coords]
+        ys = [p[1] for p in coords]
+        if max(xs) < minx or min(xs) > maxx or max(ys) < miny or min(ys) > maxy:
+            continue
+        slim = simplify([(round(p[0], 5), round(p[1], 5)) for p in coords], TOL)
+        if len(slim) < 2:
+            continue
+        try:
+            cut = line_geom(slim).Intersection(hold)
+        except Exception:
+            continue
+        for line in clipped_lines(cut):
+            drawn = simplify([(round(p[0], 5), round(p[1], 5)) for p in line], TOL)
+            if len(drawn) >= 2 and length_km(drawn) >= 0.02:
+                lines.append(drawn)
+    return lines
+
+
+def bike_polylines_canada(routes):
+    xy, _bbox = project(routes)
+    rows = []
+    for route in routes:
+        for line in route["lines"]:
+            pts = " ".join("%.1f,%.1f" % xy(*p) for p in line)
+            rows.append('<polyline points="%s"/>' % pts)
+    return rows
+
+
+def file_polylines(path):
+    return [line for line in path.read_text().splitlines() if line.startswith("<polyline")]
+
+
+def verify_canada():
+    """Reproject cached bike routes and confirm the drawings do not move."""
+    mismatches = []
+    ready = []
+    for city in CITIES:
+        if city["slug"] not in ("victoria", "calgary", "edmonton", "toronto", "ottawa", "hamilton"):
+            continue
+        svg = ROOT / "prints" / (city["slug"] + ".svg")
+        _rel, poly = load_boundary(city)
+        routes = collect(city, poly, cached_route_data(city))
+        fresh = bike_polylines_canada(routes)
+        old = file_polylines(svg)
+        if fresh != old:
+            mismatches.append((city["slug"], len(fresh), len(old)))
+            print("mismatch", city["slug"], "fresh", len(fresh), "file", len(old), flush=True)
+            continue
+        ready.append((city, poly, routes, old))
+        print("aligned", city["slug"], "routes", len(routes), "lines", len(old), flush=True)
+    return ready, mismatches
+
+
+def vancouver_polygon():
+    data = json.loads((ROOT / "boundary.json").read_text())
+    multi = ogr.Geometry(ogr.wkbMultiPolygon)
+    for ring_pts in data.get("holes") or []:
+        if len(ring_pts) < 4:
+            continue
+        poly = ogr.Geometry(ogr.wkbPolygon)
+        ring = ogr.Geometry(ogr.wkbLinearRing)
+        for lon, lat in ring_pts:
+            ring.AddPoint(float(lon), float(lat))
+        if ring_pts[0] != ring_pts[-1]:
+            ring.AddPoint(float(ring_pts[0][0]), float(ring_pts[0][1]))
+        poly.AddGeometry(ring)
+        if not poly.IsValid():
+            fixed = poly.MakeValid()
+            if fixed is not None:
+                poly = fixed
+        name = poly.GetGeometryName()
+        if name == "POLYGON":
+            multi.AddGeometry(poly)
+        elif name == "MULTIPOLYGON":
+            for i in range(poly.GetGeometryCount()):
+                multi.AddGeometry(poly.GetGeometryRef(i).Clone())
+    union = multi.UnionCascaded()
+    if union is None or union.IsEmpty():
+        raise RuntimeError("empty vancouver polygon")
+    if not union.IsValid():
+        fixed = union.MakeValid()
+        if fixed is not None:
+            union = fixed
+    return union
+
+
+def verify_vancouver(vancouver):
+    routes = json.loads((ROOT / "routes.json").read_text())["routes"]
+    xy = vancouver.project_city(routes)
+    rank = {name: i for i, name in enumerate(vancouver.TYPES)}
+    ordered = sorted(routes, key=lambda route: (max(rank.get(line["t"], 0) for line in route["lines"]), route["name"].lower()))
+    fresh = []
+    for route in ordered:
+        for line in route["lines"]:
+            pts = " ".join("%.1f,%.1f" % xy(*p) for p in line["c"])
+            width = vancouver.WIDTH.get(line["t"], 1.6)
+            color = vancouver.COLOR.get(line["t"], "#111111")
+            fresh.append('<polyline stroke="%s" stroke-width="%s" points="%s"/>' % (color, width, pts))
+    old = file_polylines(ROOT / "city.svg")
+    if fresh != old:
+        print("mismatch vancouver fresh", len(fresh), "file", len(old), flush=True)
+        return None
+    print("aligned vancouver lines", len(old), flush=True)
+    return routes, old
+
+
+def paint_roads():
+    """Road underlay for the seven city maps. Bike routes stay cached."""
+    CACHE.mkdir(parents=True, exist_ok=True)
+    import build as vancouver
+
+    ready, mismatches = verify_canada()
+    van = verify_vancouver(vancouver)
+    if mismatches or van is None or len(ready) != 6:
+        raise SystemExit("bike lines moved; roads not written")
+    for city, poly, routes, old in ready:
+        slug = city["slug"]
+        try:
+            roads = load_roads(slug, poly)
+        except Exception as err:
+            print("fail", slug, err, flush=True)
+            continue
+        svg = ROOT / "prints" / (slug + ".svg")
+        original = svg.read_text()
+        write_svg(svg, routes, roads)
+        if file_polylines(svg)[-len(old):] != old:
+            svg.write_text(original)
+            raise SystemExit("bike lines changed while writing " + slug)
+        print("wrote", slug, "roads", len(roads), "bike", len(old), flush=True)
+    routes, old = van
+    city_svg = ROOT / "city.svg"
+    original = city_svg.read_text()
+    poly = vancouver_polygon()
+    try:
+        roads = load_roads("vancouver", poly)
+    except Exception as err:
+        print("fail vancouver", err, flush=True)
+        return
+    vancouver.write_city(routes, city_svg, roads)
+    if file_polylines(city_svg)[-len(old):] != old:
+        city_svg.write_text(original)
+        raise SystemExit("vancouver bike lines changed")
+    print("wrote vancouver roads", len(roads), "bike", len(old), flush=True)
+
+
 if __name__ == "__main__":
-    main()
+    if "--roads" in sys.argv:
+        paint_roads()
+    elif "--check" in sys.argv:
+        import build as vancouver
+        _ready, mismatches = verify_canada()
+        van = verify_vancouver(vancouver)
+        if mismatches or van is None:
+            raise SystemExit(1)
+    else:
+        main()

@@ -190,7 +190,7 @@
   });
 
   if (print) {
-    fetch("city.svg?v=20261017h").then(function (res) {
+    fetch("city.svg?v=20261022f").then(function (res) {
       if (!res.ok) throw new Error("svg");
       return res.text();
     }).then(function (text) {
