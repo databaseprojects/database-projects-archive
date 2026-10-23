@@ -744,7 +744,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023g";
+    return "frontal/" + file + ".svg?v=20261023h";
   }
 
   function frontalArt(hill) {
@@ -1278,6 +1278,7 @@
     mountGallery(lb, big, card, px);
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
+    if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
     fitFrameArt(lb);
@@ -1298,7 +1299,7 @@
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-labels-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
+      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-labels-toggle, .sh-trees-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
       closeLb();
     });
   }
@@ -2633,6 +2634,7 @@
     if (lines && shift) paintContours(svg, lines, shift, false);
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
+    if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
   }
 
   function ensureFrontal(hill, done) {
@@ -2740,6 +2742,30 @@
         refreshMockArt(hill.el);
       });
     }
+    var trees = null;
+    if (hill.slug === "kimberley-alpine-resort") {
+      hill._treesOn = true;
+      trees = document.createElement("label");
+      trees.className = "sh-tag sh-trees-toggle sh-on";
+      var treeBox = document.createElement("input");
+      treeBox.type = "checkbox";
+      treeBox.className = "sh-trees-check";
+      treeBox.checked = true;
+      var treeCaption = document.createElement("span");
+      treeCaption.textContent = "Trees";
+      trees.appendChild(treeBox);
+      trees.appendChild(treeCaption);
+      trees.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      treeBox.addEventListener("change", function () {
+        hill._treesOn = treeBox.checked;
+        trees.classList.toggle("sh-on", treeBox.checked);
+        var lb = document.getElementById("sh-lb");
+        if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", treeBox.checked);
+        refreshMockArt(hill.el);
+      });
+    }
     var views = sideViews(hill);
     var sideRow = null;
     var sideBtns = [];
@@ -2774,6 +2800,7 @@
       plan.setAttribute("aria-pressed", on ? "false" : "true");
       bird.setAttribute("aria-pressed", on ? "true" : "false");
       if (labels) labels.hidden = !on;
+      if (trees) trees.hidden = !on;
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;
@@ -2792,6 +2819,7 @@
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
     if (labels) wrap.appendChild(labels);
+    if (trees) wrap.appendChild(trees);
     wrap._sync = sync;
     return wrap;
   }
@@ -2847,6 +2875,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._labelsOn) svg.classList.add("sh-labels-on");
+    if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
