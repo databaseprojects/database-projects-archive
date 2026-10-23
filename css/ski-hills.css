@@ -1184,3 +1184,16 @@ html.sh-prints-off .sh-cart-panel {
   display: none;
 }
 
+.sh-frontal-tree-wash { display: none; }
+.sh-trees-on .sh-frontal-tree-wash { display: inline; }
+
+.sh-trees-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.sh-trees-toggle[hidden] {
+  display: none;
+}
+
