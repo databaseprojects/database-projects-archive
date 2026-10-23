@@ -110,6 +110,10 @@ def row_for(hill, catalog, names):
         "bounds": bounds_of(hill),
         "catalog": catalog,
     }
+    if hill.get("admin"):
+        row["admin"] = hill["admin"]
+    if hill.get("range"):
+        row["range"] = hill["range"]
     boost = hill.get("popularBoost")
     if isinstance(boost, (int, float)) and boost:
         row["popularBoost"] = boost
@@ -122,8 +126,11 @@ def main():
         sources.append(("us-" + state, ROOT / "usa" / (state + ".json"), None))
     for code in EU_COUNTRIES:
         path = ROOT / "europe" / (code + ".json")
+        folder = ROOT / "europe" / code
         if path.exists():
             sources.append(("eu-" + code, path, None))
+        elif folder.is_dir():
+            sources.append(("eu-" + code, folder, None))
     # Canada and the United States rows stay as published. Rebuilding
     # bounds from the deduped runs would move cards that were framed earlier.
     frozen = {}
@@ -135,7 +142,10 @@ def main():
     seen = set()
     rows = []
     for catalog, path, names_path in sources:
-        data = json.loads(path.read_text())
+        if path.is_dir():
+            data = {"hills": [json.loads(child.read_text()) for child in sorted(path.glob("*.json"))]}
+        else:
+            data = json.loads(path.read_text())
         names = load_names(names_path)
         for hill in data.get("hills") or []:
             ident = hill.get("id")
@@ -153,12 +163,15 @@ def main():
         raise SystemExit("expected at least 503 hills, got %s" % len(rows))
     # 503 is the original Canada and United States list. West added 53,
     # New England added 44, the Mid-Atlantic added 60, and the Great Lakes
-    # added 67, so a published index now holds 727 Canada and United States rows.
-    if len(frozen) != 727:
-        raise SystemExit("expected 727 existing Canada/US rows, found %s" % len(frozen))
+    # added 67. Later state catalogs brought the frozen Canada/US set to 756.
+    if len(frozen) != 756:
+        raise SystemExit("expected 756 existing Canada/US rows, found %s" % len(frozen))
     missing = [row["slug"] for row in rows if not row["bounds"] or row["lat"] is None or row["lon"] is None]
     if missing:
         raise SystemExit("hills missing bounds or coordinates: %s" % ", ".join(missing))
+    published = json.loads((ROOT / "hill-index.json").read_text()).get("hills") or []
+    order = {row["id"]: i for i, row in enumerate(published)}
+    rows.sort(key=lambda row: (order.get(row["id"], len(order)), row.get("slug") or ""))
     out = ROOT / "hill-index.json"
     out.write_text(json.dumps({"hills": rows}, separators=(",", ":")) + "\n")
     print("wrote %s (%s hills, %s bytes)" % (out.name, len(rows), out.stat().st_size))

@@ -11,18 +11,22 @@ Permanent default for Bird's-eye view (`generate_birdseye_tree_wash` / `setup_fr
     rather than stopping at the ski runs' bounding box.
 
 Usage:
-  python3 build-tree-overlays.py                   # All 21 target hills (Plan + Bird's-eye)
-  python3 build-tree-overlays.py --frontal-only    # Regenerate Bird's-eye frontal SVGs only
-  python3 build-tree-overlays.py <slug> [...]      # Generate specific hill slug(s) from any regional JSON
+  python3 build-tree-overlays.py --all             # Every catalog hill still missing a hard-edge wash
+  python3 build-tree-overlays.py                   # Same as --all
+  python3 build-tree-overlays.py --targets         # The original 21 hills
+  python3 build-tree-overlays.py <slug> [...]      # Specific hill slug(s)
 """
 import bisect
 import json
 import math
+import os
 import re
 import shutil
 import sys
 import time
+import traceback
 import types
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 import numpy as np
@@ -237,8 +241,12 @@ TARGETS = [
 
 
 def load_hill_records():
-    """Load hill records across all regional JSON catalogs in ski-hills/ (Canada, USA, Europe)."""
+    """Load hill records across all regional JSON catalogs in ski-hills/ (Canada, USA, Europe).
+
+    A run-less index row must not replace the hill file that holds the drawn runs.
+    """
     by_slug = {}
+    by_path = {}
     json_files = [
         REPO_ROOT / "hills.json",
         REPO_ROOT / "alberta.json",
@@ -254,8 +262,21 @@ def load_hill_records():
     if eu_dir.exists():
         json_files.extend(sorted(eu_dir.rglob("*.json")))
     seen = set()
+    skip = {"hill-index.json"}
+
+    def remember(hill, path):
+        slug = hill.get("slug")
+        if not isinstance(slug, str) or not slug:
+            return
+        prev = by_slug.get(slug)
+        new_runs = bool(hill.get("runs"))
+        if prev is not None and prev.get("runs") and not new_runs:
+            return
+        by_slug[slug] = hill
+        by_path[slug] = str(path)
+
     for p in json_files:
-        if not p.exists() or p in seen:
+        if not p.exists() or p in seen or p.name in skip or p.name.endswith("-names.json") or p.name.endswith("-index.json"):
             continue
         seen.add(p)
         try:
@@ -264,9 +285,105 @@ def load_hill_records():
             continue
         if isinstance(data, dict) and isinstance(data.get("hills"), list):
             for h in data["hills"]:
-                if isinstance(h, dict) and "slug" in h:
-                    by_slug[h["slug"]] = h
-    return by_slug
+                if isinstance(h, dict):
+                    remember(h, p)
+        elif isinstance(data, dict) and data.get("slug") and data.get("runs"):
+            remember(data, p)
+    return by_slug, by_path
+
+
+def geom_file(slug):
+    if slug == "cypress-mountain" and Path("/tmp/cypress-geom.json").exists():
+        return Path("/tmp/cypress-geom.json")
+    return Path(f"/tmp/{slug}-geom.json")
+
+
+def materialize_missing_geom(by_slug, slugs):
+    """Write /tmp/<slug>-geom.json from OpenSkiMap for hills that have no geometry cache.
+
+    The saved runs are the deduped lines build-frontal.py projects, so the plan
+    frame matches the published drawing.
+    """
+    import ijson
+    import importlib.util
+
+    needed = []
+    for slug in slugs:
+        path = geom_file(slug)
+        if path.exists() and path.stat().st_size > 50:
+            continue
+        hill = by_slug.get(slug)
+        if not hill or not hill.get("id"):
+            continue
+        needed.append(hill)
+    if not needed:
+        print("geom cache already covers this batch", flush=True)
+        return 0
+    src = Path("/tmp/ski")
+    if not (src / "runs.geojson").exists():
+        print("no OpenSkiMap source; missing geom stays missing", flush=True)
+        return 0
+    spec = importlib.util.spec_from_file_location("build_alberta", str(REPO_ROOT / "build-alberta.py"))
+    ab = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ab)
+    wanted = {hill["id"] for hill in needed}
+    buckets = {hid: {"geom_runs": [], "geom_lifts": [], "runs": [], "lifts": []} for hid in wanted}
+
+    def take(path, keep_diff):
+        kept = 0
+        seen = 0
+        with open(path, "rb") as handle:
+            for feat in ijson.items(handle, "features.item", use_float=True):
+                seen += 1
+                if seen % 250000 == 0:
+                    print(path.name, seen, "kept", kept, flush=True)
+                props = feat.get("properties") or {}
+                ids = ab.linked_ids(props, wanted)
+                if not ids:
+                    continue
+                lines = ab.lines_of(feat.get("geometry"))
+                if not lines:
+                    continue
+                diff = None
+                if keep_diff:
+                    raw = props.get("difficulty")
+                    if isinstance(raw, str) and raw.strip():
+                        diff = raw.strip().lower()
+                name = props.get("name")
+                name = name.strip() if isinstance(name, str) and name.strip() else None
+                kind = (feat.get("geometry") or {}).get("type") or ""
+                for oid in ids:
+                    slot = buckets[oid]
+                    if keep_diff:
+                        for line in lines:
+                            slot["runs"].append((diff, line))
+                        slot["geom_runs"].append({"name": name, "difficulty": diff, "kind": kind, "lines": lines})
+                    else:
+                        slot["lifts"].extend(lines)
+                        slot["geom_lifts"].append({"name": name, "difficulty": None, "lines": lines})
+                kept += 1
+        print("linked", path.name, "features", seen, "kept", kept, flush=True)
+
+    print("linking OpenSkiMap geometry for", len(needed), "hills", flush=True)
+    take(src / "lifts.geojson", False)
+    take(src / "runs.geojson", True)
+    wrote = 0
+    for hill in needed:
+        slot = buckets[hill["id"]]
+        if not slot["geom_runs"]:
+            continue
+        try:
+            _runs, _lifts, geom, _stats, _raw = ab.framed_parts(slot["runs"], slot["lifts"], slot["geom_runs"])
+        except Exception as err:
+            print("geom frame failed", hill.get("slug"), err, flush=True)
+            continue
+        if not geom:
+            continue
+        payload = {"runs": geom, "lifts": slot["geom_lifts"]}
+        Path(f"/tmp/{hill['slug']}-geom.json").write_text(json.dumps(payload, ensure_ascii=False))
+        wrote += 1
+    print("wrote", wrote, "geom files of", len(needed), "missing", flush=True)
+    return wrote
 
 
 def worldcover_sources(box):
@@ -370,6 +487,15 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path):
     S = 2.0
     W = int(round((x1 - x0) * S))
     H = int(round((y1 - y0) * S))
+    # A hill whose stored drawing is far from the 1000px frame would otherwise
+    # rasterize a huge grid. Keep the same window and thin the sample.
+    max_cells = 6_000_000
+    cells = W * H
+    if cells > max_cells and cells > 0:
+        S *= (max_cells / cells) ** 0.5
+        S = max(S, 0.35)
+        W = max(1, int(round((x1 - x0) * S)))
+        H = max(1, int(round((y1 - y0) * S)))
 
     ix = np.arange(W, dtype=np.float64) / S + x0
     iy = np.arange(H, dtype=np.float64) / S + y0
@@ -776,10 +902,8 @@ def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, e
                 top = crest[j]
                 if top < 1e8 and yr - cdepth[j] >= bf.DEPTH_BIAS and py >= top - bf.RIDGE_MARGIN:
                     return True
-        if depth_grid is not None and (depth_hide is None or depth_hide(px, py)):
-            near = depth_grid.nearest(px, py)
-            if near < 1e8 and yr - near >= depth_grid.tol:
-                return True
+        # The contour depth grid hides line crossings. It also hides the
+        # forest on the visible slope, so the tree wash uses the skyline only.
         return False
 
     return {
@@ -828,6 +952,21 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
 
     step_x = max(10.0, (full_gx1 - full_gx0) / 850.0)
     step_y = max(10.0, (full_gy1 - full_gy0) / 850.0)
+    # A small hill fills the same 1000px frame, so a 10 m ground step can
+    # jump more than the 32px quad limit and drop the whole wash. Refine
+    # only enough that each step stays under that limit. Large hills keep
+    # the coarser of 10 m and 850 samples.
+    px_per_m = abs(paper(1.0, 0.0)[0] - paper(0.0, 0.0)[0])
+    py_per_m = abs(paper(0.0, 1.0)[1] - paper(0.0, 0.0)[1])
+    if px_per_m > 0:
+        step_x = min(step_x, 24.0 / px_per_m)
+    if py_per_m > 0:
+        step_y = min(step_y, 24.0 / py_per_m)
+    # A 2 m floor keeps ordinary hills from oversampling. On a tiny tow the
+    # frame is so enlarged that 2 m already exceeds the 32 px quad limit,
+    # so the floor cannot be coarser than that screen limit.
+    step_x = max(step_x, min(2.0, (24.0 / px_per_m) if px_per_m > 0 else 2.0))
+    step_y = max(step_y, min(2.0, (24.0 / py_per_m) if py_per_m > 0 else 2.0))
     xs = np.arange(full_gx0, full_gx1 + step_x, step_x, dtype=np.float64)
     ys = np.arange(full_gy0, full_gy1 + step_y, step_y, dtype=np.float64)
     nx, ny = len(xs), len(ys)
@@ -1025,133 +1164,263 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
     return len(subpaths), int(tree_mask.sum()), CW * CH
 
 
+
+BY_PATH = {}
+FRONTAL_ONLY = False
+PLAN_ONLY = False
+_HILL_CACHE = {}
+
+
+def _init_worker(path_map, frontal_only, plan_only):
+    global BY_PATH, FRONTAL_ONLY, PLAN_ONLY, _HILL_CACHE
+    BY_PATH = path_map
+    FRONTAL_ONLY = frontal_only
+    PLAN_ONLY = plan_only
+    _HILL_CACHE = {}
+
+
+def hill_record(slug):
+    path = BY_PATH.get(slug)
+    if not path:
+        raise KeyError(slug)
+    cached = _HILL_CACHE.get(path)
+    if cached is None:
+        cached = json.loads(Path(path).read_text())
+        _HILL_CACHE[path] = cached
+    if isinstance(cached, dict) and isinstance(cached.get("hills"), list):
+        for hill in cached["hills"]:
+            if hill.get("slug") == slug and hill.get("runs"):
+                return hill
+        for hill in cached["hills"]:
+            if hill.get("slug") == slug:
+                return hill
+    if isinstance(cached, dict) and cached.get("slug") == slug:
+        return cached
+    raise KeyError(slug)
+
+
+def frontal_paths(slug):
+    cam = bf.CAMERAS.get(slug) or {}
+    views = cam.get("views") or {}
+    paths = []
+    if views:
+        for name in views:
+            paths.append(REPO_ROOT / "frontal" / f"{slug}-{name}.svg")
+        paths.append(REPO_ROOT / "frontal" / f"{slug}.svg")
+    else:
+        one = REPO_ROOT / "frontal" / f"{slug}.svg"
+        if one.exists():
+            paths.append(one)
+    return [path for path in paths if path.exists()]
+
+
+def hard_edge_ready(slug):
+    """True when every published sheet already has a hard-edge tree wash."""
+    svgs = frontal_paths(slug)
+    contour = REPO_ROOT / "contours" / f"{slug}.json"
+    if not svgs and not contour.exists():
+        return False
+    for svg in svgs:
+        text = svg.read_text(errors="ignore")
+        if '<g class="sh-frontal-trees">' not in text:
+            return False
+        if re.search(r'<g class="sh-frontal-trees"[^>]*\smask=', text):
+            return False
+    if contour.exists() and '"treeWash"' not in contour.read_text(errors="ignore"):
+        return False
+    return True
+
+
+def generate_overlay(slug):
+    t0 = time.time()
+    hill = hill_record(slug)
+    hid = hill["id"]
+    name = hill.get("name") or slug
+    geom_path = geom_file(slug)
+    if not geom_path.exists() or geom_path.stat().st_size < 50:
+        return {"slug": slug, "name": name, "status": "no-geom", "sec": round(time.time() - t0, 1)}
+    svgs = frontal_paths(slug)
+    contour_path = REPO_ROOT / "contours" / f"{slug}.json"
+    if not svgs and not contour_path.exists():
+        return {"slug": slug, "name": name, "status": "no-drawing", "sec": round(time.time() - t0, 1)}
+
+    bf.GEOM = geom_path
+    bf.DEM = Path("/tmp/cypress-dem-wide.tif" if slug == "cypress-mountain" else f"/tmp/{slug}-dem-wide.tif")
+    runs, lifts = bf.load_geom()
+    if not runs:
+        return {"slug": slug, "name": name, "status": "no-geom", "sec": round(time.time() - t0, 1)}
+    box = bf.wide_box(runs, lifts)
+    bf.ensure_dem(box)
+    arr, gt = bf.read_grid()
+    wc_path = ensure_worldcover(slug, box)
+
+    dst_c_slug = OUT_CONTOURS / f"{slug}.json"
+    dst_c_id = OUT_CONTOURS / f"{hid}.json"
+    tree_wash_len = 0
+    if not FRONTAL_ONLY and contour_path.exists():
+        if slug == "kimberley-alpine-resort":
+            src_c_obj = json.loads(contour_path.read_text())
+            if "treeWash" in src_c_obj:
+                c_bytes = json.dumps(src_c_obj, separators=(",", ":"))
+                dst_c_slug.write_text(c_bytes)
+                dst_c_id.write_text(c_bytes)
+                tree_wash_len = len(src_c_obj["treeWash"])
+            else:
+                geom_raw = json.loads(geom_path.read_text())
+                tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
+                src_c_obj["treeWash"] = tree_wash_d
+                c_bytes = json.dumps(src_c_obj, separators=(",", ":"))
+                dst_c_slug.write_text(c_bytes)
+                dst_c_id.write_text(c_bytes)
+                tree_wash_len = len(tree_wash_d)
+        else:
+            geom_raw = json.loads(geom_path.read_text())
+            tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
+            src_c = json.loads(contour_path.read_text())
+            src_c["treeWash"] = tree_wash_d
+            c_bytes = json.dumps(src_c, separators=(",", ":"))
+            dst_c_slug.write_text(c_bytes)
+            dst_c_id.write_text(c_bytes)
+            tree_wash_len = len(tree_wash_d)
+    elif dst_c_slug.exists():
+        tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", "") or "")
+
+    frontal_written = []
+    if not PLAN_ONLY and svgs:
+        cam = bf.CAMERAS.get(slug) or {}
+        views = cam.get("views") or {}
+        if views:
+            for vname, facing_deg in views.items():
+                vslug = f"{slug}-{vname}"
+                src_svg = REPO_ROOT / "frontal" / f"{vslug}.svg"
+                if not src_svg.exists():
+                    continue
+                dst_svg = OUT_FRONTAL / f"{vslug}.svg"
+                generate_birdseye_tree_wash(
+                    slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg, facing_override=facing_deg
+                )
+                frontal_written.append(vslug)
+            front_svg = OUT_FRONTAL / f"{slug}-front.svg"
+            if front_svg.exists():
+                unsuffixed = front_svg.read_text().replace(f"{slug}-front", slug)
+                (OUT_FRONTAL / f"{slug}.svg").write_text(unsuffixed)
+                frontal_written.append(slug)
+        else:
+            src_svg = REPO_ROOT / "frontal" / f"{slug}.svg"
+            dst_svg = OUT_FRONTAL / f"{slug}.svg"
+            generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg)
+            frontal_written.append(slug)
+
+    dt = round(time.time() - t0, 1)
+    print(f"Done {slug} in {dt}s | plan treeWash len={tree_wash_len} | frontal={len(frontal_written)}", flush=True)
+    return {
+        "slug": slug,
+        "id": hid,
+        "name": name,
+        "status": "generated",
+        "plan": tree_wash_len,
+        "frontal": frontal_written,
+        "sec": dt,
+    }
+
+
+def _worker(slug):
+    try:
+        return generate_overlay(slug)
+    except SystemExit as err:
+        return {"slug": slug, "status": "error", "error": str(err)}
+    except Exception:
+        return {"slug": slug, "status": "error", "error": traceback.format_exc()[-800:]}
+
+
 def main():
     argv = sys.argv[1:]
     frontal_only = False
     plan_only = False
+    use_targets = False
+    workers = max(1, min(4, os.cpu_count() or 1))
     slug_args = []
-    for a in argv:
+    i = 0
+    while i < len(argv):
+        a = argv[i]
         if a == "--frontal-only":
             frontal_only = True
         elif a == "--plan-only":
             plan_only = True
+        elif a in ("--all",):
+            pass
+        elif a == "--targets":
+            use_targets = True
+        elif a == "--workers":
+            i += 1
+            workers = max(1, int(argv[i]))
+        elif a.startswith("--workers="):
+            workers = max(1, int(a.split("=", 1)[1]))
         elif not a.startswith("-"):
             slug_args.append(a)
+        else:
+            raise SystemExit("unknown option " + a)
+        i += 1
 
-    by_slug = load_hill_records()
-    target_map = {slug: (num, slug, name, prov) for num, slug, name, prov in TARGETS}
-
+    by_slug, by_path = load_hill_records()
     if slug_args:
-        work_list = []
-        for idx, s in enumerate(slug_args, 1):
-            if s in target_map:
-                work_list.append(target_map[s])
-            elif s in by_slug:
-                h = by_slug[s]
-                work_list.append((idx, s, h.get("name", s), h.get("province") or h.get("state") or ""))
-            else:
-                raise SystemExit(f"Unknown hill slug: {s}")
+        work = []
+        for slug in slug_args:
+            if slug not in by_slug and slug not in by_path:
+                raise SystemExit("Unknown hill slug: " + slug)
+            work.append(slug)
+    elif use_targets:
+        work = [slug for _num, slug, _name, _prov in TARGETS]
     else:
-        work_list = TARGETS
+        catalog = json.loads((REPO_ROOT / "hill-index.json").read_text()).get("hills") or []
+        work = []
+        for row in catalog:
+            slug = row.get("slug")
+            if not slug or slug not in by_slug:
+                continue
+            if frontal_paths(slug) or (REPO_ROOT / "contours" / f"{slug}.json").exists():
+                work.append(slug)
+        pending = []
+        for slug in work:
+            if hard_edge_ready(slug):
+                continue
+            pending.append(slug)
+        print(f"catalog drawings {len(work)} already complete {len(work) - len(pending)} remaining {len(pending)}", flush=True)
+        work = pending
+
+    if not work:
+        print("nothing to generate", flush=True)
+        return
+
+    materialize_missing_geom(by_slug, work)
+    # A hill whose geometry arrived in this pass can now be drawn.
+    global BY_PATH, FRONTAL_ONLY, PLAN_ONLY
+    BY_PATH = by_path
+    FRONTAL_ONLY = frontal_only
+    PLAN_ONLY = plan_only
 
     summary = []
-    total = len(work_list)
+    if workers == 1 or len(work) == 1:
+        for slug in work:
+            summary.append(_worker(slug))
+    else:
+        ctx = __import__("multiprocessing").get_context("spawn")
+        with ProcessPoolExecutor(
+            max_workers=workers,
+            mp_context=ctx,
+            initializer=_init_worker,
+            initargs=(by_path, frontal_only, plan_only),
+        ) as pool:
+            futures = [pool.submit(_worker, slug) for slug in work]
+            for fut in as_completed(futures):
+                summary.append(fut.result())
 
-    for num, slug, name, prov in work_list:
-        t0 = time.time()
-        hill = by_slug[slug]
-        hid = hill["id"]
-        print(f"\n=== [{num:2d}/{total}] {name} ({slug}) ===", flush=True)
-
-        bf.GEOM = Path("/tmp/cypress-geom.json" if (slug == "cypress-mountain" and Path("/tmp/cypress-geom.json").exists()) else f"/tmp/{slug}-geom.json")
-        bf.DEM = Path("/tmp/cypress-dem-wide.tif" if slug == "cypress-mountain" else f"/tmp/{slug}-dem-wide.tif")
-        runs, lifts = bf.load_geom()
-        box = bf.wide_box(runs, lifts)
-        bf.ensure_dem(box)
-        arr, gt = bf.read_grid()
-        wc_path = ensure_worldcover(slug, box)
-
-        dst_c_slug = OUT_CONTOURS / f"{slug}.json"
-        dst_c_id = OUT_CONTOURS / f"{hid}.json"
-        tree_wash_len = 0
-
-        # 1. Plan-view treeWash (unless --frontal-only)
-        if not frontal_only:
-            if slug == "kimberley-alpine-resort" and (REPO_ROOT / "contours" / f"{slug}.json").exists():
-                src_c_path = REPO_ROOT / "contours" / f"{slug}.json"
-                src_c_obj = json.loads(src_c_path.read_text())
-                if "treeWash" in src_c_obj:
-                    shutil.copyfile(src_c_path, dst_c_slug)
-                    shutil.copyfile(src_c_path, dst_c_id)
-                    tree_wash_len = len(src_c_obj["treeWash"])
-                else:
-                    geom_raw = json.loads(bf.GEOM.read_text())
-                    tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
-                    src_c_obj["treeWash"] = tree_wash_d
-                    c_bytes = json.dumps(src_c_obj, separators=(",", ":"))
-                    dst_c_slug.write_text(c_bytes)
-                    dst_c_id.write_text(c_bytes)
-                    tree_wash_len = len(tree_wash_d)
-            else:
-                geom_raw = json.loads(bf.GEOM.read_text())
-                tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
-                src_c = json.loads((REPO_ROOT / "contours" / f"{slug}.json").read_text())
-                src_c["treeWash"] = tree_wash_d
-                c_bytes = json.dumps(src_c, separators=(",", ":"))
-                dst_c_slug.write_text(c_bytes)
-                dst_c_id.write_text(c_bytes)
-                tree_wash_len = len(tree_wash_d)
-        elif dst_c_slug.exists():
-            tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", ""))
-
-        # 2. Bird's-eye frontal SVG(s) (unless --plan-only)
-        frontal_written = []
-        if not plan_only:
-            cam = bf.CAMERAS.get(slug) or {}
-            views = cam.get("views") or {}
-            if views:
-                for vname, facing_deg in views.items():
-                    vslug = f"{slug}-{vname}"
-                    src_svg = REPO_ROOT / "frontal" / f"{vslug}.svg"
-                    dst_svg = OUT_FRONTAL / f"{vslug}.svg"
-                    generate_birdseye_tree_wash(
-                        slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg, facing_override=facing_deg
-                    )
-                    frontal_written.append(str(dst_svg))
-                # Write unsuffixed <slug>.svg with unsuffixed filter/mask/label IDs matching <slug>.svg
-                front_svg_text = (OUT_FRONTAL / f"{slug}-front.svg").read_text()
-                unsuffixed_svg_text = front_svg_text.replace(f"{slug}-front", slug)
-                unsuffixed_dst = OUT_FRONTAL / f"{slug}.svg"
-                unsuffixed_dst.write_text(unsuffixed_svg_text)
-                frontal_written.append(str(unsuffixed_dst))
-            else:
-                src_svg = REPO_ROOT / "frontal" / f"{slug}.svg"
-                dst_svg = OUT_FRONTAL / f"{slug}.svg"
-                generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg)
-                frontal_written.append(str(dst_svg))
-
-        dt = round(time.time() - t0, 1)
-        print(
-            f"Done {slug} in {dt}s | plan treeWash len={tree_wash_len} | frontal={len(frontal_written)}",
-            flush=True,
-        )
-        summary.append(
-            {
-                "num": num,
-                "slug": slug,
-                "id": hid,
-                "name": name,
-                "prov": prov,
-                "plan_contour": str(dst_c_slug),
-                "frontal_svgs": frontal_written,
-                "status": "Generated full-frame",
-                "sec": dt,
-            }
-        )
-
-    if OUT_ROOT != REPO_ROOT:
-        (OUT_ROOT / "summary.json").write_text(json.dumps(summary, indent=2))
-    print(f"\nALL {total} HILLS GENERATED SUCCESSFULLY!", flush=True)
+    ok = [row for row in summary if row.get("status") == "generated"]
+    bad = [row for row in summary if row.get("status") != "generated"]
+    print(f"\nGENERATED {len(ok)}  OTHER {len(bad)}", flush=True)
+    for row in bad:
+        print(row.get("status"), row.get("slug"), (row.get("error") or "")[:240], flush=True)
+    (Path("/tmp") / "tree-overlay-summary.json").write_text(json.dumps(summary))
 
 
 if __name__ == "__main__":
