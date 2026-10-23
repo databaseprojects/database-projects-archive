@@ -1,0 +1,302 @@
+{
+  "slug": "calgary",
+  "name": "Calgary",
+  "province": "ab",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 473.6,
+  "routes": [
+    {
+      "name": "12 Mile Coulee Cycle",
+      "km": 2.7,
+      "network": "",
+      "osm": 14012619,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bow River Valley Pathway",
+      "km": 7.6,
+      "network": "lcn",
+      "osm": 8345878,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bow River Valley Pathway (North)",
+      "km": 21.7,
+      "network": "rcn",
+      "osm": 8345879,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bow River Valley Pathway (south - TCT)",
+      "km": 28.5,
+      "network": "ncn",
+      "osm": 9759739,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bow River Valley Pathway (southeast)",
+      "km": 12.4,
+      "network": "lcn",
+      "osm": 9759738,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bow River Valley Pathway - northeast",
+      "km": 2.1,
+      "network": "lcn",
+      "osm": 9759610,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Calgary Trans Canada Trail",
+      "km": 15.7,
+      "network": "ncn",
+      "osm": 10068770,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 12 Ave SW Cycle Track",
+      "km": 4.4,
+      "network": "lcn",
+      "osm": 16900231,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 15 Ave SW Bike Lane (EB)",
+      "km": 2.9,
+      "network": "lcn",
+      "osm": 16900232,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 17 Avenue SW Cycle Route",
+      "km": 6.6,
+      "network": "lcn",
+      "osm": 18258293,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 2 St NW, shared lane bike route",
+      "km": 3.7,
+      "network": "lcn",
+      "osm": 18240448,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 20St SW Bike Lane",
+      "km": 4.3,
+      "network": "lcn",
+      "osm": 16893223,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 24 Avenue NW protected bike lanes",
+      "km": 4.0,
+      "network": "lcn",
+      "osm": 18252651,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 26Av cycling route",
+      "km": 6.5,
+      "network": "lcn",
+      "osm": 16900178,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 32 Ave NW",
+      "km": 5.3,
+      "network": "lcn",
+      "osm": 18876315,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 42 Ave SE",
+      "km": 2.3,
+      "network": "lcn",
+      "osm": 18228641,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 5 St SW shared lane and protected cycle track",
+      "km": 2.7,
+      "network": "lcn",
+      "osm": 16906795,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 50Av SW Bike Route",
+      "km": 2.3,
+      "network": "lcn",
+      "osm": 16893735,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 52 Street Cycling Route",
+      "km": 19.7,
+      "network": "rcn",
+      "osm": 18274122,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 8 Ave NE",
+      "km": 3.9,
+      "network": "lcn",
+      "osm": 18228471,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: 8 Avenue SE Cycle Lanes",
+      "km": 3.2,
+      "network": "lcn",
+      "osm": 18439267,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Bow Trail SW cycle route",
+      "km": 5.2,
+      "network": "lcn",
+      "osm": 18258310,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Dalhousie - Bow River Connection",
+      "km": 2.6,
+      "network": "lcn",
+      "osm": 14008007,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Heritage Drive Cycle Path",
+      "km": 5.4,
+      "network": "lcn",
+      "osm": 14007137,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Nose Hill Drive NW",
+      "km": 10.5,
+      "network": "rcn",
+      "osm": 18870335,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Rotary/Mattamy Greenway (north)",
+      "km": 72.6,
+      "network": "rcn",
+      "osm": 2230606,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Rotary/Mattamy Greenway (south)",
+      "km": 69.4,
+      "network": "rcn",
+      "osm": 8348244,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Cycle: Silver Springs Blvd cycle lanes",
+      "km": 4.7,
+      "network": "lcn",
+      "osm": 18870395,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "DT Cycle Network",
+      "km": 3.9,
+      "network": "",
+      "osm": 14005271,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Edgemont Ravine Connection",
+      "km": 8.9,
+      "network": "",
+      "osm": 14007963,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "EdgemontBLVDCyclePath",
+      "km": 3.5,
+      "network": "",
+      "osm": 14008267,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Elbow River Pathway",
+      "km": 17.5,
+      "network": "ncn",
+      "osm": 10029805,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Fish Creek Loop",
+      "km": 15.4,
+      "network": "",
+      "osm": 14083039,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Glenmore Reservoir Pathway",
+      "km": 19.6,
+      "network": "rcn",
+      "osm": 7769558,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Nose Creek - Greenway Connection",
+      "km": 10.9,
+      "network": "",
+      "osm": 14007175,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Nose Creek - Nose Hill Connection",
+      "km": 3.4,
+      "network": "",
+      "osm": 14007877,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Nose Creek Pathway",
+      "km": 10.6,
+      "network": "ncn",
+      "osm": 10068769,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Nose Hill Park Paths",
+      "km": 7.4,
+      "network": "",
+      "osm": 14007910,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "ShouldiceBownessLoop",
+      "km": 11.7,
+      "network": "",
+      "osm": 14083134,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Canada Trail (Red Deer to Calgary)",
+      "km": 11.0,
+      "network": "ncn",
+      "osm": 8256817,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Western Headworks Canal Pathway",
+      "km": 16.9,
+      "network": "lcn",
+      "osm": 8345856,
+      "source": "OpenStreetMap"
+    }
+  ],
+  "bbox": [
+    -114.26806,
+    50.87017,
+    -113.90233,
+    51.19779
+  ]
+}

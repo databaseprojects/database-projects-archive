@@ -1,0 +1,323 @@
+{
+  "slug": "toronto",
+  "name": "Toronto",
+  "province": "on",
+  "attribution": "© OpenStreetMap contributors",
+  "km": 480.1,
+  "routes": [
+    {
+      "name": "Adelaide Street",
+      "km": 4.5,
+      "network": "lcn",
+      "osm": 17830216,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bartlett-Havelock-Gladstone",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 17418228,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bayview Cycle Path",
+      "km": 4.4,
+      "network": "lcn",
+      "osm": 7819739,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Beltline Trail",
+      "km": 10.5,
+      "network": "lcn",
+      "osm": 7330793,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Birkdale Trail",
+      "km": 4.6,
+      "network": "lcn",
+      "osm": 9496014,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Black Creek Trail",
+      "km": 6.3,
+      "network": "lcn",
+      "osm": 7330789,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Bloor",
+      "km": 14.6,
+      "network": "lcn",
+      "osm": 17697912,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Danforth",
+      "km": 8.0,
+      "network": "lcn",
+      "osm": 16834181,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Don Mills Trail",
+      "km": 4.0,
+      "network": "lcn",
+      "osm": 9481106,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Duncan Creek Trail",
+      "km": 3.0,
+      "network": "lcn",
+      "osm": 15831626,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Dundas",
+      "km": 4.0,
+      "network": "lcn",
+      "osm": 19435542,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Earl Bales Park Trail",
+      "km": 3.6,
+      "network": "lcn",
+      "osm": 15831565,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "East Don Parkland Trail",
+      "km": 5.6,
+      "network": "lcn",
+      "osm": 9481085,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Etobicoke Creek Trail",
+      "km": 7.1,
+      "network": "rcn",
+      "osm": 11639331,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Finch Corridor Recreation Trail",
+      "km": 22.4,
+      "network": "lcn",
+      "osm": 1731341,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "G. Ross Lord Park Trail",
+      "km": 6.1,
+      "network": "lcn",
+      "osm": 15831605,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Gatineau Corridor Recreational Trail",
+      "km": 16.8,
+      "network": "lcn",
+      "osm": 8331116,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Greenwood",
+      "km": 2.6,
+      "network": "lcn",
+      "osm": 19228219,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Highland Creek Trail",
+      "km": 8.4,
+      "network": "lcn",
+      "osm": 9495941,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Humber River Recreational Trail",
+      "km": 25.0,
+      "network": "lcn",
+      "osm": 93058,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Huntingwood Dr",
+      "km": 5.8,
+      "network": "lcn",
+      "osm": 15831636,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Huron-Wendat Trail",
+      "km": 2.6,
+      "network": "lcn",
+      "osm": 3787728,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Lake to Lake Cycling Route and Walking Trail (Toronto)",
+      "km": 28.3,
+      "network": "rcn",
+      "osm": 9496004,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "lcn 6",
+      "km": 3.4,
+      "network": "lcn",
+      "osm": 2223708,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Martin Goodman Trail",
+      "km": 21.1,
+      "network": "lcn",
+      "osm": 139042,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Milliken Trail",
+      "km": 3.1,
+      "network": "lcn",
+      "osm": 2152446,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "North Scarborough Green Loop",
+      "km": 11.6,
+      "network": "lcn",
+      "osm": 8466219,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Palmerston-Tecumseth",
+      "km": 3.8,
+      "network": "lcn",
+      "osm": 17418291,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Pan Am Path",
+      "km": 69.8,
+      "network": "lcn",
+      "osm": 5337971,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Pan Am Path (Eglinton West branch)",
+      "km": 10.2,
+      "network": "lcn",
+      "osm": 8331176,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Richmond Street",
+      "km": 3.9,
+      "network": "lcn",
+      "osm": 17698289,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Rosedale Valley Trail",
+      "km": 2.0,
+      "network": "lcn",
+      "osm": 7373767,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Sentinel Road",
+      "km": 4.5,
+      "network": "lcn",
+      "osm": 15828793,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Shaughnessy Boulevard",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 15828801,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Sherbourne Northbound",
+      "km": 3.7,
+      "network": "lcn",
+      "osm": 18443502,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Sherbourne Southbound",
+      "km": 3.7,
+      "network": "lcn",
+      "osm": 14374,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Tommy Thompson Trail",
+      "km": 5.4,
+      "network": "lcn",
+      "osm": 16019339,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Trans Canada Trail - Toronto",
+      "km": 59.6,
+      "network": "ncn",
+      "osm": 9495937,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Waterfront Trail: Toronto",
+      "km": 56.0,
+      "network": "rcn",
+      "osm": 9500098,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Wellesley",
+      "km": 2.4,
+      "network": "lcn",
+      "osm": 18018317,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "West Toronto Railpath",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 7330863,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Wilket Creek Trail",
+      "km": 2.5,
+      "network": "lcn",
+      "osm": 9496011,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Willowdale Ave",
+      "km": 2.2,
+      "network": "lcn",
+      "osm": 15842482,
+      "source": "OpenStreetMap"
+    },
+    {
+      "name": "Woodbine",
+      "km": 4.6,
+      "network": "lcn",
+      "osm": 17911252,
+      "source": "OpenStreetMap"
+    }
+  ],
+  "bbox": [
+    -79.60841,
+    43.58628,
+    -79.11804,
+    43.82148
+  ]
+}

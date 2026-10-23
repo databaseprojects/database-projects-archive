@@ -1,0 +1,95 @@
+{
+  "attribution": "© OpenStreetMap contributors",
+  "cities": [
+    {
+      "slug": "victoria",
+      "name": "Victoria",
+      "province": "bc",
+      "province_name": "British Columbia",
+      "routes": 9,
+      "km": 34.3,
+      "bbox": [
+        -123.39052,
+        48.40426,
+        -123.3225,
+        48.45018
+      ],
+      "status": "built"
+    },
+    {
+      "slug": "calgary",
+      "name": "Calgary",
+      "province": "ab",
+      "province_name": "Alberta",
+      "routes": 41,
+      "km": 473.6,
+      "bbox": [
+        -114.26806,
+        50.87017,
+        -113.90233,
+        51.19779
+      ],
+      "status": "built"
+    },
+    {
+      "slug": "edmonton",
+      "name": "Edmonton",
+      "province": "ab",
+      "province_name": "Alberta",
+      "routes": 79,
+      "km": 506.2,
+      "bbox": [
+        -113.71141,
+        53.33767,
+        -113.29518,
+        53.62918
+      ],
+      "status": "built"
+    },
+    {
+      "slug": "toronto",
+      "name": "Toronto",
+      "province": "on",
+      "province_name": "Ontario",
+      "routes": 44,
+      "km": 480.1,
+      "bbox": [
+        -79.60841,
+        43.58628,
+        -79.11804,
+        43.82148
+      ],
+      "status": "built"
+    },
+    {
+      "slug": "ottawa",
+      "name": "Ottawa",
+      "province": "on",
+      "province_name": "Ontario",
+      "routes": 26,
+      "km": 271.6,
+      "bbox": [
+        -76.34237,
+        45.1347,
+        -75.28233,
+        45.49723
+      ],
+      "status": "built"
+    },
+    {
+      "slug": "hamilton",
+      "name": "Hamilton",
+      "province": "on",
+      "province_name": "Ontario",
+      "routes": 10,
+      "km": 200.4,
+      "bbox": [
+        -80.13975,
+        43.1068,
+        -79.62656,
+        43.41348
+      ],
+      "status": "built"
+    }
+  ]
+}
