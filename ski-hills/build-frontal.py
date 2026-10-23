@@ -372,12 +372,124 @@ CAMERAS = {
         "run_width": 1.716,
         "lift_width": 1.33,
     },
+    # RED Mountain only. Run and lift strokes sit between Sun Peaks and
+    # Sunshine Village, about 16.5% under the defaults (2.2 and 1.7).
+    "red-mountain-resort": {
+        "run_width": 1.84,
+        "lift_width": 1.42,
+    },
 }
+
+
+def _xy_m(lon, lat, cos):
+    return lon * 111320.0 * cos, lat * 110540.0
+
+
+def ring_centreline(points, to_xy, close_m=3.0):
+    """Open centreline of a closed piste ring, from one end to the other.
+
+    The two vertices farthest apart are the ends of the glade. Samples
+    halfway between the two side chains are the line that gets drawn.
+    """
+    ring = [tuple(p) for p in points]
+    if len(ring) < 2:
+        return None
+    a = to_xy(ring[0])
+    b = to_xy(ring[-1])
+    if math.hypot(b[0] - a[0], b[1] - a[1]) > close_m:
+        return None
+    ring = ring[:-1]
+    if len(ring) < 4:
+        return None
+    xy = [to_xy(p) for p in ring]
+    far = -1.0
+    i0 = i1 = 0
+    count = len(ring)
+    for i in range(count):
+        xi, yi = xy[i]
+        for j in range(i + 1, count):
+            dist = math.hypot(xy[j][0] - xi, xy[j][1] - yi)
+            if dist > far:
+                far = dist
+                i0, i1 = i, j
+
+    def walk(start, end, step):
+        chain = []
+        i = start
+        while True:
+            chain.append(ring[i])
+            if i == end:
+                break
+            i = (i + step) % count
+        return chain
+
+    chain_a = walk(i0, i1, 1)
+    chain_b = walk(i0, i1, -1)
+
+    def at(chain, t):
+        plane = [to_xy(p) for p in chain]
+        spans = [
+            math.hypot(plane[i + 1][0] - plane[i][0], plane[i + 1][1] - plane[i][1])
+            for i in range(len(chain) - 1)
+        ]
+        total = sum(spans)
+        if total < 1e-9:
+            return chain[0]
+        target = max(0.0, min(1.0, t)) * total
+        acc = 0.0
+        for i, span in enumerate(spans):
+            if acc + span >= target - 1e-9:
+                u = 0.0 if span < 1e-9 else (target - acc) / span
+                u = max(0.0, min(1.0, u))
+                p0, p1 = chain[i], chain[i + 1]
+                return (p0[0] + (p1[0] - p0[0]) * u, p0[1] + (p1[1] - p0[1]) * u)
+            acc += span
+        return chain[-1]
+
+    steps = max(8, min(24, max(len(chain_a), len(chain_b)) * 2))
+    line = []
+    for i in range(steps):
+        t = i / (steps - 1)
+        pa, pb = at(chain_a, t), at(chain_b, t)
+        line.append((0.5 * (pa[0] + pb[0]), 0.5 * (pa[1] + pb[1])))
+    return line
+
+
+def open_closed_run(run):
+    """Replace each closed downhill ring with one centreline."""
+    lines = []
+    changed = False
+    for line in run.get("lines") or []:
+        if len(line) < 4:
+            lines.append(line)
+            continue
+        lat = line[len(line) // 2][1]
+        cos = math.cos(lat * math.pi / 180.0)
+
+        def to_xy(p, _cos=cos):
+            return _xy_m(p[0], p[1], _cos)
+
+        opened = ring_centreline(line, to_xy, 3.0)
+        if opened:
+            lines.append(opened)
+            changed = True
+        else:
+            lines.append(line)
+    if not changed:
+        return run
+    out = dict(run)
+    out["lines"] = lines
+    return out
 
 
 def load_geom():
     data = json.loads(GEOM.read_text())
-    return data["runs"], data["lifts"]
+    runs, lifts = data["runs"], data["lifts"]
+    # RED Mountain only. Eight glades are stored as closed rings and stroke
+    # as hollow boxes. A centreline replaces each ring.
+    if GEOM.name.startswith("red-mountain-resort"):
+        runs = [open_closed_run(run) for run in runs]
+    return runs, lifts
 
 
 def wide_box(runs, lifts):
