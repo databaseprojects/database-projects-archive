@@ -2,7 +2,7 @@
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
 The wash is four hard-edge density bands of the same green (#3a6b42), opacities
-0.06 / 0.10 / 0.14 / 0.18. Density is a summer Sentinel-2 canopy concentration
+0.08 / 0.10 / 0.12 / 0.15. Density is a summer Sentinel-2 canopy concentration
 on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
 belongs to one band. Kimberley's published wash is left as it is.
 
@@ -437,13 +437,13 @@ def ensure_worldcover(slug, box):
     return wc_path
 
 
-# Exclusive canopy bands. The darkest stays at 0.18 so contour lines still read.
+# Exclusive canopy bands. The densest stays at 0.15 so contour lines still read.
 # Cuts are quarters of the v3 stipple stretch (raw 0.30..0.95 -> 0..1).
 TREE_BANDS = (
-    (0.00, 0.25, 0.06, "1"),
+    (0.00, 0.25, 0.08, "1"),
     (0.25, 0.50, 0.10, "2"),
-    (0.50, 0.75, 0.14, "3"),
-    (0.75, 1.01, 0.18, "4"),
+    (0.50, 0.75, 0.12, "3"),
+    (0.75, 1.01, 0.15, "4"),
 )
 
 
