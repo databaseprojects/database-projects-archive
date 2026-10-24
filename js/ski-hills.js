@@ -811,7 +811,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261023zm";
+  var ASSET_V = "20261023zn";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -853,6 +853,7 @@
       path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
       path.setAttribute("fill", "#3a6b42");
       path.setAttribute("fill-opacity", bands ? String(band.opacity) : "0.10");
+      path.style.setProperty("--sh-band", bands ? String(band.opacity) : "0.10");
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
       if (bands) {
@@ -979,6 +980,30 @@
     });
   }
 
+  function treeMultiplier(hill) {
+    var mul = hill && hill._treeMul != null ? +hill._treeMul : 1;
+    if (!(mul >= 0)) mul = 1;
+    if (mul > 2) mul = 2;
+    return mul;
+  }
+
+  function applyTreeMultiplier(hill, svg) {
+    var mul = String(treeMultiplier(hill));
+    if (svg) svg.style.setProperty("--sh-tree-mul", mul);
+    var lb = document.getElementById("sh-lb");
+    if (lb && hill && hill.el && lb._card === hill.el) lb.style.setProperty("--sh-tree-mul", mul);
+  }
+
+  function stampTreeWash(root) {
+    if (!root || !root.querySelectorAll) return;
+    Array.prototype.forEach.call(root.querySelectorAll(".sh-frontal-tree-wash, .sh-plan-tree-wash path"), function (node) {
+      if (node.style.getPropertyValue("--sh-band")) return;
+      var op = node.getAttribute("fill-opacity");
+      if (op == null || op === "") op = "0.10";
+      node.style.setProperty("--sh-band", op);
+    });
+  }
+
   function syncTreesLoading(hill) {
     var lb = document.getElementById("sh-lb");
     if (!lb || !hill || lb._card !== hill.el) return;
@@ -1020,6 +1045,7 @@
     var node = doc.querySelector(".sh-frontal-trees");
     if (!node) return;
     var imported = document.importNode(node, true);
+    stampTreeWash(imported);
     var mask = host.querySelector('g[mask*="sh-contour-fade-"]');
     if (mask) host.insertBefore(imported, mask);
     else host.appendChild(imported);
@@ -1542,6 +1568,7 @@
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
+    if (card._hill) applyTreeMultiplier(card._hill, lb._svg);
     if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
@@ -2884,6 +2911,7 @@
     Array.prototype.forEach.call(art.childNodes, function (node) {
       if (node.nodeType === 1) g.appendChild(document.importNode(node, true));
     });
+    stampTreeWash(g);
     var cap = svg.querySelector(".sh-caption");
     if (cap) {
       svg.insertBefore(g, cap);
@@ -2904,6 +2932,7 @@
     setPlanHidden(svg, false);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (hill) applyTreeMultiplier(hill, svg);
   }
 
   function paintRaised(svg, hill, lines, shift) {
@@ -2911,6 +2940,7 @@
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (hill) applyTreeMultiplier(hill, svg);
   }
 
   function ensureFrontal(hill, done) {
@@ -3952,14 +3982,45 @@
       trees.addEventListener("click", function (e) {
         e.stopPropagation();
       });
+      var opacity = document.createElement("label");
+      opacity.className = "sh-tree-opacity";
+      opacity.hidden = !hill._treesOn;
+      var opacityText = document.createElement("span");
+      opacityText.textContent = "opacity";
+      var range = document.createElement("input");
+      range.type = "range";
+      range.min = "0";
+      range.max = "200";
+      range.step = "1";
+      range.value = String(Math.round(treeMultiplier(hill) * 100));
+      range.setAttribute("aria-valuemin", "0");
+      range.setAttribute("aria-valuemax", "200");
+      opacity.appendChild(opacityText);
+      opacity.appendChild(range);
+      opacity.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      range.addEventListener("input", function () {
+        var next = (+range.value) / 100;
+        if (!(next >= 0)) next = 0;
+        if (next > 2) next = 2;
+        hill._treeMul = next;
+        range.setAttribute("aria-valuenow", range.value);
+        var lb = document.getElementById("sh-lb");
+        applyTreeMultiplier(hill, lb && lb._svg);
+      });
+      range.setAttribute("aria-valuenow", range.value);
       treesBox.addEventListener("change", function () {
         hill._treesOn = !!treesBox.checked;
+        opacity.hidden = !hill._treesOn;
         var lb = document.getElementById("sh-lb");
         if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+        applyTreeMultiplier(hill, lb && lb._svg);
         if (hill._treesOn) ensureTreeWash(hill);
         else syncTreesLoading(hill);
         refreshMockArt(hill.el);
       });
+      trees._opacity = opacity;
     }
     var views = sideViews(hill);
     var sideRow = null;
@@ -4005,7 +4066,13 @@
     group.appendChild(bird.wrap);
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
-    if (trees) wrap.appendChild(trees);
+    if (trees) {
+      var treeControls = document.createElement("div");
+      treeControls.className = "sh-tree-controls";
+      if (trees._opacity) treeControls.appendChild(trees._opacity);
+      treeControls.appendChild(trees);
+      wrap.appendChild(treeControls);
+    }
     wrap._sync = sync;
     return wrap;
   }
@@ -4061,6 +4128,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
+    if (card._hill) applyTreeMultiplier(card._hill, svg);
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
