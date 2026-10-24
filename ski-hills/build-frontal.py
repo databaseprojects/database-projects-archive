@@ -398,11 +398,15 @@ CAMERAS = {
     # Lake Louise only. Front faces the main run mass (west of centre) from
     # the WSW. Back faces the Larch / Paradise / Ptarmigan / Saddleback bowls
     # (east of centre) from the ENE. Same Front / Back toggle as Washington.
+    # The pair was 82.9 / 262.9. 47.9 and 227.9 are 35° less, which turns
+    # each drawing 35° clockwise. They stay 180° apart. Edit these numbers.
     "lake-louise-ski-area": {
-        "views": {"front": 82.9, "back": 262.9},
+        "views": {"front": 47.9, "back": 227.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
     },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
     # guess, flipped by orient()). 187.6 is 180° further and turns that
