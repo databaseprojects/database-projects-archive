@@ -377,46 +377,73 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1));
 }
 
-.sh-hill polyline.sh-contour {
+.sh-hill polyline.sh-contour,
+.sh-hill path.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
-.sh-lb polyline.sh-contour {
+.sh-lb polyline.sh-contour,
+.sh-lb path.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: 0.65;
 }
 
-/* Bird's-eye topo only. 10% toward white from black. The SVG
-   writes the stroke inline, so this has to win. Plan contours stay
-   on .sh-contour. */
+.sh-hill path.sh-contour,
+.sh-lb path.sh-contour,
+.sh-hill path.sh-contour-shade,
+.sh-lb path.sh-contour-shade {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Bird's-eye topo only. 10% toward white from black. The sheet
+   writes the stroke on the element, so this has to win. Plan contours stay
+   on .sh-contour. Join, cap, and dash cover sheets that no longer repeat them. */
 .sh-frontal-contour {
   stroke: #1a1a1a !important;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: none;
+  vector-effect: none;
 }
 
 .sh-hill polyline.sh-contour-shade,
-.sh-lb polyline.sh-contour-shade {
+.sh-lb polyline.sh-contour-shade,
+.sh-hill path.sh-contour-shade,
+.sh-lb path.sh-contour-shade {
   fill: none;
   pointer-events: none;
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="1"],
-.sh-lb polyline.sh-contour-shade[data-depth="1"] {
+.sh-lb polyline.sh-contour-shade[data-depth="1"],
+.sh-hill path.sh-contour-shade[data-depth="1"],
+.sh-lb path.sh-contour-shade[data-depth="1"] {
   stroke: rgba(0, 0, 0, 0.14);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="2"],
-.sh-lb polyline.sh-contour-shade[data-depth="2"] {
+.sh-lb polyline.sh-contour-shade[data-depth="2"],
+.sh-hill path.sh-contour-shade[data-depth="2"],
+.sh-lb path.sh-contour-shade[data-depth="2"] {
   stroke: rgba(0, 0, 0, 0.18);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="3"],
-.sh-lb polyline.sh-contour-shade[data-depth="3"] {
+.sh-lb polyline.sh-contour-shade[data-depth="3"],
+.sh-hill path.sh-contour-shade[data-depth="3"],
+.sh-lb path.sh-contour-shade[data-depth="3"] {
   stroke: rgba(0, 0, 0, 0.22);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="4"],
-.sh-lb polyline.sh-contour-shade[data-depth="4"] {
+.sh-lb polyline.sh-contour-shade[data-depth="4"],
+.sh-hill path.sh-contour-shade[data-depth="4"],
+.sh-lb path.sh-contour-shade[data-depth="4"] {
   stroke: rgba(0, 0, 0, 0.26);
 }
 
@@ -842,8 +869,83 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   display: inline-flex;
 }
 
-.sh-tree-switch {
+.sh-tree-controls {
   margin: 0 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.sh-tree-opacity {
+  margin: 0;
+  color: #fff;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sh-tree-opacity[hidden] {
+  display: none !important;
+}
+
+.sh-tree-opacity input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 42px;
+  height: 12px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.sh-tree-opacity input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.sh-tree-opacity input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
+
+.sh-tree-opacity input::-moz-range-track {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 0;
+}
+
+.sh-tree-opacity input::-moz-range-thumb {
+  width: 7px;
+  height: 7px;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
+
+.sh-tree-opacity input:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
+}
+
+.sh-tree-switch {
+  margin: 0;
   color: #fff;
   background: transparent;
   border: 0;
@@ -899,6 +1001,10 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-tree-switch-input:checked + .sh-tree-switch-track .sh-tree-switch-knob {
   transform: translateX(12px);
   background: #fff;
+}
+
+.sh-tree-switch.sh-trees-loading .sh-tree-switch-knob {
+  opacity: 0.35;
 }
 
 .sh-tree-switch-input:focus-visible + .sh-tree-switch-track {
@@ -1286,6 +1392,41 @@ html.sh-prints-off .sh-cart-panel {
 
 .sh-labels-toggle[hidden] {
   display: none;
+}
+
+.sh-frontal-tree-band-1,
+.sh-plan-tree-band-1 {
+  --sh-band: 0.06;
+  --sh-band-w: 0;
+}
+
+.sh-frontal-tree-band-2,
+.sh-plan-tree-band-2 {
+  --sh-band: 0.10;
+  --sh-band-w: 0.33;
+}
+
+.sh-frontal-tree-band-3,
+.sh-plan-tree-band-3 {
+  --sh-band: 0.14;
+  --sh-band-w: 0.66;
+}
+
+.sh-frontal-tree-band-4,
+.sh-plan-tree-band-4 {
+  --sh-band: 0.18;
+  --sh-band-w: 1;
+}
+
+.sh-lb[data-sh-hill="kimberley-alpine-resort"] .sh-frontal-trees,
+.sh-lb[data-sh-hill="kimberley-alpine-resort"] .sh-plan-tree-wash {
+  --sh-band: 0.10;
+  --sh-band-w: 1;
+}
+
+.sh-frontal-tree-wash,
+.sh-plan-tree-wash path {
+  fill-opacity: min(1, calc(var(--sh-band, 0.10) * (1 - (1 - var(--sh-tree-s, 1)) * var(--sh-band-w, 0))));
 }
 
 .sh-frontal-tree-wash,

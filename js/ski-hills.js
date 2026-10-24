@@ -811,15 +811,28 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
+  var ASSET_V = "20261023zn";
+
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023zl";
+    return "frontal/" + file + ".svg?v=" + ASSET_V;
   }
 
   function frontalArt(hill) {
     var url = frontalUrl(hill);
     return (hill._frontalCache && hill._frontalCache[url]) || "";
+  }
+
+  function compactPath(d) {
+    return typeof d === "string" && d.charAt(0) === "M" && d.indexOf(".") < 0;
+  }
+
+  function planShift(shift) {
+    var s = !shift || shift.s == null ? 1 : shift.s;
+    var dx = (shift && shift.dx) || 0;
+    var dy = (shift && shift.dy) || 0;
+    return "translate(" + dx + " " + dy + ") scale(" + s + ") scale(.1)";
   }
 
   function appendTreeWash(parent, shift, treeWash, treeBands) {
@@ -831,20 +844,22 @@
     var scaleTo = shift.s == null ? 1 : shift.s;
     var dx = shift.dx || 0;
     var dy = shift.dy || 0;
-    var xf = "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")";
+    var base = "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")";
     var list = bands || [{ d: treeWash, opacity: 0.10 }];
     list.forEach(function (band) {
       if (!band || !band.d) return;
       var path = document.createElementNS(NS, "path");
       path.setAttribute("d", band.d);
-      path.setAttribute("transform", xf);
+      path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
       path.setAttribute("fill", "#3a6b42");
       path.setAttribute("fill-opacity", bands ? String(band.opacity) : "0.10");
+      path.style.setProperty("--sh-band", bands ? String(band.opacity) : "0.10");
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
       if (bands) {
         var holder = document.createElementNS(NS, "g");
-        holder.setAttribute("class", "sh-plan-tree-band");
+        var bandNo = planBandNo(band.opacity);
+        holder.setAttribute("class", bandNo ? "sh-plan-tree-band sh-plan-tree-band-" + bandNo : "sh-plan-tree-band");
         holder.appendChild(path);
         wash.appendChild(holder);
       } else {
@@ -893,6 +908,26 @@
     var stepX = 0.6 / scale;
     var stepY = 1.5 / scale;
     (lines || []).forEach(function (pts) {
+      if (compactPath(pts)) {
+        var placed = planShift(shift);
+        if (stack) {
+          var depthC;
+          for (depthC = 4; depthC >= 1; depthC--) {
+            var shadeC = document.createElementNS(NS, "path");
+            shadeC.setAttribute("class", "sh-contour sh-contour-shade");
+            shadeC.setAttribute("data-depth", String(depthC));
+            shadeC.setAttribute("d", pts);
+            shadeC.setAttribute("transform", "translate(" + (depthC * stepX).toFixed(2) + " " + (depthC * stepY).toFixed(2) + ") " + placed);
+            g.appendChild(shadeC);
+          }
+        }
+        var pathLine = document.createElementNS(NS, "path");
+        pathLine.setAttribute("class", "sh-contour");
+        pathLine.setAttribute("d", pts);
+        pathLine.setAttribute("transform", placed);
+        g.appendChild(pathLine);
+        return;
+      }
       var mapped = mapPoints(pts, shift);
       if (mapped.split(/\s+/).length < 2) return;
       if (stack) {
@@ -925,7 +960,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261023zl").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -939,10 +974,204 @@
         if (stackWanted(card._hill)) applyStack(card._hill);
         else paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash, card._treeBands);
       }
+      if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
       refreshMockArt(card);
     }).catch(function () {
       card._contourState = "err";
     });
+  }
+
+  var TREE_OPACITY_SLUGS = {
+    "whistler-blackcomb": 1,
+    "lake-louise-ski-area": 1,
+    "big-white-ski-resort": 1,
+    "banff-sunshine-village": 1,
+    "sun-peaks-resort": 1,
+    "revelstoke-mountain-resort": 1,
+    "fernie-alpine-resort": 1,
+    "silver-star-mountain-resort": 1,
+    "kicking-horse-resort": 1,
+    "red-mountain-resort": 1,
+    "panorama-mountain-resort": 1,
+    "cypress-mountain": 1,
+    "grouse-mountain": 1,
+    "whitewater-ski-resort": 1,
+    "marmot-basin": 1,
+    "mount-washington-alpine-resort": 1,
+    "nakiska": 1,
+    "kimberley-alpine-resort": 1,
+    "castle-mountain-resort": 1,
+    "apex-mountain-resort": 1,
+    "mt-bachelor": 1
+  };
+
+  function treeOpacityHill(hill) {
+    return !!(hill && hill.slug && TREE_OPACITY_SLUGS[hill.slug]);
+  }
+
+  function planBandNo(opacity) {
+    var n = Math.round(Number(opacity) * 100);
+    if (n === 6) return "1";
+    if (n === 10) return "2";
+    if (n === 14) return "3";
+    if (n === 18) return "4";
+    return "";
+  }
+
+  function treeStrength(hill) {
+    if (!treeOpacityHill(hill)) return 1;
+    var s = hill && hill._treeS != null ? +hill._treeS : 1;
+    if (!(s >= 0)) s = 1;
+    if (s > 1.5) s = 1.5;
+    return s;
+  }
+
+  function applyTreeStrength(hill, svg) {
+    var s = String(treeStrength(hill));
+    if (svg) svg.style.setProperty("--sh-tree-s", s);
+    var lb = document.getElementById("sh-lb");
+    if (lb && hill && hill.el && lb._card === hill.el) lb.style.setProperty("--sh-tree-s", s);
+  }
+
+  function stampTreeWash(root) {
+    if (!root || !root.querySelectorAll) return;
+    Array.prototype.forEach.call(root.querySelectorAll(".sh-frontal-tree-wash, .sh-plan-tree-wash path"), function (node) {
+      if (node.style.getPropertyValue("--sh-band")) return;
+      var op = node.getAttribute("fill-opacity");
+      if (op == null || op === "") op = "0.10";
+      node.style.setProperty("--sh-band", op);
+    });
+  }
+
+  function syncTreesLoading(hill) {
+    var lb = document.getElementById("sh-lb");
+    if (!lb || !hill || lb._card !== hill.el) return;
+    var sw = lb.querySelector(".sh-tree-switch");
+    if (!sw) return;
+    sw.classList.toggle("sh-trees-loading", !!(hill._treesOn && hill._washPend));
+  }
+
+  function sliceTreesGroup(markup) {
+    var key = '<g class="sh-frontal-trees"';
+    var i = markup.indexOf(key);
+    if (i < 0) return "";
+    var depth = 0;
+    var j = i;
+    var n = markup.length;
+    while (j < n) {
+      if (markup.substr(j, 4) === "</g>") {
+        depth -= 1;
+        j += 4;
+        if (depth === 0) return markup.slice(i, j);
+        continue;
+      }
+      if (markup.substr(j, 2) === "<g" && (j + 2 >= n || " \t>".indexOf(markup.charAt(j + 2)) >= 0)) {
+        depth += 1;
+        j += 2;
+        continue;
+      }
+      j += 1;
+    }
+    return "";
+  }
+
+  function mountLiveTrees(hill, group) {
+    var lb = document.getElementById("sh-lb");
+    if (!group || !lb || !hill || lb._card !== hill.el || !lb._svg) return;
+    var host = lb._svg.querySelector(".sh-frontal");
+    if (!host || host.querySelector(".sh-frontal-trees")) return;
+    var doc = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + group + "</svg>", "image/svg+xml");
+    var node = doc.querySelector(".sh-frontal-trees");
+    if (!node) return;
+    var imported = document.importNode(node, true);
+    stampTreeWash(imported);
+    var mask = host.querySelector('g[mask*="sh-contour-fade-"]');
+    if (mask) host.insertBefore(imported, mask);
+    else host.appendChild(imported);
+  }
+
+  function applyPlanWash(card, data) {
+    if (!card || !data || !data.treeBands || !data.treeBands.length) return;
+    card._treeBands = data.treeBands;
+    card._treeWash = "bands";
+    var hill = card._hill;
+    paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash, card._treeBands);
+    var lb = document.getElementById("sh-lb");
+    if (lb && lb._card === card && lb._shift && lb._svg && !(hill && stackWanted(hill))) {
+      paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash, card._treeBands);
+    }
+    refreshMockArt(card);
+  }
+
+  function spliceFrontalWash(hill, url, frag) {
+    if (!hill._frontalCache) return;
+    var text = hill._frontalCache[url] || "";
+    if (text.indexOf("sh-frontal-trees") >= 0) {
+      mountLiveTrees(hill, sliceTreesGroup(text));
+      return;
+    }
+    var group = sliceTreesGroup(frag);
+    if (!group) return;
+    var at = text.indexOf('<g mask="url(#sh-contour-fade-');
+    if (at < 0) at = text.indexOf('<path class="sh-frontal-contour"');
+    if (at < 0) at = text.indexOf('<polyline class="sh-frontal-contour"');
+    if (at < 0) return;
+    hill._frontalCache[url] = text.slice(0, at) + group + text.slice(at);
+    mountLiveTrees(hill, group);
+    refreshMockArt(hill.el);
+  }
+
+  function ensureTreeWash(hill) {
+    if (!hill || !hill._treesOn || !hill.el) return;
+    if (hill._washPend) syncTreesLoading(hill);
+    var card = hill.el;
+    function begin() {
+      hill._washPend = (hill._washPend || 0) + 1;
+      syncTreesLoading(hill);
+    }
+    function end() {
+      hill._washPend = Math.max(0, (hill._washPend || 1) - 1);
+      syncTreesLoading(hill);
+    }
+    if (card._treeWash === "lazy" && !(card._treeBands && card._treeBands.length)) {
+      if (card._washJson) applyPlanWash(card, card._washJson);
+      else if (!card._washJsonLoading) {
+        card._washJsonLoading = true;
+        begin();
+        fetch("contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
+          if (!res.ok) throw new Error("wash");
+          return res.json();
+        }).then(function (data) {
+          card._washJson = data;
+          card._washJsonLoading = false;
+          applyPlanWash(card, data);
+        }).catch(function () {
+          card._washJsonLoading = false;
+        }).then(end);
+      }
+    }
+    var url = frontalUrl(hill);
+    var text = hill._frontalCache && hill._frontalCache[url];
+    if (!text || text.indexOf('data-sh-wash="lazy"') < 0 || text.indexOf("sh-frontal-trees") >= 0) return;
+    hill._washSvg = hill._washSvg || {};
+    hill._washSvgLoading = hill._washSvgLoading || {};
+    if (hill._washSvg[url]) {
+      spliceFrontalWash(hill, url, hill._washSvg[url]);
+      return;
+    }
+    if (hill._washSvgLoading[url]) return;
+    hill._washSvgLoading[url] = true;
+    begin();
+    fetch(url.replace(".svg?v=", ".wash.svg?v=")).then(function (res) {
+      if (!res.ok) throw new Error("wash");
+      return res.text();
+    }).then(function (frag) {
+      hill._washSvg[url] = frag;
+      hill._washSvgLoading[url] = false;
+      spliceFrontalWash(hill, url, frag);
+    }).catch(function () {
+      hill._washSvgLoading[url] = false;
+    }).then(end);
   }
 
   function frameLimit() {
@@ -1378,6 +1607,8 @@
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
+    if (card._hill) applyTreeStrength(card._hill, lb._svg);
+    if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
     fitFrameArt(lb);
@@ -2719,6 +2950,7 @@
     Array.prototype.forEach.call(art.childNodes, function (node) {
       if (node.nodeType === 1) g.appendChild(document.importNode(node, true));
     });
+    stampTreeWash(g);
     var cap = svg.querySelector(".sh-caption");
     if (cap) {
       svg.insertBefore(g, cap);
@@ -2731,6 +2963,7 @@
       plate.setAttribute("fill", "#fff");
       cap.insertBefore(plate, cap.firstChild);
     } else svg.appendChild(g);
+    if (hill && hill._treesOn) ensureTreeWash(hill);
   }
 
   function paintPlan(svg, hill, lines, shift) {
@@ -2738,6 +2971,7 @@
     setPlanHidden(svg, false);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (hill) applyTreeStrength(hill, svg);
   }
 
   function paintRaised(svg, hill, lines, shift) {
@@ -2745,6 +2979,7 @@
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (hill) applyTreeStrength(hill, svg);
   }
 
   function ensureFrontal(hill, done) {
@@ -3786,12 +4021,48 @@
       trees.addEventListener("click", function (e) {
         e.stopPropagation();
       });
+      var opacity = null;
+      if (treeOpacityHill(hill)) {
+        opacity = document.createElement("label");
+        opacity.className = "sh-tree-opacity";
+        opacity.hidden = !hill._treesOn;
+        var opacityText = document.createElement("span");
+        opacityText.textContent = "opacity";
+        var range = document.createElement("input");
+        range.type = "range";
+        range.min = "0";
+        range.max = "1.5";
+        range.step = "0.01";
+        range.value = String(treeStrength(hill));
+        range.setAttribute("aria-valuemin", "0");
+        range.setAttribute("aria-valuemax", "1.5");
+        opacity.appendChild(opacityText);
+        opacity.appendChild(range);
+        opacity.addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
+        range.addEventListener("input", function () {
+          var next = +range.value;
+          if (!(next >= 0)) next = 0;
+          if (next > 1.5) next = 1.5;
+          hill._treeS = next;
+          range.setAttribute("aria-valuenow", range.value);
+          var lb = document.getElementById("sh-lb");
+          applyTreeStrength(hill, lb && lb._svg);
+        });
+        range.setAttribute("aria-valuenow", range.value);
+      }
       treesBox.addEventListener("change", function () {
         hill._treesOn = !!treesBox.checked;
+        if (opacity) opacity.hidden = !hill._treesOn;
         var lb = document.getElementById("sh-lb");
         if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+        applyTreeStrength(hill, lb && lb._svg);
+        if (hill._treesOn) ensureTreeWash(hill);
+        else syncTreesLoading(hill);
         refreshMockArt(hill.el);
       });
+      trees._opacity = opacity;
     }
     var views = sideViews(hill);
     var sideRow = null;
@@ -3837,7 +4108,13 @@
     group.appendChild(bird.wrap);
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
-    if (trees) wrap.appendChild(trees);
+    if (trees) {
+      var treeControls = document.createElement("div");
+      treeControls.className = "sh-tree-controls";
+      if (trees._opacity) treeControls.appendChild(trees._opacity);
+      treeControls.appendChild(trees);
+      wrap.appendChild(treeControls);
+    }
     wrap._sync = sync;
     return wrap;
   }
@@ -3893,6 +4170,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
+    if (card._hill) applyTreeStrength(card._hill, svg);
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
