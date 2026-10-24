@@ -562,7 +562,14 @@ CAMERAS = {
     },
     # Uniform shrink around the sheet centre, after the usual fit.
     # Plan views of Marmot and Nakiska are scaled in the catalog instead.
-    "marmot-basin": {"frame_scale": 0.91},
+    # Marmot's automatic facing was 255.5 and orient() kept it. 240.5 is
+    # 15° less, which turns the bird's-eye drawing 15° clockwise.
+    "marmot-basin": {
+        "facing": 240.5,
+        "frame_scale": 0.91,
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     "nakiska": {"frame_scale": 0.95},
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
