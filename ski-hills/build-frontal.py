@@ -52,6 +52,10 @@ gdal.SetConfigOption("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY")
 gdal.SetConfigOption("CPL_VSIL_CURL_ALLOWED_EXTENSIONS", ".tif,.TIF")
 
 ROOT = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from lean_paths import compact_points
+
 GEOM = Path("/tmp/cypress-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.
 DEM = Path("/tmp/cypress-dem-wide.tif")
@@ -2689,13 +2693,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         # Farther up the hill is paler. The near face is a little darker.
         t = (yr - front) / span_d
         opacity = 0.50 - t * 0.26
-        pts = " ".join(f"{p[0]:.1f},{p[1]:.1f}" for p in line)
+        d = compact_points(line, close=False)
+        if not d:
+            continue
+        # Join, cap, and dash come from .sh-frontal-contour. Opacity and
+        # width stay on the element because each line fades on its own.
         contour_xml.append(
-            f'<polyline class="sh-frontal-contour" points="{pts}" fill="none" stroke="#1a1a1a" '
-            f'stroke-opacity="{opacity:.3f}" stroke-width="{CONTOUR_W}" '
-            f'style="fill:none;stroke:#1a1a1a;stroke-opacity:{opacity:.3f};'
-            f'stroke-width:{CONTOUR_W};stroke-dasharray:none;'
-            f'stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>'
+            f'<path class="sh-frontal-contour" d="{d}" transform="scale(.1)" '
+            f'fill="none" stroke="#1a1a1a" stroke-opacity="{opacity:.3f}" '
+            f'stroke-width="{CONTOUR_W}"/>'
         )
     # Soft rectangular fade. The blur eats the hard edge of the wider field.
     defs = (

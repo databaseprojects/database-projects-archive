@@ -204,6 +204,7 @@ else:
     REPO_ROOT = Path("/workspace/dpa-ro/ski-hills")
 
 sys.path.insert(0, str(REPO_ROOT))
+from lean_paths import compact_abs_d, compact_point_list, compact_points
 import importlib.util
 
 spec = importlib.util.spec_from_file_location("build_frontal", str(REPO_ROOT / "build-frontal.py"))
@@ -479,11 +480,15 @@ def paths_from_mask(mask, affine):
             ext = list(p.exterior.coords[:-1])
             if len(ext) < 3:
                 continue
-            subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in ext) + "Z")
+            piece = compact_points(ext, close=True)
+            if piece:
+                subpaths.append(piece)
             for hole in p.interiors:
                 h_pts = list(hole.coords[:-1])
                 if len(h_pts) >= 3 and Polygon(hole).area >= 1.5:
-                    subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in h_pts) + "Z")
+                    hole_d = compact_points(h_pts, close=True)
+                    if hole_d:
+                        subpaths.append(hole_d)
     return " ".join(subpaths)
 
 
@@ -1125,7 +1130,7 @@ def strip_frontal_trees(svg_text):
 
 
 def frontal_wash_markup(bands):
-    parts = ['<g class="sh-frontal-trees">']
+    parts = ['<g class="sh-frontal-trees" transform="scale(.1)">']
     for b in bands:
         parts.append(
             f'<g class="sh-frontal-tree-band sh-frontal-tree-band-{b["name"]}">'
@@ -1346,18 +1351,17 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     wash_el = frontal_wash_markup(bands)
 
     svg_clean = strip_frontal_trees(svg_text)
-
-    # Insert outside <g mask="url(#sh-contour-fade-...)"> so tree wash has a hard edge (no edge fade)
-    mask_m = re.search(r'<g mask="url\(#sh-contour-fade-[^"]+\)">', svg_clean)
-    if mask_m:
-        idx = mask_m.start()
-    else:
-        anchor = '<polyline class="sh-frontal-contour"'
-        idx = svg_clean.find(anchor)
-        if idx < 0:
-            raise RuntimeError(f"Could not find contour anchor in {src_svg_path}")
-    out_svg = svg_clean[:idx] + wash_el + svg_clean[idx:]
-    out_svg_path.write_text(out_svg)
+    # The sheet stays lines-only. The page fetches the wash the first time
+    # Trees is on and inserts this group before the contour mask.
+    if bands:
+        if 'data-sh-wash="' not in svg_clean:
+            svg_clean = svg_clean.replace("<svg ", '<svg data-sh-wash="lazy" ', 1)
+        wash_path = out_svg_path.with_name(out_svg_path.stem + ".wash.svg")
+        wash_path.parent.mkdir(parents=True, exist_ok=True)
+        wash_path.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg">' + wash_el.strip() + "</svg>\n"
+        )
+    out_svg_path.write_text(svg_clean)
     return len(bands), int(tree_mask.sum()), CW * CH
 
 
@@ -1419,9 +1423,14 @@ def hard_edge_ready(slug):
         return False
     for svg in svgs:
         text = svg.read_text(errors="ignore")
-        if '<g class="sh-frontal-trees">' not in text:
+        inline = '<g class="sh-frontal-trees"' in text
+        lazy = (
+            'data-sh-wash="lazy"' in text
+            and svg.with_name(svg.stem + ".wash.svg").exists()
+        )
+        if not inline and not lazy:
             return False
-        if re.search(r'<g class="sh-frontal-trees"[^>]*\smask=', text):
+        if inline and re.search(r'<g class="sh-frontal-trees"[^>]*\smask=', text):
             return False
     if contour.exists() and '"treeWash"' not in contour.read_text(errors="ignore"):
         return False
@@ -1430,15 +1439,35 @@ def hard_edge_ready(slug):
 
 def _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands):
     src_c = json.loads(contour_path.read_text())
-    # The joined path is only a fallback for a reader that has no bands.
-    # Shipping it beside treeBands doubles the contour file, so a banded
-    # hill keeps a short truthy token and the page paints treeBands.
-    src_c["treeWash"] = "bands" if bands else tree_wash_d
-    src_c["treeBands"] = [{"opacity": b["opacity"], "d": b["d"]} for b in bands]
+    src_c["lines"] = [
+        compact_point_list(line) if isinstance(line, str) else line
+        for line in (src_c.get("lines") or [])
+    ]
+    # Bands live in a sibling file so the first contour fetch is lines only.
+    # A hill with no bands keeps one inline path, still compact.
+    if bands:
+        src_c["treeWash"] = "lazy"
+        src_c.pop("treeBands", None)
+        wash = {
+            "treeBands": [
+                {
+                    "opacity": b["opacity"],
+                    "d": compact_abs_d(b["d"]) if isinstance(b.get("d"), str) else "",
+                }
+                for b in bands
+                if b.get("d")
+            ]
+        }
+        dst_c_slug.with_name(dst_c_slug.stem + ".wash.json").write_text(
+            json.dumps(wash, separators=(",", ":"))
+        )
+    else:
+        src_c["treeWash"] = compact_abs_d(tree_wash_d) if tree_wash_d else tree_wash_d
+        src_c.pop("treeBands", None)
     c_bytes = json.dumps(src_c, separators=(",", ":"))
     dst_c_slug.write_text(c_bytes)
     dst_c_id.write_text(c_bytes)
-    return len(tree_wash_d)
+    return len(tree_wash_d or "")
 
 
 def generate_overlay(slug):
@@ -1499,6 +1528,9 @@ def generate_overlay(slug):
             if front_svg.exists():
                 unsuffixed = front_svg.read_text().replace(f"{slug}-front", slug)
                 (OUT_FRONTAL / f"{slug}.svg").write_text(unsuffixed)
+                front_wash = front_svg.with_name(front_svg.stem + ".wash.svg")
+                if front_wash.exists():
+                    (OUT_FRONTAL / f"{slug}.wash.svg").write_text(front_wash.read_text())
                 frontal_written.append(slug)
         else:
             src_svg = REPO_ROOT / "frontal" / f"{slug}.svg"
