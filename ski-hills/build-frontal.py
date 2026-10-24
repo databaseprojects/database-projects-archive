@@ -409,6 +409,17 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Fortress Mountain only. The automatic render faced 257.1 and orient()
+    # kept it. 232.1 is 25° less, which turns the bird's-eye drawing 25°
+    # clockwise. Edit this number.
+    "fortress-mountain-resort": {
+        "facing": 232.1,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
     # guess, flipped by orient()). 187.6 is 180° further and turns that
     # bird's-eye drawing upside down. Edit this number.
