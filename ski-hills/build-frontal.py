@@ -544,6 +544,17 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # White Pass only. The automatic guess was 172.4 and orient() flipped
+    # it, so the drawing faced 352.4. 62.4 is 70° further, which turns the
+    # bird's-eye drawing 70° counter-clockwise. Edit this number.
+    "white-pass-ski-area": {
+        "facing": 62.4,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     # Mount Shark only. Automatic facing was 172.4. 162.4 is 10° less,
     # which turns the drawing 10° clockwise on screen. full_ground fits
     # the whole DEM crop. The run window left the peak and the near slope
