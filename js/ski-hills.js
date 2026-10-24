@@ -814,7 +814,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023zb";
+    return "frontal/" + file + ".svg?v=20261023zc";
   }
 
   function frontalArt(hill) {
