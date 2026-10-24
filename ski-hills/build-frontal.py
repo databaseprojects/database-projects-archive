@@ -596,9 +596,14 @@ CAMERAS = {
     },
     # RED Mountain only. Run and lift strokes sit between Sun Peaks and
     # Sunshine Village, about 16.5% under the defaults (2.2 and 1.7).
+    # Automatic facing was 289.3 and orient() kept it. 269.3 is 20° less,
+    # which turns the drawing 20° clockwise on screen. Edit the facing.
     "red-mountain-resort": {
+        "facing": 269.3,
         "run_width": 1.84,
         "lift_width": 1.42,
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
     },
     # Panorama only. The sheet sits 10% smaller. Strokes match RED
     # Mountain, about 16.4% under the defaults. Elevation 18 looks down
