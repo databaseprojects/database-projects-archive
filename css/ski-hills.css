@@ -794,8 +794,7 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   transition: opacity 0.18s ease 0s;
 }
 
-.sh-stack-btn .sh-view-toggle,
-.sh-stack-btn .sh-trees-toggle {
+.sh-stack-btn .sh-view-toggle {
   margin: 0;
   color: #fff;
   background: transparent;
@@ -812,8 +811,7 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   gap: 0.4em;
 }
 
-.sh-stack-btn .sh-view-toggle input,
-.sh-stack-btn .sh-trees-toggle input {
+.sh-stack-btn .sh-view-toggle input {
   -webkit-appearance: none;
   appearance: none;
   width: 13px;
@@ -826,8 +824,7 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   flex: 0 0 auto;
 }
 
-.sh-stack-btn .sh-view-toggle input:checked,
-.sh-stack-btn .sh-trees-toggle input:checked {
+.sh-stack-btn .sh-view-toggle input:checked {
   background: #fff;
 }
 
@@ -845,8 +842,68 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   display: inline-flex;
 }
 
-.sh-stack-btn .sh-trees-toggle {
-  margin-left: auto;
+.sh-tree-switch {
+  margin: 0 0 0 auto;
+  color: #fff;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  position: relative;
+}
+
+.sh-tree-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.sh-tree-switch-track {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 0;
+  background: transparent;
+  flex: 0 0 auto;
+}
+
+.sh-tree-switch-knob {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.55);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.sh-tree-switch-input:checked + .sh-tree-switch-track {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.sh-tree-switch-input:checked + .sh-tree-switch-track .sh-tree-switch-knob {
+  transform: translateX(12px);
+  background: #fff;
+}
+
+.sh-tree-switch-input:focus-visible + .sh-tree-switch-track {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
 }
 
 .sh-lb.sh-framed .sh-stack-btn {
@@ -1238,7 +1295,7 @@ html.sh-prints-off .sh-cart-panel {
 .sh-plan-tree-wash { display: none; }
 .sh-trees-on .sh-plan-tree-wash { display: inline; }
 
-.sh-trees-toggle[hidden] {
+.sh-tree-switch[hidden] {
   display: none;
 }
 
