@@ -410,10 +410,10 @@ CAMERAS = {
         "ridge_fade": 0.10,
     },
     # Fortress Mountain only. The automatic render faced 257.1 and orient()
-    # kept it. 232.1 is 25° less, which turns the bird's-eye drawing 25°
-    # clockwise. Edit this number.
+    # kept it. 232.1 was 25° less. 207.1 is another 25° less, which turns
+    # the bird's-eye drawing a further 25° clockwise. Edit this number.
     "fortress-mountain-resort": {
-        "facing": 232.1,
+        "facing": 207.1,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
