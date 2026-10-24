@@ -544,10 +544,11 @@ CAMERAS = {
         "ridge_fade": 0.10,
     },
     # White Pass only. The automatic guess was 172.4 and orient() flipped
-    # it, so the drawing faced 352.4. 62.4 is 70° further, which turns the
-    # bird's-eye drawing 70° counter-clockwise. Edit this number.
+    # it, so the drawing faced 352.4. 62.4 was 70° further. 107.4 is
+    # another 45° further, which turns the bird's-eye drawing a further
+    # 45° counter-clockwise. Edit this number.
     "white-pass-ski-area": {
-        "facing": 62.4,
+        "facing": 107.4,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
