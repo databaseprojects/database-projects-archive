@@ -814,7 +814,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023zk";
+    return "frontal/" + file + ".svg?v=20261023zl";
   }
 
   function frontalArt(hill) {
@@ -822,7 +822,39 @@
     return (hill._frontalCache && hill._frontalCache[url]) || "";
   }
 
-  function paintContours(svg, lines, shift, stack, treeWash) {
+  function appendTreeWash(parent, shift, treeWash, treeBands) {
+    var bands = treeBands && treeBands.length ? treeBands : null;
+    var flat = !bands && typeof treeWash === "string" && treeWash.charAt(0) === "M";
+    if (!bands && !flat) return;
+    var wash = document.createElementNS(NS, "g");
+    wash.setAttribute("class", "sh-plan-tree-wash");
+    var scaleTo = shift.s == null ? 1 : shift.s;
+    var dx = shift.dx || 0;
+    var dy = shift.dy || 0;
+    var xf = "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")";
+    var list = bands || [{ d: treeWash, opacity: 0.10 }];
+    list.forEach(function (band) {
+      if (!band || !band.d) return;
+      var path = document.createElementNS(NS, "path");
+      path.setAttribute("d", band.d);
+      path.setAttribute("transform", xf);
+      path.setAttribute("fill", "#3a6b42");
+      path.setAttribute("fill-opacity", bands ? String(band.opacity) : "0.10");
+      path.setAttribute("fill-rule", "evenodd");
+      path.setAttribute("stroke", "none");
+      if (bands) {
+        var holder = document.createElementNS(NS, "g");
+        holder.setAttribute("class", "sh-plan-tree-band");
+        holder.appendChild(path);
+        wash.appendChild(holder);
+      } else {
+        wash.appendChild(path);
+      }
+    });
+    parent.appendChild(wash);
+  }
+
+  function paintContours(svg, lines, shift, stack, treeWash, treeBands) {
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
     if (old) old.parentNode.removeChild(old);
@@ -851,22 +883,7 @@
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
     g.setAttribute("clip-path", "url(#" + id + ")");
-    if (treeWash) {
-      var wash = document.createElementNS(NS, "g");
-      wash.setAttribute("class", "sh-plan-tree-wash");
-      var path = document.createElementNS(NS, "path");
-      path.setAttribute("d", treeWash);
-      var scaleTo = shift.s == null ? 1 : shift.s;
-      var dx = shift.dx || 0;
-      var dy = shift.dy || 0;
-      path.setAttribute("transform", "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")");
-      path.setAttribute("fill", "#3a6b42");
-      path.setAttribute("fill-opacity", "0.10");
-      path.setAttribute("fill-rule", "evenodd");
-      path.setAttribute("stroke", "none");
-      wash.appendChild(path);
-      g.appendChild(wash);
-    }
+    appendTreeWash(g, shift, treeWash, treeBands);
     var scale = 1;
     if (stack) {
       var laid = svg.getBoundingClientRect && svg.getBoundingClientRect().width;
@@ -908,18 +925,19 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=20261023u").then(function (res) {
+    fetch("contours/" + card.id + ".json?v=20261023zl").then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
       card._contourState = "in";
       card._contourLines = data.lines || [];
-      card._treeWash = data.treeWash || "";
-      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash);
+      card._treeBands = data.treeBands && data.treeBands.length ? data.treeBands : null;
+      card._treeWash = data.treeWash || (card._treeBands ? "bands" : "");
+      paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash, card._treeBands);
       var lb = document.getElementById("sh-lb");
       if (lb && lb._card === card && lb._shift && lb._svg) {
         if (stackWanted(card._hill)) applyStack(card._hill);
-        else paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash);
+        else paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash, card._treeBands);
       }
       refreshMockArt(card);
     }).catch(function () {
@@ -1347,7 +1365,7 @@
     var shift = fitArt(big, DRAW, card._hill && card._hill._bounds);
     writeCaption(big, card._hill);
     lb._shift = shift;
-    if (card._contourLines) paintContours(big, card._contourLines, shift, false, card._treeWash);
+    if (card._contourLines) paintContours(big, card._contourLines, shift, false, card._treeWash, card._treeBands);
     var maxW = frameLimit();
     var maxH = window.innerHeight * 0.86 - (sideViews(card._hill) ? 112 : 72);
     var scale = Math.min(maxW / SQUARE, maxH / SQUARE);
@@ -2519,7 +2537,7 @@
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
     var art = raised ? frontalArt(hill) : "";
-    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art, card._treeWash);
+    if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art, card._treeWash, card._treeBands);
     if (raised && art) {
       mountFrontal(svg, art, hill);
       setPlanHidden(svg, true);
@@ -2718,12 +2736,12 @@
   function paintPlan(svg, hill, lines, shift) {
     clearFrontal(svg);
     setPlanHidden(svg, false);
-    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash);
+    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
   }
 
   function paintRaised(svg, hill, lines, shift) {
-    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash);
+    if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
@@ -2774,7 +2792,7 @@
         else if (failed && card._contourLines) {
           clearFrontal(lb._svg);
           setPlanHidden(lb._svg, false);
-          paintContours(lb._svg, card._contourLines, lb._shift, true, card._treeWash);
+          paintContours(lb._svg, card._contourLines, lb._shift, true, card._treeWash, card._treeBands);
         } else if (!on) paintPlan(lb._svg, hill, card._contourLines, lb._shift);
       }
       if (card) refreshMockArt(card);

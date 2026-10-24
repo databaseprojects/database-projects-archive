@@ -1289,11 +1289,15 @@ html.sh-prints-off .sh-cart-panel {
 }
 
 .sh-frontal-tree-wash,
+.sh-frontal-tree-band,
 .sh-frontal-trees { display: none; }
 .sh-trees-on .sh-frontal-tree-wash,
+.sh-trees-on .sh-frontal-tree-band,
 .sh-trees-on .sh-frontal-trees { display: inline; }
-.sh-plan-tree-wash { display: none; }
-.sh-trees-on .sh-plan-tree-wash { display: inline; }
+.sh-plan-tree-wash,
+.sh-plan-tree-band { display: none; }
+.sh-trees-on .sh-plan-tree-wash,
+.sh-trees-on .sh-plan-tree-band { display: inline; }
 
 .sh-tree-switch[hidden] {
   display: none;
