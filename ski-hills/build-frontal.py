@@ -576,10 +576,11 @@ CAMERAS = {
     },
     # Uniform shrink around the sheet centre, after the usual fit.
     # Plan views of Marmot and Nakiska are scaled in the catalog instead.
-    # Marmot's automatic facing was 255.5 and orient() kept it. 240.5 is
-    # 15° less, which turns the bird's-eye drawing 15° clockwise.
+    # Marmot's automatic facing was 255.5 and orient() kept it. 240.5 was
+    # 15° less. 220.5 is another 20° less, which turns the bird's-eye
+    # drawing a further 20° clockwise.
     "marmot-basin": {
-        "facing": 240.5,
+        "facing": 220.5,
         "frame_scale": 0.91,
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
