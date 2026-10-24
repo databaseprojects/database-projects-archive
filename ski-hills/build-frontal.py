@@ -781,18 +781,31 @@ def load_geom():
     return runs, lifts
 
 
-def wide_box(runs, lifts):
-    """DEM crop about 3x the run extent, so topo continues past the frame.
+# Extra DEM on every side of the runs, in multiples of the run span.
+# 1.0 is one span each side. A rotated sheet still leaves a corner of the
+# frame outside that crop, because the crop is a lat/lon rectangle and the
+# bird's-eye is not. Fernie's top-right, Marmot's top-left, and White Pass's
+# top edge need 1.8 to reach the frame, up to the edge fade.
+DEM_PAD = {
+    "fernie-alpine-resort": 1.8,
+    "marmot-basin": 1.8,
+    "white-pass-ski-area": 1.8,
+}
 
-    Fernie's camera leaves the top-right corner empty at 1x span padding.
-    1.8x reaches that corner, up to the edge fade.
-    """
+
+def wide_box(runs, lifts):
+    """DEM crop about 3x the run extent, so topo continues past the frame."""
     pts = [p for item in runs + lifts for line in item["lines"] for p in line]
     lons = [p[0] for p in pts]
     lats = [p[1] for p in pts]
     span_lon = max(lons) - min(lons)
     span_lat = max(lats) - min(lats)
-    pad = 1.8 if GEOM is not None and GEOM.name.startswith("fernie-alpine-resort") else 1.0
+    pad = 1.0
+    if GEOM is not None:
+        for slug, extra in DEM_PAD.items():
+            if GEOM.name.startswith(slug):
+                pad = extra
+                break
     pad_lon = span_lon * pad
     pad_lat = span_lat * pad
     return min(lons) - pad_lon, min(lats) - pad_lat, max(lons) + pad_lon, max(lats) + pad_lat
