@@ -473,6 +473,17 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Shames Mountain only. The automatic render faced 334.2 and orient()
+    # kept it. 4.2 is 30° further, which turns the bird's-eye drawing
+    # 30° counter-clockwise. Edit this number.
+    "shames-mountain": {
+        "facing": 4.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     # Crystal Mountain, Washington only. Not Crystal Mountain, Michigan.
     # The automatic render faced 77.0 (the 257.0 guess, flipped by
     # orient()). 257.0 is 180° further and turns that bird's-eye drawing
