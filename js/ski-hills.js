@@ -811,7 +811,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261023zm";
+  var ASSET_V = "20261023zo";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
