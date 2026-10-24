@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
+The wash is four hard-edge density bands of the same green (#3a6b42), opacities
+0.06 / 0.10 / 0.14 / 0.18. Density is a summer Sentinel-2 canopy concentration
+on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
+belongs to one band. Kimberley's published wash is left as it is.
+
 Permanent default for Bird's-eye view (`generate_birdseye_tree_wash` / `setup_frontal_projection`):
   - The projection frame (`paper(sx, sy)`) is fitted to the ski runs' ground window
     (`gx0..gx1, gy0..gy1`) identically to `build-frontal.py` so runs, lifts, and contours
@@ -26,6 +31,7 @@ import sys
 import time
 import traceback
 import types
+import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
@@ -34,7 +40,7 @@ import rasterio
 from PIL import Image, ImageDraw
 from rasterio.features import rasterize, shapes
 from rasterio.transform import from_origin
-from rasterio.warp import Resampling, reproject
+from rasterio.warp import Resampling, reproject, transform_bounds
 from rasterio.windows import from_bounds
 from scipy.ndimage import gaussian_filter
 from shapely.affinity import affine_transform
@@ -430,6 +436,176 @@ def ensure_worldcover(slug, box):
     return wc_path
 
 
+# Exclusive canopy bands. The darkest stays at 0.18 so contour lines still read.
+# Cuts are quarters of the v3 stipple stretch (raw 0.30..0.95 -> 0..1).
+TREE_BANDS = (
+    (0.00, 0.25, 0.06, "1"),
+    (0.25, 0.50, 0.10, "2"),
+    (0.50, 0.75, 0.14, "3"),
+    (0.75, 1.01, 0.18, "4"),
+)
+
+
+def remap_canopy(raw):
+    """Stretch used by the Kimberley v3 stipple. Raw values sit near 0.30..0.95."""
+    return np.clip((raw - 0.28) / 0.66, 0.0, 1.0)
+
+
+def band_labels(tree_mask, norm):
+    """One band per tree pixel. Pixels outside the wash stay 0."""
+    labels = np.zeros(tree_mask.shape, dtype=np.uint8)
+    on = tree_mask == 1
+    n = np.nan_to_num(norm, nan=0.0)
+    labels[on & (n < 0.25)] = 1
+    labels[on & (n >= 0.25) & (n < 0.50)] = 2
+    labels[on & (n >= 0.50) & (n < 0.75)] = 3
+    labels[on & (n >= 0.75)] = 4
+    return labels
+
+
+def paths_from_mask(mask, affine):
+    subpaths = []
+    for geom_d, val in shapes(mask, mask=(mask == 1)):
+        if val != 1:
+            continue
+        poly = affine_transform(shape(geom_d), affine)
+        poly = poly.simplify(0.65, preserve_topology=True)
+        if poly.is_empty:
+            continue
+        polys = [poly] if isinstance(poly, Polygon) else list(poly.geoms) if isinstance(poly, MultiPolygon) else []
+        for p in polys:
+            if p.area < 2.0:
+                continue
+            ext = list(p.exterior.coords[:-1])
+            if len(ext) < 3:
+                continue
+            subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in ext) + "Z")
+            for hole in p.interiors:
+                h_pts = list(hole.coords[:-1])
+                if len(h_pts) >= 3 and Polygon(hole).area >= 1.5:
+                    subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in h_pts) + "Z")
+    return " ".join(subpaths)
+
+
+def band_paths(labels, affine):
+    bands = []
+    for i, (_lo, _hi, opacity, name) in enumerate(TREE_BANDS, start=1):
+        d = paths_from_mask((labels == i).astype(np.uint8), affine)
+        if d:
+            bands.append({"opacity": opacity, "name": name, "d": d})
+    return bands
+
+
+def _stac_scenes(box):
+    minlon, minlat, maxlon, maxlat = box
+    body = json.dumps({
+        "collections": ["sentinel-2-l2a"],
+        "bbox": [minlon, minlat, maxlon, maxlat],
+        "datetime": "2021-07-01T00:00:00Z/2021-09-15T00:00:00Z",
+        "limit": 40,
+    }).encode()
+    req = urllib.request.Request(
+        "https://earth-search.aws.element84.com/v1/search",
+        data=body,
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        feats = json.load(resp).get("features") or []
+    clon = (minlon + maxlon) / 2.0
+    clat = (minlat + maxlat) / 2.0
+
+    def rank(feat):
+        b = feat.get("bbox") or [0, 0, 0, 0]
+        covers = b[0] <= clon <= b[2] and b[1] <= clat <= b[3]
+        cloud = feat.get("properties", {}).get("eo:cloud_cover", 100)
+        return (0 if covers else 1, cloud)
+
+    return sorted(feats, key=rank)
+
+
+def ensure_canopy(slug, box, wc_path):
+    """10 m Sentinel-2 canopy concentration on the WorldCover grid.
+
+    The v3 Kimberley stipple read this as kimberley-canopy-conc-10m.tif and
+    stretched raw values from about 0.30..0.95. That range is a summer
+    Sentinel-2 NDVI. Each hill gets the same product, `{slug}-canopy-conc-10m.tif`.
+    """
+    dest = Path(f"/tmp/{slug}-canopy-conc-10m.tif")
+    with rasterio.open(wc_path) as wc:
+        wc_tf = wc.transform
+        wc_h, wc_w = wc.height, wc.width
+        wc_crs = wc.crs or "EPSG:4326"
+    if dest.exists() and dest.stat().st_size > 1000:
+        with rasterio.open(dest) as ds:
+            if ds.width == wc_w and ds.height == wc_h:
+                return dest
+    minlon, minlat, maxlon, maxlat = box
+    scenes = _stac_scenes((minlon, minlat, maxlon, maxlat))
+    if not scenes:
+        raise RuntimeError(f"no sentinel-2 scene for {slug}")
+    last_err = None
+    for feat in scenes[:4]:
+        try:
+            red_href = feat["assets"]["red"]["href"]
+            nir_href = feat["assets"]["nir"]["href"]
+            with rasterio.open(red_href) as red_ds:
+                bnds = transform_bounds(wc_crs, red_ds.crs, minlon, minlat, maxlon, maxlat, densify_pts=21)
+                win = from_bounds(*bnds, red_ds.transform).round_offsets().round_lengths()
+                if win.width < 2 or win.height < 2:
+                    continue
+                red = red_ds.read(1, window=win, boundless=True, fill_value=0)
+                src_tf = rasterio.windows.transform(win, red_ds.transform)
+                src_crs = red_ds.crs
+            with rasterio.open(nir_href) as nir_ds:
+                nir = nir_ds.read(1, window=win, boundless=True, fill_value=0)
+            if nir.shape != red.shape:
+                h = min(nir.shape[0], red.shape[0])
+                w = min(nir.shape[1], red.shape[1])
+                red = red[:h, :w]
+                nir = nir[:h, :w]
+            r = red.astype(np.float32)
+            n = nir.astype(np.float32)
+            valid = (red > 0) & (nir > 0)
+            if int(valid.sum()) < 100:
+                continue
+            ndvi = np.full(red.shape, np.nan, np.float32)
+            ndvi[valid] = (n[valid] - r[valid]) / (n[valid] + r[valid])
+            dst = np.full((wc_h, wc_w), -1.0, np.float32)
+            reproject(
+                ndvi,
+                dst,
+                src_transform=src_tf,
+                src_crs=src_crs,
+                dst_transform=wc_tf,
+                dst_crs=wc_crs,
+                src_nodata=np.nan,
+                dst_nodata=-1.0,
+                resampling=Resampling.bilinear,
+            )
+            if float((dst >= 0).mean()) < 0.6:
+                continue
+            profile = {
+                "driver": "GTiff",
+                "height": wc_h,
+                "width": wc_w,
+                "count": 1,
+                "dtype": "float32",
+                "crs": wc_crs,
+                "transform": wc_tf,
+                "nodata": -1.0,
+                "compress": "deflate",
+            }
+            with rasterio.open(dest, "w", **profile) as out:
+                out.write(dst, 1)
+            cloud = feat.get("properties", {}).get("eo:cloud_cover")
+            print("canopy", slug, feat["id"], "cloud", cloud, flush=True)
+            return dest
+        except Exception as err:
+            last_err = err
+            continue
+    raise RuntimeError(f"canopy failed for {slug}: {last_err}")
+
+
 def fit_art_shift(hill, limit_y=880):
     xs, ys = [], []
     for r in hill.get("runs") or []:
@@ -455,7 +631,7 @@ def fit_art_shift(hill, limit_y=880):
     return {"s": s, "dx": dx, "dy": dy, "clip": limit_y, "bounds": (min_x, min_y, max_x, max_y)}
 
 
-def generate_plan_tree_wash(slug, hill, geom_data, wc_path):
+def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path):
     """Generate Plan-view treeWash path d in unshifted Plan-view coordinates."""
     pts_runs = [p for r in geom_data["runs"] for line in r["lines"] for p in line]
     lats = [p[1] for p in pts_runs]
@@ -524,6 +700,17 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path):
     t11 = (wc_arr[r1, c1] == 10).astype(np.float32)
     tree_bilin = (1.0 - fr) * ((1.0 - fc) * t00 + fc * t01) + fr * ((1.0 - fc) * t10 + fc * t11)
 
+    with rasterio.open(conc_path) as cc_ds:
+        conc_arr = cc_ds.read(1).astype(np.float32)
+    conc_arr = np.where(conc_arr < 0, 0.0, conc_arr)
+    c00 = conc_arr[r0, c0]
+    c01 = conc_arr[r0, c1]
+    c10 = conc_arr[r1, c0]
+    c11 = conc_arr[r1, c1]
+    conc_bilin = remap_canopy((1.0 - fr) * ((1.0 - fc) * c00 + fc * c01) + fr * ((1.0 - fc) * c10 + fc * c11))
+    # Concentration only counts on WorldCover tree cover. Open ground stays out.
+    conc_bilin = np.where(tree_bilin >= 0.50, conc_bilin, 0.0)
+
     sm = gaussian_filter(tree_bilin, sigma=1.6)
     mask = (sm >= 0.50).astype(np.uint8)
 
@@ -548,28 +735,10 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path):
         corridor = rasterize(buf_geoms, out_shape=(H, W), fill=0, dtype=np.uint8)
         mask[corridor == 1] = 0
 
-    subpaths = []
-    for geom_d, val in shapes(mask, mask=(mask == 1)):
-        if val != 1:
-            continue
-        poly = affine_transform(shape(geom_d), [1.0 / S, 0.0, 0.0, 1.0 / S, x0, y0])
-        poly = poly.simplify(0.65, preserve_topology=True)
-        if poly.is_empty:
-            continue
-        polys = [poly] if isinstance(poly, Polygon) else list(poly.geoms) if isinstance(poly, MultiPolygon) else []
-        for p in polys:
-            if p.area < 2.0:
-                continue
-            ext = list(p.exterior.coords[:-1])
-            if len(ext) < 3:
-                continue
-            subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in ext) + "Z")
-            for hole in p.interiors:
-                h_pts = list(hole.coords[:-1])
-                if len(h_pts) >= 3 and Polygon(hole).area >= 1.5:
-                    subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in h_pts) + "Z")
-
-    return " ".join(subpaths), int(mask.sum()), W * H
+    labels = band_labels(mask, conc_bilin)
+    bands = band_paths(labels, [1.0 / S, 0.0, 0.0, 1.0 / S, x0, y0])
+    joined = " ".join(b["d"] for b in bands)
+    return joined, int(mask.sum()), W * H, bands
 
 
 def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, edge_margin=0.0):
@@ -929,7 +1098,46 @@ def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, e
     }
 
 
-def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_path, out_svg_path, facing_override=None):
+def strip_frontal_trees(svg_text):
+    """Drop the wash group, including one group per density band."""
+    key = '<g class="sh-frontal-trees">'
+    i = svg_text.find(key)
+    if i < 0:
+        return re.sub(r'<path class="sh-frontal-tree-wash"[^>]*/>\n?', "", svg_text)
+    depth = 0
+    j = i
+    n = len(svg_text)
+    while j < n:
+        if svg_text.startswith("</g>", j):
+            depth -= 1
+            j += 4
+            if depth == 0:
+                if j < n and svg_text[j] == "\n":
+                    j += 1
+                return svg_text[:i] + svg_text[j:]
+            continue
+        if svg_text.startswith("<g", j) and (j + 2 >= n or svg_text[j + 2] in " \t>"):
+            depth += 1
+            j += 2
+            continue
+        j += 1
+    return svg_text
+
+
+def frontal_wash_markup(bands):
+    parts = ['<g class="sh-frontal-trees">']
+    for b in bands:
+        parts.append(
+            f'<g class="sh-frontal-tree-band sh-frontal-tree-band-{b["name"]}">'
+            f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="#3a6b42" '
+            f'fill-opacity="{b["opacity"]:.2f}" fill-rule="evenodd" stroke="none"/>'
+            f"</g>"
+        )
+    parts.append("</g>\n")
+    return "".join(parts)
+
+
+def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, src_svg_path, out_svg_path, facing_override=None):
     """Generate full-frame Bird's-eye treeWash path d across the entire DEM terrain sheet."""
     pinfo = setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=facing_override)
     origin_lon = pinfo["origin_lon"]
@@ -949,6 +1157,9 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
     with rasterio.open(wc_path) as wc_ds:
         wc_arr = wc_ds.read(1)
         wc_tf = wc_ds.transform
+    with rasterio.open(conc_path) as cc_ds:
+        conc_arr = cc_ds.read(1).astype(np.float32)
+    conc_arr = np.where(conc_arr < 0, 0.0, conc_arr)
 
     step_x = max(10.0, (full_gx1 - full_gx0) / 850.0)
     step_y = max(10.0, (full_gy1 - full_gy0) / 850.0)
@@ -1008,6 +1219,11 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
     t10 = (wc_arr[wc_r1, wc_c0] == 10).astype(np.float32)
     t11 = (wc_arr[wc_r1, wc_c1] == 10).astype(np.float32)
     TREE = (1 - wfr) * ((1 - wfc) * t00 + wfc * t01) + wfr * ((1 - wfc) * t10 + wfc * t11)
+    raw_c = (1 - wfr) * ((1 - wfc) * conc_arr[wc_r0, wc_c0] + wfc * conc_arr[wc_r0, wc_c1]) + wfr * (
+        (1 - wfc) * conc_arr[wc_r1, wc_c0] + wfc * conc_arr[wc_r1, wc_c1]
+    )
+    # Open ground is not a band, even if the summer scene is green there.
+    CONC = np.where(TREE >= 0.50, remap_canopy(raw_c), 0.0)
 
     # Vectorized screen projection (paper is strictly linear in sx, sy)
     p00_x, p00_y = paper(0.0, 0.0)
@@ -1050,6 +1266,8 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
     CH = CW
     canvas = Image.new("L", (CW, CH), 0)
     draw = ImageDraw.Draw(canvas)
+    conc_canvas = Image.new("L", (CW, CH), 0)
+    draw_c = ImageDraw.Draw(conc_canvas)
 
     max_edge = 32.0
     for j in range(ny - 2, -1, -1):
@@ -1059,6 +1277,8 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
         py1 = PY[j + 1]
         t0 = TREE[j]
         t1 = TREE[j + 1]
+        c0 = CONC[j]
+        c1 = CONC[j + 1]
         v0 = VIS[j]
         v1 = VIS[j + 1]
         for i in range(nx - 1):
@@ -1083,15 +1303,15 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
             ):
                 continue
             val = int(round(tm * 255.0))
-            draw.polygon(
-                [
-                    ((x00 + BLEED) * S, (y00 + BLEED) * S),
-                    ((x10 + BLEED) * S, (y10 + BLEED) * S),
-                    ((x11 + BLEED) * S, (y11 + BLEED) * S),
-                    ((x01 + BLEED) * S, (y01 + BLEED) * S),
-                ],
-                fill=val,
-            )
+            quad = [
+                ((x00 + BLEED) * S, (y00 + BLEED) * S),
+                ((x10 + BLEED) * S, (y10 + BLEED) * S),
+                ((x11 + BLEED) * S, (y11 + BLEED) * S),
+                ((x01 + BLEED) * S, (y01 + BLEED) * S),
+            ]
+            draw.polygon(quad, fill=val)
+            cm = 0.25 * (float(c0[i]) + float(c0[i + 1]) + float(c1[i + 1]) + float(c1[i]))
+            draw_c.polygon(quad, fill=int(round(max(0.0, min(1.0, cm)) * 255.0)))
 
     raw_arr = np.array(canvas, dtype=np.float32) / 255.0
     smooth_arr = gaussian_filter(raw_arr, sigma=1.6)
@@ -1119,36 +1339,13 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
         tree_mask[corridor_mask == 1] = 0
 
     scale_to_1000 = 1.0 / S
-    subpaths = []
-    for geom_dict, val in shapes(tree_mask, mask=(tree_mask == 1)):
-        if val != 1:
-            continue
-        poly = affine_transform(shape(geom_dict), [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED])
-        poly = poly.simplify(0.65, preserve_topology=True)
-        if poly.is_empty:
-            continue
-        polys = [poly] if isinstance(poly, Polygon) else list(poly.geoms) if isinstance(poly, MultiPolygon) else []
-        for p in polys:
-            if p.area < 2.0:
-                continue
-            ext = list(p.exterior.coords[:-1])
-            if len(ext) < 3:
-                continue
-            subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in ext) + "Z")
-            for hole in p.interiors:
-                h_pts = list(hole.coords[:-1])
-                if len(h_pts) >= 3 and Polygon(hole).area >= 1.5:
-                    subpaths.append("M" + "L".join(f"{x:.1f},{y:.1f}" for x, y in h_pts) + "Z")
+    conc_u8 = np.array(conc_canvas, dtype=np.float32) / 255.0
+    # The corridor already cleared tree_mask, so every band loses the same runs and lifts.
+    labels = band_labels(tree_mask, conc_u8)
+    bands = band_paths(labels, [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED])
+    wash_el = frontal_wash_markup(bands)
 
-    path_d = " ".join(subpaths)
-    wash_el = (
-        f'<g class="sh-frontal-trees">'
-        f'<path class="sh-frontal-tree-wash" d="{path_d}" fill="#3a6b42" fill-opacity="0.10" fill-rule="evenodd" stroke="none"/>'
-        f"</g>\n"
-    )
-
-    svg_clean = re.sub(r'<g class="sh-frontal-trees">.*?</g>\n?', "", svg_text, flags=re.S)
-    svg_clean = re.sub(r'<path class="sh-frontal-tree-wash"[^>]*/>\n?', "", svg_clean)
+    svg_clean = strip_frontal_trees(svg_text)
 
     # Insert outside <g mask="url(#sh-contour-fade-...)"> so tree wash has a hard edge (no edge fade)
     mask_m = re.search(r'<g mask="url\(#sh-contour-fade-[^"]+\)">', svg_clean)
@@ -1161,7 +1358,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg_pat
             raise RuntimeError(f"Could not find contour anchor in {src_svg_path}")
     out_svg = svg_clean[:idx] + wash_el + svg_clean[idx:]
     out_svg_path.write_text(out_svg)
-    return len(subpaths), int(tree_mask.sum()), CW * CH
+    return len(bands), int(tree_mask.sum()), CW * CH
 
 
 
@@ -1231,11 +1428,29 @@ def hard_edge_ready(slug):
     return True
 
 
+def _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands):
+    src_c = json.loads(contour_path.read_text())
+    # The joined path is only a fallback for a reader that has no bands.
+    # Shipping it beside treeBands doubles the contour file, so a banded
+    # hill keeps a short truthy token and the page paints treeBands.
+    src_c["treeWash"] = "bands" if bands else tree_wash_d
+    src_c["treeBands"] = [{"opacity": b["opacity"], "d": b["d"]} for b in bands]
+    c_bytes = json.dumps(src_c, separators=(",", ":"))
+    dst_c_slug.write_text(c_bytes)
+    dst_c_id.write_text(c_bytes)
+    return len(tree_wash_d)
+
+
 def generate_overlay(slug):
     t0 = time.time()
     hill = hill_record(slug)
     hid = hill["id"]
     name = hill.get("name") or slug
+    # Kimberley's plan wash is the kept stipple-era path. Rewriting either
+    # view would replace that sheet, so a rebuild leaves both files untouched.
+    if slug == "kimberley-alpine-resort":
+        print(f"Kept {slug}", flush=True)
+        return {"slug": slug, "name": name, "status": "kept", "sec": round(time.time() - t0, 1)}
     geom_path = geom_file(slug)
     if not geom_path.exists() or geom_path.stat().st_size < 50:
         return {"slug": slug, "name": name, "status": "no-geom", "sec": round(time.time() - t0, 1)}
@@ -1253,35 +1468,15 @@ def generate_overlay(slug):
     bf.ensure_dem(box)
     arr, gt = bf.read_grid()
     wc_path = ensure_worldcover(slug, box)
+    conc_path = ensure_canopy(slug, box, wc_path)
 
     dst_c_slug = OUT_CONTOURS / f"{slug}.json"
     dst_c_id = OUT_CONTOURS / f"{hid}.json"
     tree_wash_len = 0
     if not FRONTAL_ONLY and contour_path.exists():
-        if slug == "kimberley-alpine-resort":
-            src_c_obj = json.loads(contour_path.read_text())
-            if "treeWash" in src_c_obj:
-                c_bytes = json.dumps(src_c_obj, separators=(",", ":"))
-                dst_c_slug.write_text(c_bytes)
-                dst_c_id.write_text(c_bytes)
-                tree_wash_len = len(src_c_obj["treeWash"])
-            else:
-                geom_raw = json.loads(geom_path.read_text())
-                tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
-                src_c_obj["treeWash"] = tree_wash_d
-                c_bytes = json.dumps(src_c_obj, separators=(",", ":"))
-                dst_c_slug.write_text(c_bytes)
-                dst_c_id.write_text(c_bytes)
-                tree_wash_len = len(tree_wash_d)
-        else:
-            geom_raw = json.loads(geom_path.read_text())
-            tree_wash_d, _, _ = generate_plan_tree_wash(slug, hill, geom_raw, wc_path)
-            src_c = json.loads(contour_path.read_text())
-            src_c["treeWash"] = tree_wash_d
-            c_bytes = json.dumps(src_c, separators=(",", ":"))
-            dst_c_slug.write_text(c_bytes)
-            dst_c_id.write_text(c_bytes)
-            tree_wash_len = len(tree_wash_d)
+        geom_raw = json.loads(geom_path.read_text())
+        tree_wash_d, _, _, bands = generate_plan_tree_wash(slug, hill, geom_raw, wc_path, conc_path)
+        tree_wash_len = _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands)
     elif dst_c_slug.exists():
         tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", "") or "")
 
@@ -1297,7 +1492,7 @@ def generate_overlay(slug):
                     continue
                 dst_svg = OUT_FRONTAL / f"{vslug}.svg"
                 generate_birdseye_tree_wash(
-                    slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg, facing_override=facing_deg
+                    slug, runs, lifts, arr, gt, wc_path, conc_path, src_svg, dst_svg, facing_override=facing_deg
                 )
                 frontal_written.append(vslug)
             front_svg = OUT_FRONTAL / f"{slug}-front.svg"
@@ -1308,7 +1503,7 @@ def generate_overlay(slug):
         else:
             src_svg = REPO_ROOT / "frontal" / f"{slug}.svg"
             dst_svg = OUT_FRONTAL / f"{slug}.svg"
-            generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, src_svg, dst_svg)
+            generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, src_svg, dst_svg)
             frontal_written.append(slug)
 
     dt = round(time.time() - t0, 1)
@@ -1415,8 +1610,8 @@ def main():
             for fut in as_completed(futures):
                 summary.append(fut.result())
 
-    ok = [row for row in summary if row.get("status") == "generated"]
-    bad = [row for row in summary if row.get("status") != "generated"]
+    ok = [row for row in summary if row.get("status") in ("generated", "kept")]
+    bad = [row for row in summary if row.get("status") not in ("generated", "kept")]
     print(f"\nGENERATED {len(ok)}  OTHER {len(bad)}", flush=True)
     for row in bad:
         print(row.get("status"), row.get("slug"), (row.get("error") or "")[:240], flush=True)
