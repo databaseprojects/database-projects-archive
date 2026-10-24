@@ -32,6 +32,11 @@ gdal.SetConfigOption("CPL_VSIL_CURL_ALLOWED_EXTENSIONS", ".tif,.TIF")
 gdal.SetConfigOption("VSI_CACHE", "TRUE")
 gdal.SetConfigOption("GDAL_HTTP_MULTIPLEX", "YES")
 
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+from lean_paths import compact_points
+
 MRDEM = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
 PAD = 48
 SIZE = 1000 - PAD * 2
@@ -445,8 +450,10 @@ def store_lines(lines, to_px, window):
             px, py = to_px(lon, lat)
             if px < minpx or px > maxpx or py < minpy or py > maxpy:
                 if len(cmd) >= 2:
-                    kept.append(" ".join(cmd))
-                    points += len(cmd)
+                    encoded = compact_points(cmd, close=False)
+                    if encoded:
+                        kept.append(encoded)
+                        points += len(cmd)
                 cmd = []
                 last = None
                 continue
@@ -458,11 +465,13 @@ def store_lines(lines, to_px, window):
                     continue
             if last == pair:
                 continue
-            cmd.append(f"{pair[0]:.1f},{pair[1]:.1f}")
+            cmd.append(pair)
             last = pair
         if len(cmd) >= 2:
-            kept.append(" ".join(cmd))
-            points += len(cmd)
+            encoded = compact_points(cmd, close=False)
+            if encoded:
+                kept.append(encoded)
+                points += len(cmd)
     return kept, points
 
 
