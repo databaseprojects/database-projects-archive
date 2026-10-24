@@ -530,16 +530,19 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     # Mount Spokane only. The automatic render faced 95.0 (the 275.0
-    # guess, flipped by orient()). Front keeps 95.0. Back is 277.6, the
+    # guess, flipped by orient()). Front was 95.0. Back was 277.6, the
     # bearing of the west-side runs (Yeti Crossing, Broken Thumb, Pinball,
     # Big Timber and the trails with them), 2.6° off a straight opposite.
-    # Same Front / Back toggle as Mount Washington. The sheet still frames
-    # the runs. Edit these numbers.
+    # 55.0 and 237.6 are 40° less, which turns each drawing 40° clockwise.
+    # The pair stays 2.6° off opposite. Same Front / Back toggle as Mount
+    # Washington. Edit these numbers.
     "mt-spokane": {
-        "views": {"front": 95.0, "back": 277.6},
+        "views": {"front": 55.0, "back": 237.6},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
     },
     # Mount Shark only. Automatic facing was 172.4. 162.4 is 10° less,
     # which turns the drawing 10° clockwise on screen. full_ground fits
