@@ -858,7 +858,8 @@
       path.setAttribute("stroke", "none");
       if (bands) {
         var holder = document.createElementNS(NS, "g");
-        holder.setAttribute("class", "sh-plan-tree-band");
+        var bandNo = planBandNo(band.opacity);
+        holder.setAttribute("class", bandNo ? "sh-plan-tree-band sh-plan-tree-band-" + bandNo : "sh-plan-tree-band");
         holder.appendChild(path);
         wash.appendChild(holder);
       } else {
@@ -980,18 +981,56 @@
     });
   }
 
-  function treeMultiplier(hill) {
-    var mul = hill && hill._treeMul != null ? +hill._treeMul : 1;
-    if (!(mul >= 0)) mul = 1;
-    if (mul > 2) mul = 2;
-    return mul;
+  var TREE_OPACITY_SLUGS = {
+    "whistler-blackcomb": 1,
+    "lake-louise-ski-area": 1,
+    "big-white-ski-resort": 1,
+    "banff-sunshine-village": 1,
+    "sun-peaks-resort": 1,
+    "revelstoke-mountain-resort": 1,
+    "fernie-alpine-resort": 1,
+    "silver-star-mountain-resort": 1,
+    "kicking-horse-resort": 1,
+    "red-mountain-resort": 1,
+    "panorama-mountain-resort": 1,
+    "cypress-mountain": 1,
+    "grouse-mountain": 1,
+    "whitewater-ski-resort": 1,
+    "marmot-basin": 1,
+    "mount-washington-alpine-resort": 1,
+    "nakiska": 1,
+    "kimberley-alpine-resort": 1,
+    "castle-mountain-resort": 1,
+    "apex-mountain-resort": 1,
+    "mt-bachelor": 1
+  };
+
+  function treeOpacityHill(hill) {
+    return !!(hill && hill.slug && TREE_OPACITY_SLUGS[hill.slug]);
   }
 
-  function applyTreeMultiplier(hill, svg) {
-    var mul = String(treeMultiplier(hill));
-    if (svg) svg.style.setProperty("--sh-tree-mul", mul);
+  function planBandNo(opacity) {
+    var n = Math.round(Number(opacity) * 100);
+    if (n === 6) return "1";
+    if (n === 10) return "2";
+    if (n === 14) return "3";
+    if (n === 18) return "4";
+    return "";
+  }
+
+  function treeStrength(hill) {
+    if (!treeOpacityHill(hill)) return 1;
+    var s = hill && hill._treeS != null ? +hill._treeS : 1;
+    if (!(s >= 0)) s = 1;
+    if (s > 1.5) s = 1.5;
+    return s;
+  }
+
+  function applyTreeStrength(hill, svg) {
+    var s = String(treeStrength(hill));
+    if (svg) svg.style.setProperty("--sh-tree-s", s);
     var lb = document.getElementById("sh-lb");
-    if (lb && hill && hill.el && lb._card === hill.el) lb.style.setProperty("--sh-tree-mul", mul);
+    if (lb && hill && hill.el && lb._card === hill.el) lb.style.setProperty("--sh-tree-s", s);
   }
 
   function stampTreeWash(root) {
@@ -1568,7 +1607,7 @@
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
-    if (card._hill) applyTreeMultiplier(card._hill, lb._svg);
+    if (card._hill) applyTreeStrength(card._hill, lb._svg);
     if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
@@ -2932,7 +2971,7 @@
     setPlanHidden(svg, false);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
-    if (hill) applyTreeMultiplier(hill, svg);
+    if (hill) applyTreeStrength(hill, svg);
   }
 
   function paintRaised(svg, hill, lines, shift) {
@@ -2940,7 +2979,7 @@
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
-    if (hill) applyTreeMultiplier(hill, svg);
+    if (hill) applyTreeStrength(hill, svg);
   }
 
   function ensureFrontal(hill, done) {
@@ -3982,40 +4021,43 @@
       trees.addEventListener("click", function (e) {
         e.stopPropagation();
       });
-      var opacity = document.createElement("label");
-      opacity.className = "sh-tree-opacity";
-      opacity.hidden = !hill._treesOn;
-      var opacityText = document.createElement("span");
-      opacityText.textContent = "opacity";
-      var range = document.createElement("input");
-      range.type = "range";
-      range.min = "0";
-      range.max = "200";
-      range.step = "1";
-      range.value = String(Math.round(treeMultiplier(hill) * 100));
-      range.setAttribute("aria-valuemin", "0");
-      range.setAttribute("aria-valuemax", "200");
-      opacity.appendChild(opacityText);
-      opacity.appendChild(range);
-      opacity.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-      range.addEventListener("input", function () {
-        var next = (+range.value) / 100;
-        if (!(next >= 0)) next = 0;
-        if (next > 2) next = 2;
-        hill._treeMul = next;
+      var opacity = null;
+      if (treeOpacityHill(hill)) {
+        opacity = document.createElement("label");
+        opacity.className = "sh-tree-opacity";
+        opacity.hidden = !hill._treesOn;
+        var opacityText = document.createElement("span");
+        opacityText.textContent = "opacity";
+        var range = document.createElement("input");
+        range.type = "range";
+        range.min = "0";
+        range.max = "1.5";
+        range.step = "0.01";
+        range.value = String(treeStrength(hill));
+        range.setAttribute("aria-valuemin", "0");
+        range.setAttribute("aria-valuemax", "1.5");
+        opacity.appendChild(opacityText);
+        opacity.appendChild(range);
+        opacity.addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
+        range.addEventListener("input", function () {
+          var next = +range.value;
+          if (!(next >= 0)) next = 0;
+          if (next > 1.5) next = 1.5;
+          hill._treeS = next;
+          range.setAttribute("aria-valuenow", range.value);
+          var lb = document.getElementById("sh-lb");
+          applyTreeStrength(hill, lb && lb._svg);
+        });
         range.setAttribute("aria-valuenow", range.value);
-        var lb = document.getElementById("sh-lb");
-        applyTreeMultiplier(hill, lb && lb._svg);
-      });
-      range.setAttribute("aria-valuenow", range.value);
+      }
       treesBox.addEventListener("change", function () {
         hill._treesOn = !!treesBox.checked;
-        opacity.hidden = !hill._treesOn;
+        if (opacity) opacity.hidden = !hill._treesOn;
         var lb = document.getElementById("sh-lb");
         if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
-        applyTreeMultiplier(hill, lb && lb._svg);
+        applyTreeStrength(hill, lb && lb._svg);
         if (hill._treesOn) ensureTreeWash(hill);
         else syncTreesLoading(hill);
         refreshMockArt(hill.el);
@@ -4128,7 +4170,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
-    if (card._hill) applyTreeMultiplier(card._hill, svg);
+    if (card._hill) applyTreeStrength(card._hill, svg);
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";

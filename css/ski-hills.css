@@ -1394,9 +1394,39 @@ html.sh-prints-off .sh-cart-panel {
   display: none;
 }
 
+.sh-frontal-tree-band-1,
+.sh-plan-tree-band-1 {
+  --sh-band: 0.06;
+  --sh-band-w: 0;
+}
+
+.sh-frontal-tree-band-2,
+.sh-plan-tree-band-2 {
+  --sh-band: 0.10;
+  --sh-band-w: 0.33;
+}
+
+.sh-frontal-tree-band-3,
+.sh-plan-tree-band-3 {
+  --sh-band: 0.14;
+  --sh-band-w: 0.66;
+}
+
+.sh-frontal-tree-band-4,
+.sh-plan-tree-band-4 {
+  --sh-band: 0.18;
+  --sh-band-w: 1;
+}
+
+.sh-lb[data-sh-hill="kimberley-alpine-resort"] .sh-frontal-trees,
+.sh-lb[data-sh-hill="kimberley-alpine-resort"] .sh-plan-tree-wash {
+  --sh-band: 0.10;
+  --sh-band-w: 1;
+}
+
 .sh-frontal-tree-wash,
 .sh-plan-tree-wash path {
-  fill-opacity: min(1, calc(var(--sh-band, 0.10) * var(--sh-tree-mul, 1)));
+  fill-opacity: min(1, calc(var(--sh-band, 0.10) * (1 - (1 - var(--sh-tree-s, 1)) * var(--sh-band-w, 0))));
 }
 
 .sh-frontal-tree-wash,
