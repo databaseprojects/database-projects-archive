@@ -814,7 +814,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=20261023zd";
+    return "frontal/" + file + ".svg?v=20261023ze";
   }
 
   function frontalArt(hill) {
@@ -1371,7 +1371,7 @@
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-stack-btn, .sh-labels-toggle, .sh-trees-toggle, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
+      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-stack-btn, .sh-labels-toggle, .sh-tree-switch, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
       closeLb();
     });
   }
@@ -3743,18 +3743,27 @@
       applyStack(hill);
     });
     var trees = null;
-    var treesBox = null;
     if (hasTreeOverlay(hill)) {
       if (hill._treesOn == null) hill._treesOn = true;
       trees = document.createElement("label");
-      trees.className = "sh-trees-toggle";
-      treesBox = document.createElement("input");
+      trees.className = "sh-tree-switch";
+      var treesBox = document.createElement("input");
       treesBox.type = "checkbox";
-      treesBox.className = "sh-trees-check";
+      treesBox.className = "sh-tree-switch-input";
+      treesBox.setAttribute("role", "switch");
+      treesBox.setAttribute("aria-label", "Trees");
       treesBox.checked = !!hill._treesOn;
+      var track = document.createElement("span");
+      track.className = "sh-tree-switch-track";
+      track.setAttribute("aria-hidden", "true");
+      var knob = document.createElement("span");
+      knob.className = "sh-tree-switch-knob";
+      track.appendChild(knob);
       var treesText = document.createElement("span");
+      treesText.className = "sh-tree-switch-label";
       treesText.textContent = "Trees";
       trees.appendChild(treesBox);
+      trees.appendChild(track);
       trees.appendChild(treesText);
       trees.addEventListener("click", function (e) {
         e.stopPropagation();
@@ -3795,7 +3804,6 @@
       var on = !!hill._stackOn;
       plan.box.checked = !on;
       bird.box.checked = on;
-      if (treesBox) treesBox.checked = !!hill._treesOn;
       if (sideRow) {
         var show = on;
         sideRow.hidden = !show;
