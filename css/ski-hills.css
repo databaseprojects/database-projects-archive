@@ -377,46 +377,73 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1));
 }
 
-.sh-hill polyline.sh-contour {
+.sh-hill polyline.sh-contour,
+.sh-hill path.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
-.sh-lb polyline.sh-contour {
+.sh-lb polyline.sh-contour,
+.sh-lb path.sh-contour {
   stroke: rgba(0, 0, 0, 0.1);
   stroke-width: 0.65;
 }
 
-/* Bird's-eye topo only. 10% toward white from black. The SVG
-   writes the stroke inline, so this has to win. Plan contours stay
-   on .sh-contour. */
+.sh-hill path.sh-contour,
+.sh-lb path.sh-contour,
+.sh-hill path.sh-contour-shade,
+.sh-lb path.sh-contour-shade {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Bird's-eye topo only. 10% toward white from black. The sheet
+   writes the stroke on the element, so this has to win. Plan contours stay
+   on .sh-contour. Join, cap, and dash cover sheets that no longer repeat them. */
 .sh-frontal-contour {
   stroke: #1a1a1a !important;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: none;
+  vector-effect: none;
 }
 
 .sh-hill polyline.sh-contour-shade,
-.sh-lb polyline.sh-contour-shade {
+.sh-lb polyline.sh-contour-shade,
+.sh-hill path.sh-contour-shade,
+.sh-lb path.sh-contour-shade {
   fill: none;
   pointer-events: none;
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="1"],
-.sh-lb polyline.sh-contour-shade[data-depth="1"] {
+.sh-lb polyline.sh-contour-shade[data-depth="1"],
+.sh-hill path.sh-contour-shade[data-depth="1"],
+.sh-lb path.sh-contour-shade[data-depth="1"] {
   stroke: rgba(0, 0, 0, 0.14);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="2"],
-.sh-lb polyline.sh-contour-shade[data-depth="2"] {
+.sh-lb polyline.sh-contour-shade[data-depth="2"],
+.sh-hill path.sh-contour-shade[data-depth="2"],
+.sh-lb path.sh-contour-shade[data-depth="2"] {
   stroke: rgba(0, 0, 0, 0.18);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="3"],
-.sh-lb polyline.sh-contour-shade[data-depth="3"] {
+.sh-lb polyline.sh-contour-shade[data-depth="3"],
+.sh-hill path.sh-contour-shade[data-depth="3"],
+.sh-lb path.sh-contour-shade[data-depth="3"] {
   stroke: rgba(0, 0, 0, 0.22);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="4"],
-.sh-lb polyline.sh-contour-shade[data-depth="4"] {
+.sh-lb polyline.sh-contour-shade[data-depth="4"],
+.sh-hill path.sh-contour-shade[data-depth="4"],
+.sh-lb path.sh-contour-shade[data-depth="4"] {
   stroke: rgba(0, 0, 0, 0.26);
 }
 
@@ -899,6 +926,10 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 .sh-tree-switch-input:checked + .sh-tree-switch-track .sh-tree-switch-knob {
   transform: translateX(12px);
   background: #fff;
+}
+
+.sh-tree-switch.sh-trees-loading .sh-tree-switch-knob {
+  opacity: 0.35;
 }
 
 .sh-tree-switch-input:focus-visible + .sh-tree-switch-track {
