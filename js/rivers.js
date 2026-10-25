@@ -41,6 +41,8 @@
     var facts = river.facts || {};
     var fields = [];
     if (river.name) fields.push({ label: "Name", text: river.name });
+    var regionText = regionLine(river);
+    if (regionText) fields.push({ label: "Region", text: regionText });
     if (facts.stream_segments != null && facts.stream_segments !== "") {
       fields.push({ label: "Segments", text: groupNum(facts.stream_segments) });
     }
@@ -76,6 +78,19 @@
 
   function isAllRegion(region) {
     return !region || String(region).toLowerCase() === "all";
+  }
+
+  function regionLine(river) {
+    var names = [];
+    var seen = {};
+    ((river && river.regions) || []).forEach(function (name) {
+      if (name == null) return;
+      var text = String(name).trim();
+      if (!text || isAllRegion(text) || seen[text]) return;
+      seen[text] = true;
+      names.push(text);
+    });
+    return names.join(", ");
   }
 
   function regionNames(manifest) {
@@ -174,7 +189,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025e";
+  var ASSET_V = "20261025f";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
