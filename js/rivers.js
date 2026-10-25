@@ -189,13 +189,12 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025f";
+  var ASSET_V = "20261025g";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
     return path + "?v=" + ASSET_V;
   }
-  var contoursOn = false;
   var contourReady = {};
   var contourPending = {};
   var row = document.getElementById("rv-row");
@@ -320,42 +319,9 @@
     stage.appendChild(img);
     stage.appendChild(overlay);
     var hasContours = !!(river.contours && river.contours.file);
-    var switchEl = null;
-    var controls = null;
-    if (hasContours) {
-      controls = el("div", "rv-lb-controls");
-      switchEl = document.createElement("label");
-      switchEl.className = "rv-contour-switch";
-      var input = document.createElement("input");
-      input.type = "checkbox";
-      input.className = "rv-contour-input";
-      input.setAttribute("role", "switch");
-      input.setAttribute("aria-label", "Contours");
-      input.checked = contoursOn;
-      var track = document.createElement("span");
-      track.className = "rv-contour-track";
-      track.setAttribute("aria-hidden", "true");
-      var knob = document.createElement("span");
-      knob.className = "rv-contour-knob";
-      track.appendChild(knob);
-      var switchText = document.createElement("span");
-      switchText.textContent = "Contours";
-      switchEl.appendChild(input);
-      switchEl.appendChild(track);
-      switchEl.appendChild(switchText);
-      switchEl.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-      input.addEventListener("change", function () {
-        contoursOn = !!input.checked;
-        syncContours();
-      });
-      controls.appendChild(switchEl);
-    }
     var capWrap = el("div", "rv-lb-cap");
     capWrap.appendChild(captionEl(manifest, river));
     box.appendChild(stage);
-    if (controls) box.appendChild(controls);
     box.appendChild(capWrap);
     document.body.appendChild(box);
     document.documentElement.classList.add("rv-open");
@@ -401,29 +367,26 @@
       return contourPending[slug];
     }
 
+    function showOverlay(url) {
+      if (overlay.getAttribute("src") !== url) overlay.src = url;
+      overlay.hidden = false;
+      apply();
+    }
+
     function syncContours() {
-      if (!hasContours || !contoursOn) {
+      if (!hasContours) {
         overlay.hidden = true;
-        if (switchEl) switchEl.classList.remove("rv-contour-loading");
         return;
       }
       if (contourReady[river.slug]) {
-        if (overlay.getAttribute("src") !== contourReady[river.slug]) overlay.src = contourReady[river.slug];
-        overlay.hidden = false;
-        apply();
-        if (switchEl) switchEl.classList.remove("rv-contour-loading");
+        showOverlay(contourReady[river.slug]);
         return;
       }
-      if (switchEl) switchEl.classList.add("rv-contour-loading");
       contourPromise(river).then(function (url) {
-        if (lb !== box || box._closing || !contoursOn) return;
-        overlay.src = url;
-        overlay.hidden = false;
-        apply();
+        if (lb !== box || box._closing) return;
+        showOverlay(url);
       }).catch(function () {
         if (lb === box) overlay.hidden = true;
-      }).then(function () {
-        if (switchEl && lb === box) switchEl.classList.remove("rv-contour-loading");
       });
     }
 
@@ -566,7 +529,7 @@
     stage.addEventListener("pointercancel", endPointer);
 
     box.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".rv-lb-cap, .rv-stage, .rv-lb-controls")) return;
+      if (e.target.closest && e.target.closest(".rv-lb-cap, .rv-stage")) return;
       closeLb();
     });
     syncContours();
@@ -651,21 +614,22 @@
     applyRegion();
   }
 
+  function creditLine(parts) {
+    var line = document.createElement("p");
+    line.textContent = parts.join(" ");
+    return line;
+  }
+
   function fillCredit(manifest) {
     creditEl.textContent = "";
-    var licence = document.createElement("p");
-    licence.textContent = manifest.attribution || "";
-    creditEl.appendChild(licence);
+    var sources = [];
+    if (manifest.attribution) sources.push(manifest.attribution);
     attributionLines(manifest).forEach(function (line) {
-      var extra = document.createElement("p");
-      extra.textContent = line;
-      creditEl.appendChild(extra);
+      sources.push(line);
     });
-    contourCredits(manifest).forEach(function (line) {
-      var extra = document.createElement("p");
-      extra.textContent = line;
-      creditEl.appendChild(extra);
-    });
+    var disclaimer = contourCredits(manifest);
+    if (sources.length) creditEl.appendChild(creditLine(sources));
+    if (disclaimer.length) creditEl.appendChild(creditLine(disclaimer));
   }
 
   function render(manifest) {
