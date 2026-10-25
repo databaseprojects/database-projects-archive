@@ -1,0 +1,263 @@
+/* Rivers. Same filing type as the rest of the archive. */
+
+.rv-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.7em;
+  margin: 0.2rem 0 0.9rem;
+}
+
+.rv-name {
+  margin: 0;
+  color: #000;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rv-set {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rv-scroller {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rv-row {
+  display: flex;
+  gap: 1.25rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 2px;
+  overscroll-behavior-x: contain;
+  padding-bottom: 0.4rem;
+}
+
+.rv-card {
+  flex: 0 0 min(34rem, 100%);
+  scroll-snap-align: start;
+}
+
+.rv-open {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.rv-open:focus-visible,
+.rv-arrow:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+.rv-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22rem;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.rv-frame img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.rv-card-name {
+  display: block;
+  margin: 0.45rem 0 0.35rem;
+  color: #111;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rv-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.rv-field {
+  box-sizing: border-box;
+  padding: 0.45rem 0.85rem 0.55rem;
+  min-width: 7.5rem;
+}
+
+.rv-field + .rv-field {
+  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.4);
+}
+
+.rv-label {
+  margin: 0 0 0.28rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.rv-value {
+  margin: 0;
+  color: #111;
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.rv-gauge {
+  margin-top: 0.28rem;
+  color: #111;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+}
+
+.rv-gauge a {
+  color: inherit;
+}
+
+.rv-caveat {
+  flex: 1 0 100%;
+  margin: 0;
+  padding: 0.15rem 0.85rem 0.7rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.rv-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  padding: 0.2rem 0.15rem;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rv-arrow[disabled] {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.rv-notes,
+.rv-credit {
+  margin: 1.1rem 0 0;
+  max-width: 46em;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+}
+
+.rv-credit {
+  margin-top: 0.7rem;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.rv-notes p,
+.rv-credit p {
+  margin: 0 0 0.35rem;
+}
+
+.rv-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0);
+  opacity: 0;
+  overflow: hidden;
+  transition: background 0.32s ease, opacity 0.32s ease;
+  cursor: zoom-out;
+}
+
+.rv-lb.rv-on {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.rv-lb.rv-closing {
+  opacity: 0;
+  background: rgba(0, 0, 0, 0);
+}
+
+.rv-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.rv-stage img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.rv-lb.rv-drag .rv-stage img {
+  cursor: grabbing;
+}
+
+.rv-lb-cap {
+  flex: 0 1 auto;
+  max-height: 38vh;
+  overflow: auto;
+  margin-top: 10px;
+  cursor: default;
+}
+
+.rv-lb-cap .rv-caption {
+  border-top: 0;
+}
+
+html.rv-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv-lb {
+    transition: none;
+  }
+}
