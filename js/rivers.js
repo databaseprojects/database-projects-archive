@@ -267,7 +267,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025l";
+  var ASSET_V = "20261025m";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
@@ -1296,7 +1296,7 @@
       gridBtn.setAttribute("aria-pressed", gridOn ? "true" : "false");
     }
     if (mapBtn) {
-      mapBtn.classList.toggle("rv-on", mapOn);
+      mapBtn.classList.toggle("sh-icon-on", mapOn);
       mapBtn.setAttribute("aria-pressed", mapOn ? "true" : "false");
     }
   }
