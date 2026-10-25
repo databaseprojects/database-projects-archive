@@ -243,11 +243,16 @@
 }
 
 .rv-credit {
-  margin-top: 0.35rem;
+  width: 100%;
+  max-width: none;
+  margin-top: 0.4rem;
   margin-bottom: 0;
-  color: rgba(0, 0, 0, 0.4);
-  font-size: 9px;
+  overflow-x: auto;
+  color: rgba(0, 0, 0, 0.42);
+  font-size: 10px;
+  letter-spacing: 0.01em;
   line-height: 1.25;
+  text-align: left;
 }
 
 .rv-notes p,
@@ -256,11 +261,18 @@
 }
 
 .rv-credit p {
-  margin: 0 0 0.12rem;
+  margin: 0;
+  max-width: none;
 }
 
-.rv-credit p:last-child {
-  margin-bottom: 0;
+.rv-credit p + p {
+  margin-top: 0.15rem;
+}
+
+@media (min-width: 768px) {
+  .rv-credit p {
+    white-space: nowrap;
+  }
 }
 
 .rv-lb {

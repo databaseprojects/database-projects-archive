@@ -614,21 +614,22 @@
     applyRegion();
   }
 
+  function creditLine(parts) {
+    var line = document.createElement("p");
+    line.textContent = parts.join(" ");
+    return line;
+  }
+
   function fillCredit(manifest) {
     creditEl.textContent = "";
-    var licence = document.createElement("p");
-    licence.textContent = manifest.attribution || "";
-    creditEl.appendChild(licence);
+    var sources = [];
+    if (manifest.attribution) sources.push(manifest.attribution);
     attributionLines(manifest).forEach(function (line) {
-      var extra = document.createElement("p");
-      extra.textContent = line;
-      creditEl.appendChild(extra);
+      sources.push(line);
     });
-    contourCredits(manifest).forEach(function (line) {
-      var extra = document.createElement("p");
-      extra.textContent = line;
-      creditEl.appendChild(extra);
-    });
+    var disclaimer = contourCredits(manifest);
+    if (sources.length) creditEl.appendChild(creditLine(sources));
+    if (disclaimer.length) creditEl.appendChild(creditLine(disclaimer));
   }
 
   function render(manifest) {
