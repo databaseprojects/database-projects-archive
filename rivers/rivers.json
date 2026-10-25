@@ -4,6 +4,7 @@
   "rivers": [
     {
       "slug": "fraser",
+      "map": {"lat": 49.118, "lon": -123.188, "kind": "mouth"},
       "name": "Fraser",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899305/rivers-site/v6a/fraser_thumb.webp",
@@ -51,6 +52,7 @@
     },
     {
       "slug": "columbia",
+      "map": {"lat": 49.002, "lon": -117.631, "kind": "mouth"},
       "name": "Columbia",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899309/rivers-site/v6a/columbia_thumb.webp",
@@ -99,6 +101,7 @@
     },
     {
       "slug": "skeena",
+      "map": {"lat": 54.137, "lon": -130.105, "kind": "mouth"},
       "name": "Skeena",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899302/rivers-site/v6a/skeena_thumb.webp",
@@ -146,6 +149,7 @@
     },
     {
       "slug": "peace",
+      "map": {"lat": 56.143, "lon": -120.004, "kind": "mouth"},
       "name": "Peace",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899312/rivers-site/v6a/peace_thumb.webp",
@@ -193,6 +197,7 @@
     },
     {
       "slug": "thompson",
+      "map": {"lat": 50.236, "lon": -121.583, "kind": "mouth"},
       "name": "Thompson",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899316/rivers-site/v6a/thompson_thumb.webp",
@@ -240,6 +245,7 @@
     },
     {
       "slug": "nass",
+      "map": {"lat": 54.986, "lon": -129.973, "kind": "mouth"},
       "name": "Nass",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899320/rivers-site/v6a/nass_thumb.webp",
@@ -287,6 +293,7 @@
     },
     {
       "slug": "stikine",
+      "map": {"lat": 56.665, "lon": -131.831, "kind": "mouth"},
       "name": "Stikine",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899323/rivers-site/v6a/stikine_thumb.webp",
@@ -334,6 +341,7 @@
     },
     {
       "slug": "kootenay",
+      "map": {"lat": 49.316, "lon": -117.652, "kind": "mouth"},
       "name": "Kootenay",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899326/rivers-site/v6a/kootenay_thumb.webp",
@@ -381,6 +389,7 @@
     },
     {
       "slug": "okanagan",
+      "map": {"lat": 49.002, "lon": -119.443, "kind": "mouth"},
       "name": "Okanagan",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899330/rivers-site/v6a/okanagan_thumb.webp",
@@ -428,6 +437,7 @@
     },
     {
       "slug": "squamish",
+      "map": {"lat": 49.687, "lon": -123.181, "kind": "mouth"},
       "name": "Squamish",
       "regions": ["Canada"],
       "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899333/rivers-site/v6a/squamish_thumb.webp",
@@ -475,6 +485,7 @@
     },
     {
       "slug": "skagit",
+      "map": {"lat": 48.388, "lon": -122.366, "kind": "mouth"},
       "name": "Skagit",
       "regions": [
         "Canada",
@@ -526,6 +537,7 @@
     },
     {
       "slug": "taku-stikine-alsek",
+      "map": {"lat": 59.068, "lon": -132.596, "kind": "area"},
       "name": "Taku–Stikine–Alsek",
       "regions": [
         "Canada",
@@ -598,6 +610,7 @@
     },
     {
       "slug": "sacramento-san-joaquin",
+      "map": {"lat": 37.81, "lon": -122.48, "kind": "mouth"},
       "name": "Sacramento–San Joaquin",
       "regions": [
         "US"
@@ -638,6 +651,7 @@
     },
     {
       "slug": "colorado-us-mexico",
+      "map": {"lat": 32.72, "lon": -114.72, "kind": "mouth"},
       "name": "Colorado (US)",
       "regions": [
         "US"
@@ -674,6 +688,7 @@
     },
     {
       "slug": "susquehanna-potomac",
+      "map": {"lat": 40.439, "lon": -77.218, "kind": "area"},
       "name": "Susquehanna–Potomac",
       "regions": [
         "US"
@@ -709,6 +724,7 @@
     },
     {
       "slug": "rio-grande",
+      "map": {"lat": 25.96, "lon": -97.15, "kind": "mouth"},
       "name": "Rio Grande",
       "regions": [
         "US"
@@ -750,6 +766,7 @@
     },
     {
       "slug": "kuskokwim-susitna-copper",
+      "map": {"lat": 62.29, "lon": -151.365, "kind": "area"},
       "name": "Kuskokwim, Susitna and Copper",
       "regions": [
         "US"
@@ -785,6 +802,7 @@
     },
     {
       "slug": "saskatchewan",
+      "map": {"lat": 53.16, "lon": -99.26, "kind": "mouth"},
       "name": "Saskatchewan",
       "regions": [
         "Canada"
@@ -827,6 +845,7 @@
     },
     {
       "slug": "columbia-us",
+      "map": {"lat": 46.25, "lon": -124.05, "kind": "mouth"},
       "name": "Columbia (US)",
       "regions": [
         "US"
@@ -863,6 +882,7 @@
     },
     {
       "slug": "snake-salmon",
+      "map": {"lat": 46.2, "lon": -119.03, "kind": "mouth"},
       "name": "Snake–Salmon",
       "regions": [
         "US"
@@ -903,6 +923,7 @@
     },
     {
       "slug": "hudson",
+      "map": {"lat": 40.7, "lon": -74.02, "kind": "mouth"},
       "name": "Hudson",
       "regions": [
         "US"
@@ -943,6 +964,7 @@
     },
     {
       "slug": "liard",
+      "map": {"lat": 61.86, "lon": -121.35, "kind": "mouth"},
       "name": "Liard",
       "regions": [
         "Canada"
@@ -984,6 +1006,7 @@
     },
     {
       "slug": "ohio-tennessee",
+      "map": {"lat": 36.99, "lon": -89.13, "kind": "mouth"},
       "name": "Ohio–Tennessee",
       "regions": [
         "US"
@@ -1020,6 +1043,7 @@
     },
     {
       "slug": "mississippi-missouri",
+      "map": {"lat": 29.0, "lon": -89.2, "kind": "mouth"},
       "name": "Mississippi–Missouri",
       "regions": [
         "US"
@@ -1056,6 +1080,7 @@
     },
     {
       "slug": "nelson-red",
+      "map": {"lat": 57.05, "lon": -92.95, "kind": "mouth"},
       "name": "Nelson–Red",
       "regions": [
         "Canada",
@@ -1095,6 +1120,7 @@
     },
     {
       "slug": "yukon",
+      "map": {"lat": 64.78, "lon": -141.0, "kind": "mouth"},
       "name": "Yukon",
       "regions": [
         "Canada"
@@ -1136,6 +1162,7 @@
     },
     {
       "slug": "severn-thames-tweed-spey",
+      "map": {"lat": 55.42, "lon": -2.622, "kind": "area"},
       "name": "Severn, Thames, Tweed and Spey",
       "regions": [
         "Europe"
@@ -1169,6 +1196,7 @@
     },
     {
       "slug": "aare-inn-ticino",
+      "map": {"lat": 46.762, "lon": 8.208, "kind": "area"},
       "name": "Aare, Inn and Ticino",
       "regions": [
         "Europe"
@@ -1202,6 +1230,7 @@
     },
     {
       "slug": "amazon-brazil",
+      "map": {"lat": 0.216, "lon": -50.684, "kind": "mouth"},
       "name": "Amazon (Brazil)",
       "regions": [
         "South America"
@@ -1236,6 +1265,7 @@
     },
     {
       "slug": "sao-francisco",
+      "map": {"lat": -10.506, "lon": -36.397, "kind": "mouth"},
       "name": "São Francisco",
       "regions": [
         "South America"
@@ -1285,6 +1315,7 @@
     },
     {
       "slug": "tocantins-araguaia",
+      "map": {"lat": -0.574, "lon": -48.274, "kind": "mouth"},
       "name": "Tocantins–Araguaia",
       "regions": [
         "South America"
@@ -1325,6 +1356,7 @@
     },
     {
       "slug": "parana-iguacu",
+      "map": {"lat": -25.201, "lon": -54.71, "kind": "area"},
       "name": "Paraná and Iguaçu",
       "regions": [
         "South America"
@@ -1360,6 +1392,7 @@
     },
     {
       "slug": "danube",
+      "map": {"lat": 45.248, "lon": 29.698, "kind": "mouth"},
       "name": "Danube",
       "regions": [
         "Europe"
@@ -1409,6 +1442,7 @@
     },
     {
       "slug": "loire",
+      "map": {"lat": 47.29, "lon": -1.973, "kind": "mouth"},
       "name": "Loire",
       "regions": [
         "Europe"
@@ -1458,6 +1492,7 @@
     },
     {
       "slug": "seine",
+      "map": {"lat": 49.485, "lon": 0.51, "kind": "mouth"},
       "name": "Seine",
       "regions": [
         "Europe"
@@ -1507,6 +1542,7 @@
     },
     {
       "slug": "garonne-dordogne",
+      "map": {"lat": 44.186, "lon": 1.481, "kind": "area"},
       "name": "Garonne–Dordogne",
       "regions": [
         "Europe"
@@ -1542,6 +1578,7 @@
     },
     {
       "slug": "churchill-labrador",
+      "map": {"lat": 53.315, "lon": -60.2, "kind": "mouth"},
       "name": "Churchill (Labrador)",
       "regions": [
         "Canada"
@@ -1579,6 +1616,7 @@
     },
     {
       "slug": "rhine",
+      "map": {"lat": 51.96, "lon": 4.152, "kind": "mouth"},
       "name": "Rhine",
       "regions": [
         "Europe"
@@ -1628,6 +1666,7 @@
     },
     {
       "slug": "po",
+      "map": {"lat": 44.96, "lon": 12.515, "kind": "mouth"},
       "name": "Po",
       "regions": [
         "Europe"
@@ -1677,6 +1716,7 @@
     },
     {
       "slug": "iberia",
+      "map": {"lat": 41.114, "lon": -3.645, "kind": "area"},
       "name": "Ebro, Tagus and Douro",
       "regions": [
         "Europe"
@@ -1712,6 +1752,7 @@
     },
     {
       "slug": "elbe-oder-vistula",
+      "map": {"lat": 51.451, "lon": 17.75, "kind": "area"},
       "name": "Elbe, Oder and Vistula",
       "regions": [
         "Europe"
@@ -1747,6 +1788,7 @@
     },
     {
       "slug": "shannon",
+      "map": {"lat": 52.673, "lon": -8.731, "kind": "mouth"},
       "name": "Shannon",
       "regions": [
         "Europe"
@@ -1796,6 +1838,7 @@
     },
     {
       "slug": "rhone",
+      "map": {"lat": 43.381, "lon": 4.806, "kind": "mouth"},
       "name": "Rhône",
       "regions": [
         "Europe"
@@ -1845,6 +1888,7 @@
     },
     {
       "slug": "biobio-central-chile",
+      "map": {"lat": -35.915, "lon": -71.446, "kind": "area"},
       "name": "Biobío and central Chile",
       "regions": [
         "South America"
@@ -1880,6 +1924,7 @@
     },
     {
       "slug": "murray-darling",
+      "map": {"lat": -35.348, "lon": 139.381, "kind": "mouth"},
       "name": "Murray–Darling",
       "regions": [
         "Oceania"
@@ -1929,6 +1974,7 @@
     },
     {
       "slug": "st-lawrence-ottawa",
+      "map": {"lat": 46.815, "lon": -71.19, "kind": "mouth"},
       "name": "St. Lawrence–Ottawa",
       "regions": [
         "Canada"
@@ -1966,6 +2012,7 @@
     },
     {
       "slug": "back-thelon",
+      "map": {"lat": 62.939, "lon": -100.252, "kind": "area"},
       "name": "Back and Thelon",
       "regions": [
         "Canada"
@@ -1997,6 +2044,7 @@
     },
     {
       "slug": "torne-kalix-angerman",
+      "map": {"lat": 66.049, "lon": 19.027, "kind": "area"},
       "name": "Torne, Kalix and Angerman",
       "regions": [
         "Europe"
@@ -2032,6 +2080,7 @@
     },
     {
       "slug": "orange-vaal",
+      "map": {"lat": -28.631, "lon": 16.452, "kind": "mouth"},
       "name": "Orange–Vaal",
       "regions": [
         "Africa"
@@ -2081,6 +2130,7 @@
     },
     {
       "slug": "limpopo",
+      "map": {"lat": -25.173, "lon": 33.515, "kind": "mouth"},
       "name": "Limpopo",
       "regions": [
         "Africa"
@@ -2130,6 +2180,7 @@
     },
     {
       "slug": "tugela-umgeni",
+      "map": {"lat": -28.567, "lon": 30.201, "kind": "area"},
       "name": "Tugela and Umgeni",
       "regions": [
         "Africa"
@@ -2165,6 +2216,7 @@
     },
     {
       "slug": "zambezi",
+      "map": {"lat": -18.802, "lon": 36.256, "kind": "mouth"},
       "name": "Zambezi",
       "regions": [
         "Africa"
@@ -2214,6 +2266,7 @@
     },
     {
       "slug": "mekong",
+      "map": {"lat": 9.615, "lon": 106.252, "kind": "mouth"},
       "name": "Mekong",
       "regions": [
         "Asia"
@@ -2263,6 +2316,7 @@
     },
     {
       "slug": "senegal-volta",
+      "map": {"lat": 12.176, "lon": -7.049, "kind": "area"},
       "name": "Senegal and Volta",
       "regions": [
         "Africa"
@@ -2298,6 +2352,7 @@
     },
     {
       "slug": "niger",
+      "map": {"lat": 4.394, "lon": 6.069, "kind": "mouth"},
       "name": "Niger",
       "regions": [
         "Africa"
@@ -2347,6 +2402,7 @@
     },
     {
       "slug": "nile",
+      "map": {"lat": 31.444, "lon": 30.385, "kind": "mouth"},
       "name": "Nile",
       "regions": [
         "Africa"
@@ -2396,6 +2452,7 @@
     },
     {
       "slug": "congo",
+      "map": {"lat": -6.069, "lon": 12.465, "kind": "mouth"},
       "name": "Congo",
       "regions": [
         "Africa"
@@ -2445,6 +2502,7 @@
     },
     {
       "slug": "mackenzie",
+      "map": {"lat": 67.45, "lon": -133.75, "kind": "mouth"},
       "name": "Mackenzie",
       "regions": [
         "Canada"
@@ -2481,6 +2539,7 @@
     },
     {
       "slug": "glomma-drammen",
+      "map": {"lat": 60.96, "lon": 9.936, "kind": "area"},
       "name": "Glomma and Drammen",
       "regions": [
         "Europe"
@@ -2516,6 +2575,7 @@
     },
     {
       "slug": "patagonia-south",
+      "map": {"lat": -47.813, "lon": -71.148, "kind": "area"},
       "name": "Southern Patagonia",
       "regions": [
         "South America"
@@ -2551,6 +2611,7 @@
     },
     {
       "slug": "uruguay",
+      "map": {"lat": -32.944, "lon": -58.102, "kind": "mouth"},
       "name": "Uruguay",
       "regions": [
         "South America"
@@ -2600,6 +2661,7 @@
     },
     {
       "slug": "magdalena-cauca",
+      "map": {"lat": 11.069, "lon": -74.844, "kind": "mouth"},
       "name": "Magdalena–Cauca",
       "regions": [
         "South America"
@@ -2649,6 +2711,7 @@
     },
     {
       "slug": "sava-drina-neretva",
+      "map": {"lat": 44.521, "lon": 17.174, "kind": "area"},
       "name": "Sava, Drina and Neretva",
       "regions": [
         "Europe"
@@ -2684,6 +2747,7 @@
     },
     {
       "slug": "dnieper-dniester",
+      "map": {"lat": 50.994, "lon": 30.265, "kind": "area"},
       "name": "Dnieper and Dniester",
       "regions": [
         "Europe"
@@ -2719,6 +2783,7 @@
     },
     {
       "slug": "orinoco",
+      "map": {"lat": 8.577, "lon": -60.981, "kind": "mouth"},
       "name": "Orinoco",
       "regions": [
         "South America"
@@ -2768,6 +2833,7 @@
     },
     {
       "slug": "chao-phraya",
+      "map": {"lat": 13.615, "lon": 100.56, "kind": "mouth"},
       "name": "Chao Phraya",
       "regions": [
         "Asia"
@@ -2817,6 +2883,7 @@
     },
     {
       "slug": "red-river",
+      "map": {"lat": 20.315, "lon": 106.531, "kind": "mouth"},
       "name": "Red River (Song Hong)",
       "regions": [
         "Asia"
@@ -2866,6 +2933,7 @@
     },
     {
       "slug": "salween",
+      "map": {"lat": 16.552, "lon": 97.66, "kind": "mouth"},
       "name": "Salween",
       "regions": [
         "Asia"
@@ -2915,6 +2983,7 @@
     },
     {
       "slug": "godavari-krishna",
+      "map": {"lat": 17.914, "lon": 78.227, "kind": "area"},
       "name": "Godavari and Krishna",
       "regions": [
         "Asia"
@@ -2950,6 +3019,7 @@
     },
     {
       "slug": "irrawaddy",
+      "map": {"lat": 16.36, "lon": 95.04, "kind": "mouth"},
       "name": "Irrawaddy",
       "regions": [
         "Asia"
@@ -2999,6 +3069,7 @@
     },
     {
       "slug": "indus",
+      "map": {"lat": 24.081, "lon": 67.652, "kind": "mouth"},
       "name": "Indus",
       "regions": [
         "Asia"
@@ -3048,6 +3119,7 @@
     },
     {
       "slug": "baltic-rivers",
+      "map": {"lat": 56.064, "lon": 27.509, "kind": "area"},
       "name": "Baltic rivers (Daugava, Neman, Narva)",
       "regions": [
         "Europe"
@@ -3083,6 +3155,7 @@
     },
     {
       "slug": "brisbane-fitzroy-burdekin",
+      "map": {"lat": -23.217, "lon": 148.567, "kind": "area"},
       "name": "Brisbane, Fitzroy and Burdekin",
       "regions": [
         "Oceania"
@@ -3118,6 +3191,7 @@
     },
     {
       "slug": "hawkesbury-nsw-coast",
+      "map": {"lat": -32.131, "lon": 151.575, "kind": "area"},
       "name": "Hawkesbury–Nepean and NSW coast",
       "regions": [
         "Oceania"
@@ -3153,6 +3227,7 @@
     },
     {
       "slug": "tasmania",
+      "map": {"lat": -42.165, "lon": 146.566, "kind": "area"},
       "name": "Tasmania",
       "regions": [
         "Oceania"
@@ -3188,6 +3263,7 @@
     },
     {
       "slug": "paraguay-pantanal",
+      "map": {"lat": -27.331, "lon": -58.648, "kind": "mouth"},
       "name": "Paraguay and the Pantanal",
       "regions": [
         "South America"
@@ -3228,6 +3304,7 @@
     },
     {
       "slug": "volga-don",
+      "map": {"lat": 53.445, "lon": 46.396, "kind": "area"},
       "name": "Volga and Don",
       "regions": [
         "Europe"
@@ -3263,6 +3340,7 @@
     },
     {
       "slug": "korea",
+      "map": {"lat": 36.955, "lon": 127.981, "kind": "area"},
       "name": "South Korea (Han, Geum, Nakdong)",
       "regions": [
         "Asia"
@@ -3298,6 +3376,7 @@
     },
     {
       "slug": "morocco-atlas",
+      "map": {"lat": 33.262, "lon": -4.799, "kind": "area"},
       "name": "Morocco (Sebou, Oum Er-Rbia, Moulouya)",
       "regions": [
         "Africa"
@@ -3333,6 +3412,7 @@
     },
     {
       "slug": "colorado-negro-patagonia",
+      "map": {"lat": -34.595, "lon": -67.029, "kind": "area"},
       "name": "Colorado and Negro (Patagonia)",
       "regions": [
         "South America"
@@ -3368,6 +3448,7 @@
     },
     {
       "slug": "guianas",
+      "map": {"lat": 3.885, "lon": -55.771, "kind": "area"},
       "name": "The Guianas",
       "regions": [
         "South America"
@@ -3403,6 +3484,7 @@
     },
     {
       "slug": "madagascar",
+      "map": {"lat": -17.799, "lon": 46.928, "kind": "area"},
       "name": "Madagascar",
       "regions": [
         "Africa"
@@ -3438,6 +3520,7 @@
     },
     {
       "slug": "tanzania-coast",
+      "map": {"lat": -9.037, "lon": 36.963, "kind": "area"},
       "name": "Tanzania coast (Rufiji, Ruvuma, Pangani)",
       "regions": [
         "Africa"
@@ -3473,6 +3556,7 @@
     },
     {
       "slug": "breede-berg",
+      "map": {"lat": -33.557, "lon": 19.507, "kind": "area"},
       "name": "Breede and Berg",
       "regions": [
         "Africa"
@@ -3508,6 +3592,7 @@
     },
     {
       "slug": "amu-syr-darya",
+      "map": {"lat": 40.637, "lon": 68.683, "kind": "area"},
       "name": "Amu Darya and Syr Darya",
       "regions": [
         "Asia"
@@ -3543,6 +3628,7 @@
     },
     {
       "slug": "ucayali-maranon",
+      "map": {"lat": -4.177, "lon": -73.36, "kind": "mouth"},
       "name": "Ucayali–Marañón",
       "regions": [
         "South America"
@@ -3583,6 +3669,7 @@
     },
     {
       "slug": "kolyma-indigirka",
+      "map": {"lat": 66.108, "lon": 153.549, "kind": "area"},
       "name": "Kolyma and Indigirka",
       "regions": [
         "Asia"
@@ -3618,6 +3705,7 @@
     },
     {
       "slug": "pechora-dvina",
+      "map": {"lat": 63.719, "lon": 50.442, "kind": "area"},
       "name": "Pechora and Northern Dvina",
       "regions": [
         "Europe"
@@ -3653,6 +3741,7 @@
     },
     {
       "slug": "yangtze",
+      "map": {"lat": 31.94, "lon": 120.235, "kind": "mouth"},
       "name": "Yangtze",
       "regions": [
         "Asia"
@@ -3702,6 +3791,7 @@
     },
     {
       "slug": "yellow-river",
+      "map": {"lat": 37.769, "lon": 119.173, "kind": "mouth"},
       "name": "Yellow River",
       "regions": [
         "Asia"
@@ -3751,6 +3841,7 @@
     },
     {
       "slug": "pearl-xi",
+      "map": {"lat": 22.398, "lon": 113.256, "kind": "mouth"},
       "name": "Pearl (Xi)",
       "regions": [
         "Asia"
@@ -3800,6 +3891,7 @@
     },
     {
       "slug": "amur",
+      "map": {"lat": 53.115, "lon": 140.706, "kind": "mouth"},
       "name": "Amur",
       "regions": [
         "Asia"
@@ -3849,6 +3941,7 @@
     },
     {
       "slug": "ganges-brahmaputra",
+      "map": {"lat": 27.139, "lon": 85.38, "kind": "area"},
       "name": "Ganges–Brahmaputra",
       "regions": [
         "Asia"
@@ -3884,6 +3977,7 @@
     },
     {
       "slug": "ob-irtysh",
+      "map": {"lat": 66.781, "lon": 69.998, "kind": "mouth"},
       "name": "Ob–Irtysh",
       "regions": [
         "Asia"
@@ -3933,6 +4027,7 @@
     },
     {
       "slug": "yenisei-angara",
+      "map": {"lat": 69.627, "lon": 84.527, "kind": "mouth"},
       "name": "Yenisei–Angara",
       "regions": [
         "Asia"
@@ -3982,6 +4077,7 @@
     },
     {
       "slug": "lena",
+      "map": {"lat": 72.002, "lon": 128.565, "kind": "mouth"},
       "name": "Lena",
       "regions": [
         "Asia"
@@ -4031,6 +4127,7 @@
     },
     {
       "slug": "fly-sepik",
+      "map": {"lat": -5.916, "lon": 143.406, "kind": "area"},
       "name": "Fly and Sepik",
       "regions": [
         "Oceania"
@@ -4066,6 +4163,7 @@
     },
     {
       "slug": "ethiopia-highlands",
+      "map": {"lat": 5.902, "lon": 40.596, "kind": "area"},
       "name": "Ethiopian highlands (Awash, Omo, Juba)",
       "regions": [
         "Africa"
@@ -4101,6 +4199,7 @@
     },
     {
       "slug": "kura-caucasus",
+      "map": {"lat": 40.917, "lon": 44.571, "kind": "area"},
       "name": "Caucasus (Kura–Araks, Terek, Rioni)",
       "regions": [
         "Asia",
@@ -4137,6 +4236,7 @@
     },
     {
       "slug": "kaveri-mahanadi",
+      "map": {"lat": 16.894, "lon": 81.103, "kind": "area"},
       "name": "Kaveri, Mahanadi, Brahmani and Pennar",
       "regions": [
         "Asia"
@@ -4172,6 +4272,7 @@
     },
     {
       "slug": "hai-liao",
+      "map": {"lat": 40.178, "lon": 118.615, "kind": "area"},
       "name": "Hai and Liao",
       "regions": [
         "Asia"
@@ -4207,6 +4308,7 @@
     },
     {
       "slug": "narmada-tapti-mahi",
+      "map": {"lat": 22.369, "lon": 77.188, "kind": "area"},
       "name": "Narmada, Tapti and Mahi",
       "regions": [
         "Asia"
@@ -4242,6 +4344,7 @@
     },
     {
       "slug": "neva-ladoga",
+      "map": {"lat": 59.919, "lon": 30.256, "kind": "mouth"},
       "name": "Neva and Ladoga",
       "regions": [
         "Europe"
