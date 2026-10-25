@@ -104,6 +104,28 @@
     return (river.regions || []).indexOf(region) !== -1;
   }
 
+  function fold(text) {
+    return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  function searchHay(river) {
+    var parts = [river && river.name || ""];
+    ((river && river.regions) || []).forEach(function (name) {
+      parts.push(name);
+    });
+    return fold(parts.join(" "));
+  }
+
+  function searchMatch(river, query) {
+    var words = fold(query).split(/\s+/).filter(function (word) { return word; });
+    if (!words.length) return true;
+    var hay = searchHay(river);
+    for (var i = 0; i < words.length; i++) {
+      if (hay.indexOf(words[i]) === -1) return false;
+    }
+    return true;
+  }
+
   function addLine(lines, seen, line) {
     if (!line || seen[line]) return;
     seen[line] = true;
@@ -157,6 +179,7 @@
     coordText: coordText,
     fieldsFor: fieldsFor,
     regionMatch: regionMatch,
+    searchMatch: searchMatch,
     regionNames: regionNames,
     attributionLines: attributionLines,
     contourCredits: contourCredits,
@@ -167,6 +190,11 @@
   if (typeof document === "undefined") return;
 
   var ASSET_V = "20261025f";
+
+  function assetSrc(path) {
+    if (typeof path === "string" && path.indexOf("https://") === 0) return path;
+    return path + "?v=" + ASSET_V;
+  }
   var contoursOn = false;
   var contourReady = {};
   var contourPending = {};
@@ -176,8 +204,12 @@
   var setEl = document.getElementById("rv-set");
   var titleEl = document.getElementById("rv-title");
   var regionsEl = document.getElementById("rv-regions");
+  var findEl = document.getElementById("rv-find");
+  var clearEl = document.getElementById("rv-find-clear");
+  var emptyEl = document.getElementById("rv-empty");
   var manifestNow = null;
   var regionFilter = "All";
+  var searchQuery = "";
   var lb = null;
   var lbTimer = null;
 
@@ -208,15 +240,7 @@
         if (field.stationId || field.years || field.modelled) {
           var meta = el("div", "rv-gauge");
           var marked = false;
-          if (field.stationId && field.url) {
-            var link = document.createElement("a");
-            link.href = field.url;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.textContent = field.stationId;
-            meta.appendChild(link);
-            marked = true;
-          } else if (field.stationId) {
+          if (field.stationId) {
             meta.appendChild(document.createTextNode(field.stationId));
             marked = true;
           } else if (field.modelled) {
@@ -282,7 +306,7 @@
     img.height = H;
     img.style.width = W + "px";
     img.style.height = H + "px";
-    img.src = river.mid + "?v=" + ASSET_V;
+    img.src = assetSrc(river.mid);
     var overlay = document.createElement("img");
     overlay.className = "rv-contour";
     overlay.alt = "";
@@ -338,7 +362,7 @@
     lb = box;
 
     var large = new Image();
-    large.src = river.large + "?v=" + ASSET_V;
+    large.src = assetSrc(river.large);
 
     function fit() {
       var sw = stage.clientWidth;
@@ -363,7 +387,7 @@
       var slug = item.slug;
       if (contourReady[slug]) return Promise.resolve(contourReady[slug]);
       if (contourPending[slug]) return contourPending[slug];
-      contourPending[slug] = fetch(item.contours.file + "?v=" + ASSET_V).then(function (res) {
+      contourPending[slug] = fetch(assetSrc(item.contours.file)).then(function (res) {
         if (!res.ok) throw new Error("contours");
         return res.arrayBuffer();
       }).then(function (buf) {
@@ -412,7 +436,7 @@
       var want = needsLarge() ? "large" : "mid";
       if (want === showing) return;
       showing = want;
-      img.src = (want === "large" ? river.large : river.mid) + "?v=" + ASSET_V;
+      img.src = assetSrc(want === "large" ? river.large : river.mid);
     }
 
     function clampPan() {
@@ -562,7 +586,7 @@
     btn.setAttribute("aria-label", "Open " + (river.name || "river"));
     var img = document.createElement("img");
     img.alt = river.name || "";
-    img.src = river.thumb + "?v=" + ASSET_V;
+    img.src = assetSrc(river.thumb);
     img.loading = "lazy";
     img.decoding = "async";
     if (river.thumbWidth) img.width = river.thumbWidth;
@@ -576,11 +600,13 @@
     return card;
   }
 
+  function riverShown(river) {
+    return regionMatch(river, regionFilter) && searchMatch(river, searchQuery);
+  }
+
   function visibleRivers() {
     if (!manifestNow) return [];
-    return (manifestNow.rivers || []).filter(function (river) {
-      return regionMatch(river, regionFilter);
-    });
+    return (manifestNow.rivers || []).filter(riverShown);
   }
 
   function applyRegion() {
@@ -593,8 +619,12 @@
     }
     if (row) {
       Array.prototype.forEach.call(row.querySelectorAll(".rv-card"), function (card) {
-        card.hidden = !(card._river && regionMatch(card._river, regionFilter));
+        card.hidden = !(card._river && riverShown(card._river));
       });
+    }
+    if (emptyEl) {
+      var loaded = manifestNow && (manifestNow.rivers || []).length;
+      emptyEl.hidden = !loaded || visibleRivers().length > 0;
     }
     if (lb && !lb._closing) {
       var still = visibleRivers().some(function (river) { return river.slug === lb._slug; });
@@ -671,12 +701,37 @@
     openLb(manifestNow, list[next]);
   }
 
+  function syncFind() {
+    if (clearEl) clearEl.hidden = !searchQuery;
+  }
+
+  if (findEl) {
+    findEl.addEventListener("input", function () {
+      searchQuery = findEl.value;
+      syncFind();
+      applyRegion();
+    });
+  }
+  if (clearEl) {
+    clearEl.addEventListener("click", function () {
+      searchQuery = "";
+      if (findEl) {
+        findEl.value = "";
+        findEl.focus();
+      }
+      syncFind();
+      applyRegion();
+    });
+  }
+
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && lb) {
       e.preventDefault();
       closeLb();
       return;
     }
+    var typing = e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA");
+    if (typing) return;
     if (!lb || lb._closing) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
