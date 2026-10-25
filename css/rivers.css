@@ -234,36 +234,6 @@
   background: #e8e8e8;
 }
 
-.rv-map-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1rem;
-  margin: 0.4rem 0 0;
-  color: rgba(0, 0, 0, 0.55);
-  font-family: "Courier New", Courier, monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  line-height: 1.3;
-}
-
-.rv-map-key {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-}
-
-.rv-map-key::before,
-.rv-map-key-area::before {
-  content: "";
-  box-sizing: border-box;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #1f4e9c;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
-}
-
 .rv-mouth {
   position: relative;
   width: 13px;
@@ -334,44 +304,6 @@
 .rv-map .maplibregl-ctrl-logo,
 .rv-map .maplibregl-ctrl-attrib {
   display: none;
-}
-
-.rv-map .maplibregl-popup.rv-map-pop .maplibregl-popup-content {
-  border: 1px solid rgba(0, 0, 0, 0.55);
-  border-radius: 0;
-  box-shadow: none;
-  background: #fff;
-  color: #111;
-  padding: 0.4rem 0.5rem 0.45rem;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
-.rv-map .maplibregl-popup.rv-map-pop .maplibregl-popup-tip {
-  display: none;
-}
-
-.rv-map .maplibregl-popup.rv-map-pop .maplibregl-popup-close-button {
-  top: 0;
-  right: 0;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  color: #111;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.rv-map-pop-name {
-  margin: 0 0.9rem 0.35rem 0;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
-.rv-map .maplibregl-popup.rv-map-pop .rv-tag {
-  margin-top: 0.1rem;
 }
 
 .rv-card {
