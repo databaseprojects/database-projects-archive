@@ -1,4 +1,4 @@
-/* Rivers. Reads rivers/rivers.json and draws the row, captions, and preview. */
+/* Rivers. Reads rivers/rivers.json and draws the row, captions, and zoom. */
 (function (root) {
   "use strict";
 
@@ -16,47 +16,19 @@
     return Math.abs(lat).toFixed(3) + "° " + ns + ", " + Math.abs(lon).toFixed(3) + "° " + ew;
   }
 
-  function unitTitle(manifest, river, key) {
-    var local = river.facts && river.facts.units;
-    var shared = manifest.units || {};
-    if (local && local[key]) return local[key];
-    return shared[key] || "";
-  }
-
   function fieldsFor(manifest, river) {
     var facts = river.facts || {};
     var flow = river.flow || {};
     var fields = [
       { label: "Name", text: river.name || "" },
-      {
-        label: "Segments",
-        text: groupNum(facts.stream_segments),
-        title: unitTitle(manifest, river, "stream_segments")
-      },
-      {
-        label: "Order",
-        text: groupNum(facts.highest_stream_order),
-        title: unitTitle(manifest, river, "highest_stream_order")
-      },
-      {
-        label: "Length",
-        text: groupNum(facts.total_stream_length_km) + " km",
-        title: unitTitle(manifest, river, "total_stream_length_km")
-      },
-      {
-        label: "Main stem",
-        text: groupNum(facts.main_stem_length_km) + " km",
-        title: unitTitle(manifest, river, "main_stem_length_km")
-      },
-      {
-        label: "Area",
-        text: groupNum(facts.river_surface_area_km2) + " km\u00b2",
-        title: unitTitle(manifest, river, "river_surface_area_km2")
-      },
+      { label: "Segments", text: groupNum(facts.stream_segments) },
+      { label: "Order", text: groupNum(facts.highest_stream_order) },
+      { label: "Length", text: groupNum(facts.total_stream_length_km) + " km" },
+      { label: "Main stem", text: groupNum(facts.main_stem_length_km) + " km" },
+      { label: "Area", text: groupNum(facts.river_surface_area_km2) + " km\u00b2" },
       {
         label: facts.mouth_label || "Mouth",
-        text: coordText(facts.mouth_lat, facts.mouth_lon),
-        title: [unitTitle(manifest, river, "mouth_lat"), unitTitle(manifest, river, "mouth_lon")].filter(Boolean).join(". ")
+        text: coordText(facts.mouth_lat, facts.mouth_lon)
       }
     ];
     var flowLines = [];
@@ -68,8 +40,7 @@
       station: flow.station || "",
       stationId: flow.stationId || "",
       years: flow.years || "",
-      url: flow.url || "",
-      caveat: flow.caveat || ""
+      url: flow.url || ""
     });
     return fields;
   }
@@ -83,11 +54,12 @@
     return { s: s, x: px - ix * s, y: py - iy * s };
   }
 
-  var api = { groupNum: groupNum, coordText: coordText, fieldsFor: fieldsFor, zoomAt: zoomAt };
+  var MAX_NATIVE = 2;
+  var api = { groupNum: groupNum, coordText: coordText, fieldsFor: fieldsFor, zoomAt: zoomAt, maxNative: MAX_NATIVE };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261024a";
+  var ASSET_V = "20261024b";
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
@@ -104,13 +76,12 @@
     return node;
   }
 
-  function captionEl(manifest, river, full) {
+  function captionEl(manifest, river) {
     var cap = el("div", "rv-caption");
     fieldsFor(manifest, river).forEach(function (field) {
       var cell = el("div", "rv-field");
       var label = el("div", "rv-label");
       label.textContent = field.label;
-      if (field.title) label.title = field.title;
       var value = el("div", "rv-value");
       if (field.lines) {
         field.lines.forEach(function (line) {
@@ -140,18 +111,12 @@
           }
           value.appendChild(meta);
         }
-        if (!full && field.caveat) value.title = field.caveat;
       } else {
         value.textContent = field.text;
       }
       cell.appendChild(label);
       cell.appendChild(value);
       cap.appendChild(cell);
-      if (full && field.caveat) {
-        var note = el("p", "rv-caveat");
-        note.textContent = field.caveat;
-        cap.appendChild(note);
-      }
     });
     return cap;
   }
@@ -193,12 +158,12 @@
       lb = null;
     }
     clearTimeout(lbTimer);
-    var W = river.width;
-    var H = river.height;
+    var W = river.largeWidth || river.width;
+    var H = river.largeHeight || river.height;
     var view = { s: 1, x: 0, y: 0 };
     var minS = 1;
-    var maxS = 8;
-    var midW = 0;
+    var maxS = MAX_NATIVE;
+    var midW = river.midWidth || 0;
     var showing = "mid";
     var drag = null;
     var pointers = new Map();
@@ -219,22 +184,22 @@
     img.src = river.mid + "?v=" + ASSET_V;
     stage.appendChild(img);
     var capWrap = el("div", "rv-lb-cap");
-    capWrap.appendChild(captionEl(manifest, river, true));
+    capWrap.appendChild(captionEl(manifest, river));
     box.appendChild(stage);
     box.appendChild(capWrap);
     document.body.appendChild(box);
     document.documentElement.classList.add("rv-open");
     lb = box;
 
-    var preview = new Image();
-    preview.src = river.preview + "?v=" + ASSET_V;
+    var large = new Image();
+    large.src = river.large + "?v=" + ASSET_V;
 
     function fit() {
       var sw = stage.clientWidth;
       var sh = stage.clientHeight;
       if (!(sw > 0) || !(sh > 0) || !(W > 0) || !(H > 0)) return false;
       minS = Math.min(sw / W, sh / H);
-      maxS = Math.max(minS * 16, 8);
+      maxS = Math.max(minS, MAX_NATIVE);
       view.s = minS;
       view.x = (sw - W * view.s) / 2;
       view.y = (sh - H * view.s) / 2;
@@ -246,16 +211,16 @@
       img.style.transform = "translate(" + view.x.toFixed(2) + "px, " + view.y.toFixed(2) + "px) scale(" + view.s + ")";
     }
 
-    function needsPreview() {
+    function needsLarge() {
       if (!(midW > 0)) return false;
       return W * view.s > midW * 1.02;
     }
 
     function swap() {
-      var want = needsPreview() ? "preview" : "mid";
+      var want = needsLarge() ? "large" : "mid";
       if (want === showing) return;
       showing = want;
-      img.src = (want === "preview" ? river.preview : river.mid) + "?v=" + ASSET_V;
+      img.src = (want === "large" ? river.large : river.mid) + "?v=" + ASSET_V;
     }
 
     function clampPan() {
@@ -271,7 +236,10 @@
     }
 
     img.addEventListener("load", function () {
-      if (showing === "mid" && !midW) midW = img.naturalWidth || 0;
+      if (showing === "mid") {
+        var natural = img.naturalWidth || 0;
+        if (natural) midW = natural;
+      }
       if (!box._fitted && fit()) box._fitted = true;
       swap();
     });
@@ -413,44 +381,15 @@
       openLb(manifest, river);
     });
     card.appendChild(btn);
-    card.appendChild(captionEl(manifest, river, false));
+    card.appendChild(captionEl(manifest, river));
     return card;
-  }
-
-  function fillNotes(manifest) {
-    notesEl.textContent = "";
-    (manifest.notes || []).forEach(function (line) {
-      var p = document.createElement("p");
-      p.textContent = line;
-      notesEl.appendChild(p);
-    });
-    if (manifest.facts_note) {
-      var extra = document.createElement("p");
-      extra.textContent = manifest.facts_note;
-      notesEl.appendChild(extra);
-    }
   }
 
   function fillCredit(manifest) {
     creditEl.textContent = "";
-    var attr = manifest.attribution || "";
-    var facts = manifest.facts_source || "";
-    if (facts && attr && facts.indexOf(attr) !== -1) {
-      var atlas = facts.replace(attr, "").trim().replace(/[.\s]+$/, "");
-      if (atlas) {
-        var lead = document.createElement("p");
-        lead.textContent = atlas + ".";
-        creditEl.appendChild(lead);
-      }
-    }
     var licence = document.createElement("p");
-    licence.textContent = attr;
+    licence.textContent = manifest.attribution || "";
     creditEl.appendChild(licence);
-    if (manifest.flow_source) {
-      var flow = document.createElement("p");
-      flow.textContent = manifest.flow_source;
-      creditEl.appendChild(flow);
-    }
   }
 
   function render(manifest) {
@@ -461,7 +400,10 @@
     (manifest.rivers || []).forEach(function (river) {
       row.appendChild(cardEl(manifest, river));
     });
-    fillNotes(manifest);
+    if (notesEl) {
+      notesEl.textContent = "";
+      notesEl.hidden = true;
+    }
     fillCredit(manifest);
     syncArrows();
     requestAnimationFrame(syncArrows);
@@ -483,7 +425,10 @@
     if (!res.ok) throw new Error("rivers");
     return res.json();
   }).then(render).catch(function () {
-    if (notesEl) notesEl.textContent = "The river list did not load.";
+    if (notesEl) {
+      notesEl.hidden = false;
+      notesEl.textContent = "The river list did not load.";
+    }
   });
 
   root.RiversPage = api;
