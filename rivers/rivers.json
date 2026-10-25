@@ -5,6 +5,7 @@
     {
       "slug": "fraser",
       "name": "Fraser",
+      "regions": ["Canada"],
       "thumb": "img/fraser-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 681,
@@ -47,6 +48,7 @@
     {
       "slug": "columbia",
       "name": "Columbia",
+      "regions": ["Canada"],
       "thumb": "img/columbia-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 547,
@@ -89,6 +91,7 @@
     {
       "slug": "skeena",
       "name": "Skeena",
+      "regions": ["Canada"],
       "thumb": "img/skeena-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 549,
@@ -131,6 +134,7 @@
     {
       "slug": "peace",
       "name": "Peace",
+      "regions": ["Canada"],
       "thumb": "img/peace-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 553,
@@ -173,6 +177,7 @@
     {
       "slug": "thompson",
       "name": "Thompson",
+      "regions": ["Canada"],
       "thumb": "img/thompson-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 635,
@@ -215,6 +220,7 @@
     {
       "slug": "nass",
       "name": "Nass",
+      "regions": ["Canada"],
       "thumb": "img/nass-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 799,
@@ -257,6 +263,7 @@
     {
       "slug": "stikine",
       "name": "Stikine",
+      "regions": ["Canada"],
       "thumb": "img/stikine-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 635,
@@ -299,6 +306,7 @@
     {
       "slug": "kootenay",
       "name": "Kootenay",
+      "regions": ["Canada"],
       "thumb": "img/kootenay-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 457,
@@ -341,6 +349,7 @@
     {
       "slug": "okanagan",
       "name": "Okanagan",
+      "regions": ["Canada"],
       "thumb": "img/okanagan-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 563,
@@ -383,6 +392,7 @@
     {
       "slug": "squamish",
       "name": "Squamish",
+      "regions": ["Canada"],
       "thumb": "img/squamish-thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 910,
@@ -421,7 +431,127 @@
         "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth; gauge drainage area (2,353 km2) excludes the Mamquam and lower tributaries. Gauge 08GA053 Squamish River below Mamquam River (3,835 km2) is nearer the mouth but has no discharge series in the monthly-mean feed, so was not used.",
         "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08GA022"
       }
+    },
+    {
+      "slug": "skagit",
+      "name": "Skagit",
+      "regions": [
+        "Canada",
+        "US"
+      ],
+      "thumb": "img/skagit-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 659,
+      "mid": "img/skagit-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1758,
+      "large": "img/skagit-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7141,
+      "facts": {
+        "stream_segments": 69613,
+        "highest_stream_order": 8,
+        "total_stream_length_km": 25919.9,
+        "main_stem_length_km": 258.4,
+        "river_surface_area_km2": 39.4,
+        "mouth_label": "Mouth",
+        "mouth_lat": 48.388,
+        "mouth_lon": -122.366,
+        "units": {
+          "stream_segments": "count of stream edges in the data (BC Freshwater Atlas edges in BC; USGS NHDPlus HR StreamRiver/ArtificialPath/Connector flowlines in Washington, canals excluded)",
+          "highest_stream_order": "highest stream order in the data; the BC and US sources define order slightly differently and were joined at the border without being snapped",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the data, BC and Washington",
+          "main_stem_length_km": "km, summed geodesic length of the edges named Skagit River: BC Atlas 58.5 km + USGS 3DHP 199.8 km (Washington)",
+          "river_surface_area_km2": "km², area of the BC Atlas double-line river polygons only; no river polygons were used for the Washington reach",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia. U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "flow": {
+        "station": "SKAGIT RIVER NEAR MOUNT VERNON, WA",
+        "stationId": "12200500",
+        "meanM3s": 468.9,
+        "years": "1941–2025",
+        "km3PerYear": 14.8,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present; 85 years), computed from USGS NWIS daily mean discharge (parameter 00060, cubic feet per second, converted at 0.028316846592 m3/s per cfs). Not a figure published pre-computed by USGS. Most recent years may be provisional. Not at the mouth: the gauge is above the delta; its drainage area is 3,093 sq mi (about 8,010 km2).",
+        "url": "https://waterdata.usgs.gov/monitoring-location/12200500/"
+      }
+    },
+    {
+      "slug": "taku-stikine-alsek",
+      "name": "Taku–Stikine–Alsek",
+      "regions": [
+        "Canada",
+        "US"
+      ],
+      "thumb": "img/taku-stikine-alsek-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 380,
+      "mid": "img/taku-stikine-alsek-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1014,
+      "large": "img/taku-stikine-alsek-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4118,
+      "facts": {
+        "stream_segments": 442979,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 176495.4,
+        "river_surface_area_km2": 930.5,
+        "units": {
+          "stream_segments": "count of stream edges in the data across the three basins (BC Atlas for BC Stikine and Taku; USGS 3DHP flowlines for the Alaska reaches; NHN for the whole Alsek basin)",
+          "highest_stream_order": "highest stream order in the data; Alaska and Alsek orders are computed from topology (Strahler), the Alsek from coarser NHN data, so orders are not strictly comparable between the three basins",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the data, all three basins",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², area of the BC Atlas double-line river polygons only; none for Alaska or the Alsek",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia. U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain). National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada. Border clip: Natural Earth (public domain)."
+      },
+      "flow_gauges": [
+        {
+          "river": "Stikine",
+          "station": "STIKINE RIVER NEAR WRANGELL",
+          "stationId": "08CF003",
+          "meanM3s": 1563.0,
+          "years": "1984–2018",
+          "km3PerYear": 49.3,
+          "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08CF003",
+          "source": "Water Survey of Canada (HYDAT), same figure as the live Stikine entry"
+        },
+        {
+          "river": "Taku",
+          "station": "TAKU R NR JUNEAU AK",
+          "stationId": "15041200",
+          "meanM3s": 390.5,
+          "years": "1988–2025",
+          "km3PerYear": 12.3,
+          "source": "USGS NWIS daily mean discharge, complete years only (38 years), cfs converted to m3/s",
+          "drainageAreaSqMi": 6500,
+          "url": "https://waterdata.usgs.gov/monitoring-location/15041200/"
+        },
+        {
+          "river": "Alsek",
+          "station": "ALSEK R AT DRY BAY NR YAKUTAT AK",
+          "stationId": "15129120",
+          "meanM3s": 1338.8,
+          "years": "2012–2024",
+          "km3PerYear": 42.2,
+          "source": "USGS NWIS daily mean discharge, complete years only (13 years), cfs converted to m3/s",
+          "drainageAreaSqMi": 11417,
+          "url": "https://waterdata.usgs.gov/monitoring-location/15129120/"
+        }
+      ]
     }
+  ],
+  "regions": ["Canada", "US"],
+  "attribution_additions": [
+    "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain).",
+    "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+    "Natural Earth admin-1 boundaries (public domain)",
+    "Discharge: U.S. Geological Survey National Water Information System (public domain)."
   ],
   "attribution": "Contains information licensed under the Open Government Licence – British Columbia.",
   "units": {

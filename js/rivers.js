@@ -16,33 +16,65 @@
     return Math.abs(lat).toFixed(3) + "° " + ns + ", " + Math.abs(lon).toFixed(3) + "° " + ew;
   }
 
+  function flowField(flow, label) {
+    if (!flow) return null;
+    var lines = [];
+    if (flow.meanM3s != null && flow.meanM3s !== "") lines.push(groupNum(flow.meanM3s) + " m\u00b3/s");
+    if (flow.km3PerYear != null && flow.km3PerYear !== "") lines.push(groupNum(flow.km3PerYear) + " km\u00b3/yr");
+    var station = flow.station || "";
+    var stationId = flow.stationId || "";
+    var years = flow.years || "";
+    if (!lines.length && !station && !stationId && !years) return null;
+    return {
+      label: label || "Flow",
+      lines: lines,
+      station: station,
+      stationId: stationId,
+      years: years,
+      url: flow.url || ""
+    };
+  }
+
   function fieldsFor(manifest, river) {
     var facts = river.facts || {};
-    var flow = river.flow || {};
-    var fields = [
-      { label: "Name", text: river.name || "" },
-      { label: "Segments", text: groupNum(facts.stream_segments) },
-      { label: "Order", text: groupNum(facts.highest_stream_order) },
-      { label: "Length", text: groupNum(facts.total_stream_length_km) + " km" },
-      { label: "Main stem", text: groupNum(facts.main_stem_length_km) + " km" },
-      { label: "Area", text: groupNum(facts.river_surface_area_km2) + " km\u00b2" },
-      {
+    var fields = [];
+    if (river.name) fields.push({ label: "Name", text: river.name });
+    if (facts.stream_segments != null && facts.stream_segments !== "") {
+      fields.push({ label: "Segments", text: groupNum(facts.stream_segments) });
+    }
+    if (facts.highest_stream_order != null && facts.highest_stream_order !== "") {
+      fields.push({ label: "Order", text: groupNum(facts.highest_stream_order) });
+    }
+    if (facts.total_stream_length_km != null && facts.total_stream_length_km !== "") {
+      fields.push({ label: "Length", text: groupNum(facts.total_stream_length_km) + " km" });
+    }
+    if (facts.main_stem_length_km != null && facts.main_stem_length_km !== "") {
+      fields.push({ label: "Main stem", text: groupNum(facts.main_stem_length_km) + " km" });
+    }
+    if (facts.river_surface_area_km2 != null && facts.river_surface_area_km2 !== "") {
+      fields.push({ label: "Area", text: groupNum(facts.river_surface_area_km2) + " km\u00b2" });
+    }
+    if (typeof facts.mouth_lat === "number" && typeof facts.mouth_lon === "number") {
+      fields.push({
         label: facts.mouth_label || "Mouth",
         text: coordText(facts.mouth_lat, facts.mouth_lon)
-      }
-    ];
-    var flowLines = [];
-    if (flow.meanM3s != null) flowLines.push(groupNum(flow.meanM3s) + " m\u00b3/s");
-    if (flow.km3PerYear != null) flowLines.push(groupNum(flow.km3PerYear) + " km\u00b3/yr");
-    fields.push({
-      label: "Flow",
-      lines: flowLines,
-      station: flow.station || "",
-      stationId: flow.stationId || "",
-      years: flow.years || "",
-      url: flow.url || ""
-    });
+      });
+    }
+    if (river.flow) {
+      var one = flowField(river.flow, "Flow");
+      if (one) fields.push(one);
+    } else if (river.flow_gauges && river.flow_gauges.length) {
+      river.flow_gauges.forEach(function (gauge) {
+        var field = flowField(gauge, gauge.river || "Flow");
+        if (field) fields.push(field);
+      });
+    }
     return fields;
+  }
+
+  function regionMatch(river, region) {
+    if (!region || region === "all") return true;
+    return (river.regions || []).indexOf(region) !== -1;
   }
 
   function zoomAt(view, px, py, next, minS, maxS) {
@@ -55,16 +87,26 @@
   }
 
   var MAX_NATIVE = 2;
-  var api = { groupNum: groupNum, coordText: coordText, fieldsFor: fieldsFor, zoomAt: zoomAt, maxNative: MAX_NATIVE };
+  var api = {
+    groupNum: groupNum,
+    coordText: coordText,
+    fieldsFor: fieldsFor,
+    regionMatch: regionMatch,
+    zoomAt: zoomAt,
+    maxNative: MAX_NATIVE
+  };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261024d";
+  var ASSET_V = "20261024e";
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
   var setEl = document.getElementById("rv-set");
   var titleEl = document.getElementById("rv-title");
+  var regionsEl = document.getElementById("rv-regions");
+  var manifestNow = null;
+  var regionFilter = "all";
   var lb = null;
   var lbTimer = null;
 
@@ -357,8 +399,54 @@
     btn.addEventListener("click", function () {
       openLb(manifest, river);
     });
+    card._river = river;
     card.appendChild(btn);
     return card;
+  }
+
+  function visibleRivers() {
+    if (!manifestNow) return [];
+    return (manifestNow.rivers || []).filter(function (river) {
+      return regionMatch(river, regionFilter);
+    });
+  }
+
+  function applyRegion() {
+    if (regionsEl) {
+      Array.prototype.forEach.call(regionsEl.querySelectorAll(".rv-tag"), function (btn) {
+        var on = btn.getAttribute("data-rv-region") === regionFilter;
+        btn.classList.toggle("rv-on", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+    if (row) {
+      Array.prototype.forEach.call(row.querySelectorAll(".rv-card"), function (card) {
+        card.hidden = !(card._river && regionMatch(card._river, regionFilter));
+      });
+    }
+    if (lb && !lb._closing) {
+      var still = visibleRivers().some(function (river) { return river.slug === lb._slug; });
+      if (!still) closeLb();
+    }
+  }
+
+  function buildRegions(manifest) {
+    if (!regionsEl) return;
+    regionsEl.textContent = "";
+    ["all"].concat(manifest.regions || []).forEach(function (name) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rv-tag";
+      btn.setAttribute("data-rv-region", name);
+      btn.textContent = name === "all" ? "All" : name;
+      btn.addEventListener("click", function () {
+        if (regionFilter === name) return;
+        regionFilter = name;
+        applyRegion();
+      });
+      regionsEl.appendChild(btn);
+    });
+    applyRegion();
   }
 
   function fillCredit(manifest) {
@@ -366,9 +454,16 @@
     var licence = document.createElement("p");
     licence.textContent = manifest.attribution || "";
     creditEl.appendChild(licence);
+    (manifest.attribution_additions || []).forEach(function (line) {
+      if (!line) return;
+      var extra = document.createElement("p");
+      extra.textContent = line;
+      creditEl.appendChild(extra);
+    });
   }
 
   function render(manifest) {
+    manifestNow = manifest;
     if (titleEl) titleEl.textContent = manifest.title || "Rivers";
     document.title = (manifest.title || "Rivers") + " \u2014 databaseprojects";
     if (setEl) setEl.textContent = manifest.set || "";
@@ -381,12 +476,38 @@
       notesEl.hidden = true;
     }
     fillCredit(manifest);
+    buildRegions(manifest);
+  }
+
+  function stepLb(dir) {
+    if (!lb || lb._closing || !manifestNow) return;
+    var list = visibleRivers();
+    var index = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].slug === lb._slug) {
+        index = i;
+        break;
+      }
+    }
+    if (index < 0) return;
+    var next = index + dir;
+    if (next < 0 || next >= list.length) return;
+    openLb(manifestNow, list[next]);
   }
 
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && lb) {
       e.preventDefault();
       closeLb();
+      return;
+    }
+    if (!lb || lb._closing) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      stepLb(1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      stepLb(-1);
     }
   });
 
