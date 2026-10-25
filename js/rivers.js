@@ -59,14 +59,12 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261024b";
+  var ASSET_V = "20261024c";
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
   var setEl = document.getElementById("rv-set");
   var titleEl = document.getElementById("rv-title");
-  var prevBtn = document.getElementById("rv-prev");
-  var nextBtn = document.getElementById("rv-next");
   var lb = null;
   var lbTimer = null;
 
@@ -119,22 +117,6 @@
       cap.appendChild(cell);
     });
     return cap;
-  }
-
-  function syncArrows() {
-    if (!row || !prevBtn || !nextBtn) return;
-    var max = row.scrollWidth - row.clientWidth;
-    var overflow = max > 2;
-    prevBtn.hidden = !overflow;
-    nextBtn.hidden = !overflow;
-    prevBtn.disabled = row.scrollLeft <= 2;
-    nextBtn.disabled = row.scrollLeft >= max - 2;
-  }
-
-  function scrollRow(dir) {
-    var card = row.querySelector(".rv-card");
-    var step = card ? card.getBoundingClientRect().width + 20 : 360;
-    row.scrollBy({ left: dir * step, behavior: "smooth" });
   }
 
   function closeLb() {
@@ -367,21 +349,15 @@
     var btn = el("button", "rv-open");
     btn.type = "button";
     btn.setAttribute("aria-label", "Open " + (river.name || "river"));
-    var frame = el("span", "rv-frame");
     var img = document.createElement("img");
     img.alt = river.name || "";
     img.src = river.thumb + "?v=" + ASSET_V;
     img.decoding = "async";
-    frame.appendChild(img);
-    var name = el("span", "rv-card-name");
-    name.textContent = river.name || "";
-    btn.appendChild(frame);
-    btn.appendChild(name);
+    btn.appendChild(img);
     btn.addEventListener("click", function () {
       openLb(manifest, river);
     });
     card.appendChild(btn);
-    card.appendChild(captionEl(manifest, river));
     return card;
   }
 
@@ -405,8 +381,6 @@
       notesEl.hidden = true;
     }
     fillCredit(manifest);
-    syncArrows();
-    requestAnimationFrame(syncArrows);
   }
 
   document.addEventListener("keydown", function (e) {
@@ -415,11 +389,6 @@
       closeLb();
     }
   });
-
-  if (prevBtn) prevBtn.addEventListener("click", function () { scrollRow(-1); });
-  if (nextBtn) nextBtn.addEventListener("click", function () { scrollRow(1); });
-  if (row) row.addEventListener("scroll", syncArrows, { passive: true });
-  window.addEventListener("resize", syncArrows);
 
   fetch("rivers.json?v=" + ASSET_V).then(function (res) {
     if (!res.ok) throw new Error("rivers");
