@@ -830,6 +830,7 @@
     });
     map.on("zoomend", placeLabels);
     map.on("moveend", placeLabels);
+    map.on("idle", syncLines);
     map.on("mousemove", function (ev) {
       var hits = lineHits(ev.point);
       map.getCanvas().style.cursor = hits.length ? "pointer" : "";
@@ -1050,12 +1051,13 @@
   }
 
   function syncLines() {
-    if (viewMode !== "map" || !styleReady() || !map.getSource("rv-lines") || !previewPack) return;
+    if (viewMode !== "map" || !map || !previewPack) return;
+    if (!styleReady() || !map.getSource("rv-lines")) return;
     var rivers = visibleRivers();
     var key = rivers.map(function (river) { return river.slug; }).join("|");
     if (key === previewKey) return;
-    previewKey = key;
     map.getSource("rv-lines").setData(previewFC(rivers));
+    previewKey = key;
   }
 
   function syncMap() {
