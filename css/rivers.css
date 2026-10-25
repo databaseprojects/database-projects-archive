@@ -25,6 +25,75 @@
   text-transform: uppercase;
 }
 
+.rv-find-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 0 0.55rem;
+}
+
+.rv-find {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  width: 12rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.22em 1.5em 0.22em 0.55em;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.rv-find::-webkit-search-cancel-button,
+.rv-find::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.rv-find::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.rv-find:focus {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
+.rv-find-clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0 0.35em;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rv-find-clear:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 1px;
+}
+
+.rv-empty {
+  margin: 0 0 0.8rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
 .rv-regions {
   display: flex;
   flex-wrap: wrap;
