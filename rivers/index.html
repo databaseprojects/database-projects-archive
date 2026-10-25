@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Rivers — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/rivers.css?v=20261025b">
+  <link rel="stylesheet" href="../css/rivers.css?v=20261025c">
 </head>
 <body>
   <div class="sheet">
@@ -17,13 +17,18 @@
     <h1 class="rv-name" id="rv-title">Rivers</h1>
     <p class="rv-set" id="rv-set">BC</p>
   </div>
+  <div class="rv-find-wrap">
+    <input class="rv-find" id="rv-find" type="search" placeholder="Search rivers" aria-label="Search rivers" autocomplete="off" spellcheck="false">
+    <button type="button" class="rv-find-clear" id="rv-find-clear" hidden aria-label="Clear search">×</button>
+  </div>
   <div class="rv-regions" id="rv-regions" role="group" aria-label="Region"></div>
+  <p class="rv-empty" id="rv-empty" hidden>No rivers match</p>
   <div class="rv-row" id="rv-row"></div>
   <div class="rv-notes" id="rv-notes" hidden></div>
   <div class="rv-credit" id="rv-credit"></div>
 </main>
 
   </div>
-  <script src="../js/rivers.js?v=20261025b"></script>
+  <script src="../js/rivers.js?v=20261025c"></script>
 </body>
 </html>
