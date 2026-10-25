@@ -595,14 +595,3592 @@
           "url": "https://waterdata.usgs.gov/monitoring-location/15129120/"
         }
       ]
+    },
+    {
+      "slug": "sacramento-san-joaquin",
+      "name": "Sacramento–San Joaquin",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/sacramento-san-joaquin-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 472,
+      "mid": "img/sacramento-san-joaquin-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1260,
+      "large": "img/sacramento-san-joaquin-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5118,
+      "contours": {
+        "file": "img/sacramento-san-joaquin-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 746133,
+        "total_stream_length_km": 226258.3,
+        "highest_stream_order": 10,
+        "mouth_label": "Golden Gate",
+        "mouth_lat": 37.81,
+        "mouth_lon": -122.48,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS NHDPlus HR StreamRiver, ArtificialPath and Connector flowlines; canals excluded) — US only; the closed Tulare basin is not included",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — US only; the closed Tulare basin is not included",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US only; the closed Tulare basin is not included",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "colorado-us-mexico",
+      "name": "Colorado (US)",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/colorado-us-mexico-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 838,
+      "mid": "img/colorado-us-mexico-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2233,
+      "large": "img/colorado-us-mexico-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9073,
+      "contours": {
+        "file": "img/colorado-us-mexico-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "mouth_label": "US–Mexico border (map ends here)",
+        "mouth_lat": 32.72,
+        "mouth_lon": -114.72,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US part only (the Mexican reaches and delta are not drawn)",
+          "mouth_lat": "degrees N, WGS84; the end of the mapped reach, not the river's mouth",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "susquehanna-potomac",
+      "name": "Susquehanna–Potomac",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/susquehanna-potomac-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 583,
+      "mid": "img/susquehanna-potomac-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1554,
+      "large": "img/susquehanna-potomac-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6315,
+      "contours": {
+        "file": "img/susquehanna-potomac-contours.svg",
+        "interval_m": 100,
+        "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 209803,
+        "total_stream_length_km": 133127.8,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS NHDPlus HR StreamRiver, ArtificialPath and Connector flowlines; canals excluded) — US only; includes the Chesapeake Bay centre-line trunk (estuary, not river)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — US only; includes the Chesapeake Bay centre-line trunk (estuary, not river)",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US only; includes the Chesapeake Bay centre-line trunk (estuary, not river)"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "rio-grande",
+      "name": "Rio Grande",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/rio-grande-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1534,
+      "mid": "img/rio-grande-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 4090,
+      "large": "img/rio-grande-large.webp",
+      "largeWidth": 6409,
+      "largeHeight": 16383,
+      "contours": {
+        "file": "img/rio-grande-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 596844,
+        "total_stream_length_km": 392072.1,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 25.96,
+        "mouth_lon": -97.15,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS 3DHP/NHDPlus HR flowlines in the US; HydroRIVERS reaches on the Mexican side) — US side from USGS, Mexican side from HydroRIVERS (coarser)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — US side from USGS, Mexican side from HydroRIVERS (coarser)",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde; the US and Mexican sources define order differently) — US side from USGS, Mexican side from HydroRIVERS (coarser)",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain); Mexican side from HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain).",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "kuskokwim-susitna-copper",
+      "name": "Kuskokwim, Susitna and Copper",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/kuskokwim-susitna-copper-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 336,
+      "mid": "img/kuskokwim-susitna-copper-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 896,
+      "large": "img/kuskokwim-susitna-copper-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 3639,
+      "contours": {
+        "file": "img/kuskokwim-susitna-copper-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 532520,
+        "total_stream_length_km": 281411.1,
+        "highest_stream_order": 10,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS NHDPlus HR StreamRiver, ArtificialPath and Connector flowlines; canals excluded)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde)"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "saskatchewan",
+      "name": "Saskatchewan",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/saskatchewan-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1119,
+      "mid": "img/saskatchewan-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2985,
+      "large": "img/saskatchewan-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12127,
+      "contours": {
+        "file": "img/saskatchewan-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 265547,
+        "total_stream_length_km": 197251.3,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth (Cedar Lake)",
+        "mouth_lat": 53.16,
+        "mouth_lon": -99.26,
+        "units": {
+          "stream_segments": "count of stream edges in the data (NHN reaches) — Canadian part of the basin",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — Canadian part of the basin",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order) — Canadian part of the basin",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain).",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "columbia-us",
+      "name": "Columbia (US)",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/columbia-us-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 505,
+      "mid": "img/columbia-us-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1346,
+      "large": "img/columbia-us-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5469,
+      "contours": {
+        "file": "img/columbia-us-contours.svg",
+        "interval_m": 250,
+        "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
+      },
+      "facts": {
+        "highest_stream_order": 11,
+        "mouth_label": "Mouth",
+        "mouth_lat": 46.25,
+        "mouth_lon": -124.05,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US part only",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "snake-salmon",
+      "name": "Snake–Salmon",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/snake-salmon-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 757,
+      "mid": "img/snake-salmon-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2019,
+      "large": "img/snake-salmon-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8204,
+      "contours": {
+        "file": "img/snake-salmon-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 482577,
+        "total_stream_length_km": 328721.3,
+        "highest_stream_order": 9,
+        "mouth_label": "Confluence with the Columbia",
+        "mouth_lat": 46.2,
+        "mouth_lon": -119.03,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS NHDPlus HR StreamRiver, ArtificialPath and Connector flowlines; canals excluded)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde)",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "hudson",
+      "name": "Hudson",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/hudson-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1116,
+      "mid": "img/hudson-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2976,
+      "large": "img/hudson-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12092,
+      "contours": {
+        "file": "img/hudson-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 136337,
+        "total_stream_length_km": 54842.7,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth (New York Harbor)",
+        "mouth_lat": 40.7,
+        "mouth_lon": -74.02,
+        "units": {
+          "stream_segments": "count of stream edges in the data (USGS NHDPlus HR StreamRiver, ArtificialPath and Connector flowlines; canals excluded)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde)",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "liard",
+      "name": "Liard",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/liard-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 472,
+      "mid": "img/liard-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1259,
+      "large": "img/liard-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5115,
+      "contours": {
+        "file": "img/liard-contours.svg",
+        "interval_m": 200
+      },
+      "facts": {
+        "stream_segments": 889590,
+        "total_stream_length_km": 405770.9,
+        "highest_stream_order": 11,
+        "mouth_label": "Confluence with the Mackenzie",
+        "mouth_lat": 61.86,
+        "mouth_lon": -121.35,
+        "units": {
+          "stream_segments": "count of stream edges in the data (BC Freshwater Atlas edges in BC; NHN reaches in Yukon, NWT and Alberta) — BC, Yukon, NWT and Alberta parts of the basin",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — BC, Yukon, NWT and Alberta parts of the basin",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order) — BC, Yukon, NWT and Alberta parts of the basin",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia. National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia.",
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "Natural Earth admin-1 boundaries (public domain)"
+      ]
+    },
+    {
+      "slug": "ohio-tennessee",
+      "name": "Ohio–Tennessee",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/ohio-tennessee-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1079,
+      "mid": "img/ohio-tennessee-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2878,
+      "large": "img/ohio-tennessee-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 11690,
+      "contours": {
+        "file": "img/ohio-tennessee-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 9,
+        "mouth_label": "Confluence with the Mississippi",
+        "mouth_lat": 36.99,
+        "mouth_lon": -89.13,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US part only",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "mississippi-missouri",
+      "name": "Mississippi–Missouri",
+      "regions": [
+        "US"
+      ],
+      "thumb": "img/mississippi-missouri-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 712,
+      "mid": "img/mississippi-missouri-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1899,
+      "large": "img/mississippi-missouri-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7715,
+      "contours": {
+        "file": "img/mississippi-missouri-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "mouth_label": "Mouth",
+        "mouth_lat": 29.0,
+        "mouth_lon": -89.2,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (USGS StreamOrde) — US part only",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      },
+      "credits": [
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain)."
+      ]
+    },
+    {
+      "slug": "nelson-red",
+      "name": "Nelson–Red",
+      "regions": [
+        "Canada",
+        "US"
+      ],
+      "thumb": "img/nelson-red-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 607,
+      "mid": "img/nelson-red-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1618,
+      "large": "img/nelson-red-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6573,
+      "contours": {
+        "file": "img/nelson-red-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "mouth_label": "Mouth",
+        "mouth_lat": 57.05,
+        "mouth_lon": -92.95,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order) — Canadian part plus the US headwaters of the Red River",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain).",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "yukon",
+      "name": "Yukon",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/yukon-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 821,
+      "mid": "img/yukon-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2190,
+      "large": "img/yukon-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8895,
+      "contours": {
+        "file": "img/yukon-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 450130,
+        "total_stream_length_km": 289589.9,
+        "highest_stream_order": 9,
+        "mouth_label": "Canada–Alaska border (map ends here)",
+        "mouth_lat": 64.78,
+        "mouth_lon": -141.0,
+        "units": {
+          "stream_segments": "count of stream edges in the data (NHN reaches) — Canadian part of the basin only (the Alaska part is not drawn)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map) — Canadian part of the basin only (the Alaska part is not drawn)",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order) — Canadian part of the basin only (the Alaska part is not drawn)",
+          "mouth_lat": "degrees N, WGS84; the end of the mapped reach, not the river's mouth",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "severn-thames-tweed-spey",
+      "name": "Severn, Thames, Tweed and Spey",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/severn-thames-tweed-spey-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 714,
+      "mid": "img/severn-thames-tweed-spey-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1903,
+      "large": "img/severn-thames-tweed-spey-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7730,
+      "contours": {
+        "file": "img/severn-thames-tweed-spey-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 191464,
+        "total_stream_length_km": 149832.6,
+        "units": {
+          "stream_segments": "count of watercourse links in the data (OS Open Rivers; canals dropped)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all watercourse links in the raw data (before any order-1 thinning of the drawn map)"
+        },
+        "source": "Contains OS data © Crown copyright and database rights 2026 (OS Open Rivers)."
+      },
+      "credits": [
+        "Contains OS data © Crown copyright and database rights 2026. OS Open Rivers."
+      ]
+    },
+    {
+      "slug": "aare-inn-ticino",
+      "name": "Aare, Inn and Ticino",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/aare-inn-ticino-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 420,
+      "mid": "img/aare-inn-ticino-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1121,
+      "large": "img/aare-inn-ticino-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4555,
+      "contours": {
+        "file": "img/aare-inn-ticino-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 460604,
+        "total_stream_length_km": 76152.3,
+        "units": {
+          "stream_segments": "count of stream edges in the data (swissTLM3D)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)"
+        },
+        "source": "Source: swisstopo (swissTLM3D)."
+      },
+      "credits": [
+        "Source: swisstopo (swissTLM3D hydrography, Federal Office of Topography, Open Government Data)."
+      ]
+    },
+    {
+      "slug": "amazon-brazil",
+      "name": "Amazon (Brazil)",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/amazon-brazil-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 657,
+      "mid": "img/amazon-brazil-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1751,
+      "large": "img/amazon-brazil-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7113,
+      "contours": {
+        "file": "img/amazon-brazil-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "mouth_label": "Mouth",
+        "mouth_lat": 0.216,
+        "mouth_lon": -50.684,
+        "units": {
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      },
+      "credits": [
+        "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      ]
+    },
+    {
+      "slug": "sao-francisco",
+      "name": "São Francisco",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/sao-francisco-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 873,
+      "mid": "img/sao-francisco-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2328,
+      "large": "img/sao-francisco-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9458,
+      "contours": {
+        "file": "img/sao-francisco-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 6835,
+        "total_stream_length_km": 116918.2,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": -10.506,
+        "mouth_lon": -36.397,
+        "units": {
+          "stream_segments": "count of stream edges in the data (ANA BHO)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 2697,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 85.1,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 61026669, upstream area 637,199 km2. Not a gauge record. The mapped mouth is 5 km from this reach's end.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      ]
+    },
+    {
+      "slug": "tocantins-araguaia",
+      "name": "Tocantins–Araguaia",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/tocantins-araguaia-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1125,
+      "mid": "img/tocantins-araguaia-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3001,
+      "large": "img/tocantins-araguaia-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12190,
+      "contours": {
+        "file": "img/tocantins-araguaia-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 8853,
+        "total_stream_length_km": 143542.2,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": -0.574,
+        "mouth_lon": -48.274,
+        "units": {
+          "stream_segments": "count of stream edges in the data (ANA BHO)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      },
+      "credits": [
+        "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      ]
+    },
+    {
+      "slug": "parana-iguacu",
+      "name": "Paraná and Iguaçu",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/parana-iguacu-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 695,
+      "mid": "img/parana-iguacu-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1854,
+      "large": "img/parana-iguacu-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7533,
+      "contours": {
+        "file": "img/parana-iguacu-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 16887,
+        "total_stream_length_km": 344193.5,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of stream edges in the data (ANA BHO)",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all stream edges in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)"
+        },
+        "source": "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      },
+      "credits": [
+        "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
+      ]
+    },
+    {
+      "slug": "danube",
+      "name": "Danube",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/danube-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1076,
+      "mid": "img/danube-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2870,
+      "large": "img/danube-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 11658,
+      "contours": {
+        "file": "img/danube-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 42994,
+        "total_stream_length_km": 198095.6,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 45.248,
+        "mouth_lon": 29.698,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 6745,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 212.9,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20498112, upstream area 786,749 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "loire",
+      "name": "Loire",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/loire-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 867,
+      "mid": "img/loire-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2313,
+      "large": "img/loire-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9397,
+      "contours": {
+        "file": "img/loire-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 6297,
+        "total_stream_length_km": 28179.9,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 47.29,
+        "mouth_lon": -1.973,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 1023,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 32.3,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20446779, upstream area 116,722 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "seine",
+      "name": "Seine",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/seine-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 837,
+      "mid": "img/seine-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2232,
+      "large": "img/seine-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9066,
+      "contours": {
+        "file": "img/seine-contours.svg",
+        "interval_m": 100,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 3674,
+        "total_stream_length_km": 17078.7,
+        "highest_stream_order": 6,
+        "mouth_label": "Mouth",
+        "mouth_lat": 49.485,
+        "mouth_lon": 0.51,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 554,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 17.5,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20386022, upstream area 73,249 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "garonne-dordogne",
+      "name": "Garonne–Dordogne",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/garonne-dordogne-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 556,
+      "mid": "img/garonne-dordogne-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1483,
+      "large": "img/garonne-dordogne-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6024,
+      "contours": {
+        "file": "img/garonne-dordogne-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 4936,
+        "total_stream_length_km": 21091.3,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "churchill-labrador",
+      "name": "Churchill (Labrador)",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/churchill-labrador-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 741,
+      "mid": "img/churchill-labrador-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1977,
+      "large": "img/churchill-labrador-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8030,
+      "contours": {
+        "file": "img/churchill-labrador-contours.svg",
+        "interval_m": 100,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 53.315,
+        "mouth_lon": -60.2,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order) — Canadian part of the basin only",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "rhine",
+      "name": "Rhine",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/rhine-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 729,
+      "mid": "img/rhine-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1945,
+      "large": "img/rhine-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7900,
+      "contours": {
+        "file": "img/rhine-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 10699,
+        "total_stream_length_km": 43001.7,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 51.96,
+        "mouth_lon": 4.152,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 2451,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 77.3,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20323928, upstream area 163,008 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "po",
+      "name": "Po",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/po-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 646,
+      "mid": "img/po-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1722,
+      "large": "img/po-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6994,
+      "contours": {
+        "file": "img/po-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 7139,
+        "total_stream_length_km": 26568.0,
+        "highest_stream_order": 6,
+        "mouth_label": "Mouth",
+        "mouth_lat": 44.96,
+        "mouth_lon": 12.515,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 1841,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 58.1,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20504798, upstream area 73,289 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "iberia",
+      "name": "Ebro, Tagus and Douro",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/iberia-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1021,
+      "mid": "img/iberia-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2723,
+      "large": "img/iberia-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 11064,
+      "contours": {
+        "file": "img/iberia-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 13656,
+        "total_stream_length_km": 60801.2,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "elbe-oder-vistula",
+      "name": "Elbe, Oder and Vistula",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/elbe-oder-vistula-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 793,
+      "mid": "img/elbe-oder-vistula-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2115,
+      "large": "img/elbe-oder-vistula-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8594,
+      "contours": {
+        "file": "img/elbe-oder-vistula-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 22172,
+        "total_stream_length_km": 105108.6,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "shannon",
+      "name": "Shannon",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/shannon-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 874,
+      "mid": "img/shannon-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2332,
+      "large": "img/shannon-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9473,
+      "contours": {
+        "file": "img/shannon-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 1035,
+        "total_stream_length_km": 3564.4,
+        "highest_stream_order": 6,
+        "mouth_label": "Mouth",
+        "mouth_lat": 52.673,
+        "mouth_lon": -8.731,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 214,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 6.8,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20304531, upstream area 11,770 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "rhone",
+      "name": "Rhône",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/rhone-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1004,
+      "mid": "img/rhone-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2677,
+      "large": "img/rhone-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10875,
+      "contours": {
+        "file": "img/rhone-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 7082,
+        "total_stream_length_km": 26324.3,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 43.381,
+        "mouth_lon": 4.806,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 1727,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 54.5,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20537764, upstream area 95,894 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "biobio-central-chile",
+      "name": "Biobío and central Chile",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/biobio-central-chile-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 591,
+      "mid": "img/biobio-central-chile-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1576,
+      "large": "img/biobio-central-chile-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6402,
+      "contours": {
+        "file": "img/biobio-central-chile-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 7779,
+        "total_stream_length_km": 28336.6,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "murray-darling",
+      "name": "Murray–Darling",
+      "regions": [
+        "Oceania"
+      ],
+      "thumb": "img/murray-darling-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 743,
+      "mid": "img/murray-darling-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1981,
+      "large": "img/murray-darling-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8046,
+      "contours": {
+        "file": "img/murray-darling-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 32594,
+        "total_stream_length_km": 176348.5,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": -35.348,
+        "mouth_lon": 139.381,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 255,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 8.0,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 50784762, upstream area 775,219 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "st-lawrence-ottawa",
+      "name": "St. Lawrence–Ottawa",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/st-lawrence-ottawa-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 716,
+      "mid": "img/st-lawrence-ottawa-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1911,
+      "large": "img/st-lawrence-ottawa-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7762,
+      "contours": {
+        "file": "img/st-lawrence-ottawa-contours.svg",
+        "interval_m": 100,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "mouth_label": "Quebec City (map ends here)",
+        "mouth_lat": 46.815,
+        "mouth_lon": -71.19,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)",
+          "mouth_lat": "degrees N, WGS84; the end of the mapped reach, not the river's mouth",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "back-thelon",
+      "name": "Back and Thelon",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/back-thelon-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 916,
+      "mid": "img/back-thelon-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2443,
+      "large": "img/back-thelon-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9925,
+      "contours": {
+        "file": "img/back-thelon-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      ]
+    },
+    {
+      "slug": "torne-kalix-angerman",
+      "name": "Torne, Kalix and Angerman",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/torne-kalix-angerman-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 459,
+      "mid": "img/torne-kalix-angerman-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1225,
+      "large": "img/torne-kalix-angerman-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4977,
+      "contours": {
+        "file": "img/torne-kalix-angerman-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 5530,
+        "total_stream_length_km": 22618.3,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "orange-vaal",
+      "name": "Orange–Vaal",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/orange-vaal-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 644,
+      "mid": "img/orange-vaal-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1717,
+      "large": "img/orange-vaal-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6976,
+      "contours": {
+        "file": "img/orange-vaal-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 40931,
+        "total_stream_length_km": 217073.9,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": -28.631,
+        "mouth_lon": 16.452,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 310,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 9.8,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 11493634, upstream area 884,883 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "limpopo",
+      "name": "Limpopo",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/limpopo-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 638,
+      "mid": "img/limpopo-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1702,
+      "large": "img/limpopo-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6915,
+      "contours": {
+        "file": "img/limpopo-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 18865,
+        "total_stream_length_km": 94448.2,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": -25.173,
+        "mouth_lon": 33.515,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 309,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 9.8,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 11462479, upstream area 407,137 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "tugela-umgeni",
+      "name": "Tugela and Umgeni",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/tugela-umgeni-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 621,
+      "mid": "img/tugela-umgeni-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1656,
+      "large": "img/tugela-umgeni-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6727,
+      "contours": {
+        "file": "img/tugela-umgeni-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 1657,
+        "total_stream_length_km": 7396.2,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "zambezi",
+      "name": "Zambezi",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/zambezi-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 778,
+      "mid": "img/zambezi-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2074,
+      "large": "img/zambezi-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8427,
+      "contours": {
+        "file": "img/zambezi-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 63304,
+        "total_stream_length_km": 310228.0,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": -18.802,
+        "mouth_lon": 36.256,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 3896,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 122.9,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 11371100, upstream area 1,378,121 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "mekong",
+      "name": "Mekong",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/mekong-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1919,
+      "mid": "img/mekong-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 5117,
+      "large": "img/mekong-large.webp",
+      "largeWidth": 5123,
+      "largeHeight": 16383,
+      "contours": {
+        "file": "img/mekong-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 66695,
+        "total_stream_length_km": 224431.2,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 9.615,
+        "mouth_lon": 106.252,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 15252,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 481.3,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41392598, upstream area 774,281 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "senegal-volta",
+      "name": "Senegal and Volta",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/senegal-volta-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1281,
+      "mid": "img/senegal-volta-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3417,
+      "large": "img/senegal-volta-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 13882,
+      "contours": {
+        "file": "img/senegal-volta-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 40350,
+        "total_stream_length_km": 187340.8,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "niger",
+      "name": "Niger",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/niger-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 448,
+      "mid": "img/niger-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1193,
+      "large": "img/niger-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4848,
+      "contours": {
+        "file": "img/niger-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 104374,
+        "total_stream_length_km": 460673.5,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 4.394,
+        "mouth_lon": 6.069,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 6859,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 216.5,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 10877687, upstream area 2,098,664 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "nile",
+      "name": "Nile",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/nile-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1199,
+      "mid": "img/nile-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3198,
+      "large": "img/nile-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12993,
+      "contours": {
+        "file": "img/nile-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 133797,
+        "total_stream_length_km": 670212.2,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 31.444,
+        "mouth_lon": 30.385,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 1934,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 61.0,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 10047863, upstream area 2,916,802 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "congo",
+      "name": "Congo",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/congo-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 523,
+      "mid": "img/congo-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1396,
+      "large": "img/congo-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5670,
+      "contours": {
+        "file": "img/congo-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 218170,
+        "total_stream_length_km": 879544.8,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": -6.069,
+        "mouth_lon": 12.465,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 39637,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 1250.8,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 11137695, upstream area 3,705,302 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "mackenzie",
+      "name": "Mackenzie",
+      "regions": [
+        "Canada"
+      ],
+      "thumb": "img/mackenzie-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 673,
+      "mid": "img/mackenzie-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1795,
+      "large": "img/mackenzie-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7294,
+      "contours": {
+        "file": "img/mackenzie-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "highest_stream_order": 10,
+        "mouth_label": "Map ends near Tsiigehtchic",
+        "mouth_lat": 67.45,
+        "mouth_lon": -133.75,
+        "units": {
+          "highest_stream_order": "highest Strahler order in the data (computed from the network topology of the source reaches where the source has no order)",
+          "mouth_lat": "degrees N, WGS84; the end of the mapped reach, not the river's mouth",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      },
+      "credits": [
+        "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada."
+      ]
+    },
+    {
+      "slug": "glomma-drammen",
+      "name": "Glomma and Drammen",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/glomma-drammen-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 714,
+      "mid": "img/glomma-drammen-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1904,
+      "large": "img/glomma-drammen-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7733,
+      "contours": {
+        "file": "img/glomma-drammen-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 4505,
+        "total_stream_length_km": 16634.5,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "patagonia-south",
+      "name": "Southern Patagonia",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/patagonia-south-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 350,
+      "mid": "img/patagonia-south-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 934,
+      "large": "img/patagonia-south-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 3796,
+      "contours": {
+        "file": "img/patagonia-south-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 5411,
+        "total_stream_length_km": 22203.6,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "uruguay",
+      "name": "Uruguay",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/uruguay-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1076,
+      "mid": "img/uruguay-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2868,
+      "large": "img/uruguay-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 11653,
+      "contours": {
+        "file": "img/uruguay-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 25917,
+        "total_stream_length_km": 82240.0,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": -32.944,
+        "mouth_lon": -58.102,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 6423,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 202.7,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 61494133, upstream area 266,131 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "magdalena-cauca",
+      "name": "Magdalena–Cauca",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/magdalena-cauca-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1092,
+      "mid": "img/magdalena-cauca-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2912,
+      "large": "img/magdalena-cauca-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 11831,
+      "contours": {
+        "file": "img/magdalena-cauca-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 28171,
+        "total_stream_length_km": 86249.3,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 11.069,
+        "mouth_lon": -74.844,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 7248,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 228.7,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 60001946, upstream area 260,739 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "sava-drina-neretva",
+      "name": "Sava, Drina and Neretva",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/sava-drina-neretva-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 576,
+      "mid": "img/sava-drina-neretva-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1535,
+      "large": "img/sava-drina-neretva-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6235,
+      "contours": {
+        "file": "img/sava-drina-neretva-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 6444,
+        "total_stream_length_km": 25223.1,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "dnieper-dniester",
+      "name": "Dnieper and Dniester",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/dnieper-dniester-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 587,
+      "mid": "img/dnieper-dniester-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1566,
+      "large": "img/dnieper-dniester-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6360,
+      "contours": {
+        "file": "img/dnieper-dniester-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 31810,
+        "total_stream_length_km": 149933.3,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "orinoco",
+      "name": "Orinoco",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/orinoco-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 896,
+      "mid": "img/orinoco-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2389,
+      "large": "img/orinoco-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9707,
+      "contours": {
+        "file": "img/orinoco-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 133754,
+        "total_stream_length_km": 350254.5,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 8.577,
+        "mouth_lon": -60.981,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 37053,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 1169.3,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 60023012, upstream area 938,384 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "chao-phraya",
+      "name": "Chao Phraya",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/chao-phraya-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1110,
+      "mid": "img/chao-phraya-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2960,
+      "large": "img/chao-phraya-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12027,
+      "contours": {
+        "file": "img/chao-phraya-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 7055,
+        "total_stream_length_km": 33292.0,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 13.615,
+        "mouth_lon": 100.56,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 836,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 26.4,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41337891, upstream area 144,308 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "red-river",
+      "name": "Red River (Song Hong)",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/red-river-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1239,
+      "mid": "img/red-river-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3303,
+      "large": "img/red-river-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 13419,
+      "contours": {
+        "file": "img/red-river-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 12967,
+        "total_stream_length_km": 40279.4,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 20.315,
+        "mouth_lon": 106.531,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 3380,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 106.7,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41182380, upstream area 138,848 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "salween",
+      "name": "Salween",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/salween-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1527,
+      "mid": "img/salween-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 4072,
+      "large": "img/salween-large.webp",
+      "largeWidth": 6438,
+      "largeHeight": 16383,
+      "contours": {
+        "file": "img/salween-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 21106,
+        "total_stream_length_km": 71996.6,
+        "highest_stream_order": 7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 16.552,
+        "mouth_lon": 97.66,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 5218,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 164.7,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41279826, upstream area 265,228 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "godavari-krishna",
+      "name": "Godavari and Krishna",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/godavari-krishna-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 528,
+      "mid": "img/godavari-krishna-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1408,
+      "large": "img/godavari-krishna-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5719,
+      "contours": {
+        "file": "img/godavari-krishna-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 34785,
+        "total_stream_length_km": 137756.8,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "irrawaddy",
+      "name": "Irrawaddy",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/irrawaddy-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1458,
+      "mid": "img/irrawaddy-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3887,
+      "large": "img/irrawaddy-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 15790,
+      "contours": {
+        "file": "img/irrawaddy-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 57748,
+        "total_stream_length_km": 140544.6,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 16.36,
+        "mouth_lon": 95.04,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 17182,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 542.2,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41284417, upstream area 376,349 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "indus",
+      "name": "Indus",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/indus-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 760,
+      "mid": "img/indus-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2026,
+      "large": "img/indus-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8232,
+      "contours": {
+        "file": "img/indus-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 48035,
+        "total_stream_length_km": 207765.5,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 24.081,
+        "mouth_lon": 67.652,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 4101,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 129.4,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41023100, upstream area 854,650 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "baltic-rivers",
+      "name": "Baltic rivers (Daugava, Neman, Narva)",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/baltic-rivers-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 531,
+      "mid": "img/baltic-rivers-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1416,
+      "large": "img/baltic-rivers-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5753,
+      "contours": {
+        "file": "img/baltic-rivers-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 11593,
+        "total_stream_length_km": 56045.5,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "brisbane-fitzroy-burdekin",
+      "name": "Brisbane, Fitzroy and Burdekin",
+      "regions": [
+        "Oceania"
+      ],
+      "thumb": "img/brisbane-fitzroy-burdekin-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1117,
+      "mid": "img/brisbane-fitzroy-burdekin-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2978,
+      "large": "img/brisbane-fitzroy-burdekin-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12097,
+      "contours": {
+        "file": "img/brisbane-fitzroy-burdekin-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 12781,
+        "total_stream_length_km": 64348.6,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "hawkesbury-nsw-coast",
+      "name": "Hawkesbury–Nepean and NSW coast",
+      "regions": [
+        "Oceania"
+      ],
+      "thumb": "img/hawkesbury-nsw-coast-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1709,
+      "mid": "img/hawkesbury-nsw-coast-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 4557,
+      "large": "img/hawkesbury-nsw-coast-large.webp",
+      "largeWidth": 5752,
+      "largeHeight": 16383,
+      "contours": {
+        "file": "img/hawkesbury-nsw-coast-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 4084,
+        "total_stream_length_km": 20815.0,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "tasmania",
+      "name": "Tasmania",
+      "regions": [
+        "Oceania"
+      ],
+      "thumb": "img/tasmania-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 577,
+      "mid": "img/tasmania-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1539,
+      "large": "img/tasmania-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6252,
+      "contours": {
+        "file": "img/tasmania-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 2671,
+        "total_stream_length_km": 8409.5,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "paraguay-pantanal",
+      "name": "Paraguay and the Pantanal",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/paraguay-pantanal-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 570,
+      "mid": "img/paraguay-pantanal-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1519,
+      "large": "img/paraguay-pantanal-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6170,
+      "contours": {
+        "file": "img/paraguay-pantanal-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 50873,
+        "total_stream_length_km": 265608.8,
+        "highest_stream_order": 8,
+        "mouth_label": "Confluence with the Paraná",
+        "mouth_lat": -27.331,
+        "mouth_lon": -58.648,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "volga-don",
+      "name": "Volga and Don",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/volga-don-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 662,
+      "mid": "img/volga-don-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1766,
+      "large": "img/volga-don-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7175,
+      "contours": {
+        "file": "img/volga-don-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 94437,
+        "total_stream_length_km": 420748.5,
+        "highest_stream_order": 9,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "korea",
+      "name": "South Korea (Han, Geum, Nakdong)",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/korea-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 612,
+      "mid": "img/korea-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1631,
+      "large": "img/korea-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6625,
+      "contours": {
+        "file": "img/korea-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 4775,
+        "total_stream_length_km": 16267.3,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "morocco-atlas",
+      "name": "Morocco (Sebou, Oum Er-Rbia, Moulouya)",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/morocco-atlas-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 522,
+      "mid": "img/morocco-atlas-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1391,
+      "large": "img/morocco-atlas-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5650,
+      "contours": {
+        "file": "img/morocco-atlas-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 6078,
+        "total_stream_length_km": 31402.9,
+        "highest_stream_order": 6,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "colorado-negro-patagonia",
+      "name": "Colorado and Negro (Patagonia)",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/colorado-negro-patagonia-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 825,
+      "mid": "img/colorado-negro-patagonia-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2199,
+      "large": "img/colorado-negro-patagonia-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8935,
+      "contours": {
+        "file": "img/colorado-negro-patagonia-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 20101,
+        "total_stream_length_km": 108101.7,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "guianas",
+      "name": "The Guianas",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/guianas-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 627,
+      "mid": "img/guianas-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1672,
+      "large": "img/guianas-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6793,
+      "contours": {
+        "file": "img/guianas-contours.svg",
+        "interval_m": 100,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 21205,
+        "total_stream_length_km": 65156.4,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "madagascar",
+      "name": "Madagascar",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/madagascar-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 609,
+      "mid": "img/madagascar-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1623,
+      "large": "img/madagascar-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6594,
+      "contours": {
+        "file": "img/madagascar-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 21597,
+        "total_stream_length_km": 65950.7,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "tanzania-coast",
+      "name": "Tanzania coast (Rufiji, Ruvuma, Pangani)",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/tanzania-coast-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 460,
+      "mid": "img/tanzania-coast-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1227,
+      "large": "img/tanzania-coast-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4983,
+      "contours": {
+        "file": "img/tanzania-coast-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 23443,
+        "total_stream_length_km": 107733.9,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "breede-berg",
+      "name": "Breede and Berg",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/breede-berg-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1472,
+      "mid": "img/breede-berg-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3926,
+      "large": "img/breede-berg-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 15948,
+      "contours": {
+        "file": "img/breede-berg-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 1028,
+        "total_stream_length_km": 4463.1,
+        "highest_stream_order": 5,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "amu-syr-darya",
+      "name": "Amu Darya and Syr Darya",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/amu-syr-darya-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 714,
+      "mid": "img/amu-syr-darya-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1905,
+      "large": "img/amu-syr-darya-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7740,
+      "contours": {
+        "file": "img/amu-syr-darya-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 38570,
+        "total_stream_length_km": 189284.0,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "ucayali-maranon",
+      "name": "Ucayali–Marañón",
+      "regions": [
+        "South America"
+      ],
+      "thumb": "img/ucayali-maranon-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 495,
+      "mid": "img/ucayali-maranon-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1321,
+      "large": "img/ucayali-maranon-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5366,
+      "contours": {
+        "file": "img/ucayali-maranon-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 102455,
+        "total_stream_length_km": 265969.8,
+        "highest_stream_order": 9,
+        "mouth_label": "Confluence (start of the Amazon)",
+        "mouth_lat": -4.177,
+        "mouth_lon": -73.36,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "kolyma-indigirka",
+      "name": "Kolyma and Indigirka",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/kolyma-indigirka-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 606,
+      "mid": "img/kolyma-indigirka-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1617,
+      "large": "img/kolyma-indigirka-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 6570,
+      "contours": {
+        "file": "img/kolyma-indigirka-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 48970,
+        "total_stream_length_km": 225859.7,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "pechora-dvina",
+      "name": "Pechora and Northern Dvina",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "img/pechora-dvina-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 774,
+      "mid": "img/pechora-dvina-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2065,
+      "large": "img/pechora-dvina-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 8388,
+      "contours": {
+        "file": "img/pechora-dvina-contours.svg",
+        "interval_m": 250,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 40311,
+        "total_stream_length_km": 164911.7,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "yangtze",
+      "name": "Yangtze",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/yangtze-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 927,
+      "mid": "img/yangtze-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2471,
+      "large": "img/yangtze-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10039,
+      "contours": {
+        "file": "img/yangtze-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 140973,
+        "total_stream_length_km": 510422.2,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 31.94,
+        "mouth_lon": 120.235,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 31068,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 980.4,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 40613666, upstream area 1,909,199 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "yellow-river",
+      "name": "Yellow River",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/yellow-river-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1200,
+      "mid": "img/yellow-river-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 3199,
+      "large": "img/yellow-river-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 12996,
+      "contours": {
+        "file": "img/yellow-river-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 37229,
+        "total_stream_length_km": 177506.2,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 37.769,
+        "mouth_lon": 119.173,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 1491,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 47.1,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 40417973, upstream area 761,252 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "pearl-xi",
+      "name": "Pearl (Xi)",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/pearl-xi-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 945,
+      "mid": "img/pearl-xi-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2519,
+      "large": "img/pearl-xi-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10235,
+      "contours": {
+        "file": "img/pearl-xi-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 36062,
+        "total_stream_length_km": 119510.3,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 22.398,
+        "mouth_lon": 113.256,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 9175,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 289.5,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 41109275, upstream area 389,564 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "amur",
+      "name": "Amur",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/amur-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 843,
+      "mid": "img/amur-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2249,
+      "large": "img/amur-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 9136,
+      "contours": {
+        "file": "img/amur-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 104987,
+        "total_stream_length_km": 470921.0,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 53.115,
+        "mouth_lon": 140.706,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 10900,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 344.0,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 40017702, upstream area 1,998,203 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "ganges-brahmaputra",
+      "name": "Ganges–Brahmaputra",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/ganges-brahmaputra-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 546,
+      "mid": "img/ganges-brahmaputra-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1456,
+      "large": "img/ganges-brahmaputra-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5916,
+      "contours": {
+        "file": "img/ganges-brahmaputra-contours.svg",
+        "interval_m": 1000,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 163483,
+        "total_stream_length_km": 476040.5,
+        "highest_stream_order": 9,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "ob-irtysh",
+      "name": "Ob–Irtysh",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/ob-irtysh-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 710,
+      "mid": "img/ob-irtysh-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1892,
+      "large": "img/ob-irtysh-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7687,
+      "contours": {
+        "file": "img/ob-irtysh-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 128797,
+        "total_stream_length_km": 592648.7,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 66.781,
+        "mouth_lon": 69.998,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 13754,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 434.0,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 30145067, upstream area 2,467,589 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "yenisei-angara",
+      "name": "Yenisei–Angara",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/yenisei-angara-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 956,
+      "mid": "img/yenisei-angara-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2549,
+      "large": "img/yenisei-angara-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10356,
+      "contours": {
+        "file": "img/yenisei-angara-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 136544,
+        "total_stream_length_km": 579749.7,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 69.627,
+        "mouth_lon": 84.527,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 19719,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 622.3,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 30069252, upstream area 2,489,751 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "lena",
+      "name": "Lena",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/lena-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 708,
+      "mid": "img/lena-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1887,
+      "large": "img/lena-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7666,
+      "contours": {
+        "file": "img/lena-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 124646,
+        "total_stream_length_km": 553591.0,
+        "highest_stream_order": 9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 72.002,
+        "mouth_lon": 128.565,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 15804,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 498.7,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 30028172, upstream area 2,453,574 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "fly-sepik",
+      "name": "Fly and Sepik",
+      "regions": [
+        "Oceania"
+      ],
+      "thumb": "img/fly-sepik-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 538,
+      "mid": "img/fly-sepik-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1435,
+      "large": "img/fly-sepik-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 5829,
+      "contours": {
+        "file": "img/fly-sepik-contours.svg",
+        "interval_m": 500,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 41017,
+        "total_stream_length_km": 91623.3,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "ethiopia-highlands",
+      "name": "Ethiopian highlands (Awash, Omo, Juba)",
+      "regions": [
+        "Africa"
+      ],
+      "thumb": "img/ethiopia-highlands-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 695,
+      "mid": "img/ethiopia-highlands-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1854,
+      "large": "img/ethiopia-highlands-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7532,
+      "contours": {
+        "file": "img/ethiopia-highlands-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 42559,
+        "total_stream_length_km": 226910.3,
+        "highest_stream_order": 8,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "kura-caucasus",
+      "name": "Caucasus (Kura–Araks, Terek, Rioni)",
+      "regions": [
+        "Asia",
+        "Europe"
+      ],
+      "thumb": "img/kura-caucasus-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 729,
+      "mid": "img/kura-caucasus-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1944,
+      "large": "img/kura-caucasus-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 7899,
+      "contours": {
+        "file": "img/kura-caucasus-contours.svg",
+        "interval_m": 750,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 13200,
+        "total_stream_length_km": 62679.1,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "kaveri-mahanadi",
+      "name": "Kaveri, Mahanadi, Brahmani and Pennar",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "img/kaveri-mahanadi-thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 937,
+      "mid": "img/kaveri-mahanadi-mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2499,
+      "large": "img/kaveri-mahanadi-large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10154,
+      "contours": {
+        "file": "img/kaveri-mahanadi-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 22987,
+        "total_stream_length_km": 84870.8,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
     }
   ],
-  "regions": ["Canada", "US"],
+  "regions": ["All", "Canada", "US", "South America", "Europe", "Africa", "Asia", "Oceania"],
   "attribution_additions": [
     "U.S. Geological Survey, NHDPlus High Resolution / 3D Hydrography Program (U.S. public domain).",
     "National Hydrographic Network, Natural Resources Canada. Contains information licensed under the Open Government Licence – Canada.",
     "Natural Earth admin-1 boundaries (public domain)",
-    "Discharge: U.S. Geological Survey National Water Information System (public domain)."
+    "Discharge: U.S. Geological Survey National Water Information System (public domain).",
+    "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org.",
+    "Contains OS data © Crown copyright and database rights 2026. OS Open Rivers.",
+    "Source: swisstopo (swissTLM3D hydrography, Federal Office of Topography, Open Government Data).",
+    "Data: ANA – Base Hidrográfica Ottocodificada (BHO 2017)."
   ],
   "attribution": "Contains information licensed under the Open Government Licence – British Columbia.",
   "contour_credit": "Contours: Contains information licensed under the Open Government Licence – Canada. Elevation: Natural Resources Canada, Canadian Digital Elevation Model. Contour lines derived from the elevation model.",
@@ -617,6 +4195,6 @@
   },
   "facts_source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia.",
   "facts_note": "Facts are computed from the raw Atlas data (not the drawn set, which drops some order-1 streams in dense areas). Main stems are measured only within the BC data.",
-  "flow_source": "Water Survey of Canada (HYDAT) via the ECCC open-data API. Data: Environment and Climate Change Canada, Open Government Licence – Canada.",
-  "flow_method": "Mean annual discharge = mean of annual means over complete calendar years; volume km3/yr = m3/s x 31,557,600 / 1e9."
+  "flow_source": "Water Survey of Canada (HYDAT) via the ECCC open-data API. Data: Environment and Climate Change Canada, Open Government Licence – Canada. Modelled long-term mean discharge: HydroSHEDS HydroRIVERS v10 (WaterGAP 2.2 downscaled, 1971–2000); Lehner & Grill (2013), www.hydrosheds.org.",
+  "flow_method": "Mean annual discharge = mean of annual means over complete calendar years; volume km3/yr = m3/s x 31,557,600 / 1e9. For modelled entries: meanM3s = HydroRIVERS DIS_AV_CMS of the terminal reach at the mouth; km3/yr = m3/s x 31,557,600 / 1e9."
 }

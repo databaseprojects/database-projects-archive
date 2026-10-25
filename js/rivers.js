@@ -24,14 +24,16 @@
     var station = flow.station || "";
     var stationId = flow.stationId || "";
     var years = flow.years || "";
-    if (!lines.length && !station && !stationId && !years) return null;
+    var modelled = flow.modelled === true;
+    if (!lines.length && !station && !stationId && !years && !modelled) return null;
     return {
       label: label || "Flow",
       lines: lines,
       station: station,
       stationId: stationId,
       years: years,
-      url: flow.url || ""
+      url: modelled ? "" : (flow.url || ""),
+      modelled: modelled
     };
   }
 
@@ -72,20 +74,55 @@
     return fields;
   }
 
+  function isAllRegion(region) {
+    return !region || String(region).toLowerCase() === "all";
+  }
+
+  function regionNames(manifest) {
+    var names = ((manifest && manifest.regions) || []).slice();
+    var hasAll = names.some(function (name) { return isAllRegion(name); });
+    return hasAll ? names : ["All"].concat(names);
+  }
+
   function regionMatch(river, region) {
-    if (!region || region === "all") return true;
+    if (isAllRegion(region)) return true;
     return (river.regions || []).indexOf(region) !== -1;
+  }
+
+  function addLine(lines, seen, line) {
+    if (!line || seen[line]) return;
+    seen[line] = true;
+    lines.push(line);
+  }
+
+  function attributionLines(manifest) {
+    var lines = [];
+    var seen = {};
+    if (manifest && manifest.attribution) seen[manifest.attribution] = true;
+    (manifest && manifest.attribution_additions || []).forEach(function (line) {
+      addLine(lines, seen, line);
+    });
+    ((manifest && manifest.rivers) || []).forEach(function (river) {
+      (river.credits || []).forEach(function (line) {
+        addLine(lines, seen, line);
+      });
+    });
+    return lines;
   }
 
   function contourCredits(manifest) {
     var lines = [];
-    if (manifest && manifest.contour_credit) lines.push(manifest.contour_credit);
     var seen = {};
-    ((manifest && manifest.rivers) || []).forEach(function (river) {
-      var extra = river.contours && river.contours.extra_credit;
-      if (!extra || seen[extra]) return;
-      seen[extra] = true;
-      lines.push(extra);
+    var rivers = (manifest && manifest.rivers) || [];
+    var needSite = rivers.some(function (river) {
+      return !(river.contours && river.contours.credit);
+    });
+    if (needSite) addLine(lines, seen, manifest && manifest.contour_credit);
+    rivers.forEach(function (river) {
+      addLine(lines, seen, river.contours && river.contours.credit);
+    });
+    rivers.forEach(function (river) {
+      addLine(lines, seen, river.contours && river.contours.extra_credit);
     });
     return lines;
   }
@@ -105,6 +142,8 @@
     coordText: coordText,
     fieldsFor: fieldsFor,
     regionMatch: regionMatch,
+    regionNames: regionNames,
+    attributionLines: attributionLines,
     contourCredits: contourCredits,
     zoomAt: zoomAt,
     maxNative: MAX_NATIVE
@@ -112,7 +151,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025a";
+  var ASSET_V = "20261025b";
   var contoursOn = false;
   var contourReady = {};
   var contourPending = {};
@@ -123,7 +162,7 @@
   var titleEl = document.getElementById("rv-title");
   var regionsEl = document.getElementById("rv-regions");
   var manifestNow = null;
-  var regionFilter = "all";
+  var regionFilter = "All";
   var lb = null;
   var lbTimer = null;
 
@@ -151,8 +190,9 @@
           station.textContent = field.station;
           value.appendChild(station);
         }
-        if (field.stationId || field.years) {
+        if (field.stationId || field.years || field.modelled) {
           var meta = el("div", "rv-gauge");
+          var marked = false;
           if (field.stationId && field.url) {
             var link = document.createElement("a");
             link.href = field.url;
@@ -160,11 +200,16 @@
             link.rel = "noopener";
             link.textContent = field.stationId;
             meta.appendChild(link);
+            marked = true;
           } else if (field.stationId) {
             meta.appendChild(document.createTextNode(field.stationId));
+            marked = true;
+          } else if (field.modelled) {
+            meta.appendChild(document.createTextNode("modelled"));
+            marked = true;
           }
           if (field.years) {
-            meta.appendChild(document.createTextNode((field.stationId ? " \u00b7 " : "") + field.years));
+            meta.appendChild(document.createTextNode((marked ? " \u00b7 " : "") + field.years));
           }
           value.appendChild(meta);
         }
@@ -503,7 +548,10 @@
     var img = document.createElement("img");
     img.alt = river.name || "";
     img.src = river.thumb + "?v=" + ASSET_V;
+    img.loading = "lazy";
     img.decoding = "async";
+    if (river.thumbWidth) img.width = river.thumbWidth;
+    if (river.thumbHeight) img.height = river.thumbHeight;
     btn.appendChild(img);
     btn.addEventListener("click", function () {
       openLb(manifest, river);
@@ -542,12 +590,12 @@
   function buildRegions(manifest) {
     if (!regionsEl) return;
     regionsEl.textContent = "";
-    ["all"].concat(manifest.regions || []).forEach(function (name) {
+    regionNames(manifest).forEach(function (name) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "rv-tag";
       btn.setAttribute("data-rv-region", name);
-      btn.textContent = name === "all" ? "All" : name;
+      btn.textContent = name;
       btn.addEventListener("click", function () {
         if (regionFilter === name) return;
         regionFilter = name;
@@ -563,8 +611,7 @@
     var licence = document.createElement("p");
     licence.textContent = manifest.attribution || "";
     creditEl.appendChild(licence);
-    (manifest.attribution_additions || []).forEach(function (line) {
-      if (!line) return;
+    attributionLines(manifest).forEach(function (line) {
       var extra = document.createElement("p");
       extra.textContent = line;
       creditEl.appendChild(extra);
