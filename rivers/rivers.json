@@ -15,6 +15,10 @@
       "large": "img/fraser-large.webp",
       "largeWidth": 6500,
       "largeHeight": 7374,
+      "contours": {
+        "file": "img/fraser-contours.svg",
+        "interval_m": 250
+      },
       "facts": {
         "stream_segments": 1036146,
         "highest_stream_order": 10,
@@ -58,6 +62,11 @@
       "large": "img/columbia-large.webp",
       "largeWidth": 6500,
       "largeHeight": 5929,
+      "contours": {
+        "file": "img/columbia-contours.svg",
+        "interval_m": 500,
+        "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
+      },
       "facts": {
         "stream_segments": 383845,
         "highest_stream_order": 9,
@@ -101,6 +110,10 @@
       "large": "img/skeena-large.webp",
       "largeWidth": 6500,
       "largeHeight": 5951,
+      "contours": {
+        "file": "img/skeena-contours.svg",
+        "interval_m": 400
+      },
       "facts": {
         "stream_segments": 272621,
         "highest_stream_order": 9,
@@ -144,6 +157,10 @@
       "large": "img/peace-large.webp",
       "largeWidth": 6500,
       "largeHeight": 5986,
+      "contours": {
+        "file": "img/peace-contours.svg",
+        "interval_m": 200
+      },
       "facts": {
         "stream_segments": 626538,
         "highest_stream_order": 9,
@@ -187,6 +204,10 @@
       "large": "img/thompson-large.webp",
       "largeWidth": 6500,
       "largeHeight": 6875,
+      "contours": {
+        "file": "img/thompson-contours.svg",
+        "interval_m": 400
+      },
       "facts": {
         "stream_segments": 243576,
         "highest_stream_order": 9,
@@ -230,6 +251,10 @@
       "large": "img/nass-large.webp",
       "largeWidth": 6500,
       "largeHeight": 8658,
+      "contours": {
+        "file": "img/nass-contours.svg",
+        "interval_m": 200
+      },
       "facts": {
         "stream_segments": 133921,
         "highest_stream_order": 9,
@@ -273,6 +298,10 @@
       "large": "img/stikine-large.webp",
       "largeWidth": 6500,
       "largeHeight": 6878,
+      "contours": {
+        "file": "img/stikine-contours.svg",
+        "interval_m": 250
+      },
       "facts": {
         "stream_segments": 300576,
         "highest_stream_order": 9,
@@ -316,6 +345,10 @@
       "large": "img/kootenay-large.webp",
       "largeWidth": 6500,
       "largeHeight": 4954,
+      "contours": {
+        "file": "img/kootenay-contours.svg",
+        "interval_m": 400
+      },
       "facts": {
         "stream_segments": 148224,
         "highest_stream_order": 9,
@@ -359,6 +392,10 @@
       "large": "img/okanagan-large.webp",
       "largeWidth": 6500,
       "largeHeight": 6094,
+      "contours": {
+        "file": "img/okanagan-contours.svg",
+        "interval_m": 200
+      },
       "facts": {
         "stream_segments": 47999,
         "highest_stream_order": 8,
@@ -402,6 +439,10 @@
       "large": "img/squamish-large.webp",
       "largeWidth": 6500,
       "largeHeight": 9853,
+      "contours": {
+        "file": "img/squamish-contours.svg",
+        "interval_m": 100
+      },
       "facts": {
         "stream_segments": 14224,
         "highest_stream_order": 7,
@@ -448,6 +489,11 @@
       "large": "img/skagit-large.webp",
       "largeWidth": 6500,
       "largeHeight": 7141,
+      "contours": {
+        "file": "img/skagit-contours.svg",
+        "interval_m": 100,
+        "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
+      },
       "facts": {
         "stream_segments": 69613,
         "highest_stream_order": 8,
@@ -494,6 +540,11 @@
       "large": "img/taku-stikine-alsek-large.webp",
       "largeWidth": 6500,
       "largeHeight": 4118,
+      "contours": {
+        "file": "img/taku-stikine-alsek-contours.svg",
+        "interval_m": 400,
+        "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
+      },
       "facts": {
         "stream_segments": 442979,
         "highest_stream_order": 9,
@@ -554,6 +605,7 @@
     "Discharge: U.S. Geological Survey National Water Information System (public domain)."
   ],
   "attribution": "Contains information licensed under the Open Government Licence – British Columbia.",
+  "contour_credit": "Contours: Contains information licensed under the Open Government Licence – Canada. Elevation: Natural Resources Canada, Canadian Digital Elevation Model. Contour lines derived from the elevation model.",
   "units": {
     "stream_segments": "count of Atlas stream edges",
     "highest_stream_order": "STREAM_ORDER from the Atlas",

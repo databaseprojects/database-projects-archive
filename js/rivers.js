@@ -77,6 +77,19 @@
     return (river.regions || []).indexOf(region) !== -1;
   }
 
+  function contourCredits(manifest) {
+    var lines = [];
+    if (manifest && manifest.contour_credit) lines.push(manifest.contour_credit);
+    var seen = {};
+    ((manifest && manifest.rivers) || []).forEach(function (river) {
+      var extra = river.contours && river.contours.extra_credit;
+      if (!extra || seen[extra]) return;
+      seen[extra] = true;
+      lines.push(extra);
+    });
+    return lines;
+  }
+
   function zoomAt(view, px, py, next, minS, maxS) {
     var s = next;
     if (s < minS) s = minS;
@@ -92,13 +105,17 @@
     coordText: coordText,
     fieldsFor: fieldsFor,
     regionMatch: regionMatch,
+    contourCredits: contourCredits,
     zoomAt: zoomAt,
     maxNative: MAX_NATIVE
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261024e";
+  var ASSET_V = "20261025a";
+  var contoursOn = false;
+  var contourReady = {};
+  var contourPending = {};
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
@@ -206,10 +223,55 @@
     img.style.width = W + "px";
     img.style.height = H + "px";
     img.src = river.mid + "?v=" + ASSET_V;
+    var overlay = document.createElement("img");
+    overlay.className = "rv-contour";
+    overlay.alt = "";
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.draggable = false;
+    overlay.hidden = true;
+    overlay.width = W;
+    overlay.height = H;
+    overlay.style.width = W + "px";
+    overlay.style.height = H + "px";
     stage.appendChild(img);
+    stage.appendChild(overlay);
+    var hasContours = !!(river.contours && river.contours.file);
+    var switchEl = null;
+    var controls = null;
+    if (hasContours) {
+      controls = el("div", "rv-lb-controls");
+      switchEl = document.createElement("label");
+      switchEl.className = "rv-contour-switch";
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.className = "rv-contour-input";
+      input.setAttribute("role", "switch");
+      input.setAttribute("aria-label", "Contours");
+      input.checked = contoursOn;
+      var track = document.createElement("span");
+      track.className = "rv-contour-track";
+      track.setAttribute("aria-hidden", "true");
+      var knob = document.createElement("span");
+      knob.className = "rv-contour-knob";
+      track.appendChild(knob);
+      var switchText = document.createElement("span");
+      switchText.textContent = "Contours";
+      switchEl.appendChild(input);
+      switchEl.appendChild(track);
+      switchEl.appendChild(switchText);
+      switchEl.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      input.addEventListener("change", function () {
+        contoursOn = !!input.checked;
+        syncContours();
+      });
+      controls.appendChild(switchEl);
+    }
     var capWrap = el("div", "rv-lb-cap");
     capWrap.appendChild(captionEl(manifest, river));
     box.appendChild(stage);
+    if (controls) box.appendChild(controls);
     box.appendChild(capWrap);
     document.body.appendChild(box);
     document.documentElement.classList.add("rv-open");
@@ -232,7 +294,53 @@
     }
 
     function apply() {
-      img.style.transform = "translate(" + view.x.toFixed(2) + "px, " + view.y.toFixed(2) + "px) scale(" + view.s + ")";
+      var transform = "translate(" + view.x.toFixed(2) + "px, " + view.y.toFixed(2) + "px) scale(" + view.s + ")";
+      img.style.transform = transform;
+      overlay.style.transform = transform;
+    }
+
+    function contourPromise(item) {
+      var slug = item.slug;
+      if (contourReady[slug]) return Promise.resolve(contourReady[slug]);
+      if (contourPending[slug]) return contourPending[slug];
+      contourPending[slug] = fetch(item.contours.file + "?v=" + ASSET_V).then(function (res) {
+        if (!res.ok) throw new Error("contours");
+        return res.arrayBuffer();
+      }).then(function (buf) {
+        var url = URL.createObjectURL(new Blob([buf], { type: "image/svg+xml" }));
+        contourReady[slug] = url;
+        return url;
+      }).catch(function (err) {
+        delete contourPending[slug];
+        throw err;
+      });
+      return contourPending[slug];
+    }
+
+    function syncContours() {
+      if (!hasContours || !contoursOn) {
+        overlay.hidden = true;
+        if (switchEl) switchEl.classList.remove("rv-contour-loading");
+        return;
+      }
+      if (contourReady[river.slug]) {
+        if (overlay.getAttribute("src") !== contourReady[river.slug]) overlay.src = contourReady[river.slug];
+        overlay.hidden = false;
+        apply();
+        if (switchEl) switchEl.classList.remove("rv-contour-loading");
+        return;
+      }
+      if (switchEl) switchEl.classList.add("rv-contour-loading");
+      contourPromise(river).then(function (url) {
+        if (lb !== box || box._closing || !contoursOn) return;
+        overlay.src = url;
+        overlay.hidden = false;
+        apply();
+      }).catch(function () {
+        if (lb === box) overlay.hidden = true;
+      }).then(function () {
+        if (switchEl && lb === box) switchEl.classList.remove("rv-contour-loading");
+      });
     }
 
     function needsLarge() {
@@ -374,9 +482,10 @@
     stage.addEventListener("pointercancel", endPointer);
 
     box.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".rv-lb-cap, .rv-stage")) return;
+      if (e.target.closest && e.target.closest(".rv-lb-cap, .rv-stage, .rv-lb-controls")) return;
       closeLb();
     });
+    syncContours();
 
     requestAnimationFrame(function () {
       if (lb !== box || box._closing) return;
@@ -456,6 +565,11 @@
     creditEl.appendChild(licence);
     (manifest.attribution_additions || []).forEach(function (line) {
       if (!line) return;
+      var extra = document.createElement("p");
+      extra.textContent = line;
+      creditEl.appendChild(extra);
+    });
+    contourCredits(manifest).forEach(function (line) {
       var extra = document.createElement("p");
       extra.textContent = line;
       creditEl.appendChild(extra);
