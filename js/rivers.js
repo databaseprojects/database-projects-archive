@@ -174,7 +174,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025c";
+  var ASSET_V = "20261025d";
   var contoursOn = false;
   var contourReady = {};
   var contourPending = {};
@@ -220,15 +220,7 @@
         if (field.stationId || field.years || field.modelled) {
           var meta = el("div", "rv-gauge");
           var marked = false;
-          if (field.stationId && field.url) {
-            var link = document.createElement("a");
-            link.href = field.url;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.textContent = field.stationId;
-            meta.appendChild(link);
-            marked = true;
-          } else if (field.stationId) {
+          if (field.stationId) {
             meta.appendChild(document.createTextNode(field.stationId));
             marked = true;
           } else if (field.modelled) {
