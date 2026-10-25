@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Rivers — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/rivers.css?v=20261025g">
+  <link rel="stylesheet" href="../css/rivers.css?v=20261025h">
 </head>
 <body>
   <div class="sheet">
@@ -21,14 +21,25 @@
     <input class="rv-find" id="rv-find" type="search" placeholder="Search rivers" aria-label="Search rivers" autocomplete="off" spellcheck="false">
     <button type="button" class="rv-find-clear" id="rv-find-clear" hidden aria-label="Clear search">×</button>
   </div>
+  <div class="rv-views" id="rv-views" role="group" aria-label="View">
+    <button type="button" class="rv-tag rv-on" id="rv-view-grid" aria-pressed="true">Grid</button>
+    <button type="button" class="rv-tag" id="rv-view-map" aria-pressed="false">Map</button>
+  </div>
   <div class="rv-regions" id="rv-regions" role="group" aria-label="Region"></div>
   <p class="rv-empty" id="rv-empty" hidden>No rivers match</p>
   <div class="rv-row" id="rv-row"></div>
+  <div class="rv-map-wrap" id="rv-map-wrap" hidden>
+    <div class="rv-map" id="rv-map" role="region" aria-label="River map"></div>
+    <p class="rv-map-legend">
+      <span class="rv-map-key rv-map-key-mouth">River mouth</span>
+      <span class="rv-map-key rv-map-key-area">Area centre</span>
+    </p>
+  </div>
   <div class="rv-notes" id="rv-notes" hidden></div>
   <div class="rv-credit" id="rv-credit"></div>
 </main>
 
   </div>
-  <script src="../js/rivers.js?v=20261025g"></script>
+  <script src="../js/rivers.js?v=20261025h"></script>
 </body>
 </html>

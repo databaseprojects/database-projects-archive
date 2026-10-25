@@ -173,6 +173,34 @@
     return { s: s, x: px - ix * s, y: py - iy * s };
   }
 
+  function boxesOverlap(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  var LABEL_ALL_ZOOM = 8;
+
+  function labelsShown(boxes, zoom) {
+    var showAll = zoom >= LABEL_ALL_ZOOM;
+    var taken = [];
+    var shown = [];
+    var i, j, box, clear;
+    for (i = 0; i < boxes.length; i++) {
+      box = boxes[i];
+      clear = true;
+      if (!showAll && !box.force) {
+        for (j = 0; j < taken.length; j++) {
+          if (boxesOverlap(box, taken[j])) {
+            clear = false;
+            break;
+          }
+        }
+      }
+      shown.push(!!(box.force || showAll || clear));
+      if (shown[i] && !box.force) taken.push(box);
+    }
+    return shown;
+  }
+
   var MAX_NATIVE = 2;
   var api = {
     groupNum: groupNum,
@@ -184,12 +212,14 @@
     attributionLines: attributionLines,
     contourCredits: contourCredits,
     zoomAt: zoomAt,
+    labelsShown: labelsShown,
+    labelAllZoom: LABEL_ALL_ZOOM,
     maxNative: MAX_NATIVE
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025g";
+  var ASSET_V = "20261025h";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
@@ -206,11 +236,21 @@
   var findEl = document.getElementById("rv-find");
   var clearEl = document.getElementById("rv-find-clear");
   var emptyEl = document.getElementById("rv-empty");
+  var gridBtn = document.getElementById("rv-view-grid");
+  var mapBtn = document.getElementById("rv-view-map");
+  var mapWrap = document.getElementById("rv-map-wrap");
+  var mapEl = document.getElementById("rv-map");
   var manifestNow = null;
   var regionFilter = "All";
   var searchQuery = "";
+  var viewMode = "grid";
   var lb = null;
   var lbTimer = null;
+  var map = null;
+  var markerLayer = null;
+  var markerEntries = [];
+  var fittedKey = "";
+  var leafletPromise = null;
 
   function el(tag, className) {
     var node = document.createElement(tag);
@@ -593,6 +633,244 @@
       var still = visibleRivers().some(function (river) { return river.slug === lb._slug; });
       if (!still) closeLb();
     }
+    syncMap();
+  }
+
+  function loadLeaflet() {
+    if (window.L && window.L.map) return Promise.resolve(window.L);
+    if (leafletPromise) return leafletPromise;
+    leafletPromise = new Promise(function (resolve, reject) {
+      var css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "../js/vendor/leaflet/leaflet.css?v=" + ASSET_V;
+      document.head.appendChild(css);
+      var script = document.createElement("script");
+      script.src = "../js/vendor/leaflet/leaflet.js?v=" + ASSET_V;
+      script.async = true;
+      script.onload = function () {
+        if (window.L && window.L.map) resolve(window.L);
+        else reject(new Error("leaflet"));
+      };
+      script.onerror = function () {
+        leafletPromise = null;
+        reject(new Error("leaflet"));
+      };
+      document.head.appendChild(script);
+    });
+    return leafletPromise;
+  }
+
+  function markerOptions(kind, hot) {
+    var area = kind === "area";
+    return {
+      radius: hot ? (area ? 8 : 7) : (area ? 6 : 5),
+      color: "#111",
+      weight: hot ? (area ? 3 : 2) : (area ? 2 : 1),
+      fillColor: "#111",
+      fillOpacity: area ? 0 : 1,
+      opacity: 1
+    };
+  }
+
+  function mapPoint(river) {
+    var point = river && river.map;
+    if (!point) return null;
+    if (typeof point.lat !== "number" || typeof point.lon !== "number") return null;
+    if (point.kind !== "mouth" && point.kind !== "area") return null;
+    return point;
+  }
+
+  function ensureMap() {
+    if (map || !mapEl || !window.L) return;
+    map = window.L.map(mapEl, {
+      worldCopyJump: false,
+      minZoom: 2,
+      maxZoom: 12,
+      maxBounds: [[-85, -180], [85, 180]],
+      maxBoundsViscosity: 1,
+      zoomControl: true,
+      attributionControl: true
+    });
+    window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "\u00a9 OpenStreetMap contributors",
+      noWrap: true,
+      minZoom: 2,
+      maxZoom: 12
+    }).addTo(map);
+    markerLayer = window.L.layerGroup().addTo(map);
+    map.on("zoomend moveend", placeLabels);
+    map.setView([20, 0], 2);
+  }
+
+  function paintMarker(entry, hot) {
+    entry.marker.setStyle(markerOptions(entry.river.map.kind, hot));
+  }
+
+  function setForce(entry, on) {
+    if (entry.force === on) return;
+    entry.force = on;
+    paintMarker(entry, on);
+    placeLabels();
+  }
+
+  function openRiver(river) {
+    if (manifestNow) openLb(manifestNow, river);
+  }
+
+  function armMarker(entry) {
+    var marker = entry.marker;
+    var node = marker.getElement();
+    if (!node || node._rvArmed) return;
+    node._rvArmed = true;
+    var name = entry.river.name || "river";
+    node.setAttribute("tabindex", "0");
+    node.setAttribute("role", "button");
+    node.setAttribute("aria-label", "Open " + name);
+    node.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Enter" && ev.key !== " ") return;
+      ev.preventDefault();
+      openRiver(entry.river);
+    });
+    node.addEventListener("focus", function () { setForce(entry, true); });
+    node.addEventListener("blur", function () { setForce(entry, false); });
+  }
+
+  function wireMarker(entry) {
+    var marker = entry.marker;
+    var name = entry.river.name || entry.river.slug || "";
+    marker.bindTooltip(name, {
+      permanent: true,
+      direction: "right",
+      offset: [7, 0],
+      className: "rv-map-label",
+      interactive: false,
+      opacity: 1
+    });
+    marker.on("click", function (e) {
+      if (window.L && e.originalEvent) window.L.DomEvent.stop(e.originalEvent);
+      openRiver(entry.river);
+    });
+    marker.on("add", function () { armMarker(entry); });
+    marker.on("mouseover", function () { setForce(entry, true); });
+    marker.on("mouseout", function () { setForce(entry, false); });
+  }
+
+  function ensureMarkers() {
+    if (markerEntries.length || !manifestNow || !window.L) return;
+    (manifestNow.rivers || []).forEach(function (river) {
+      var point = mapPoint(river);
+      if (!point) return;
+      var marker = window.L.circleMarker([point.lat, point.lon], markerOptions(point.kind, false));
+      var entry = { river: river, marker: marker, force: false };
+      wireMarker(entry);
+      markerEntries.push(entry);
+    });
+  }
+
+  function placeLabels() {
+    if (!map) return;
+    var boxes = [];
+    var nodes = [];
+    markerEntries.forEach(function (entry) {
+      var tip = entry.marker.getTooltip();
+      var node = tip && tip.getElement();
+      if (!node || !entry.marker._map) {
+        nodes.push(node || null);
+        boxes.push(null);
+        return;
+      }
+      var pt = map.latLngToContainerPoint(entry.marker.getLatLng());
+      var name = entry.river.name || entry.river.slug || "";
+      nodes.push(node);
+      boxes.push({
+        x: pt.x + 8,
+        y: pt.y - 7,
+        w: Math.max(28, name.length * 6.6),
+        h: 14,
+        force: entry.force
+      });
+    });
+    var live = [];
+    var index = [];
+    boxes.forEach(function (box, i) {
+      if (!box) return;
+      live.push(box);
+      index.push(i);
+    });
+    var shown = labelsShown(live, map.getZoom());
+    var on = {};
+    index.forEach(function (entryIndex, i) {
+      on[entryIndex] = shown[i];
+    });
+    nodes.forEach(function (node, i) {
+      if (!node) return;
+      node.classList.toggle("rv-map-label-off", !on[i]);
+    });
+  }
+
+  function fitVisible() {
+    var pts = [];
+    markerEntries.forEach(function (entry) {
+      if (entry.marker._map) pts.push(entry.marker.getLatLng());
+    });
+    if (!pts.length || !map) return;
+    if (pts.length === 1) {
+      map.setView(pts[0], 5, { animate: false });
+      return;
+    }
+    map.fitBounds(window.L.latLngBounds(pts), { padding: [32, 32], maxZoom: 6, animate: false });
+  }
+
+  function syncMap() {
+    if (viewMode !== "map" || !map || !manifestNow) return;
+    ensureMarkers();
+    var slugs = [];
+    markerEntries.forEach(function (entry) {
+      var show = riverShown(entry.river);
+      var onMap = !!entry.marker._map;
+      if (show && !onMap) markerLayer.addLayer(entry.marker);
+      else if (!show && onMap) markerLayer.removeLayer(entry.marker);
+      if (show) slugs.push(entry.river.slug);
+    });
+    var key = slugs.join("|");
+    var viewerOpen = lb && !lb._closing;
+    if (key !== fittedKey && !viewerOpen) {
+      fitVisible();
+      fittedKey = key;
+    }
+    placeLabels();
+  }
+
+  function setViewButtons() {
+    var gridOn = viewMode === "grid";
+    var mapOn = viewMode === "map";
+    if (gridBtn) {
+      gridBtn.classList.toggle("rv-on", gridOn);
+      gridBtn.setAttribute("aria-pressed", gridOn ? "true" : "false");
+    }
+    if (mapBtn) {
+      mapBtn.classList.toggle("rv-on", mapOn);
+      mapBtn.setAttribute("aria-pressed", mapOn ? "true" : "false");
+    }
+  }
+
+  function setViewMode(mode) {
+    if (mode !== "grid" && mode !== "map") return;
+    if (mode === viewMode) return;
+    viewMode = mode;
+    setViewButtons();
+    if (row) row.hidden = mode === "map";
+    if (mapWrap) mapWrap.hidden = mode !== "map";
+    if (mode !== "map") return;
+    loadLeaflet().then(function () {
+      if (viewMode !== "map") return;
+      ensureMap();
+      requestAnimationFrame(function () {
+        if (viewMode !== "map" || !map) return;
+        map.invalidateSize();
+        syncMap();
+      });
+    }).catch(function () {});
   }
 
   function buildRegions(manifest) {
@@ -687,6 +965,8 @@
       applyRegion();
     });
   }
+  if (gridBtn) gridBtn.addEventListener("click", function () { setViewMode("grid"); });
+  if (mapBtn) mapBtn.addEventListener("click", function () { setViewMode("map"); });
 
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && lb) {
