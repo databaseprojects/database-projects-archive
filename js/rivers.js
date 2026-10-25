@@ -59,7 +59,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261024c";
+  var ASSET_V = "20261024d";
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
