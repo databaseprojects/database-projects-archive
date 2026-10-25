@@ -243,13 +243,24 @@
 }
 
 .rv-credit {
-  margin-top: 0.7rem;
-  color: rgba(0, 0, 0, 0.55);
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 9px;
+  line-height: 1.25;
 }
 
 .rv-notes p,
 .rv-credit p {
   margin: 0 0 0.35rem;
+}
+
+.rv-credit p {
+  margin: 0 0 0.12rem;
+}
+
+.rv-credit p:last-child {
+  margin-bottom: 0;
 }
 
 .rv-lb {
