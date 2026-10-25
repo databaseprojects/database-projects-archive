@@ -6,17 +6,17 @@
       "slug": "fraser",
       "name": "Fraser",
       "regions": ["Canada"],
-      "thumb": "img/fraser-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899305/rivers-site/v6a/fraser_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 681,
-      "mid": "img/fraser-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899306/rivers-site/v6a/fraser_mid.webp",
       "midWidth": 1600,
       "midHeight": 1815,
-      "large": "img/fraser-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903782/rivers-site/v6b/fraser_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7374,
       "contours": {
-        "file": "img/fraser-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915422/rivers-site/contours-v7/fraser-contours.svg",
         "interval_m": 250
       },
       "facts": {
@@ -53,17 +53,17 @@
       "slug": "columbia",
       "name": "Columbia",
       "regions": ["Canada"],
-      "thumb": "img/columbia-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899309/rivers-site/v6a/columbia_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 547,
-      "mid": "img/columbia-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899310/rivers-site/v6a/columbia_mid.webp",
       "midWidth": 1600,
       "midHeight": 1460,
-      "large": "img/columbia-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903784/rivers-site/v6b/columbia_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5929,
       "contours": {
-        "file": "img/columbia-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915438/rivers-site/contours-v7/columbia-contours.svg",
         "interval_m": 500,
         "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
       },
@@ -101,17 +101,17 @@
       "slug": "skeena",
       "name": "Skeena",
       "regions": ["Canada"],
-      "thumb": "img/skeena-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899302/rivers-site/v6a/skeena_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 549,
-      "mid": "img/skeena-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899303/rivers-site/v6a/skeena_mid.webp",
       "midWidth": 1600,
       "midHeight": 1465,
-      "large": "img/skeena-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903780/rivers-site/v6b/skeena_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5951,
       "contours": {
-        "file": "img/skeena-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915414/rivers-site/contours-v7/skeena-contours.svg",
         "interval_m": 400
       },
       "facts": {
@@ -148,17 +148,17 @@
       "slug": "peace",
       "name": "Peace",
       "regions": ["Canada"],
-      "thumb": "img/peace-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899312/rivers-site/v6a/peace_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 553,
-      "mid": "img/peace-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899313/rivers-site/v6a/peace_mid.webp",
       "midWidth": 1600,
       "midHeight": 1473,
-      "large": "img/peace-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903787/rivers-site/v6b/peace_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5986,
       "contours": {
-        "file": "img/peace-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915449/rivers-site/contours-v7/peace-contours.svg",
         "interval_m": 200
       },
       "facts": {
@@ -195,17 +195,17 @@
       "slug": "thompson",
       "name": "Thompson",
       "regions": ["Canada"],
-      "thumb": "img/thompson-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899316/rivers-site/v6a/thompson_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 635,
-      "mid": "img/thompson-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899317/rivers-site/v6a/thompson_mid.webp",
       "midWidth": 1600,
       "midHeight": 1692,
-      "large": "img/thompson-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903789/rivers-site/v6b/thompson_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6875,
       "contours": {
-        "file": "img/thompson-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915462/rivers-site/contours-v7/thompson-contours.svg",
         "interval_m": 400
       },
       "facts": {
@@ -242,17 +242,17 @@
       "slug": "nass",
       "name": "Nass",
       "regions": ["Canada"],
-      "thumb": "img/nass-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899320/rivers-site/v6a/nass_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 799,
-      "mid": "img/nass-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899321/rivers-site/v6a/nass_mid.webp",
       "midWidth": 1600,
       "midHeight": 2131,
-      "large": "img/nass-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903790/rivers-site/v6b/nass_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8658,
       "contours": {
-        "file": "img/nass-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915470/rivers-site/contours-v7/nass-contours.svg",
         "interval_m": 200
       },
       "facts": {
@@ -289,17 +289,17 @@
       "slug": "stikine",
       "name": "Stikine",
       "regions": ["Canada"],
-      "thumb": "img/stikine-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899323/rivers-site/v6a/stikine_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 635,
-      "mid": "img/stikine-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899324/rivers-site/v6a/stikine_mid.webp",
       "midWidth": 1600,
       "midHeight": 1693,
-      "large": "img/stikine-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903792/rivers-site/v6b/stikine_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6878,
       "contours": {
-        "file": "img/stikine-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915480/rivers-site/contours-v7/stikine-contours.svg",
         "interval_m": 250
       },
       "facts": {
@@ -336,17 +336,17 @@
       "slug": "kootenay",
       "name": "Kootenay",
       "regions": ["Canada"],
-      "thumb": "img/kootenay-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899326/rivers-site/v6a/kootenay_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 457,
-      "mid": "img/kootenay-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899327/rivers-site/v6a/kootenay_mid.webp",
       "midWidth": 1600,
       "midHeight": 1219,
-      "large": "img/kootenay-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903794/rivers-site/v6b/kootenay_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4954,
       "contours": {
-        "file": "img/kootenay-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915497/rivers-site/contours-v7/kootenay-contours.svg",
         "interval_m": 400
       },
       "facts": {
@@ -383,17 +383,17 @@
       "slug": "okanagan",
       "name": "Okanagan",
       "regions": ["Canada"],
-      "thumb": "img/okanagan-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899330/rivers-site/v6a/okanagan_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 563,
-      "mid": "img/okanagan-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899331/rivers-site/v6a/okanagan_mid.webp",
       "midWidth": 1600,
       "midHeight": 1500,
-      "large": "img/okanagan-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903795/rivers-site/v6b/okanagan_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6094,
       "contours": {
-        "file": "img/okanagan-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915506/rivers-site/contours-v7/okanagan-contours.svg",
         "interval_m": 200
       },
       "facts": {
@@ -430,17 +430,17 @@
       "slug": "squamish",
       "name": "Squamish",
       "regions": ["Canada"],
-      "thumb": "img/squamish-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899333/rivers-site/v6a/squamish_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 910,
-      "mid": "img/squamish-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792899334/rivers-site/v6a/squamish_mid.webp",
       "midWidth": 1600,
       "midHeight": 2425,
-      "large": "img/squamish-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792903797/rivers-site/v6b/squamish_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9853,
       "contours": {
-        "file": "img/squamish-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915516/rivers-site/contours-v7/squamish-contours.svg",
         "interval_m": 100
       },
       "facts": {
@@ -480,17 +480,17 @@
         "Canada",
         "US"
       ],
-      "thumb": "img/skagit-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792908859/rivers-site/v6c/skagit_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 659,
-      "mid": "img/skagit-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792908860/rivers-site/v6c/skagit_mid.webp",
       "midWidth": 1600,
       "midHeight": 1758,
-      "large": "img/skagit-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792908862/rivers-site/v6c/skagit_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7141,
       "contours": {
-        "file": "img/skagit-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915528/rivers-site/contours-v7/skagit-contours.svg",
         "interval_m": 100,
         "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
       },
@@ -531,17 +531,17 @@
         "Canada",
         "US"
       ],
-      "thumb": "img/taku-stikine-alsek-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792908904/rivers-site/v6c/taku-stikine-alsek_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 380,
-      "mid": "img/taku-stikine-alsek-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792908906/rivers-site/v6c/taku-stikine-alsek_mid.webp",
       "midWidth": 1600,
       "midHeight": 1014,
-      "large": "img/taku-stikine-alsek-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792909183/rivers-site/v6c/taku-stikine-alsek_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4118,
       "contours": {
-        "file": "img/taku-stikine-alsek-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792915547/rivers-site/contours-v7/taku-stikine-alsek-contours.svg",
         "interval_m": 400,
         "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
       },
@@ -602,17 +602,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/sacramento-san-joaquin-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944348/rivers-site/more-w1/sacramento-san-joaquin_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 472,
-      "mid": "img/sacramento-san-joaquin-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944400/rivers-site/more-w1/sacramento-san-joaquin_mid.webp",
       "midWidth": 1600,
       "midHeight": 1260,
-      "large": "img/sacramento-san-joaquin-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/sacramento-san-joaquin_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5118,
       "contours": {
-        "file": "img/sacramento-san-joaquin-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944479/rivers-site/more-contours/sacramento-san-joaquin-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -642,17 +642,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/colorado-us-mexico-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944349/rivers-site/more-w1/colorado-us-mexico_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 838,
-      "mid": "img/colorado-us-mexico-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944400/rivers-site/more-w1/colorado-us-mexico_mid.webp",
       "midWidth": 1600,
       "midHeight": 2233,
-      "large": "img/colorado-us-mexico-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/colorado-us-mexico_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9073,
       "contours": {
-        "file": "img/colorado-us-mexico-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944480/rivers-site/more-contours/colorado-us-mexico-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -678,17 +678,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/susquehanna-potomac-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944349/rivers-site/more-w1/susquehanna-potomac_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 583,
-      "mid": "img/susquehanna-potomac-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944399/rivers-site/more-w1/susquehanna-potomac_mid.webp",
       "midWidth": 1600,
       "midHeight": 1554,
-      "large": "img/susquehanna-potomac-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/susquehanna-potomac_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6315,
       "contours": {
-        "file": "img/susquehanna-potomac-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944479/rivers-site/more-contours/susquehanna-potomac-contours.svg",
         "interval_m": 100,
         "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
       },
@@ -713,17 +713,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/rio-grande-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944349/rivers-site/more-w1/rio-grande_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1534,
-      "mid": "img/rio-grande-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944400/rivers-site/more-w1/rio-grande_mid.webp",
       "midWidth": 1600,
       "midHeight": 4090,
-      "large": "img/rio-grande-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/rio-grande_large.webp",
       "largeWidth": 6409,
       "largeHeight": 16383,
       "contours": {
-        "file": "img/rio-grande-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944479/rivers-site/more-contours/rio-grande-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -754,17 +754,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/kuskokwim-susitna-copper-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944348/rivers-site/more-w1/kuskokwim-susitna-copper_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 336,
-      "mid": "img/kuskokwim-susitna-copper-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944399/rivers-site/more-w1/kuskokwim-susitna-copper_mid.webp",
       "midWidth": 1600,
       "midHeight": 896,
-      "large": "img/kuskokwim-susitna-copper-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/kuskokwim-susitna-copper_large.webp",
       "largeWidth": 6500,
       "largeHeight": 3639,
       "contours": {
-        "file": "img/kuskokwim-susitna-copper-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944479/rivers-site/more-contours/kuskokwim-susitna-copper-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -789,17 +789,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/saskatchewan-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944349/rivers-site/more-w1/saskatchewan_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1119,
-      "mid": "img/saskatchewan-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944400/rivers-site/more-w1/saskatchewan_mid.webp",
       "midWidth": 1600,
       "midHeight": 2985,
-      "large": "img/saskatchewan-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944442/rivers-site/more-w1/saskatchewan_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12127,
       "contours": {
-        "file": "img/saskatchewan-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944479/rivers-site/more-contours/saskatchewan-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -831,17 +831,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/columbia-us-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944350/rivers-site/more-w1/columbia-us_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 505,
-      "mid": "img/columbia-us-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944402/rivers-site/more-w1/columbia-us_mid.webp",
       "midWidth": 1600,
       "midHeight": 1346,
-      "large": "img/columbia-us-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944444/rivers-site/more-w1/columbia-us_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5469,
       "contours": {
-        "file": "img/columbia-us-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944482/rivers-site/more-contours/columbia-us-contours.svg",
         "interval_m": 250,
         "extra_credit": "Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain)."
       },
@@ -867,17 +867,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/snake-salmon-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944350/rivers-site/more-w1/snake-salmon_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 757,
-      "mid": "img/snake-salmon-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944402/rivers-site/more-w1/snake-salmon_mid.webp",
       "midWidth": 1600,
       "midHeight": 2019,
-      "large": "img/snake-salmon-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944444/rivers-site/more-w1/snake-salmon_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8204,
       "contours": {
-        "file": "img/snake-salmon-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944482/rivers-site/more-contours/snake-salmon-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
       },
@@ -907,17 +907,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/hudson-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944350/rivers-site/more-w1/hudson_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1116,
-      "mid": "img/hudson-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944402/rivers-site/more-w1/hudson_mid.webp",
       "midWidth": 1600,
       "midHeight": 2976,
-      "large": "img/hudson-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944444/rivers-site/more-w1/hudson_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12092,
       "contours": {
-        "file": "img/hudson-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944483/rivers-site/more-contours/hudson-contours.svg",
         "interval_m": 50,
         "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
       },
@@ -947,17 +947,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/liard-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944350/rivers-site/more-w1/liard_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 472,
-      "mid": "img/liard-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944402/rivers-site/more-w1/liard_mid.webp",
       "midWidth": 1600,
       "midHeight": 1259,
-      "large": "img/liard-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944445/rivers-site/more-w1/liard_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5115,
       "contours": {
-        "file": "img/liard-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944486/rivers-site/more-contours/liard-contours.svg",
         "interval_m": 200
       },
       "facts": {
@@ -988,17 +988,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/ohio-tennessee-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944351/rivers-site/more-w1/ohio-tennessee_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1079,
-      "mid": "img/ohio-tennessee-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944403/rivers-site/more-w1/ohio-tennessee_mid.webp",
       "midWidth": 1600,
       "midHeight": 2878,
-      "large": "img/ohio-tennessee-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944445/rivers-site/more-w1/ohio-tennessee_large.webp",
       "largeWidth": 6500,
       "largeHeight": 11690,
       "contours": {
-        "file": "img/ohio-tennessee-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944489/rivers-site/more-contours/ohio-tennessee-contours.svg",
         "interval_m": 50,
         "credit": "Contours: Elevation: U.S. Geological Survey, 3D Elevation Program (3DEP) bare-earth DEM (public domain). Contour lines derived from the elevation model."
       },
@@ -1024,17 +1024,17 @@
       "regions": [
         "US"
       ],
-      "thumb": "img/mississippi-missouri-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944351/rivers-site/more-w1/mississippi-missouri_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 712,
-      "mid": "img/mississippi-missouri-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944402/rivers-site/more-w1/mississippi-missouri_mid.webp",
       "midWidth": 1600,
       "midHeight": 1899,
-      "large": "img/mississippi-missouri-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944445/rivers-site/more-w1/mississippi-missouri_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7715,
       "contours": {
-        "file": "img/mississippi-missouri-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944492/rivers-site/more-contours/mississippi-missouri-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1061,17 +1061,17 @@
         "Canada",
         "US"
       ],
-      "thumb": "img/nelson-red-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944352/rivers-site/more-w1/nelson-red_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 607,
-      "mid": "img/nelson-red-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944403/rivers-site/more-w1/nelson-red_mid.webp",
       "midWidth": 1600,
       "midHeight": 1618,
-      "large": "img/nelson-red-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944446/rivers-site/more-w1/nelson-red_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6573,
       "contours": {
-        "file": "img/nelson-red-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944496/rivers-site/more-contours/nelson-red-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1099,17 +1099,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/yukon-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944352/rivers-site/more-w1/yukon_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 821,
-      "mid": "img/yukon-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944404/rivers-site/more-w1/yukon_mid.webp",
       "midWidth": 1600,
       "midHeight": 2190,
-      "large": "img/yukon-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944448/rivers-site/more-w1/yukon_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8895,
       "contours": {
-        "file": "img/yukon-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944498/rivers-site/more-contours/yukon-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1140,17 +1140,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/severn-thames-tweed-spey-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944352/rivers-site/more-w1/severn-thames-tweed-spey_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 714,
-      "mid": "img/severn-thames-tweed-spey-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944404/rivers-site/more-w1/severn-thames-tweed-spey_mid.webp",
       "midWidth": 1600,
       "midHeight": 1903,
-      "large": "img/severn-thames-tweed-spey-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944447/rivers-site/more-w1/severn-thames-tweed-spey_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7730,
       "contours": {
-        "file": "img/severn-thames-tweed-spey-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944501/rivers-site/more-contours/severn-thames-tweed-spey-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1173,17 +1173,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/aare-inn-ticino-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944353/rivers-site/more-w1/aare-inn-ticino_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 420,
-      "mid": "img/aare-inn-ticino-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944405/rivers-site/more-w1/aare-inn-ticino_mid.webp",
       "midWidth": 1600,
       "midHeight": 1121,
-      "large": "img/aare-inn-ticino-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944447/rivers-site/more-w1/aare-inn-ticino_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4555,
       "contours": {
-        "file": "img/aare-inn-ticino-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944502/rivers-site/more-contours/aare-inn-ticino-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1206,17 +1206,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/amazon-brazil-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944353/rivers-site/more-w1/amazon-brazil_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 657,
-      "mid": "img/amazon-brazil-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944405/rivers-site/more-w1/amazon-brazil_mid.webp",
       "midWidth": 1600,
       "midHeight": 1751,
-      "large": "img/amazon-brazil-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944448/rivers-site/more-w1/amazon-brazil_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7113,
       "contours": {
-        "file": "img/amazon-brazil-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944505/rivers-site/more-contours/amazon-brazil-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1240,17 +1240,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/sao-francisco-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944353/rivers-site/more-w1/sao-francisco_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 873,
-      "mid": "img/sao-francisco-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944404/rivers-site/more-w1/sao-francisco_mid.webp",
       "midWidth": 1600,
       "midHeight": 2328,
-      "large": "img/sao-francisco-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944447/rivers-site/more-w1/sao-francisco_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9458,
       "contours": {
-        "file": "img/sao-francisco-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944508/rivers-site/more-contours/sao-francisco-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1289,17 +1289,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/tocantins-araguaia-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944353/rivers-site/more-w1/tocantins-araguaia_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1125,
-      "mid": "img/tocantins-araguaia-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944405/rivers-site/more-w1/tocantins-araguaia_mid.webp",
       "midWidth": 1600,
       "midHeight": 3001,
-      "large": "img/tocantins-araguaia-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944448/rivers-site/more-w1/tocantins-araguaia_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12190,
       "contours": {
-        "file": "img/tocantins-araguaia-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944510/rivers-site/more-contours/tocantins-araguaia-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1329,17 +1329,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/parana-iguacu-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944354/rivers-site/more-w1/parana-iguacu_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 695,
-      "mid": "img/parana-iguacu-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944406/rivers-site/more-w1/parana-iguacu_mid.webp",
       "midWidth": 1600,
       "midHeight": 1854,
-      "large": "img/parana-iguacu-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944449/rivers-site/more-w1/parana-iguacu_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7533,
       "contours": {
-        "file": "img/parana-iguacu-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944510/rivers-site/more-contours/parana-iguacu-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1364,17 +1364,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/danube-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944354/rivers-site/more-w1/danube_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1076,
-      "mid": "img/danube-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944407/rivers-site/more-w1/danube_mid.webp",
       "midWidth": 1600,
       "midHeight": 2870,
-      "large": "img/danube-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944450/rivers-site/more-w1/danube_large.webp",
       "largeWidth": 6500,
       "largeHeight": 11658,
       "contours": {
-        "file": "img/danube-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944511/rivers-site/more-contours/danube-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1413,17 +1413,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/loire-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944354/rivers-site/more-w1/loire_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 867,
-      "mid": "img/loire-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944407/rivers-site/more-w1/loire_mid.webp",
       "midWidth": 1600,
       "midHeight": 2313,
-      "large": "img/loire-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944450/rivers-site/more-w1/loire_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9397,
       "contours": {
-        "file": "img/loire-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944511/rivers-site/more-contours/loire-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1462,17 +1462,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/seine-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944354/rivers-site/more-w1/seine_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 837,
-      "mid": "img/seine-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944407/rivers-site/more-w1/seine_mid.webp",
       "midWidth": 1600,
       "midHeight": 2232,
-      "large": "img/seine-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944450/rivers-site/more-w1/seine_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9066,
       "contours": {
-        "file": "img/seine-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944513/rivers-site/more-contours/seine-contours.svg",
         "interval_m": 100,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1511,17 +1511,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/garonne-dordogne-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944355/rivers-site/more-w1/garonne-dordogne_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 556,
-      "mid": "img/garonne-dordogne-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944407/rivers-site/more-w1/garonne-dordogne_mid.webp",
       "midWidth": 1600,
       "midHeight": 1483,
-      "large": "img/garonne-dordogne-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944450/rivers-site/more-w1/garonne-dordogne_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6024,
       "contours": {
-        "file": "img/garonne-dordogne-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944513/rivers-site/more-contours/garonne-dordogne-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1546,17 +1546,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/churchill-labrador-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944355/rivers-site/more-w1/churchill-labrador_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 741,
-      "mid": "img/churchill-labrador-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944407/rivers-site/more-w1/churchill-labrador_mid.webp",
       "midWidth": 1600,
       "midHeight": 1977,
-      "large": "img/churchill-labrador-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944451/rivers-site/more-w1/churchill-labrador_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8030,
       "contours": {
-        "file": "img/churchill-labrador-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944517/rivers-site/more-contours/churchill-labrador-contours.svg",
         "interval_m": 100,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1583,17 +1583,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/rhine-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944356/rivers-site/more-w1/rhine_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 729,
-      "mid": "img/rhine-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944408/rivers-site/more-w1/rhine_mid.webp",
       "midWidth": 1600,
       "midHeight": 1945,
-      "large": "img/rhine-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944452/rivers-site/more-w1/rhine_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7900,
       "contours": {
-        "file": "img/rhine-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944518/rivers-site/more-contours/rhine-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1632,17 +1632,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/po-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944356/rivers-site/more-w1/po_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 646,
-      "mid": "img/po-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944409/rivers-site/more-w1/po_mid.webp",
       "midWidth": 1600,
       "midHeight": 1722,
-      "large": "img/po-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944452/rivers-site/more-w1/po_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6994,
       "contours": {
-        "file": "img/po-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944519/rivers-site/more-contours/po-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1681,17 +1681,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/iberia-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944356/rivers-site/more-w1/iberia_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1021,
-      "mid": "img/iberia-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944409/rivers-site/more-w1/iberia_mid.webp",
       "midWidth": 1600,
       "midHeight": 2723,
-      "large": "img/iberia-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944453/rivers-site/more-w1/iberia_large.webp",
       "largeWidth": 6500,
       "largeHeight": 11064,
       "contours": {
-        "file": "img/iberia-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944519/rivers-site/more-contours/iberia-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1716,17 +1716,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/elbe-oder-vistula-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944357/rivers-site/more-w1/elbe-oder-vistula_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 793,
-      "mid": "img/elbe-oder-vistula-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944409/rivers-site/more-w1/elbe-oder-vistula_mid.webp",
       "midWidth": 1600,
       "midHeight": 2115,
-      "large": "img/elbe-oder-vistula-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944453/rivers-site/more-w1/elbe-oder-vistula_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8594,
       "contours": {
-        "file": "img/elbe-oder-vistula-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944519/rivers-site/more-contours/elbe-oder-vistula-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1751,17 +1751,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/shannon-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944357/rivers-site/more-w1/shannon_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 874,
-      "mid": "img/shannon-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944409/rivers-site/more-w1/shannon_mid.webp",
       "midWidth": 1600,
       "midHeight": 2332,
-      "large": "img/shannon-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944452/rivers-site/more-w1/shannon_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9473,
       "contours": {
-        "file": "img/shannon-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944521/rivers-site/more-contours/shannon-contours.svg",
         "interval_m": 50,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1800,17 +1800,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/rhone-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944363/rivers-site/more-w1/rhone_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1004,
-      "mid": "img/rhone-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944409/rivers-site/more-w1/rhone_mid.webp",
       "midWidth": 1600,
       "midHeight": 2677,
-      "large": "img/rhone-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944454/rivers-site/more-w1/rhone_large.webp",
       "largeWidth": 6500,
       "largeHeight": 10875,
       "contours": {
-        "file": "img/rhone-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944523/rivers-site/more-contours/rhone-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1849,17 +1849,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/biobio-central-chile-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944357/rivers-site/more-w1/biobio-central-chile_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 591,
-      "mid": "img/biobio-central-chile-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944410/rivers-site/more-w1/biobio-central-chile_mid.webp",
       "midWidth": 1600,
       "midHeight": 1576,
-      "large": "img/biobio-central-chile-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944454/rivers-site/more-w1/biobio-central-chile_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6402,
       "contours": {
-        "file": "img/biobio-central-chile-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944524/rivers-site/more-contours/biobio-central-chile-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1884,17 +1884,17 @@
       "regions": [
         "Oceania"
       ],
-      "thumb": "img/murray-darling-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944357/rivers-site/more-w1/murray-darling_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 743,
-      "mid": "img/murray-darling-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944411/rivers-site/more-w1/murray-darling_mid.webp",
       "midWidth": 1600,
       "midHeight": 1981,
-      "large": "img/murray-darling-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944454/rivers-site/more-w1/murray-darling_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8046,
       "contours": {
-        "file": "img/murray-darling-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944525/rivers-site/more-contours/murray-darling-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1933,17 +1933,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/st-lawrence-ottawa-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944357/rivers-site/more-w1/st-lawrence-ottawa_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 716,
-      "mid": "img/st-lawrence-ottawa-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944411/rivers-site/more-w1/st-lawrence-ottawa_mid.webp",
       "midWidth": 1600,
       "midHeight": 1911,
-      "large": "img/st-lawrence-ottawa-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944455/rivers-site/more-w1/st-lawrence-ottawa_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7762,
       "contours": {
-        "file": "img/st-lawrence-ottawa-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944525/rivers-site/more-contours/st-lawrence-ottawa-contours.svg",
         "interval_m": 100,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -1970,17 +1970,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/back-thelon-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944359/rivers-site/more-w1/back-thelon_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 916,
-      "mid": "img/back-thelon-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944411/rivers-site/more-w1/back-thelon_mid.webp",
       "midWidth": 1600,
       "midHeight": 2443,
-      "large": "img/back-thelon-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944455/rivers-site/more-w1/back-thelon_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9925,
       "contours": {
-        "file": "img/back-thelon-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944527/rivers-site/more-contours/back-thelon-contours.svg",
         "interval_m": 50,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2001,17 +2001,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/torne-kalix-angerman-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944359/rivers-site/more-w1/torne-kalix-angerman_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 459,
-      "mid": "img/torne-kalix-angerman-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944411/rivers-site/more-w1/torne-kalix-angerman_mid.webp",
       "midWidth": 1600,
       "midHeight": 1225,
-      "large": "img/torne-kalix-angerman-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944455/rivers-site/more-w1/torne-kalix-angerman_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4977,
       "contours": {
-        "file": "img/torne-kalix-angerman-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944528/rivers-site/more-contours/torne-kalix-angerman-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2036,17 +2036,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/orange-vaal-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944359/rivers-site/more-w1/orange-vaal_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 644,
-      "mid": "img/orange-vaal-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944411/rivers-site/more-w1/orange-vaal_mid.webp",
       "midWidth": 1600,
       "midHeight": 1717,
-      "large": "img/orange-vaal-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944457/rivers-site/more-w1/orange-vaal_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6976,
       "contours": {
-        "file": "img/orange-vaal-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944530/rivers-site/more-contours/orange-vaal-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2085,17 +2085,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/limpopo-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944359/rivers-site/more-w1/limpopo_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 638,
-      "mid": "img/limpopo-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944412/rivers-site/more-w1/limpopo_mid.webp",
       "midWidth": 1600,
       "midHeight": 1702,
-      "large": "img/limpopo-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944456/rivers-site/more-w1/limpopo_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6915,
       "contours": {
-        "file": "img/limpopo-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944531/rivers-site/more-contours/limpopo-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2134,17 +2134,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/tugela-umgeni-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944360/rivers-site/more-w1/tugela-umgeni_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 621,
-      "mid": "img/tugela-umgeni-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/tugela-umgeni_mid.webp",
       "midWidth": 1600,
       "midHeight": 1656,
-      "large": "img/tugela-umgeni-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944456/rivers-site/more-w1/tugela-umgeni_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6727,
       "contours": {
-        "file": "img/tugela-umgeni-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944530/rivers-site/more-contours/tugela-umgeni-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2169,17 +2169,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/zambezi-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944360/rivers-site/more-w1/zambezi_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 778,
-      "mid": "img/zambezi-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/zambezi_mid.webp",
       "midWidth": 1600,
       "midHeight": 2074,
-      "large": "img/zambezi-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944457/rivers-site/more-w1/zambezi_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8427,
       "contours": {
-        "file": "img/zambezi-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944533/rivers-site/more-contours/zambezi-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2218,17 +2218,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/mekong-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944361/rivers-site/more-w1/mekong_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1919,
-      "mid": "img/mekong-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/mekong_mid.webp",
       "midWidth": 1600,
       "midHeight": 5117,
-      "large": "img/mekong-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944457/rivers-site/more-w1/mekong_large.webp",
       "largeWidth": 5123,
       "largeHeight": 16383,
       "contours": {
-        "file": "img/mekong-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944534/rivers-site/more-contours/mekong-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2267,17 +2267,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/senegal-volta-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944361/rivers-site/more-w1/senegal-volta_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1281,
-      "mid": "img/senegal-volta-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/senegal-volta_mid.webp",
       "midWidth": 1600,
       "midHeight": 3417,
-      "large": "img/senegal-volta-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944458/rivers-site/more-w1/senegal-volta_large.webp",
       "largeWidth": 6500,
       "largeHeight": 13882,
       "contours": {
-        "file": "img/senegal-volta-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944535/rivers-site/more-contours/senegal-volta-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2302,17 +2302,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/niger-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944361/rivers-site/more-w1/niger_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 448,
-      "mid": "img/niger-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/niger_mid.webp",
       "midWidth": 1600,
       "midHeight": 1193,
-      "large": "img/niger-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944459/rivers-site/more-w1/niger_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4848,
       "contours": {
-        "file": "img/niger-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944535/rivers-site/more-contours/niger-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2351,17 +2351,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/nile-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944361/rivers-site/more-w1/nile_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1199,
-      "mid": "img/nile-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944413/rivers-site/more-w1/nile_mid.webp",
       "midWidth": 1600,
       "midHeight": 3198,
-      "large": "img/nile-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944458/rivers-site/more-w1/nile_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12993,
       "contours": {
-        "file": "img/nile-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944538/rivers-site/more-contours/nile-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2400,17 +2400,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/congo-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944362/rivers-site/more-w1/congo_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 523,
-      "mid": "img/congo-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944415/rivers-site/more-w1/congo_mid.webp",
       "midWidth": 1600,
       "midHeight": 1396,
-      "large": "img/congo-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944460/rivers-site/more-w1/congo_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5670,
       "contours": {
-        "file": "img/congo-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944538/rivers-site/more-contours/congo-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2449,17 +2449,17 @@
       "regions": [
         "Canada"
       ],
-      "thumb": "img/mackenzie-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944363/rivers-site/more-w1/mackenzie_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 673,
-      "mid": "img/mackenzie-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944415/rivers-site/more-w1/mackenzie_mid.webp",
       "midWidth": 1600,
       "midHeight": 1795,
-      "large": "img/mackenzie-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944459/rivers-site/more-w1/mackenzie_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7294,
       "contours": {
-        "file": "img/mackenzie-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944539/rivers-site/more-contours/mackenzie-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2485,17 +2485,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/glomma-drammen-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944364/rivers-site/more-w1/glomma-drammen_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 714,
-      "mid": "img/glomma-drammen-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944415/rivers-site/more-w1/glomma-drammen_mid.webp",
       "midWidth": 1600,
       "midHeight": 1904,
-      "large": "img/glomma-drammen-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944460/rivers-site/more-w1/glomma-drammen_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7733,
       "contours": {
-        "file": "img/glomma-drammen-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944539/rivers-site/more-contours/glomma-drammen-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2520,17 +2520,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/patagonia-south-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944363/rivers-site/more-w1/patagonia-south_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 350,
-      "mid": "img/patagonia-south-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944415/rivers-site/more-w1/patagonia-south_mid.webp",
       "midWidth": 1600,
       "midHeight": 934,
-      "large": "img/patagonia-south-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944460/rivers-site/more-w1/patagonia-south_large.webp",
       "largeWidth": 6500,
       "largeHeight": 3796,
       "contours": {
-        "file": "img/patagonia-south-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944539/rivers-site/more-contours/patagonia-south-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2555,17 +2555,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/uruguay-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944363/rivers-site/more-w1/uruguay_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1076,
-      "mid": "img/uruguay-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944415/rivers-site/more-w1/uruguay_mid.webp",
       "midWidth": 1600,
       "midHeight": 2868,
-      "large": "img/uruguay-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944461/rivers-site/more-w1/uruguay_large.webp",
       "largeWidth": 6500,
       "largeHeight": 11653,
       "contours": {
-        "file": "img/uruguay-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944539/rivers-site/more-contours/uruguay-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2604,17 +2604,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/magdalena-cauca-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944364/rivers-site/more-w1/magdalena-cauca_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1092,
-      "mid": "img/magdalena-cauca-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944416/rivers-site/more-w1/magdalena-cauca_mid.webp",
       "midWidth": 1600,
       "midHeight": 2912,
-      "large": "img/magdalena-cauca-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944462/rivers-site/more-w1/magdalena-cauca_large.webp",
       "largeWidth": 6500,
       "largeHeight": 11831,
       "contours": {
-        "file": "img/magdalena-cauca-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944542/rivers-site/more-contours/magdalena-cauca-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2653,17 +2653,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/sava-drina-neretva-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944365/rivers-site/more-w1/sava-drina-neretva_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 576,
-      "mid": "img/sava-drina-neretva-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944417/rivers-site/more-w1/sava-drina-neretva_mid.webp",
       "midWidth": 1600,
       "midHeight": 1535,
-      "large": "img/sava-drina-neretva-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944461/rivers-site/more-w1/sava-drina-neretva_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6235,
       "contours": {
-        "file": "img/sava-drina-neretva-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944543/rivers-site/more-contours/sava-drina-neretva-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2688,17 +2688,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/dnieper-dniester-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944364/rivers-site/more-w1/dnieper-dniester_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 587,
-      "mid": "img/dnieper-dniester-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944417/rivers-site/more-w1/dnieper-dniester_mid.webp",
       "midWidth": 1600,
       "midHeight": 1566,
-      "large": "img/dnieper-dniester-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944463/rivers-site/more-w1/dnieper-dniester_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6360,
       "contours": {
-        "file": "img/dnieper-dniester-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944544/rivers-site/more-contours/dnieper-dniester-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2723,17 +2723,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/orinoco-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944365/rivers-site/more-w1/orinoco_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 896,
-      "mid": "img/orinoco-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944417/rivers-site/more-w1/orinoco_mid.webp",
       "midWidth": 1600,
       "midHeight": 2389,
-      "large": "img/orinoco-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944463/rivers-site/more-w1/orinoco_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9707,
       "contours": {
-        "file": "img/orinoco-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944545/rivers-site/more-contours/orinoco-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2772,17 +2772,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/chao-phraya-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944365/rivers-site/more-w1/chao-phraya_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1110,
-      "mid": "img/chao-phraya-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944417/rivers-site/more-w1/chao-phraya_mid.webp",
       "midWidth": 1600,
       "midHeight": 2960,
-      "large": "img/chao-phraya-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944463/rivers-site/more-w1/chao-phraya_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12027,
       "contours": {
-        "file": "img/chao-phraya-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944544/rivers-site/more-contours/chao-phraya-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2821,17 +2821,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/red-river-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944365/rivers-site/more-w1/red-river_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1239,
-      "mid": "img/red-river-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944418/rivers-site/more-w1/red-river_mid.webp",
       "midWidth": 1600,
       "midHeight": 3303,
-      "large": "img/red-river-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944464/rivers-site/more-w1/red-river_large.webp",
       "largeWidth": 6500,
       "largeHeight": 13419,
       "contours": {
-        "file": "img/red-river-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944545/rivers-site/more-contours/red-river-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2870,17 +2870,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/salween-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944366/rivers-site/more-w1/salween_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1527,
-      "mid": "img/salween-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944419/rivers-site/more-w1/salween_mid.webp",
       "midWidth": 1600,
       "midHeight": 4072,
-      "large": "img/salween-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944463/rivers-site/more-w1/salween_large.webp",
       "largeWidth": 6438,
       "largeHeight": 16383,
       "contours": {
-        "file": "img/salween-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944547/rivers-site/more-contours/salween-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2919,17 +2919,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/godavari-krishna-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944366/rivers-site/more-w1/godavari-krishna_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 528,
-      "mid": "img/godavari-krishna-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944418/rivers-site/more-w1/godavari-krishna_mid.webp",
       "midWidth": 1600,
       "midHeight": 1408,
-      "large": "img/godavari-krishna-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944464/rivers-site/more-w1/godavari-krishna_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5719,
       "contours": {
-        "file": "img/godavari-krishna-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944547/rivers-site/more-contours/godavari-krishna-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -2954,17 +2954,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/irrawaddy-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944366/rivers-site/more-w1/irrawaddy_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1458,
-      "mid": "img/irrawaddy-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944419/rivers-site/more-w1/irrawaddy_mid.webp",
       "midWidth": 1600,
       "midHeight": 3887,
-      "large": "img/irrawaddy-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944465/rivers-site/more-w1/irrawaddy_large.webp",
       "largeWidth": 6500,
       "largeHeight": 15790,
       "contours": {
-        "file": "img/irrawaddy-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944549/rivers-site/more-contours/irrawaddy-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3003,17 +3003,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/indus-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944367/rivers-site/more-w1/indus_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 760,
-      "mid": "img/indus-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944419/rivers-site/more-w1/indus_mid.webp",
       "midWidth": 1600,
       "midHeight": 2026,
-      "large": "img/indus-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944465/rivers-site/more-w1/indus_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8232,
       "contours": {
-        "file": "img/indus-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944549/rivers-site/more-contours/indus-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3052,17 +3052,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/baltic-rivers-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944367/rivers-site/more-w1/baltic-rivers_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 531,
-      "mid": "img/baltic-rivers-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944419/rivers-site/more-w1/baltic-rivers_mid.webp",
       "midWidth": 1600,
       "midHeight": 1416,
-      "large": "img/baltic-rivers-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944465/rivers-site/more-w1/baltic-rivers_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5753,
       "contours": {
-        "file": "img/baltic-rivers-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944551/rivers-site/more-contours/baltic-rivers-contours.svg",
         "interval_m": 50,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3087,17 +3087,17 @@
       "regions": [
         "Oceania"
       ],
-      "thumb": "img/brisbane-fitzroy-burdekin-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944367/rivers-site/more-w1/brisbane-fitzroy-burdekin_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1117,
-      "mid": "img/brisbane-fitzroy-burdekin-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944420/rivers-site/more-w1/brisbane-fitzroy-burdekin_mid.webp",
       "midWidth": 1600,
       "midHeight": 2978,
-      "large": "img/brisbane-fitzroy-burdekin-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944466/rivers-site/more-w1/brisbane-fitzroy-burdekin_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12097,
       "contours": {
-        "file": "img/brisbane-fitzroy-burdekin-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944551/rivers-site/more-contours/brisbane-fitzroy-burdekin-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3122,17 +3122,17 @@
       "regions": [
         "Oceania"
       ],
-      "thumb": "img/hawkesbury-nsw-coast-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944367/rivers-site/more-w1/hawkesbury-nsw-coast_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1709,
-      "mid": "img/hawkesbury-nsw-coast-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944420/rivers-site/more-w1/hawkesbury-nsw-coast_mid.webp",
       "midWidth": 1600,
       "midHeight": 4557,
-      "large": "img/hawkesbury-nsw-coast-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944466/rivers-site/more-w1/hawkesbury-nsw-coast_large.webp",
       "largeWidth": 5752,
       "largeHeight": 16383,
       "contours": {
-        "file": "img/hawkesbury-nsw-coast-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944553/rivers-site/more-contours/hawkesbury-nsw-coast-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3157,17 +3157,17 @@
       "regions": [
         "Oceania"
       ],
-      "thumb": "img/tasmania-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944368/rivers-site/more-w1/tasmania_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 577,
-      "mid": "img/tasmania-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944420/rivers-site/more-w1/tasmania_mid.webp",
       "midWidth": 1600,
       "midHeight": 1539,
-      "large": "img/tasmania-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944466/rivers-site/more-w1/tasmania_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6252,
       "contours": {
-        "file": "img/tasmania-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944554/rivers-site/more-contours/tasmania-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3192,17 +3192,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/paraguay-pantanal-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944367/rivers-site/more-w1/paraguay-pantanal_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 570,
-      "mid": "img/paraguay-pantanal-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944421/rivers-site/more-w1/paraguay-pantanal_mid.webp",
       "midWidth": 1600,
       "midHeight": 1519,
-      "large": "img/paraguay-pantanal-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944468/rivers-site/more-w1/paraguay-pantanal_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6170,
       "contours": {
-        "file": "img/paraguay-pantanal-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944554/rivers-site/more-contours/paraguay-pantanal-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3232,17 +3232,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/volga-don-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944368/rivers-site/more-w1/volga-don_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 662,
-      "mid": "img/volga-don-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944421/rivers-site/more-w1/volga-don_mid.webp",
       "midWidth": 1600,
       "midHeight": 1766,
-      "large": "img/volga-don-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944468/rivers-site/more-w1/volga-don_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7175,
       "contours": {
-        "file": "img/volga-don-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944554/rivers-site/more-contours/volga-don-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3267,17 +3267,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/korea-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944368/rivers-site/more-w1/korea_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 612,
-      "mid": "img/korea-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944421/rivers-site/more-w1/korea_mid.webp",
       "midWidth": 1600,
       "midHeight": 1631,
-      "large": "img/korea-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944468/rivers-site/more-w1/korea_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6625,
       "contours": {
-        "file": "img/korea-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944556/rivers-site/more-contours/korea-contours.svg",
         "interval_m": 200,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3302,17 +3302,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/morocco-atlas-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944369/rivers-site/more-w1/morocco-atlas_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 522,
-      "mid": "img/morocco-atlas-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944421/rivers-site/more-w1/morocco-atlas_mid.webp",
       "midWidth": 1600,
       "midHeight": 1391,
-      "large": "img/morocco-atlas-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944468/rivers-site/more-w1/morocco-atlas_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5650,
       "contours": {
-        "file": "img/morocco-atlas-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944556/rivers-site/more-contours/morocco-atlas-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3337,17 +3337,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/colorado-negro-patagonia-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944369/rivers-site/more-w1/colorado-negro-patagonia_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 825,
-      "mid": "img/colorado-negro-patagonia-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944422/rivers-site/more-w1/colorado-negro-patagonia_mid.webp",
       "midWidth": 1600,
       "midHeight": 2199,
-      "large": "img/colorado-negro-patagonia-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944469/rivers-site/more-w1/colorado-negro-patagonia_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8935,
       "contours": {
-        "file": "img/colorado-negro-patagonia-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944558/rivers-site/more-contours/colorado-negro-patagonia-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3372,17 +3372,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/guianas-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944370/rivers-site/more-w1/guianas_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 627,
-      "mid": "img/guianas-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944423/rivers-site/more-w1/guianas_mid.webp",
       "midWidth": 1600,
       "midHeight": 1672,
-      "large": "img/guianas-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944468/rivers-site/more-w1/guianas_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6793,
       "contours": {
-        "file": "img/guianas-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944559/rivers-site/more-contours/guianas-contours.svg",
         "interval_m": 100,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3407,17 +3407,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/madagascar-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944369/rivers-site/more-w1/madagascar_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 609,
-      "mid": "img/madagascar-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944423/rivers-site/more-w1/madagascar_mid.webp",
       "midWidth": 1600,
       "midHeight": 1623,
-      "large": "img/madagascar-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944470/rivers-site/more-w1/madagascar_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6594,
       "contours": {
-        "file": "img/madagascar-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944560/rivers-site/more-contours/madagascar-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3442,17 +3442,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/tanzania-coast-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944370/rivers-site/more-w1/tanzania-coast_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 460,
-      "mid": "img/tanzania-coast-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944423/rivers-site/more-w1/tanzania-coast_mid.webp",
       "midWidth": 1600,
       "midHeight": 1227,
-      "large": "img/tanzania-coast-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944470/rivers-site/more-w1/tanzania-coast_large.webp",
       "largeWidth": 6500,
       "largeHeight": 4983,
       "contours": {
-        "file": "img/tanzania-coast-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944560/rivers-site/more-contours/tanzania-coast-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3477,17 +3477,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/breede-berg-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944370/rivers-site/more-w1/breede-berg_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1472,
-      "mid": "img/breede-berg-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944423/rivers-site/more-w1/breede-berg_mid.webp",
       "midWidth": 1600,
       "midHeight": 3926,
-      "large": "img/breede-berg-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944471/rivers-site/more-w1/breede-berg_large.webp",
       "largeWidth": 6500,
       "largeHeight": 15948,
       "contours": {
-        "file": "img/breede-berg-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944562/rivers-site/more-contours/breede-berg-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3512,17 +3512,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/amu-syr-darya-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944371/rivers-site/more-w1/amu-syr-darya_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 714,
-      "mid": "img/amu-syr-darya-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944423/rivers-site/more-w1/amu-syr-darya_mid.webp",
       "midWidth": 1600,
       "midHeight": 1905,
-      "large": "img/amu-syr-darya-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944471/rivers-site/more-w1/amu-syr-darya_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7740,
       "contours": {
-        "file": "img/amu-syr-darya-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944562/rivers-site/more-contours/amu-syr-darya-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3547,17 +3547,17 @@
       "regions": [
         "South America"
       ],
-      "thumb": "img/ucayali-maranon-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944370/rivers-site/more-w1/ucayali-maranon_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 495,
-      "mid": "img/ucayali-maranon-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944424/rivers-site/more-w1/ucayali-maranon_mid.webp",
       "midWidth": 1600,
       "midHeight": 1321,
-      "large": "img/ucayali-maranon-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944470/rivers-site/more-w1/ucayali-maranon_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5366,
       "contours": {
-        "file": "img/ucayali-maranon-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944564/rivers-site/more-contours/ucayali-maranon-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3587,17 +3587,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/kolyma-indigirka-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944372/rivers-site/more-w1/kolyma-indigirka_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 606,
-      "mid": "img/kolyma-indigirka-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944424/rivers-site/more-w1/kolyma-indigirka_mid.webp",
       "midWidth": 1600,
       "midHeight": 1617,
-      "large": "img/kolyma-indigirka-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944471/rivers-site/more-w1/kolyma-indigirka_large.webp",
       "largeWidth": 6500,
       "largeHeight": 6570,
       "contours": {
-        "file": "img/kolyma-indigirka-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944564/rivers-site/more-contours/kolyma-indigirka-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3622,17 +3622,17 @@
       "regions": [
         "Europe"
       ],
-      "thumb": "img/pechora-dvina-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944372/rivers-site/more-w1/pechora-dvina_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 774,
-      "mid": "img/pechora-dvina-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944425/rivers-site/more-w1/pechora-dvina_mid.webp",
       "midWidth": 1600,
       "midHeight": 2065,
-      "large": "img/pechora-dvina-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944472/rivers-site/more-w1/pechora-dvina_large.webp",
       "largeWidth": 6500,
       "largeHeight": 8388,
       "contours": {
-        "file": "img/pechora-dvina-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944564/rivers-site/more-contours/pechora-dvina-contours.svg",
         "interval_m": 250,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3657,17 +3657,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/yangtze-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944372/rivers-site/more-w1/yangtze_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 927,
-      "mid": "img/yangtze-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944425/rivers-site/more-w1/yangtze_mid.webp",
       "midWidth": 1600,
       "midHeight": 2471,
-      "large": "img/yangtze-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944473/rivers-site/more-w1/yangtze_large.webp",
       "largeWidth": 6500,
       "largeHeight": 10039,
       "contours": {
-        "file": "img/yangtze-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944565/rivers-site/more-contours/yangtze-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3706,17 +3706,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/yellow-river-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944372/rivers-site/more-w1/yellow-river_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 1200,
-      "mid": "img/yellow-river-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944425/rivers-site/more-w1/yellow-river_mid.webp",
       "midWidth": 1600,
       "midHeight": 3199,
-      "large": "img/yellow-river-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944473/rivers-site/more-w1/yellow-river_large.webp",
       "largeWidth": 6500,
       "largeHeight": 12996,
       "contours": {
-        "file": "img/yellow-river-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944567/rivers-site/more-contours/yellow-river-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3755,17 +3755,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/pearl-xi-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944372/rivers-site/more-w1/pearl-xi_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 945,
-      "mid": "img/pearl-xi-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944426/rivers-site/more-w1/pearl-xi_mid.webp",
       "midWidth": 1600,
       "midHeight": 2519,
-      "large": "img/pearl-xi-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944473/rivers-site/more-w1/pearl-xi_large.webp",
       "largeWidth": 6500,
       "largeHeight": 10235,
       "contours": {
-        "file": "img/pearl-xi-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944568/rivers-site/more-contours/pearl-xi-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3804,17 +3804,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/amur-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944373/rivers-site/more-w1/amur_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 843,
-      "mid": "img/amur-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944426/rivers-site/more-w1/amur_mid.webp",
       "midWidth": 1600,
       "midHeight": 2249,
-      "large": "img/amur-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944474/rivers-site/more-w1/amur_large.webp",
       "largeWidth": 6500,
       "largeHeight": 9136,
       "contours": {
-        "file": "img/amur-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944569/rivers-site/more-contours/amur-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3853,17 +3853,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/ganges-brahmaputra-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944373/rivers-site/more-w1/ganges-brahmaputra_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 546,
-      "mid": "img/ganges-brahmaputra-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944426/rivers-site/more-w1/ganges-brahmaputra_mid.webp",
       "midWidth": 1600,
       "midHeight": 1456,
-      "large": "img/ganges-brahmaputra-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944474/rivers-site/more-w1/ganges-brahmaputra_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5916,
       "contours": {
-        "file": "img/ganges-brahmaputra-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944572/rivers-site/more-contours/ganges-brahmaputra-contours.svg",
         "interval_m": 1000,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3888,17 +3888,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/ob-irtysh-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944373/rivers-site/more-w1/ob-irtysh_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 710,
-      "mid": "img/ob-irtysh-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944426/rivers-site/more-w1/ob-irtysh_mid.webp",
       "midWidth": 1600,
       "midHeight": 1892,
-      "large": "img/ob-irtysh-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944475/rivers-site/more-w1/ob-irtysh_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7687,
       "contours": {
-        "file": "img/ob-irtysh-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944571/rivers-site/more-contours/ob-irtysh-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3937,17 +3937,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/yenisei-angara-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944373/rivers-site/more-w1/yenisei-angara_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 956,
-      "mid": "img/yenisei-angara-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944428/rivers-site/more-w1/yenisei-angara_mid.webp",
       "midWidth": 1600,
       "midHeight": 2549,
-      "large": "img/yenisei-angara-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944476/rivers-site/more-w1/yenisei-angara_large.webp",
       "largeWidth": 6500,
       "largeHeight": 10356,
       "contours": {
-        "file": "img/yenisei-angara-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944572/rivers-site/more-contours/yenisei-angara-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -3986,17 +3986,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/lena-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944374/rivers-site/more-w1/lena_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 708,
-      "mid": "img/lena-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944427/rivers-site/more-w1/lena_mid.webp",
       "midWidth": 1600,
       "midHeight": 1887,
-      "large": "img/lena-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944476/rivers-site/more-w1/lena_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7666,
       "contours": {
-        "file": "img/lena-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944572/rivers-site/more-contours/lena-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -4035,17 +4035,17 @@
       "regions": [
         "Oceania"
       ],
-      "thumb": "img/fly-sepik-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944374/rivers-site/more-w1/fly-sepik_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 538,
-      "mid": "img/fly-sepik-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944428/rivers-site/more-w1/fly-sepik_mid.webp",
       "midWidth": 1600,
       "midHeight": 1435,
-      "large": "img/fly-sepik-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944477/rivers-site/more-w1/fly-sepik_large.webp",
       "largeWidth": 6500,
       "largeHeight": 5829,
       "contours": {
-        "file": "img/fly-sepik-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944576/rivers-site/more-contours/fly-sepik-contours.svg",
         "interval_m": 500,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -4070,17 +4070,17 @@
       "regions": [
         "Africa"
       ],
-      "thumb": "img/ethiopia-highlands-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944375/rivers-site/more-w1/ethiopia-highlands_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 695,
-      "mid": "img/ethiopia-highlands-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944428/rivers-site/more-w1/ethiopia-highlands_mid.webp",
       "midWidth": 1600,
       "midHeight": 1854,
-      "large": "img/ethiopia-highlands-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944477/rivers-site/more-w1/ethiopia-highlands_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7532,
       "contours": {
-        "file": "img/ethiopia-highlands-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944577/rivers-site/more-contours/ethiopia-highlands-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -4106,17 +4106,17 @@
         "Asia",
         "Europe"
       ],
-      "thumb": "img/kura-caucasus-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944375/rivers-site/more-w1/kura-caucasus_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 729,
-      "mid": "img/kura-caucasus-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944428/rivers-site/more-w1/kura-caucasus_mid.webp",
       "midWidth": 1600,
       "midHeight": 1944,
-      "large": "img/kura-caucasus-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944477/rivers-site/more-w1/kura-caucasus_large.webp",
       "largeWidth": 6500,
       "largeHeight": 7899,
       "contours": {
-        "file": "img/kura-caucasus-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944577/rivers-site/more-contours/kura-caucasus-contours.svg",
         "interval_m": 750,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -4141,17 +4141,17 @@
       "regions": [
         "Asia"
       ],
-      "thumb": "img/kaveri-mahanadi-thumb.webp",
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944374/rivers-site/more-w1/kaveri-mahanadi_thumb.webp",
       "thumbWidth": 600,
       "thumbHeight": 937,
-      "mid": "img/kaveri-mahanadi-mid.webp",
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944428/rivers-site/more-w1/kaveri-mahanadi_mid.webp",
       "midWidth": 1600,
       "midHeight": 2499,
-      "large": "img/kaveri-mahanadi-large.webp",
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944478/rivers-site/more-w1/kaveri-mahanadi_large.webp",
       "largeWidth": 6500,
       "largeHeight": 10154,
       "contours": {
-        "file": "img/kaveri-mahanadi-contours.svg",
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792944578/rivers-site/more-contours/kaveri-mahanadi-contours.svg",
         "interval_m": 400,
         "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
       },
@@ -4165,6 +4165,125 @@
           "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
         },
         "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "hai-liao",
+      "name": "Hai and Liao",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-w2/hai-liao_thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 960,
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-w2/hai-liao_mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2560,
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-w2/hai-liao_large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10399,
+      "contours": {
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-contours/hai-liao-contours.svg",
+        "interval_m": 400,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 21007,
+        "total_stream_length_km": 104814.4,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "narmada-tapti-mahi",
+      "name": "Narmada, Tapti and Mahi",
+      "regions": [
+        "Asia"
+      ],
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-w2/narmada-tapti-mahi_thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 1010,
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952563/rivers-site/more-w2/narmada-tapti-mahi_mid.webp",
+      "midWidth": 1600,
+      "midHeight": 2694,
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952564/rivers-site/more-w2/narmada-tapti-mahi_large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 10946,
+      "contours": {
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952564/rivers-site/more-contours/narmada-tapti-mahi-contours.svg",
+        "interval_m": 200,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 11601,
+        "total_stream_length_km": 50141.4,
+        "highest_stream_order": 7,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "credits": [
+        "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."
+      ]
+    },
+    {
+      "slug": "neva-ladoga",
+      "name": "Neva and Ladoga",
+      "regions": [
+        "Europe"
+      ],
+      "thumb": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952564/rivers-site/more-w2/neva-ladoga_thumb.webp",
+      "thumbWidth": 600,
+      "thumbHeight": 418,
+      "mid": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952565/rivers-site/more-w2/neva-ladoga_mid.webp",
+      "midWidth": 1600,
+      "midHeight": 1116,
+      "large": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952565/rivers-site/more-w2/neva-ladoga_large.webp",
+      "largeWidth": 6500,
+      "largeHeight": 4532,
+      "contours": {
+        "file": "https://res.cloudinary.com/vtyvhdpv/image/upload/v1792952566/rivers-site/more-contours/neva-ladoga-contours.svg",
+        "interval_m": 50,
+        "credit": "Contours: Elevation: Contains modified Copernicus DEM GLO-30 data © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the European Union and ESA; all rights reserved. Contour lines derived from the elevation model."
+      },
+      "facts": {
+        "stream_segments": 13545,
+        "total_stream_length_km": 71031.7,
+        "highest_stream_order": 8,
+        "mouth_label": "Mouth",
+        "mouth_lat": 59.919,
+        "mouth_lon": 30.256,
+        "units": {
+          "stream_segments": "count of HydroRIVERS reaches in the data",
+          "total_stream_length_km": "km, summed geodesic (WGS84) length of all HydroRIVERS reaches in the raw data (before any order-1 thinning of the drawn map)",
+          "highest_stream_order": "highest Strahler order (ORD_STRA) in the data",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "HydroSHEDS HydroRIVERS v10 (Lehner & Grill 2013), www.hydrosheds.org."
+      },
+      "flow": {
+        "station": "Modelled flow at the river mouth (HydroRIVERS)",
+        "meanM3s": 2562,
+        "years": "1971–2000 (modelled)",
+        "km3PerYear": 80.9,
+        "caveat": "Modelled, not measured: long-term (1971–2000) average natural discharge for the terminal reach at the river mouth (HydroRIVERS v10 attribute DIS_AV_CMS, downscaled from the WaterGAP 2.2 global water-balance model). 'Natural' means without the effect of dams and withdrawals, so it can differ from gauged flow. The data provider reports a symmetric mean absolute percentage error of about 13% against gauges for rivers of 100 m3/s and larger. Reach HYRIV_ID 20165518, upstream area 285,331 km2. Not a gauge record.",
+        "url": "https://www.hydrosheds.org/products/hydrorivers",
+        "modelled": true
       },
       "credits": [
         "HydroSHEDS HydroRIVERS v10: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171–2186. Data: www.hydrosheds.org."

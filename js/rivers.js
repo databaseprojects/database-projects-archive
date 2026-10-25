@@ -151,7 +151,12 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025b";
+  var ASSET_V = "20261025e";
+
+  function assetSrc(path) {
+    if (typeof path === "string" && path.indexOf("https://") === 0) return path;
+    return path + "?v=" + ASSET_V;
+  }
   var contoursOn = false;
   var contourReady = {};
   var contourPending = {};
@@ -267,7 +272,7 @@
     img.height = H;
     img.style.width = W + "px";
     img.style.height = H + "px";
-    img.src = river.mid + "?v=" + ASSET_V;
+    img.src = assetSrc(river.mid);
     var overlay = document.createElement("img");
     overlay.className = "rv-contour";
     overlay.alt = "";
@@ -323,7 +328,7 @@
     lb = box;
 
     var large = new Image();
-    large.src = river.large + "?v=" + ASSET_V;
+    large.src = assetSrc(river.large);
 
     function fit() {
       var sw = stage.clientWidth;
@@ -348,7 +353,7 @@
       var slug = item.slug;
       if (contourReady[slug]) return Promise.resolve(contourReady[slug]);
       if (contourPending[slug]) return contourPending[slug];
-      contourPending[slug] = fetch(item.contours.file + "?v=" + ASSET_V).then(function (res) {
+      contourPending[slug] = fetch(assetSrc(item.contours.file)).then(function (res) {
         if (!res.ok) throw new Error("contours");
         return res.arrayBuffer();
       }).then(function (buf) {
@@ -397,7 +402,7 @@
       var want = needsLarge() ? "large" : "mid";
       if (want === showing) return;
       showing = want;
-      img.src = (want === "large" ? river.large : river.mid) + "?v=" + ASSET_V;
+      img.src = assetSrc(want === "large" ? river.large : river.mid);
     }
 
     function clampPan() {
@@ -547,7 +552,7 @@
     btn.setAttribute("aria-label", "Open " + (river.name || "river"));
     var img = document.createElement("img");
     img.alt = river.name || "";
-    img.src = river.thumb + "?v=" + ASSET_V;
+    img.src = assetSrc(river.thumb);
     img.loading = "lazy";
     img.decoding = "async";
     if (river.thumbWidth) img.width = river.thumbWidth;
