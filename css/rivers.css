@@ -25,27 +25,19 @@
   text-transform: uppercase;
 }
 
-.rv-scroller {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
 .rv-row {
-  display: flex;
-  gap: 1.25rem;
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 2px;
-  overscroll-behavior-x: contain;
-  padding-bottom: 0.4rem;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: center;
+  justify-items: center;
 }
 
 .rv-card {
-  flex: 0 0 min(34rem, 100%);
-  scroll-snap-align: start;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
 }
 
 .rv-open {
@@ -62,56 +54,42 @@
   cursor: zoom-in;
 }
 
-.rv-open:focus-visible,
-.rv-arrow:focus-visible {
+.rv-open:focus-visible {
   outline: 1px solid #000;
   outline-offset: 3px;
 }
 
-.rv-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 22rem;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-}
-
-.rv-frame img {
+.rv-open img {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: auto;
   object-fit: contain;
-}
-
-.rv-card-name {
-  display: block;
-  margin: 0.45rem 0 0.35rem;
-  color: #111;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  background: transparent;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .rv-caption {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+  gap: 0.1rem 0.35rem;
+  padding: 0.3rem 0.4rem 0.35rem;
   background: #fff;
 }
 
 .rv-field {
   box-sizing: border-box;
-  padding: 0.45rem 0.85rem 0.55rem;
-  min-width: 7.5rem;
+  padding: 0.1rem 0.3rem 0.12rem;
+  min-width: 0;
 }
 
 .rv-label {
-  margin: 0 0 0.28rem;
+  margin: 0 0 0.08rem;
   color: rgba(0, 0, 0, 0.55);
   font-size: 9px;
   letter-spacing: 0.16em;
-  line-height: 1.2;
+  line-height: 1.05;
   text-transform: uppercase;
 }
 
@@ -120,38 +98,19 @@
   color: #111;
   font-size: 15px;
   letter-spacing: 0;
-  line-height: 1.25;
+  line-height: 1.15;
 }
 
 .rv-gauge {
-  margin-top: 0.28rem;
+  margin-top: 0.08rem;
   color: #111;
   font-size: 11px;
-  letter-spacing: 0.03em;
-  line-height: 1.35;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .rv-gauge a {
   color: inherit;
-}
-
-.rv-arrow {
-  flex: 0 0 auto;
-  align-self: center;
-  margin: 0;
-  padding: 0.2rem 0.15rem;
-  border: 0;
-  background: transparent;
-  color: #111;
-  font: inherit;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.rv-arrow[disabled] {
-  opacity: 0.28;
-  cursor: default;
 }
 
 .rv-notes,
@@ -229,12 +188,18 @@
   flex: 0 1 auto;
   max-height: 38vh;
   overflow: auto;
-  margin-top: 10px;
+  margin-top: 6px;
   cursor: default;
 }
 
 html.rv-open {
   overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .rv-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
