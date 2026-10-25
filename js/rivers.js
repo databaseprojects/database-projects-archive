@@ -1292,7 +1292,7 @@
     var gridOn = viewMode === "grid";
     var mapOn = viewMode === "map";
     if (gridBtn) {
-      gridBtn.classList.toggle("rv-on", gridOn);
+      gridBtn.classList.toggle("sh-icon-on", gridOn);
       gridBtn.setAttribute("aria-pressed", gridOn ? "true" : "false");
     }
     if (mapBtn) {
