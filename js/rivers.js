@@ -179,7 +179,6 @@
 
   var LABEL_ALL_ZOOM = 8;
   var RIVER_BLUE = "#1f4e9c";
-  var RIVER_BLUE_HOT = "#12386e";
   var FULL_ZOOM = 6;
   var FULL_KEEP = 5;
 
@@ -267,7 +266,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025m";
+  var ASSET_V = "20261025n";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
@@ -295,26 +294,17 @@
   var lb = null;
   var lbTimer = null;
   var map = null;
-  var selectPopup = null;
-  var popupLock = false;
-  var SELECT_ZOOM = 6;
   var markerEntries = [];
   var fittedKey = "";
   var mapLibrePromise = null;
   var positronStyle = null;
-  var lineSlug = null;
-  var lineTier = null;
-  var lineFC = null;
-  var mainPack = null;
-  var fullPack = null;
+  var previewPack = null;
+  var previewPromise = null;
+  var previewKey = "";
   var boundsBySlug = null;
   var boundsPromise = null;
-  var mainPromise = null;
-  var fullPromise = null;
-  var fullWait = false;
-  var fullFailed = false;
   var fitToken = 0;
-  var selectedSlug = null;
+  var PREVIEW_INK = "#8aa4b8";
 
   function el(tag, className) {
     var node = document.createElement(tag);
@@ -778,34 +768,18 @@
     return boundsPromise;
   }
 
-  function ensureMainLines() {
-    if (mainPack) return Promise.resolve(mainPack);
-    if (!mainPromise) {
-      mainPromise = fetch(assetSrc("map/lines-main.json")).then(readJson).then(function (data) {
-        mainPack = data;
+  function ensurePreviewLines() {
+    if (previewPack) return Promise.resolve(previewPack);
+    if (!previewPromise) {
+      previewPromise = fetch(assetSrc("map/lines-preview.json")).then(readJson).then(function (data) {
+        previewPack = data;
         return data;
       }).catch(function (err) {
-        mainPromise = null;
+        previewPromise = null;
         throw err;
       });
     }
-    return mainPromise;
-  }
-
-  function ensureFullData() {
-    if (fullPack) return Promise.resolve(fullPack);
-    if (fullFailed) return Promise.reject(new Error("lines"));
-    if (!fullPromise) {
-      fullPromise = fetch(assetSrc("map/lines-full.json")).then(readJson).then(function (data) {
-        fullPack = data;
-        return data;
-      }).catch(function (err) {
-        fullPromise = null;
-        fullFailed = true;
-        throw err;
-      });
-    }
-    return fullPromise;
+    return previewPromise;
   }
 
   function emptyLines() {
@@ -840,37 +814,22 @@
       if (!map.getSource("rv-lines")) {
         map.addSource("rv-lines", { type: "geojson", data: emptyLines() });
         map.addLayer({
-          id: "rv-line-hit",
-          type: "line",
-          source: "rv-lines",
-          paint: {
-            "line-color": RIVER_BLUE_HOT,
-            "line-width": 12,
-            "line-opacity": 0
-          }
-        });
-        map.addLayer({
           id: "rv-line",
           type: "line",
           source: "rv-lines",
           layout: { "line-cap": "round", "line-join": "round" },
           paint: {
-            "line-color": RIVER_BLUE_HOT,
-            "line-width": ["get", "weight"],
-            "line-opacity": 1
+            "line-color": PREVIEW_INK,
+            "line-width": 1,
+            "line-opacity": 0.5
           }
         });
       }
       map.resize();
       if (viewMode === "map") syncMap();
     });
-    map.on("zoomend", function () {
-      placeLabels();
-      syncLines();
-    });
-    map.on("moveend", function () {
-      placeLabels();
-    });
+    map.on("zoomend", placeLabels);
+    map.on("moveend", placeLabels);
     map.on("mousemove", function (ev) {
       var hits = lineHits(ev.point);
       map.getCanvas().style.cursor = hits.length ? "pointer" : "";
@@ -879,19 +838,17 @@
       var native = ev.originalEvent;
       var target = native && native.target;
       if (native && native._rvHandled) return;
-      if (target && target.closest && (target.closest(".maplibregl-ctrl") || target.closest(".maplibregl-popup") || target.closest(".rv-mouth"))) return;
-      if (lineHits(ev.point).length) {
-        var river = selectedSlug && riverBySlug[selectedSlug];
-        if (river) selectRiver(river);
-        return;
-      }
-      clearSelection();
+      if (target && target.closest && (target.closest(".maplibregl-ctrl") || target.closest(".rv-mouth"))) return;
+      var hits = lineHits(ev.point);
+      if (!hits.length) return;
+      var slug = hits[0].properties && hits[0].properties.slug;
+      var river = slug && riverBySlug[slug];
+      if (river && riverShown(river)) openRiver(river);
     });
   }
 
   function paintMarker(entry) {
-    var hot = entry.river.slug === selectedSlug || entry.force;
-    entry.root.classList.toggle("rv-mouth-hot", hot);
+    entry.root.classList.toggle("rv-mouth-hot", !!entry.force);
   }
 
   function paintMarkers() {
@@ -909,19 +866,19 @@
     if (manifestNow) openLb(manifestNow, river);
   }
 
-  function bindSelect(node, entry) {
+  function bindOpen(node, entry) {
     var name = entry.river.name || entry.river.slug || "river";
-    node.setAttribute("aria-label", "Select " + name);
+    node.setAttribute("aria-label", "Open " + name);
     node.addEventListener("click", function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
       ev._rvHandled = true;
-      selectRiver(entry.river);
+      openRiver(entry.river);
     });
     node.addEventListener("keydown", function (ev) {
       if (ev.key !== "Enter" && ev.key !== " ") return;
       ev.preventDefault();
-      selectRiver(entry.river);
+      openRiver(entry.river);
     });
     node.addEventListener("focus", function () { setForce(entry, true); });
     node.addEventListener("blur", function () { setForce(entry, false); });
@@ -947,8 +904,8 @@
       root.appendChild(label);
       root.addEventListener("mouseenter", function () { setForce(entry, true); });
       root.addEventListener("mouseleave", function () { setForce(entry, false); });
-      bindSelect(dot, entry);
-      bindSelect(label, entry);
+      bindOpen(dot, entry);
+      bindOpen(label, entry);
       entry.root = root;
       entry.nameEl = label;
       entry.marker = new window.maplibregl.Marker({ element: root, anchor: "center" })
@@ -977,7 +934,7 @@
         y: pt.y - 7,
         w: Math.max(28, name.length * 6.6),
         h: 14,
-        force: entry.force || entry.river.slug === selectedSlug
+        force: entry.force
       });
     });
     var live = [];
@@ -1067,200 +1024,43 @@
   }
 
   function lineHits(point) {
-    if (!styleReady() || !map.getLayer("rv-line-hit")) return [];
-    return map.queryRenderedFeatures(point, { layers: ["rv-line", "rv-line-hit"] });
+    if (!styleReady() || !map.getLayer("rv-line")) return [];
+    var box = [
+      [point.x - 8, point.y - 8],
+      [point.x + 8, point.y + 8]
+    ];
+    return map.queryRenderedFeatures(box, { layers: ["rv-line"] });
   }
 
-  function clearLineSource() {
-    lineSlug = null;
-    lineTier = null;
-    lineFC = emptyLines();
-    if (styleReady() && map.getSource("rv-lines")) map.getSource("rv-lines").setData(lineFC);
-  }
-
-  function linesFC(slug, tier, zoom) {
-    var pack = tier === "full" ? fullPack : mainPack;
-    var data = pack && pack.rivers && pack.rivers[slug];
-    if (!data) return null;
-    var by = {};
-    var lines = data.lines || [];
-    var orders = data.orders || [];
-    var i, order, bucket;
-    for (i = 0; i < lines.length; i++) {
-      order = orders[i];
-      bucket = by[order];
-      if (!bucket) by[order] = bucket = [];
-      bucket.push(lines[i]);
-    }
-    var keys = Object.keys(by).map(Number).sort(function (a, b) { return a - b; });
+  function previewFC(rivers) {
+    var pack = previewPack && previewPack.rivers;
     var features = [];
-    keys.forEach(function (key) {
+    if (!pack) return emptyLines();
+    rivers.forEach(function (river) {
+      var data = pack[river.slug];
+      var lines = data && data.lines;
+      if (!lines || !lines.length) return;
       features.push({
         type: "Feature",
-        properties: {
-          slug: slug,
-          order: key,
-          orderMin: data.order_min,
-          orderMax: data.order_max,
-          weight: lineWeight(key, data.order_min, data.order_max, zoom, true)
-        },
-        geometry: { type: "MultiLineString", coordinates: by[key] }
+        properties: { slug: river.slug },
+        geometry: { type: "MultiLineString", coordinates: lines }
       });
     });
     return { type: "FeatureCollection", features: features };
   }
 
-  function paintLineWeights() {
-    if (!lineFC || !map || !map.getSource("rv-lines")) return;
-    var zoom = map.getZoom();
-    var i, props;
-    for (i = 0; i < lineFC.features.length; i++) {
-      props = lineFC.features[i].properties;
-      props.weight = lineWeight(props.order, props.orderMin, props.orderMax, zoom, true);
-    }
-    map.getSource("rv-lines").setData(lineFC);
-  }
-
   function syncLines() {
-    if (viewMode !== "map" || !styleReady() || !map.getSource("rv-lines") || !mainPack) return;
-    var slug = selectedSlug;
-    var river = slug && riverBySlug[slug];
-    var shown = !!(river && riverShown(river));
-    var zoom = map.getZoom();
-    var wantFull = shown && zoom >= FULL_ZOOM;
-    if (wantFull && !fullPack && !fullWait && !fullFailed) {
-      fullWait = true;
-      ensureFullData().then(function () {
-        fullWait = false;
-        if (viewMode !== "map") return;
-        syncLines();
-      }).catch(function () { fullWait = false; });
-    }
-    if (!shown) {
-      if (lineSlug) clearLineSource();
-      return;
-    }
-    var tier = (wantFull && fullPack) ? "full" : "main";
-    if (lineSlug === slug && lineTier === tier) {
-      paintLineWeights();
-      return;
-    }
-    var fc = linesFC(slug, tier, zoom);
-    if (!fc && tier === "full") {
-      tier = "main";
-      fc = linesFC(slug, "main", zoom);
-    }
-    if (!fc) {
-      clearLineSource();
-      return;
-    }
-    lineSlug = slug;
-    lineTier = tier;
-    lineFC = fc;
-    map.getSource("rv-lines").setData(fc);
-  }
-
-  function popupBody(river) {
-    var wrap = document.createElement("div");
-    wrap.className = "rv-map-pop-body";
-    var name = document.createElement("p");
-    name.className = "rv-map-pop-name";
-    name.textContent = river.name || river.slug || "";
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "rv-tag";
-    btn.textContent = "Open full-detail map";
-    btn.addEventListener("click", function (ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      openRiver(river);
-    });
-    wrap.appendChild(name);
-    wrap.appendChild(btn);
-    return wrap;
-  }
-
-  function selectionAnchor(river) {
-    var point = mapPoint(river);
-    if (point) return [point.lon, point.lat];
-    var bounds = boundsOf(river.slug);
-    if (!bounds) return null;
-    return [(bounds.west + bounds.east) / 2, (bounds.south + bounds.north) / 2];
-  }
-
-  function closeSelectPopup() {
-    if (!selectPopup || !selectPopup.isOpen()) return;
-    popupLock = true;
-    selectPopup.remove();
-    popupLock = false;
-  }
-
-  function showSelectPopup(river) {
-    if (!map || !window.maplibregl) return;
-    var at = selectionAnchor(river);
-    if (!at) return;
-    if (!selectPopup) {
-      selectPopup = new window.maplibregl.Popup({
-        className: "rv-map-pop",
-        closeButton: true,
-        closeOnClick: false,
-        maxWidth: "230px",
-        anchor: "bottom",
-        offset: [0, -10]
-      });
-      selectPopup.on("close", function () {
-        if (popupLock) return;
-        if (selectedSlug) clearSelection();
-      });
-    }
-    popupLock = true;
-    selectPopup.setLngLat(at).setDOMContent(popupBody(river)).addTo(map);
-    popupLock = false;
-  }
-
-  function clearSelection() {
-    if (!selectedSlug) return;
-    selectedSlug = null;
-    fitToken += 1;
-    closeSelectPopup();
-    paintMarkers();
-    placeLabels();
-    syncLines();
-  }
-
-  function selectRiver(river) {
-    if (!river || !riverShown(river)) return;
-    var same = selectedSlug === river.slug;
-    selectedSlug = river.slug;
-    if (!same) {
-      closeSelectPopup();
-      clearLineSource();
-    }
-    paintMarkers();
-    placeLabels();
-    ensureMainLines().catch(function () {});
-    scheduleFit([river], SELECT_ZOOM, function () {
-      if (selectedSlug !== river.slug || viewMode !== "map" || !map) return;
-      ensureMainLines().then(function () {
-        if (selectedSlug !== river.slug || viewMode !== "map" || !map) return;
-        syncLines();
-        showSelectPopup(river);
-      }).catch(function () {
-        if (selectedSlug === river.slug && viewMode === "map" && map) showSelectPopup(river);
-      });
-    });
+    if (viewMode !== "map" || !styleReady() || !map.getSource("rv-lines") || !previewPack) return;
+    var rivers = visibleRivers();
+    var key = rivers.map(function (river) { return river.slug; }).join("|");
+    if (key === previewKey) return;
+    previewKey = key;
+    map.getSource("rv-lines").setData(previewFC(rivers));
   }
 
   function syncMap() {
     if (viewMode !== "map" || !map || !manifestNow) return;
     ensureMarkers();
-    if (selectedSlug) {
-      var still = visibleRivers().some(function (river) { return river.slug === selectedSlug; });
-      if (!still) {
-        selectedSlug = null;
-        closeSelectPopup();
-      }
-    }
     var slugs = [];
     markerEntries.forEach(function (entry) {
       var show = riverShown(entry.river);
@@ -1277,15 +1077,16 @@
     var viewerOpen = lb && !lb._closing;
     if (key !== fittedKey && !viewerOpen) {
       fittedKey = key;
-      if (selectedSlug) {
-        selectedSlug = null;
-        closeSelectPopup();
-      }
       scheduleFit(visibleRivers(), 6);
     }
     paintMarkers();
     placeLabels();
-    if (mainPack) syncLines();
+    if (previewPack) syncLines();
+    else {
+      ensurePreviewLines().then(function () {
+        if (viewMode === "map") syncLines();
+      }).catch(function () {});
+    }
   }
 
   function setViewButtons() {
