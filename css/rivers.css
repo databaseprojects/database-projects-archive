@@ -25,11 +25,25 @@
   text-transform: uppercase;
 }
 
+.rv-find-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  margin: 0 0 0.55rem;
+}
+
 .rv-find-wrap {
   position: relative;
   display: inline-block;
   max-width: 100%;
   margin: 0 0 0.55rem;
+}
+
+.rv-find-row .rv-find-wrap,
+.rv-find-row .rv-views {
+  margin: 0;
 }
 
 .rv-find {
@@ -163,6 +177,7 @@
 }
 
 .rv-map-wrap {
+  position: relative;
   width: 100%;
   margin: 0;
 }
@@ -235,6 +250,62 @@
 
 .rv-map .leaflet-tooltip.rv-map-label.rv-map-label-off {
   display: none;
+}
+
+.rv-map-chip {
+  position: absolute;
+  z-index: 500;
+  top: 0.55rem;
+  right: 0.55rem;
+  box-sizing: border-box;
+  max-width: 16rem;
+  margin: 0;
+  padding: 0.45rem 1.3rem 0.5rem 0.55rem;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  background: #fff;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.rv-map-chip[hidden] {
+  display: none;
+}
+
+.rv-map-chip-name {
+  margin: 0 0 0.15rem;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.rv-map-chip-region {
+  margin: 0 0 0.4rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.rv-map-chip-region[hidden] {
+  display: none;
+}
+
+.rv-map-chip-x {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.15rem;
+  margin: 0;
+  padding: 0 0.3em;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rv-map-chip-x:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 1px;
 }
 
 .rv-map .leaflet-tooltip.rv-map-label::before {
