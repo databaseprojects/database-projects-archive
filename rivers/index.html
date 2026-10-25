@@ -6,7 +6,7 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Rivers — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/rivers.css?v=20261025j">
+  <link rel="stylesheet" href="../css/rivers.css?v=20261025m">
 </head>
 <body>
   <div class="sheet">
@@ -15,7 +15,6 @@
 <main>
   <div class="rv-bar">
     <h1 class="rv-name" id="rv-title">Rivers</h1>
-    <p class="rv-set" id="rv-set">BC</p>
   </div>
   <div class="rv-find-row">
     <div class="rv-find-wrap">
@@ -23,8 +22,8 @@
       <button type="button" class="rv-find-clear" id="rv-find-clear" hidden aria-label="Clear search">×</button>
     </div>
     <div class="rv-views" id="rv-views" role="group" aria-label="View">
-      <button type="button" class="rv-tag" id="rv-view-map" aria-pressed="false">Map</button>
-      <button type="button" class="rv-tag rv-on" id="rv-view-grid" aria-pressed="true">Grid</button>
+      <button type="button" class="sh-icon" id="rv-view-map" aria-pressed="false" aria-label="Map" title="Map"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+      <button type="button" class="sh-icon sh-icon-on" id="rv-view-grid" aria-pressed="true" aria-label="Grid" title="Grid"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg></button>
     </div>
   </div>
   <div class="rv-regions" id="rv-regions" role="group" aria-label="Region"></div>
@@ -32,12 +31,6 @@
   <div class="rv-row" id="rv-row"></div>
   <div class="rv-map-wrap" id="rv-map-wrap" hidden>
     <div class="rv-map" id="rv-map" role="region" aria-label="River map"></div>
-    <div class="rv-map-chip" id="rv-map-chip" hidden>
-      <button type="button" class="rv-map-chip-x" id="rv-map-chip-x" aria-label="Clear selection">×</button>
-      <p class="rv-map-chip-name" id="rv-map-chip-name"></p>
-      <p class="rv-map-chip-region" id="rv-map-chip-region"></p>
-      <button type="button" class="rv-tag" id="rv-map-chip-open">Open</button>
-    </div>
     <p class="rv-map-legend">
       <span class="rv-map-key rv-map-key-mouth">River mouth</span>
       <span class="rv-map-key rv-map-key-area">Area centre</span>
@@ -48,6 +41,6 @@
 </main>
 
   </div>
-  <script src="../js/rivers.js?v=20261025j"></script>
+  <script src="../js/rivers.js?v=20261025m"></script>
 </body>
 </html>
