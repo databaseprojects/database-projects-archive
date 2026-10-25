@@ -1,0 +1,405 @@
+{
+  "title": "Rivers",
+  "set": "BC",
+  "rivers": [
+    {
+      "slug": "fraser",
+      "name": "Fraser",
+      "thumb": "img/fraser-thumb.webp",
+      "mid": "img/fraser-mid.webp",
+      "preview": "img/fraser-preview.webp",
+      "width": 2400,
+      "height": 2723,
+      "facts": {
+        "stream_segments": 1036146,
+        "highest_stream_order": 10,
+        "total_stream_length_km": 431195.8,
+        "main_stem_length_km": 1407.2,
+        "river_surface_area_km2": 976.9,
+        "mouth_label": "Mouth",
+        "mouth_lat": 49.118,
+        "mouth_lon": -123.188,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "FRASER RIVER AT HOPE",
+        "stationId": "08MF005",
+        "meanM3s": 2720.3,
+        "years": "1913–2024",
+        "km3PerYear": 85.8,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth: Hope is upstream of the mouth, but is the long-record gauge on the lower main stem; flow added below Hope is not included (gauge area 216,600 km2 vs 228,100 km2 at Mission). Includes the Thompson. Mission (08MH024, tidal reach, 228,100 km2) is further down but has only 27 complete years (1966–1992) and gives 3,340 m3/s; see alternates.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08MF005"
+      }
+    },
+    {
+      "slug": "columbia",
+      "name": "Columbia",
+      "thumb": "img/columbia-thumb.webp",
+      "mid": "img/columbia-mid.webp",
+      "preview": "img/columbia-preview.webp",
+      "width": 2400,
+      "height": 2190,
+      "facts": {
+        "stream_segments": 383845,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 196202.7,
+        "main_stem_length_km": 777.0,
+        "river_surface_area_km2": 328.9,
+        "mouth_label": "Main stem ends at",
+        "mouth_lat": 49.002,
+        "mouth_lon": -117.631,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "COLUMBIA RIVER AT INTERNATIONAL BOUNDARY",
+        "stationId": "08NE058",
+        "meanM3s": 2813.8,
+        "years": "1939–2021",
+        "km3PerYear": 88.8,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Downstream-most Canadian main-stem gauge, at the US border; not at the mouth (Pacific), so flow added in the US is not included. Its drainage area (155,200 km2) is much larger than Birchbank's (87,390 km2); the difference matches the Pend d'Oreille (65,640 km2 at the boundary, station 08NE119), which appears to join above this gauge (inference from gauge areas). Includes the Kootenay (joins at Castlegar, above the gauge) and excludes the Okanagan (joins in Washington). Record ends 2021 in the data feed. Flow regulated by dams (general knowledge).",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08NE058"
+      }
+    },
+    {
+      "slug": "skeena",
+      "name": "Skeena",
+      "thumb": "img/skeena-thumb.webp",
+      "mid": "img/skeena-mid.webp",
+      "preview": "img/skeena-preview.webp",
+      "width": 2400,
+      "height": 2198,
+      "facts": {
+        "stream_segments": 272621,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 116171.4,
+        "main_stem_length_km": 625.7,
+        "river_surface_area_km2": 444.6,
+        "mouth_label": "Mouth",
+        "mouth_lat": 54.137,
+        "mouth_lon": -130.105,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "SKEENA RIVER AT USK",
+        "stationId": "08EF001",
+        "meanM3s": 908.2,
+        "years": "1929–2024",
+        "km3PerYear": 28.7,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth: Usk is the downstream-most long-record main-stem gauge, upstream of the lower river and estuary.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08EF001"
+      }
+    },
+    {
+      "slug": "peace",
+      "name": "Peace",
+      "thumb": "img/peace-thumb.webp",
+      "mid": "img/peace-mid.webp",
+      "preview": "img/peace-preview.webp",
+      "width": 2400,
+      "height": 2211,
+      "facts": {
+        "stream_segments": 626538,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 257982.5,
+        "main_stem_length_km": 424.1,
+        "river_surface_area_km2": 555.9,
+        "mouth_label": "Main stem ends at",
+        "mouth_lat": 56.143,
+        "mouth_lon": -120.004,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "PEACE RIVER AT PEACE POINT",
+        "stationId": "07KC001",
+        "meanM3s": 2049.8,
+        "years": "1960–2024",
+        "km3PerYear": 64.7,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Downstream-most long-record main-stem gauge, in Alberta (Wood Buffalo National Park); the Peace does not reach the sea, it flows on as the Slave River to the Mackenzie system, so this is near the end of the Peace, not 'a mouth'. Includes Alberta tributaries well beyond the BC portion (gauge area 299,400 km2). The BC gauge Peace River near Taylor (07FD002, 100,800 km2) gives 1,411 m3/s (1949–2024), see alternates. Flow regulated by W.A.C. Bennett Dam since the late 1960s (general knowledge).",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=07KC001"
+      }
+    },
+    {
+      "slug": "thompson",
+      "name": "Thompson",
+      "thumb": "img/thompson-thumb.webp",
+      "mid": "img/thompson-mid.webp",
+      "preview": "img/thompson-preview.webp",
+      "width": 2400,
+      "height": 2539,
+      "facts": {
+        "stream_segments": 243576,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 102689.5,
+        "main_stem_length_km": 159.4,
+        "river_surface_area_km2": 161.3,
+        "mouth_label": "Mouth",
+        "mouth_lat": 50.236,
+        "mouth_lon": -121.583,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "THOMPSON RIVER NEAR SPENCES BRIDGE",
+        "stationId": "08LF051",
+        "meanM3s": 773.2,
+        "years": "1952–2025",
+        "km3PerYear": 24.4,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth; Spences Bridge is the downstream-most long-record gauge. Includes North and South Thompson. A predecessor gauge, 08LF022 Thompson River at Spences Bridge (1911–1951, 55,150 km2), is a separate station ID and not merged here. Last data date 2026-01-07 is recent/provisional; the last complete year is 2025.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08LF051"
+      }
+    },
+    {
+      "slug": "nass",
+      "name": "Nass",
+      "thumb": "img/nass-thumb.webp",
+      "mid": "img/nass-mid.webp",
+      "preview": "img/nass-preview.webp",
+      "width": 2400,
+      "height": 3197,
+      "facts": {
+        "stream_segments": 133921,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 53241.6,
+        "main_stem_length_km": 409.2,
+        "river_surface_area_km2": 223.5,
+        "mouth_label": "Mouth",
+        "mouth_lat": 54.986,
+        "mouth_lon": -129.973,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "NASS RIVER ABOVE SHUMAL CREEK",
+        "stationId": "08DB001",
+        "meanM3s": 774.9,
+        "years": "1930–2024",
+        "km3PerYear": 24.5,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth: gauge is upstream of the lower Nass valley tributaries, so the mouth flow is higher than this figure. Gauge drainage area 18,340 km2 is only part of the basin.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08DB001"
+      }
+    },
+    {
+      "slug": "stikine",
+      "name": "Stikine",
+      "thumb": "img/stikine-thumb.webp",
+      "mid": "img/stikine-mid.webp",
+      "preview": "img/stikine-preview.webp",
+      "width": 2400,
+      "height": 2540,
+      "facts": {
+        "stream_segments": 300576,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 116590.2,
+        "main_stem_length_km": 594.4,
+        "river_surface_area_km2": 435.7,
+        "mouth_label": "Main stem ends at",
+        "mouth_lat": 56.665,
+        "mouth_lon": -131.831,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "STIKINE RIVER NEAR WRANGELL",
+        "stationId": "08CF003",
+        "meanM3s": 1563.0,
+        "years": "1984–2018",
+        "km3PerYear": 49.3,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Gauge is in Alaska near the river's mouth, so close to full-basin flow, but the record is short (1984–2018 only; no data after 2018 in the feed) and the station is listed Active in the station table.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08CF003"
+      }
+    },
+    {
+      "slug": "kootenay",
+      "name": "Kootenay",
+      "thumb": "img/kootenay-thumb.webp",
+      "mid": "img/kootenay-mid.webp",
+      "preview": "img/kootenay-preview.webp",
+      "width": 2400,
+      "height": 1830,
+      "facts": {
+        "stream_segments": 148224,
+        "highest_stream_order": 9,
+        "total_stream_length_km": 76246.3,
+        "main_stem_length_km": 776.0,
+        "river_surface_area_km2": 139.7,
+        "mouth_label": "Mouth",
+        "mouth_lat": 49.316,
+        "mouth_lon": -117.652,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "KOOTENAY LAKE OUTFLOW NEAR CORRA LINN",
+        "stationId": "08NJ158",
+        "meanM3s": 783.5,
+        "years": "1938–2024",
+        "km3PerYear": 24.7,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth (confluence with the Columbia is downstream): this is the outflow of Kootenay Lake and excludes the Slocan River and other inflows below it. The Kootenay passes through the US (Montana/Idaho) upstream of this gauge, so the gauge integrates that flow. Flow is regulated by upstream dams (general knowledge). Data series begins 1937 under this station ID; WSC may have merged predecessor records. Kootenay is part of the Columbia basin, so do not add it to the Columbia.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08NJ158"
+      }
+    },
+    {
+      "slug": "okanagan",
+      "name": "Okanagan",
+      "thumb": "img/okanagan-thumb.webp",
+      "mid": "img/okanagan-mid.webp",
+      "preview": "img/okanagan-preview.webp",
+      "width": 2400,
+      "height": 2251,
+      "facts": {
+        "stream_segments": 47999,
+        "highest_stream_order": 8,
+        "total_stream_length_km": 25619.7,
+        "main_stem_length_km": 179.9,
+        "river_surface_area_km2": 20.1,
+        "mouth_label": "Main stem ends at",
+        "mouth_lat": 49.002,
+        "mouth_lon": -119.443,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "OKANAGAN RIVER NEAR OLIVER",
+        "stationId": "08NM085",
+        "meanM3s": 19.1,
+        "years": "1945–2025",
+        "km3PerYear": 0.6,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Border-side gauge: downstream-most Canadian main-stem gauge, above Osoyoos Lake and the US border; the river continues in Washington State to the Columbia and flow added there is not included. Does not represent the mouth. Heavily regulated and used for irrigation. Note the very small flow (about 19 m3/s) compared with the other nine.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08NM085"
+      }
+    },
+    {
+      "slug": "squamish",
+      "name": "Squamish",
+      "thumb": "img/squamish-thumb.webp",
+      "mid": "img/squamish-mid.webp",
+      "preview": "img/squamish-preview.webp",
+      "width": 2375,
+      "height": 3600,
+      "facts": {
+        "stream_segments": 14224,
+        "highest_stream_order": 7,
+        "total_stream_length_km": 6548.4,
+        "main_stem_length_km": 91.6,
+        "river_surface_area_km2": 33.5,
+        "mouth_label": "Mouth",
+        "mouth_lat": 49.687,
+        "mouth_lon": -123.181,
+        "units": {
+          "stream_segments": "count of Atlas stream edges",
+          "highest_stream_order": "STREAM_ORDER from the Atlas",
+          "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+          "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+          "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+          "mouth_lat": "degrees N, WGS84",
+          "mouth_lon": "degrees E (negative = west), WGS84"
+        },
+        "source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia."
+      },
+      "flow": {
+        "station": "SQUAMISH RIVER NEAR BRACKENDALE",
+        "stationId": "08GA022",
+        "meanM3s": 235.7,
+        "years": "1923–2025",
+        "km3PerYear": 7.4,
+        "caveat": "Mean = average of annual means over complete calendar years only (every day present), computed from WSC daily mean discharge via the ECCC open-data API (cross-checked against monthly means, within 0.5%). Not a figure published pre-computed by WSC. Most recent years may be provisional. Not at the mouth; gauge drainage area (2,353 km2) excludes the Mamquam and lower tributaries. Gauge 08GA053 Squamish River below Mamquam River (3,835 km2) is nearer the mouth but has no discharge series in the monthly-mean feed, so was not used.",
+        "url": "https://wateroffice.ec.gc.ca/report/historical_e.html?stn=08GA022"
+      }
+    }
+  ],
+  "notes": [
+    "Columbia includes the Kootenay and Okanagan basins.",
+    "The Fraser includes the Thompson.",
+    "Columbia, Kootenay and Okanagan show short US stream lines from the Atlas."
+  ],
+  "attribution": "Contains information licensed under the Open Government Licence – British Columbia.",
+  "units": {
+    "stream_segments": "count of Atlas stream edges",
+    "highest_stream_order": "STREAM_ORDER from the Atlas",
+    "total_stream_length_km": "km, summed 2D geometry length of all raw stream edges (EPSG:3005)",
+    "main_stem_length_km": "km, summed geometry length of the named main-stem edges in the data",
+    "river_surface_area_km2": "km², sum of FEATURE_AREA_SQM of double-line river polygons",
+    "mouth_lat": "degrees N, WGS84",
+    "mouth_lon": "degrees E (negative = west), WGS84"
+  },
+  "facts_source": "BC Freshwater Atlas, DataBC. Contains information licensed under the Open Government Licence – British Columbia.",
+  "facts_note": "Facts are computed from the raw Atlas data (not the drawn set, which drops some order-1 streams in dense areas). Main stems are measured only within the BC data.",
+  "flow_source": "Water Survey of Canada (HYDAT) via the ECCC open-data API. Data: Environment and Climate Change Canada, Open Government Licence – Canada.",
+  "flow_method": "Mean annual discharge = mean of annual means over complete calendar years; volume km3/yr = m3/s x 31,557,600 / 1e9."
+}

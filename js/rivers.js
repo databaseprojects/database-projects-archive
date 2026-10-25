@@ -1,0 +1,490 @@
+/* Rivers. Reads rivers/rivers.json and draws the row, captions, and preview. */
+(function (root) {
+  "use strict";
+
+  function groupNum(n) {
+    if (n == null || n === "") return "";
+    var s = String(n);
+    var bits = s.split(".");
+    bits[0] = bits[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return bits.join(".");
+  }
+
+  function coordText(lat, lon) {
+    var ns = lat >= 0 ? "N" : "S";
+    var ew = lon >= 0 ? "E" : "W";
+    return Math.abs(lat).toFixed(3) + "° " + ns + ", " + Math.abs(lon).toFixed(3) + "° " + ew;
+  }
+
+  function unitTitle(manifest, river, key) {
+    var local = river.facts && river.facts.units;
+    var shared = manifest.units || {};
+    if (local && local[key]) return local[key];
+    return shared[key] || "";
+  }
+
+  function fieldsFor(manifest, river) {
+    var facts = river.facts || {};
+    var flow = river.flow || {};
+    var fields = [
+      { label: "Name", text: river.name || "" },
+      {
+        label: "Segments",
+        text: groupNum(facts.stream_segments),
+        title: unitTitle(manifest, river, "stream_segments")
+      },
+      {
+        label: "Order",
+        text: groupNum(facts.highest_stream_order),
+        title: unitTitle(manifest, river, "highest_stream_order")
+      },
+      {
+        label: "Length",
+        text: groupNum(facts.total_stream_length_km) + " km",
+        title: unitTitle(manifest, river, "total_stream_length_km")
+      },
+      {
+        label: "Main stem",
+        text: groupNum(facts.main_stem_length_km) + " km",
+        title: unitTitle(manifest, river, "main_stem_length_km")
+      },
+      {
+        label: "Area",
+        text: groupNum(facts.river_surface_area_km2) + " km\u00b2",
+        title: unitTitle(manifest, river, "river_surface_area_km2")
+      },
+      {
+        label: facts.mouth_label || "Mouth",
+        text: coordText(facts.mouth_lat, facts.mouth_lon),
+        title: [unitTitle(manifest, river, "mouth_lat"), unitTitle(manifest, river, "mouth_lon")].filter(Boolean).join(". ")
+      }
+    ];
+    var flowLines = [];
+    if (flow.meanM3s != null) flowLines.push(groupNum(flow.meanM3s) + " m\u00b3/s");
+    if (flow.km3PerYear != null) flowLines.push(groupNum(flow.km3PerYear) + " km\u00b3/yr");
+    fields.push({
+      label: "Flow",
+      lines: flowLines,
+      station: flow.station || "",
+      stationId: flow.stationId || "",
+      years: flow.years || "",
+      url: flow.url || "",
+      caveat: flow.caveat || ""
+    });
+    return fields;
+  }
+
+  function zoomAt(view, px, py, next, minS, maxS) {
+    var s = next;
+    if (s < minS) s = minS;
+    if (s > maxS) s = maxS;
+    var ix = (px - view.x) / view.s;
+    var iy = (py - view.y) / view.s;
+    return { s: s, x: px - ix * s, y: py - iy * s };
+  }
+
+  var api = { groupNum: groupNum, coordText: coordText, fieldsFor: fieldsFor, zoomAt: zoomAt };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  if (typeof document === "undefined") return;
+
+  var ASSET_V = "20261024a";
+  var row = document.getElementById("rv-row");
+  var notesEl = document.getElementById("rv-notes");
+  var creditEl = document.getElementById("rv-credit");
+  var setEl = document.getElementById("rv-set");
+  var titleEl = document.getElementById("rv-title");
+  var prevBtn = document.getElementById("rv-prev");
+  var nextBtn = document.getElementById("rv-next");
+  var lb = null;
+  var lbTimer = null;
+
+  function el(tag, className) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    return node;
+  }
+
+  function captionEl(manifest, river, full) {
+    var cap = el("div", "rv-caption");
+    fieldsFor(manifest, river).forEach(function (field) {
+      var cell = el("div", "rv-field");
+      var label = el("div", "rv-label");
+      label.textContent = field.label;
+      if (field.title) label.title = field.title;
+      var value = el("div", "rv-value");
+      if (field.lines) {
+        field.lines.forEach(function (line) {
+          var rowLine = el("div");
+          rowLine.textContent = line;
+          value.appendChild(rowLine);
+        });
+        if (field.station) {
+          var station = el("div", "rv-gauge");
+          station.textContent = field.station;
+          value.appendChild(station);
+        }
+        if (field.stationId || field.years) {
+          var meta = el("div", "rv-gauge");
+          if (field.stationId && field.url) {
+            var link = document.createElement("a");
+            link.href = field.url;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.textContent = field.stationId;
+            meta.appendChild(link);
+          } else if (field.stationId) {
+            meta.appendChild(document.createTextNode(field.stationId));
+          }
+          if (field.years) {
+            meta.appendChild(document.createTextNode((field.stationId ? " \u00b7 " : "") + field.years));
+          }
+          value.appendChild(meta);
+        }
+        if (!full && field.caveat) value.title = field.caveat;
+      } else {
+        value.textContent = field.text;
+      }
+      cell.appendChild(label);
+      cell.appendChild(value);
+      cap.appendChild(cell);
+      if (full && field.caveat) {
+        var note = el("p", "rv-caveat");
+        note.textContent = field.caveat;
+        cap.appendChild(note);
+      }
+    });
+    return cap;
+  }
+
+  function syncArrows() {
+    if (!row || !prevBtn || !nextBtn) return;
+    var max = row.scrollWidth - row.clientWidth;
+    var overflow = max > 2;
+    prevBtn.hidden = !overflow;
+    nextBtn.hidden = !overflow;
+    prevBtn.disabled = row.scrollLeft <= 2;
+    nextBtn.disabled = row.scrollLeft >= max - 2;
+  }
+
+  function scrollRow(dir) {
+    var card = row.querySelector(".rv-card");
+    var step = card ? card.getBoundingClientRect().width + 20 : 360;
+    row.scrollBy({ left: dir * step, behavior: "smooth" });
+  }
+
+  function closeLb() {
+    if (!lb || lb._closing) return;
+    lb._closing = true;
+    lb.classList.remove("rv-on");
+    lb.classList.add("rv-closing");
+    var node = lb;
+    lb = null;
+    clearTimeout(lbTimer);
+    lbTimer = setTimeout(function () {
+      if (node.parentNode) node.parentNode.removeChild(node);
+      if (!document.querySelector(".rv-lb")) document.documentElement.classList.remove("rv-open");
+    }, 340);
+  }
+
+  function openLb(manifest, river) {
+    if (lb && lb._slug === river.slug && !lb._closing) return;
+    if (lb && lb.parentNode) {
+      lb.parentNode.removeChild(lb);
+      lb = null;
+    }
+    clearTimeout(lbTimer);
+    var W = river.width;
+    var H = river.height;
+    var view = { s: 1, x: 0, y: 0 };
+    var minS = 1;
+    var maxS = 8;
+    var midW = 0;
+    var showing = "mid";
+    var drag = null;
+    var pointers = new Map();
+
+    var box = el("div", "rv-lb");
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", river.name || "River");
+    box._slug = river.slug;
+    var stage = el("div", "rv-stage");
+    var img = document.createElement("img");
+    img.alt = river.name || "";
+    img.draggable = false;
+    img.width = W;
+    img.height = H;
+    img.style.width = W + "px";
+    img.style.height = H + "px";
+    img.src = river.mid + "?v=" + ASSET_V;
+    stage.appendChild(img);
+    var capWrap = el("div", "rv-lb-cap");
+    capWrap.appendChild(captionEl(manifest, river, true));
+    box.appendChild(stage);
+    box.appendChild(capWrap);
+    document.body.appendChild(box);
+    document.documentElement.classList.add("rv-open");
+    lb = box;
+
+    var preview = new Image();
+    preview.src = river.preview + "?v=" + ASSET_V;
+
+    function fit() {
+      var sw = stage.clientWidth;
+      var sh = stage.clientHeight;
+      if (!(sw > 0) || !(sh > 0) || !(W > 0) || !(H > 0)) return false;
+      minS = Math.min(sw / W, sh / H);
+      maxS = Math.max(minS * 16, 8);
+      view.s = minS;
+      view.x = (sw - W * view.s) / 2;
+      view.y = (sh - H * view.s) / 2;
+      apply();
+      return true;
+    }
+
+    function apply() {
+      img.style.transform = "translate(" + view.x.toFixed(2) + "px, " + view.y.toFixed(2) + "px) scale(" + view.s + ")";
+    }
+
+    function needsPreview() {
+      if (!(midW > 0)) return false;
+      return W * view.s > midW * 1.02;
+    }
+
+    function swap() {
+      var want = needsPreview() ? "preview" : "mid";
+      if (want === showing) return;
+      showing = want;
+      img.src = (want === "preview" ? river.preview : river.mid) + "?v=" + ASSET_V;
+    }
+
+    function clampPan() {
+      var sw = stage.clientWidth;
+      var sh = stage.clientHeight;
+      var iw = W * view.s;
+      var ih = H * view.s;
+      var margin = 48;
+      if (iw <= sw) view.x = (sw - iw) / 2;
+      else view.x = Math.min(margin, Math.max(sw - iw - margin, view.x));
+      if (ih <= sh) view.y = (sh - ih) / 2;
+      else view.y = Math.min(margin, Math.max(sh - ih - margin, view.y));
+    }
+
+    img.addEventListener("load", function () {
+      if (showing === "mid" && !midW) midW = img.naturalWidth || 0;
+      if (!box._fitted && fit()) box._fitted = true;
+      swap();
+    });
+
+    function pointOf(e) {
+      var rect = stage.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function overImage(px, py) {
+      var ix = (px - view.x) / view.s;
+      var iy = (py - view.y) / view.s;
+      return ix >= 0 && iy >= 0 && ix <= W && iy <= H;
+    }
+
+    stage.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 16;
+      else if (e.deltaMode === 2) dy *= stage.clientHeight;
+      var p = pointOf(e);
+      view = zoomAt(view, p.x, p.y, view.s * Math.exp(-dy * 0.0018), minS, maxS);
+      clampPan();
+      apply();
+      swap();
+    }, { passive: false });
+
+    function pinchInfo() {
+      var pts = Array.from(pointers.values());
+      if (pts.length < 2) return null;
+      var dx = pts[1].x - pts[0].x;
+      var dy = pts[1].y - pts[0].y;
+      return {
+        dist: Math.hypot(dx, dy) || 1,
+        x: (pts[0].x + pts[1].x) / 2,
+        y: (pts[0].y + pts[1].y) / 2
+      };
+    }
+
+    function beginPinch() {
+      var info = pinchInfo();
+      if (!info) {
+        box._pinch = null;
+        return;
+      }
+      box._pinch = {
+        dist: info.dist,
+        s: view.s,
+        ix: (info.x - view.x) / view.s,
+        iy: (info.y - view.y) / view.s
+      };
+    }
+
+    stage.addEventListener("pointerdown", function (e) {
+      if (e.button != null && e.button !== 0) return;
+      stage.setPointerCapture(e.pointerId);
+      var p = pointOf(e);
+      pointers.set(e.pointerId, p);
+      if (pointers.size === 1) {
+        drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false, over: overImage(p.x, p.y) };
+      } else if (pointers.size >= 2) {
+        drag = null;
+        beginPinch();
+      }
+    });
+
+    stage.addEventListener("pointermove", function (e) {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, pointOf(e));
+      if (pointers.size >= 2 && box._pinch) {
+        var info = pinchInfo();
+        if (!info || !box._pinch.dist) return;
+        var next = box._pinch.s * (info.dist / box._pinch.dist);
+        if (next < minS) next = minS;
+        if (next > maxS) next = maxS;
+        view.s = next;
+        view.x = info.x - box._pinch.ix * view.s;
+        view.y = info.y - box._pinch.iy * view.s;
+        clampPan();
+        apply();
+        swap();
+        box.classList.add("rv-drag");
+        return;
+      }
+      if (!drag) return;
+      if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 4) drag.moved = true;
+      if (!drag.moved) return;
+      view.x += e.clientX - drag.x;
+      view.y += e.clientY - drag.y;
+      drag.x = e.clientX;
+      drag.y = e.clientY;
+      clampPan();
+      apply();
+      box.classList.add("rv-drag");
+    });
+
+    function endPointer(e) {
+      var was = drag;
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) box._pinch = null;
+      if (pointers.size === 0) {
+        drag = null;
+        box.classList.remove("rv-drag");
+        if (was && !was.moved && !was.over) closeLb();
+      }
+    }
+    stage.addEventListener("pointerup", endPointer);
+    stage.addEventListener("pointercancel", endPointer);
+
+    box.addEventListener("click", function (e) {
+      if (e.target.closest && e.target.closest(".rv-lb-cap, .rv-stage")) return;
+      closeLb();
+    });
+
+    requestAnimationFrame(function () {
+      if (lb !== box || box._closing) return;
+      if (!box._fitted && fit()) box._fitted = true;
+      box.classList.add("rv-on");
+    });
+  }
+
+  function cardEl(manifest, river) {
+    var card = el("article", "rv-card");
+    card.id = river.slug;
+    var btn = el("button", "rv-open");
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Open " + (river.name || "river"));
+    var frame = el("span", "rv-frame");
+    var img = document.createElement("img");
+    img.alt = river.name || "";
+    img.src = river.thumb + "?v=" + ASSET_V;
+    img.decoding = "async";
+    frame.appendChild(img);
+    var name = el("span", "rv-card-name");
+    name.textContent = river.name || "";
+    btn.appendChild(frame);
+    btn.appendChild(name);
+    btn.addEventListener("click", function () {
+      openLb(manifest, river);
+    });
+    card.appendChild(btn);
+    card.appendChild(captionEl(manifest, river, false));
+    return card;
+  }
+
+  function fillNotes(manifest) {
+    notesEl.textContent = "";
+    (manifest.notes || []).forEach(function (line) {
+      var p = document.createElement("p");
+      p.textContent = line;
+      notesEl.appendChild(p);
+    });
+    if (manifest.facts_note) {
+      var extra = document.createElement("p");
+      extra.textContent = manifest.facts_note;
+      notesEl.appendChild(extra);
+    }
+  }
+
+  function fillCredit(manifest) {
+    creditEl.textContent = "";
+    var attr = manifest.attribution || "";
+    var facts = manifest.facts_source || "";
+    if (facts && attr && facts.indexOf(attr) !== -1) {
+      var atlas = facts.replace(attr, "").trim().replace(/[.\s]+$/, "");
+      if (atlas) {
+        var lead = document.createElement("p");
+        lead.textContent = atlas + ".";
+        creditEl.appendChild(lead);
+      }
+    }
+    var licence = document.createElement("p");
+    licence.textContent = attr;
+    creditEl.appendChild(licence);
+    if (manifest.flow_source) {
+      var flow = document.createElement("p");
+      flow.textContent = manifest.flow_source;
+      creditEl.appendChild(flow);
+    }
+  }
+
+  function render(manifest) {
+    if (titleEl) titleEl.textContent = manifest.title || "Rivers";
+    document.title = (manifest.title || "Rivers") + " \u2014 databaseprojects";
+    if (setEl) setEl.textContent = manifest.set || "";
+    row.textContent = "";
+    (manifest.rivers || []).forEach(function (river) {
+      row.appendChild(cardEl(manifest, river));
+    });
+    fillNotes(manifest);
+    fillCredit(manifest);
+    syncArrows();
+    requestAnimationFrame(syncArrows);
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lb) {
+      e.preventDefault();
+      closeLb();
+    }
+  });
+
+  if (prevBtn) prevBtn.addEventListener("click", function () { scrollRow(-1); });
+  if (nextBtn) nextBtn.addEventListener("click", function () { scrollRow(1); });
+  if (row) row.addEventListener("scroll", syncArrows, { passive: true });
+  window.addEventListener("resize", syncArrows);
+
+  fetch("rivers.json?v=" + ASSET_V).then(function (res) {
+    if (!res.ok) throw new Error("rivers");
+    return res.json();
+  }).then(render).catch(function () {
+    if (notesEl) notesEl.textContent = "The river list did not load.";
+  });
+
+  root.RiversPage = api;
+})(typeof window !== "undefined" ? window : globalThis);
