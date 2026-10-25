@@ -25,6 +25,51 @@
   text-transform: uppercase;
 }
 
+.rv-regions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 0.25em;
+  row-gap: 0.35em;
+  margin: 0 0 0.9rem;
+}
+
+.rv-tag {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.25em 0.75em;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rv-tag:hover {
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.rv-tag.rv-on {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.rv-tag:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 2px;
+}
+
 .rv-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -38,6 +83,10 @@
   width: 100%;
   min-width: 0;
   background: transparent;
+}
+
+.rv-card[hidden] {
+  display: none;
 }
 
 .rv-open {
