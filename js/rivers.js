@@ -268,7 +268,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof document === "undefined") return;
 
-  var ASSET_V = "20261025j";
+  var ASSET_V = "20261025k";
 
   function assetSrc(path) {
     if (typeof path === "string" && path.indexOf("https://") === 0) return path;
@@ -279,7 +279,6 @@
   var row = document.getElementById("rv-row");
   var notesEl = document.getElementById("rv-notes");
   var creditEl = document.getElementById("rv-credit");
-  var setEl = document.getElementById("rv-set");
   var titleEl = document.getElementById("rv-title");
   var regionsEl = document.getElementById("rv-regions");
   var findEl = document.getElementById("rv-find");
@@ -289,11 +288,6 @@
   var mapBtn = document.getElementById("rv-view-map");
   var mapWrap = document.getElementById("rv-map-wrap");
   var mapEl = document.getElementById("rv-map");
-  var chipEl = document.getElementById("rv-map-chip");
-  var chipName = document.getElementById("rv-map-chip-name");
-  var chipRegion = document.getElementById("rv-map-chip-region");
-  var chipOpen = document.getElementById("rv-map-chip-open");
-  var chipX = document.getElementById("rv-map-chip-x");
   var manifestNow = null;
   var riverBySlug = Object.create(null);
   var regionFilter = "All";
@@ -303,6 +297,11 @@
   var lbTimer = null;
   var map = null;
   var markerLayer = null;
+  var placeTiles = null;
+  var selectPopup = null;
+  var popupLock = false;
+  var PLACE_ZOOM = 6;
+  var SELECT_ZOOM = 6;
   var markerEntries = [];
   var fittedKey = "";
   var leafletPromise = null;
@@ -311,7 +310,8 @@
   var mainPack = null;
   var fullPack = null;
   var boundsBySlug = null;
-  var lineDataPromise = null;
+  var boundsPromise = null;
+  var mainPromise = null;
   var fullPromise = null;
   var fullWait = false;
   var fullFailed = false;
@@ -727,16 +727,15 @@
     return leafletPromise;
   }
 
-  function markerOptions(kind, hot, dim) {
-    var area = kind === "area";
-    var fade = dim ? LINE_DIM : 1;
+  function markerOptions(hot) {
     return {
-      radius: hot ? (area ? 8 : 7) : (area ? 6 : 5),
-      color: "#111",
-      weight: hot ? (area ? 3 : 2) : (area ? 2 : 1),
-      fillColor: "#111",
-      fillOpacity: area ? 0 : fade,
-      opacity: fade
+      radius: hot ? 8 : 6.5,
+      color: "#fff",
+      weight: hot ? 3 : 2.5,
+      fillColor: RIVER_BLUE,
+      fillOpacity: 1,
+      opacity: 1,
+      bubblingMouseEvents: false
     };
   }
 
@@ -753,21 +752,32 @@
     return res.json();
   }
 
-  function ensureLineData() {
-    if (mainPack && boundsBySlug) return Promise.resolve();
-    if (!lineDataPromise) {
-      lineDataPromise = Promise.all([
-        fetch(assetSrc("map/lines-main.json")).then(readJson),
-        fetch(assetSrc("map/bounds.json")).then(readJson)
-      ]).then(function (pair) {
-        mainPack = pair[0];
-        boundsBySlug = pair[1];
+  function ensureBounds() {
+    if (boundsBySlug) return Promise.resolve(boundsBySlug);
+    if (!boundsPromise) {
+      boundsPromise = fetch(assetSrc("map/bounds.json")).then(readJson).then(function (data) {
+        boundsBySlug = data;
+        return data;
       }).catch(function (err) {
-        lineDataPromise = null;
+        boundsPromise = null;
         throw err;
       });
     }
-    return lineDataPromise;
+    return boundsPromise;
+  }
+
+  function ensureMainLines() {
+    if (mainPack) return Promise.resolve(mainPack);
+    if (!mainPromise) {
+      mainPromise = fetch(assetSrc("map/lines-main.json")).then(readJson).then(function (data) {
+        mainPack = data;
+        return data;
+      }).catch(function (err) {
+        mainPromise = null;
+        throw err;
+      });
+    }
+    return mainPromise;
   }
 
   function ensureFullData() {
@@ -804,17 +814,31 @@
       zoomControl: true,
       attributionControl: true
     });
-    window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap contributors",
+    if (map.attributionControl) map.attributionControl.setPrefix(false);
+    window.L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png", {
+      subdomains: "abcd",
+      attribution: "\u00a9 OpenStreetMap contributors \u00a9 CARTO",
+      noWrap: true,
+      minZoom: 2,
+      maxZoom: 12,
+      maxNativeZoom: 5
+    }).addTo(map);
+    var placePane = map.createPane("rv-places");
+    placePane.style.zIndex = "280";
+    placePane.style.pointerEvents = "none";
+    placeTiles = window.L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png", {
+      subdomains: "abcd",
+      pane: "rv-places",
       noWrap: true,
       minZoom: 2,
       maxZoom: 12
-    }).addTo(map);
+    });
     var pane = map.createPane("rv-lines");
     pane.style.zIndex = "350";
     lineCanvas = window.L.canvas({ pane: "rv-lines", tolerance: 6 });
     markerLayer = window.L.layerGroup().addTo(map);
     map.on("zoomend", function () {
+      syncPlaceTiles();
       placeLabels();
       paintLines();
       syncLines();
@@ -824,18 +848,27 @@
       syncLines();
     });
     map.on("click", function (ev) {
-      var target = ev.originalEvent && ev.originalEvent.target;
-      if (target && target.closest && target.closest(".leaflet-control")) return;
+      var native = ev.originalEvent;
+      if (native && native._stopped) return;
+      var target = native && native.target;
+      if (target && target.closest && (target.closest(".leaflet-control") || target.closest(".leaflet-popup"))) return;
       clearSelection();
     });
     map.setView([20, 0], 2);
+    syncPlaceTiles();
+  }
+
+  function syncPlaceTiles() {
+    if (!map || !placeTiles) return;
+    var want = map.getZoom() >= PLACE_ZOOM;
+    var on = map.hasLayer(placeTiles);
+    if (want && !on) placeTiles.addTo(map);
+    else if (!want && on) map.removeLayer(placeTiles);
   }
 
   function paintMarker(entry) {
-    var selected = entry.river.slug === selectedSlug;
-    var hot = selected || entry.force;
-    var dim = !!selectedSlug && !selected && !entry.force;
-    entry.marker.setStyle(markerOptions(entry.river.map.kind, hot, dim));
+    var hot = entry.river.slug === selectedSlug || entry.force;
+    entry.marker.setStyle(markerOptions(hot));
   }
 
   function paintMarkers() {
@@ -906,7 +939,7 @@
     marker.bindTooltip(name, {
       permanent: true,
       direction: "right",
-      offset: [7, 0],
+      offset: [12, 0],
       className: "rv-map-label",
       interactive: true,
       opacity: 1
@@ -925,7 +958,7 @@
     (manifestNow.rivers || []).forEach(function (river) {
       var point = mapPoint(river);
       if (!point) return;
-      var marker = window.L.circleMarker([point.lat, point.lon], markerOptions(point.kind, false, false));
+      var marker = window.L.circleMarker([point.lat, point.lon], markerOptions(false));
       var entry = { river: river, marker: marker, force: false };
       wireMarker(entry);
       markerEntries.push(entry);
@@ -949,7 +982,7 @@
       var name = entry.river.name || entry.river.slug || "";
       nodes.push(node);
       boxes.push({
-        x: pt.x + 8,
+        x: pt.x + 14,
         y: pt.y - 7,
         w: Math.max(28, name.length * 6.6),
         h: 14,
@@ -973,10 +1006,6 @@
       var visible = !!on[i];
       node.classList.toggle("rv-map-label-off", !visible);
       node.tabIndex = visible ? 0 : -1;
-      var entry = markerEntries[i];
-      var dim = !!(selectedSlug && entry && entry.river.slug !== selectedSlug);
-      var tip = entry && entry.marker.getTooltip();
-      if (tip) tip.setOpacity(dim ? LINE_DIM : 1);
     });
   }
 
@@ -991,9 +1020,11 @@
     var bounds = null;
     rivers.forEach(function (river) {
       var part = boundsOf(river.slug);
-      if (!part) {
-        var point = mapPoint(river);
-        if (point) part = window.L.latLngBounds([point.lat, point.lon], [point.lat, point.lon]);
+      var point = mapPoint(river);
+      if (!part && point) {
+        part = window.L.latLngBounds([point.lat, point.lon], [point.lat, point.lon]);
+      } else if (part && point) {
+        part.extend([point.lat, point.lon]);
       }
       if (!part || !part.isValid()) return;
       bounds = bounds ? bounds.extend(part) : part;
@@ -1007,14 +1038,16 @@
     map.fitBounds(bounds, { padding: [32, 32], maxZoom: cap, animate: false });
   }
 
-  function scheduleFit(rivers, maxZoom) {
+  function scheduleFit(rivers, maxZoom, done) {
     var token = ++fitToken;
     var list = rivers.slice();
-    ensureLineData().then(function () {
+    ensureBounds().then(function () {
       if (token !== fitToken || viewMode !== "map" || !map) return;
-      if (lb && !lb._closing) return;
-      fitRivers(list, maxZoom);
-    }).catch(function () {});
+      if (!(lb && !lb._closing)) fitRivers(list, maxZoom);
+      if (done) done();
+    }).catch(function () {
+      if (token === fitToken && done) done();
+    });
   }
 
   function lineStyle(order, orderMin, orderMax, zoom, selected, dim) {
@@ -1130,29 +1163,14 @@
     paintBuilt(built, slug);
   }
 
-  function fullSlugSet() {
-    var set = {};
-    if (!map || !fullPack || map.getZoom() < FULL_ZOOM) return set;
-    var view = map.getBounds();
-    var center = map.getCenter();
-    var ranked = [];
-    visibleRivers().forEach(function (river) {
-      var bounds = boundsOf(river.slug);
-      if (!bounds || !view.intersects(bounds)) return;
-      ranked.push({
-        slug: river.slug,
-        d: center.distanceTo(bounds.getCenter()),
-        selected: river.slug === selectedSlug
-      });
-    });
-    pickFullSlugs(ranked, FULL_KEEP).forEach(function (slug) { set[slug] = true; });
-    return set;
-  }
-
   function syncLines() {
-    if (viewMode !== "map" || !map || !mainPack || !boundsBySlug) return;
+    if (viewMode !== "map" || !map || !mainPack) return;
+    var slug = selectedSlug;
+    var river = slug && riverBySlug[slug];
+    var shown = !!(river && riverShown(river));
     var zoom = map.getZoom();
-    if ((zoom >= FULL_ZOOM || selectedSlug) && !fullPack && !fullWait && !fullFailed) {
+    var wantFull = shown && zoom >= FULL_ZOOM;
+    if (wantFull && !fullPack && !fullWait && !fullFailed) {
       fullWait = true;
       ensureFullData().then(function () {
         fullWait = false;
@@ -1160,20 +1178,17 @@
         syncLines();
       }).catch(function () { fullWait = false; });
     }
-    var wantFull = fullSlugSet();
-    var visible = {};
-    visibleRivers().forEach(function (river) { visible[river.slug] = true; });
+    var tier = (wantFull && fullPack) ? "full" : "main";
     var queue = [];
-    Object.keys(riverBySlug).forEach(function (slug) {
-      if (!visible[slug]) {
-        var slot = lineSlots[slug];
-        if (slot && slot.shown) queue.push({ slug: slug, hide: true });
-        return;
-      }
-      var tier = wantFull[slug] ? "full" : "main";
+    Object.keys(lineSlots).forEach(function (key) {
+      var slot = lineSlots[key];
+      if (!slot || !slot.shown) return;
+      if (!shown || key !== slug) queue.push({ slug: key, hide: true });
+    });
+    if (shown) {
       var slotShown = lineSlots[slug] && lineSlots[slug].shown;
       if (slotShown !== tier) queue.push({ slug: slug, tier: tier });
-    });
+    }
     if (!queue.length) return;
     var job = ++lineJob;
     var index = 0;
@@ -1193,23 +1208,72 @@
     requestAnimationFrame(step);
   }
 
-  function showChip(river) {
-    if (!chipEl) return;
-    var name = river.name || river.slug || "";
-    if (chipName) chipName.textContent = name;
-    var region = regionLine(river);
-    if (chipRegion) {
-      chipRegion.textContent = region;
-      chipRegion.hidden = !region;
+  function popupBody(river) {
+    var wrap = document.createElement("div");
+    wrap.className = "rv-map-pop-body";
+    var name = document.createElement("p");
+    name.className = "rv-map-pop-name";
+    name.textContent = river.name || river.slug || "";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "rv-tag";
+    btn.textContent = "Open full-detail map";
+    btn.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openRiver(river);
+    });
+    wrap.appendChild(name);
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  function selectionAnchor(river) {
+    var point = mapPoint(river);
+    if (point && window.L) return window.L.latLng(point.lat, point.lon);
+    var bounds = boundsOf(river.slug);
+    if (bounds && bounds.isValid()) return bounds.getCenter();
+    return null;
+  }
+
+  function closeSelectPopup() {
+    if (!selectPopup || !selectPopup.isOpen()) return;
+    popupLock = true;
+    selectPopup.close();
+    popupLock = false;
+  }
+
+  function showSelectPopup(river) {
+    if (!map || !window.L) return;
+    var latlng = selectionAnchor(river);
+    if (!latlng) return;
+    if (!selectPopup) {
+      selectPopup = window.L.popup({
+        className: "rv-map-pop",
+        closeButton: true,
+        autoClose: true,
+        closeOnClick: false,
+        autoPan: true,
+        autoPanPadding: [28, 28],
+        offset: [0, -12],
+        maxWidth: 230,
+        minWidth: 150
+      });
+      map.on("popupclose", function (ev) {
+        if (popupLock || !selectPopup || ev.popup !== selectPopup) return;
+        if (selectedSlug) clearSelection();
+      });
     }
-    if (chipOpen) chipOpen.setAttribute("aria-label", "Open " + (name || "river"));
-    chipEl.hidden = false;
+    popupLock = true;
+    selectPopup.setLatLng(latlng).setContent(popupBody(river)).openOn(map);
+    popupLock = false;
   }
 
   function clearSelection() {
     if (!selectedSlug) return;
     selectedSlug = null;
-    if (chipEl) chipEl.hidden = true;
+    fitToken += 1;
+    closeSelectPopup();
     paintMarkers();
     paintLines();
     placeLabels();
@@ -1218,13 +1282,25 @@
 
   function selectRiver(river) {
     if (!river || !riverShown(river)) return;
+    var same = selectedSlug === river.slug;
     selectedSlug = river.slug;
-    showChip(river);
+    if (!same) closeSelectPopup();
     paintMarkers();
-    paintLines();
     placeLabels();
-    scheduleFit([river], 9);
-    syncLines();
+    Object.keys(lineSlots).forEach(function (slug) {
+      if (slug !== river.slug) hideRiverLines(slug);
+    });
+    ensureMainLines().catch(function () {});
+    scheduleFit([river], SELECT_ZOOM, function () {
+      if (selectedSlug !== river.slug || viewMode !== "map" || !map) return;
+      ensureMainLines().then(function () {
+        if (selectedSlug !== river.slug || viewMode !== "map" || !map) return;
+        syncLines();
+        showSelectPopup(river);
+      }).catch(function () {
+        if (selectedSlug === river.slug && viewMode === "map" && map) showSelectPopup(river);
+      });
+    });
   }
 
   function syncMap() {
@@ -1234,7 +1310,7 @@
       var still = visibleRivers().some(function (river) { return river.slug === selectedSlug; });
       if (!still) {
         selectedSlug = null;
-        if (chipEl) chipEl.hidden = true;
+        closeSelectPopup();
       }
     }
     var slugs = [];
@@ -1249,14 +1325,15 @@
     var viewerOpen = lb && !lb._closing;
     if (key !== fittedKey && !viewerOpen) {
       fittedKey = key;
+      if (selectedSlug) {
+        selectedSlug = null;
+        closeSelectPopup();
+      }
       scheduleFit(visibleRivers(), 6);
     }
     paintMarkers();
     placeLabels();
-    ensureLineData().then(function () {
-      if (viewMode !== "map" || !map) return;
-      syncLines();
-    }).catch(function () {});
+    if (mainPack) syncLines();
   }
 
   function setViewButtons() {
@@ -1336,7 +1413,6 @@
     });
     if (titleEl) titleEl.textContent = manifest.title || "Rivers";
     document.title = (manifest.title || "Rivers") + " \u2014 databaseprojects";
-    if (setEl) setEl.textContent = manifest.set || "";
     row.textContent = "";
     (manifest.rivers || []).forEach(function (river) {
       row.appendChild(cardEl(manifest, river));
@@ -1389,13 +1465,6 @@
   }
   if (gridBtn) gridBtn.addEventListener("click", function () { setViewMode("grid"); });
   if (mapBtn) mapBtn.addEventListener("click", function () { setViewMode("map"); });
-  if (chipX) chipX.addEventListener("click", function () { clearSelection(); });
-  if (chipOpen) {
-    chipOpen.addEventListener("click", function () {
-      var river = selectedSlug && riverBySlug[selectedSlug];
-      if (river) openRiver(river);
-    });
-  }
 
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && lb) {
