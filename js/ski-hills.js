@@ -15,7 +15,7 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261023e",
+      file: "hills.json?v=20261025zp",
       names: "names.json?v=20261016f",
       index: "contours/index.json?v=20261016w",
       label: "British Columbia"
@@ -726,6 +726,7 @@
         else hill.el.insertBefore(svg, hill.el.firstChild);
       }
       hill.el._shift = fitArt(svg, SQUARE, hill._bounds);
+      writeMapCredit(svg, hill, SQUARE);
       hill._drawn = true;
       loadContour(hill.el);
       requestAnimationFrame(syncStroke);
@@ -1465,6 +1466,49 @@
     return SQUARE;
   }
 
+  // 6 pt on the 5 in print. The sheet is 1000 units, so this scales with
+  // the gallery card, the open print, and the framed copy.
+  var PRINT_INCHES = 5;
+  var CREDIT_PT = 6;
+
+  function writeMapCredit(svg, hill, limitY) {
+    if (!svg) return;
+    var old = svg.querySelector(".sh-map-credit");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var line = hill && hill.mapCredit;
+    if (!line) return;
+    var limit = limitY == null ? DRAW : limitY;
+    var size = CREDIT_PT * (SQUARE / (PRINT_INCHES * 72));
+    var edge = 16;
+    var base = limit - 12;
+    var w = textWidth(line, size);
+    var ascent = size * 0.8;
+    var descent = size * 0.22;
+    var pad = 3;
+    var x = SQUARE - edge - w;
+    var y = base - ascent;
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "sh-map-credit");
+    var plate = document.createElementNS(NS, "rect");
+    plate.setAttribute("x", (x - pad).toFixed(2));
+    plate.setAttribute("y", (y - pad).toFixed(2));
+    plate.setAttribute("width", (w + pad * 2).toFixed(2));
+    plate.setAttribute("height", (ascent + descent + pad * 2).toFixed(2));
+    plate.setAttribute("fill", "#fff");
+    var text = document.createElementNS(NS, "text");
+    text.setAttribute("x", (SQUARE - edge).toFixed(2));
+    text.setAttribute("y", base.toFixed(2));
+    text.setAttribute("text-anchor", "end");
+    text.setAttribute("fill", "#111");
+    text.setAttribute("fill-opacity", "0.7");
+    text.setAttribute("font-family", "Courier New, Courier, monospace");
+    text.setAttribute("font-size", size.toFixed(2));
+    text.textContent = line;
+    g.appendChild(plate);
+    g.appendChild(text);
+    svg.appendChild(g);
+  }
+
   window.addEventListener("scroll", function () {
     if (scrollHold == null) return;
     if (window.scrollY !== scrollHold) window.scrollTo(window.scrollX, scrollHold);
@@ -1528,6 +1572,7 @@
     big.removeAttribute("aria-hidden");
     var shift = fitArt(big, DRAW, card._hill && card._hill._bounds);
     writeCaption(big, card._hill);
+    writeMapCredit(big, card._hill, DRAW);
     lb._shift = shift;
     if (card._contourLines) paintContours(big, card._contourLines, shift, false, card._treeWash, card._treeBands);
     var maxW = frameLimit();
@@ -2707,6 +2752,7 @@
       mountFrontal(svg, art, hill);
       setPlanHidden(svg, true);
     }
+    writeMapCredit(svg, hill, DRAW);
     return svg;
   }
 
@@ -2897,6 +2943,8 @@
       cap.insertBefore(plate, cap.firstChild);
     } else svg.appendChild(g);
     if (hill && hill._treesOn) ensureTreeWash(hill);
+    var credit = svg.querySelector(".sh-map-credit");
+    if (credit) svg.appendChild(credit);
   }
 
   function paintPlan(svg, hill, lines, shift) {
