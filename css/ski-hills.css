@@ -24,6 +24,14 @@
   margin-left: auto;
 }
 
+.sh-find-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  margin: 0.85rem 0 0.4rem;
+}
+
 .sh-find {
   -webkit-appearance: none;
   appearance: none;
@@ -48,6 +56,10 @@
 .sh-find:focus {
   outline: 1px solid #000;
   outline-offset: 2px;
+}
+
+.sh-find-row .sh-find {
+  margin: 0;
 }
 
 .sh-zslider {
