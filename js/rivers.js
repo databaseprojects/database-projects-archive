@@ -89,6 +89,28 @@
     return (river.regions || []).indexOf(region) !== -1;
   }
 
+  function fold(text) {
+    return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  function searchHay(river) {
+    var parts = [river && river.name || ""];
+    ((river && river.regions) || []).forEach(function (name) {
+      parts.push(name);
+    });
+    return fold(parts.join(" "));
+  }
+
+  function searchMatch(river, query) {
+    var words = fold(query).split(/\s+/).filter(function (word) { return word; });
+    if (!words.length) return true;
+    var hay = searchHay(river);
+    for (var i = 0; i < words.length; i++) {
+      if (hay.indexOf(words[i]) === -1) return false;
+    }
+    return true;
+  }
+
   function addLine(lines, seen, line) {
     if (!line || seen[line]) return;
     seen[line] = true;
@@ -142,6 +164,7 @@
     coordText: coordText,
     fieldsFor: fieldsFor,
     regionMatch: regionMatch,
+    searchMatch: searchMatch,
     regionNames: regionNames,
     attributionLines: attributionLines,
     contourCredits: contourCredits,
@@ -166,8 +189,12 @@
   var setEl = document.getElementById("rv-set");
   var titleEl = document.getElementById("rv-title");
   var regionsEl = document.getElementById("rv-regions");
+  var findEl = document.getElementById("rv-find");
+  var clearEl = document.getElementById("rv-find-clear");
+  var emptyEl = document.getElementById("rv-empty");
   var manifestNow = null;
   var regionFilter = "All";
+  var searchQuery = "";
   var lb = null;
   var lbTimer = null;
 
@@ -198,15 +225,7 @@
         if (field.stationId || field.years || field.modelled) {
           var meta = el("div", "rv-gauge");
           var marked = false;
-          if (field.stationId && field.url) {
-            var link = document.createElement("a");
-            link.href = field.url;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.textContent = field.stationId;
-            meta.appendChild(link);
-            marked = true;
-          } else if (field.stationId) {
+          if (field.stationId) {
             meta.appendChild(document.createTextNode(field.stationId));
             marked = true;
           } else if (field.modelled) {
@@ -566,11 +585,13 @@
     return card;
   }
 
+  function riverShown(river) {
+    return regionMatch(river, regionFilter) && searchMatch(river, searchQuery);
+  }
+
   function visibleRivers() {
     if (!manifestNow) return [];
-    return (manifestNow.rivers || []).filter(function (river) {
-      return regionMatch(river, regionFilter);
-    });
+    return (manifestNow.rivers || []).filter(riverShown);
   }
 
   function applyRegion() {
@@ -583,8 +604,12 @@
     }
     if (row) {
       Array.prototype.forEach.call(row.querySelectorAll(".rv-card"), function (card) {
-        card.hidden = !(card._river && regionMatch(card._river, regionFilter));
+        card.hidden = !(card._river && riverShown(card._river));
       });
+    }
+    if (emptyEl) {
+      var loaded = manifestNow && (manifestNow.rivers || []).length;
+      emptyEl.hidden = !loaded || visibleRivers().length > 0;
     }
     if (lb && !lb._closing) {
       var still = visibleRivers().some(function (river) { return river.slug === lb._slug; });
@@ -661,12 +686,37 @@
     openLb(manifestNow, list[next]);
   }
 
+  function syncFind() {
+    if (clearEl) clearEl.hidden = !searchQuery;
+  }
+
+  if (findEl) {
+    findEl.addEventListener("input", function () {
+      searchQuery = findEl.value;
+      syncFind();
+      applyRegion();
+    });
+  }
+  if (clearEl) {
+    clearEl.addEventListener("click", function () {
+      searchQuery = "";
+      if (findEl) {
+        findEl.value = "";
+        findEl.focus();
+      }
+      syncFind();
+      applyRegion();
+    });
+  }
+
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && lb) {
       e.preventDefault();
       closeLb();
       return;
     }
+    var typing = e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA");
+    if (typing) return;
     if (!lb || lb._closing) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
