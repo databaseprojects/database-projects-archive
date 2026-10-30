@@ -313,6 +313,10 @@ LIFT_CLEAR = 12.0
 # Runs clear the contour ink, and stay under the lifts.
 RUN_CLEAR = 7.0
 CONTOUR_M = 20
+# Bird's-eye contour interval per hill. Sun Peaks (lines packed about twice
+# a typical hill's density) draws at 100 m; Mt Seymour draws at 40 m. They drew far
+# more lines than a typical sheet, so their ridges read as thick, merged ink.
+CONTOUR_M_HILL = {"sun-peaks-resort": 100, "mt-seymour": 40}
 # Was 0.85. About 22% thinner, every contour including the 100 m steps.
 # Runs stay 2.2 and lifts stay 1.7, unless the contour field is spread out.
 CONTOUR_W = 0.66
@@ -354,9 +358,10 @@ SOFT_GREY_HI = 250
 CAMERAS = {
     # Cypress only. 0 looks due north. 45.0 is 45° further, which turns
     # the drawing 45° counter-clockwise on screen. 45.0 is 20° more than
-    # 25.0, another 20° counter-clockwise.
+    # 25.0, another 20° counter-clockwise. 355.0 is 50° less than 45.0,
+    # which turns the drawing 50° clockwise; the plan view is turned to match.
     "cypress-mountain": {
-        "facing": 45.0,
+        "facing": 355.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -404,10 +409,12 @@ CAMERAS = {
     # shows the north side. Black runs cluster north of centre (bearing
     # 10.6°). Green and blue runs cluster south (bearing 186.7°). Front
     # looks from that south side back toward the hill. Back looks from the
-    # north side. Edit these numbers. A second entry is enough for the page
+    # north side. Front 26.7 is 20° more than 6.7, which turns the front
+    # drawing 20° counter-clockwise; the plan view is turned to match.
+    # Edit these numbers. A second entry is enough for the page
     # to offer Front / Back.
     "mount-washington-alpine-resort": {
-        "views": {"front": 6.7, "back": 190.6},
+        "views": {"front": 26.7, "back": 190.6},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         # Draws both views smaller inside the frame. Same line weight.
@@ -418,10 +425,10 @@ CAMERAS = {
     # the WSW. Back faces the Larch / Paradise / Ptarmigan / Saddleback bowls
     # (east of centre) from the ENE. Same Front / Back toggle as Washington.
     # The pair was 82.9 / 262.9. 47.9 and 227.9 are 35° less, which turns
-    # each drawing 35° clockwise. 67.9 and 247.9 are 20° more, which turns
-    # each drawing 20° counter-clockwise. They stay 180° apart. Edit these numbers.
+    # each drawing 35° clockwise. Back 247.9 is 20° more, which turns
+    # the back drawing 20° counter-clockwise; front stays 47.9. They stay 180° apart. Edit these numbers.
     "lake-louise-ski-area": {
-        "views": {"front": 67.9, "back": 247.9},
+        "views": {"front": 47.9, "back": 247.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -491,6 +498,17 @@ CAMERAS = {
     # bird's-eye drawing upside down. Edit this number.
     "mt-bachelor": {
         "facing": 187.9,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
+    # Sasquatch only. The automatic render faced 138.1. 318.1 is 180°
+    # further and turns the bird's-eye drawing upside down; the plan view
+    # is turned to match. Edit this number.
+    "sasquatch-mountain-resort": {
+        "facing": 318.1,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -633,8 +651,10 @@ CAMERAS = {
     # Revelstoke only. Automatic facing was 103.8. 76.8 is 27° less,
     # which turns the drawing 27° clockwise on screen. 0.86 pulls the
     # sheet back 14% around the centre. Edit the facing.
+    # 106.8 is 30° more than 76.8, which turns the drawing 30°
+    # counter-clockwise; the plan view is turned to match.
     "revelstoke-mountain-resort": {
-        "facing": 76.8,
+        "facing": 106.8,
         "frame_scale": 0.86,
         # Runs that pass behind a ridge stay on the line at 10% opacity
         # across the whole mountain, the same treatment as Sunshine
@@ -1409,7 +1429,8 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     draws a horizon dip that is shorter than that many samples.
     float_hide(px, py), when set, keeps the hide inside that screen band.
     """
-    raw = marching_contours(arr, gt, CONTOUR_M)
+    _hill = GEOM.name[: -len("-geom.json")] if GEOM.name.endswith("-geom.json") else ""
+    raw = marching_contours(arr, gt, CONTOUR_M_HILL.get(_hill, CONTOUR_M))
     hidden = 0
     chunks = []
     for elev, line in raw:
