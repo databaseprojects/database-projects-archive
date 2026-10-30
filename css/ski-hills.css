@@ -426,7 +426,10 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1)) !important;
 }
 
+/* Bird's-eye contours 20% lighter than the baked stroke-opacity
+   (0.240-0.249 becomes 0.192-0.199). opacity multiplies with it. */
 .sh-lb .sh-frontal-contour {
+  opacity: 0.8;
   stroke-width: 0.65px !important;
   vector-effect: non-scaling-stroke !important;
 }
