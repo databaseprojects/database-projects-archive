@@ -447,6 +447,11 @@ TREE_BANDS = (
 )
 
 
+# Kicking Horse. The forest behind the summit ridge stopped about 10 px
+# short of the skyline, so the step is a third as long.
+TREE_STEP_DIV = {"kicking-horse-resort": 3}
+
+
 def remap_canopy(raw):
     """Stretch used by the Kimberley v3 stipple. Raw values sit near 0.30..0.95."""
     return np.clip((raw - 0.28) / 0.66, 0.0, 1.0)
@@ -1183,6 +1188,12 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     # so the floor cannot be coarser than that screen limit.
     step_x = max(step_x, min(2.0, (24.0 / px_per_m) if px_per_m > 0 else 2.0))
     step_y = max(step_y, min(2.0, (24.0 / py_per_m) if py_per_m > 0 else 2.0))
+    # Per hill, a finer ground step. A quad is drawn only when all four
+    # corners are visible, so the far trees behind a crest stop one quad
+    # short of the skyline. A finer step shrinks that gap to a few pixels.
+    div = TREE_STEP_DIV.get(slug, 1)
+    step_x /= div
+    step_y /= div
     xs = np.arange(full_gx0, full_gx1 + step_x, step_x, dtype=np.float64)
     ys = np.arange(full_gy0, full_gy1 + step_y, step_y, dtype=np.float64)
     nx, ny = len(xs), len(ys)
