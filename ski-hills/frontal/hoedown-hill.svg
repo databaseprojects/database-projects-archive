@@ -10,7 +10,6 @@
 </mask>
 </defs>
 
-<g class="sh-frontal-trees"><path class="sh-frontal-tree-wash" d="" fill="#3a6b42" fill-opacity="0.10" fill-rule="evenodd" stroke="none"/></g>
 <g mask="url(#sh-contour-fade-hoedown-hill)">
 <polyline class="sh-frontal-contour" points="1084.0,143.7 1172.8,132.2" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
 <polyline class="sh-frontal-contour" points="1084.0,143.7 996.1,156.9 900.7,154.7 801.2,144.0 776.0,136.3 681.8,92.1 670.9,86.3 614.0,29.9 587.5,-30.3 599.7,-77.4 599.1,-95.5 597.9,-159.1 628.0,-214.0" fill="none" stroke="#1a1a1a" stroke-opacity="0.240" stroke-width="0.66" style="fill:none;stroke:#1a1a1a;stroke-opacity:0.240;stroke-width:0.66;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:none"/>
