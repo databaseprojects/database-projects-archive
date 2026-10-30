@@ -17,6 +17,7 @@ hills.json is not modified.
 """
 import argparse
 import json
+import os
 import math
 import sys
 from pathlib import Path
@@ -45,11 +46,17 @@ SIZE = 1000 - PAD * 2
 FRAME_PAD = 40
 SQUARE = 1000
 DRAW = 880
-BLEED = 0.04
+BLEED = 0.25
 # A 20 m sheet is too dense past this many stored vertices.
 DENSE_POINTS = 14000
 DENSE_LINES = 220
 
+
+# Contour interval forced for a hill whose 20 m lines pile into each other.
+# Mt Seymour's steep faces merged at 20 m; 50 m keeps them apart.
+# Sun Peaks drew about 120 lines at 50 m, twice a typical hill; 100 m
+# brings it back to the usual density.
+M_OVERRIDE = {"mt-seymour": 50, "sun-peaks-resort": 100}
 
 def lines_of(geom):
     if not geom:
@@ -184,6 +191,9 @@ def square_frame(point_lines, to_ll):
     maxpx += bleed
     minpy -= bleed
     maxpy += bleed
+    if os.environ.get("PLAN_BOX"):
+        _b = [float(v) for v in os.environ["PLAN_BOX"].split(",")]
+        minpx, minpy, maxpx, maxpy = min(minpx, _b[0]), min(minpy, _b[1]), max(maxpx, _b[2]), max(maxpy, _b[3])
     corners = (
         to_ll(minpx, minpy),
         to_ll(minpx, maxpy),
@@ -494,8 +504,9 @@ def render_us(task):
             tif.unlink()
         return {"slug": slug, "skipped": "no elevation"}
     recorded = task.get("recorded")
+    recorded = M_OVERRIDE.get(slug, recorded)
     drop = task.get("drop")
-    if recorded in (20, 50):
+    if slug in M_OVERRIDE or recorded in (20, 50):
         interval = recorded
     else:
         interval = 50 if isinstance(drop, (int, float)) and drop > 1000 else 20
@@ -506,7 +517,7 @@ def render_us(task):
             tif.unlink()
         return {"slug": slug, "skipped": "contour failed", "error": str(exc)}
     stored, npts = store_lines(raw, to_px, pixel_window)
-    if recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
+    if slug not in M_OVERRIDE and recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
         interval = 50
         raw = contour_lines(tif, interval, back_hill)
         stored, npts = store_lines(raw, to_px, pixel_window)
@@ -691,7 +702,8 @@ def main():
                 tif.unlink()
             continue
         recorded = prior.get(hill["slug"], {}).get("m")
-        if recorded in (20, 50):
+        recorded = M_OVERRIDE.get(hill["slug"], recorded)
+        if hill["slug"] in M_OVERRIDE or recorded in (20, 50):
             interval = recorded
         else:
             interval = 50 if isinstance(hill["drop"], (int, float)) and hill["drop"] > 1000 else 20
@@ -704,7 +716,7 @@ def main():
                 tif.unlink()
             continue
         stored, npts = store_lines(raw, to_px, pixel_window)
-        if recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
+        if hill["slug"] not in M_OVERRIDE and recorded not in (20, 50) and interval == 20 and (npts > DENSE_POINTS or len(stored) > DENSE_LINES):
             interval = 50
             raw = contour_lines(tif, interval, back_hill)
             stored, npts = store_lines(raw, to_px, pixel_window)
