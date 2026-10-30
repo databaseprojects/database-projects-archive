@@ -391,13 +391,13 @@
 
 .sh-hill polyline.sh-contour,
 .sh-hill path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.1);
+  stroke: rgba(0, 0, 0, 0.11);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
 .sh-lb polyline.sh-contour,
 .sh-lb path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.1);
+  stroke: rgba(0, 0, 0, 0.11);
   stroke-width: 0.65;
 }
 
