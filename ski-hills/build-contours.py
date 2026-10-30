@@ -56,7 +56,7 @@ DENSE_LINES = 220
 # Mt Seymour's steep faces merged at 20 m; 50 m keeps them apart.
 # Sun Peaks drew about 120 lines at 50 m, twice a typical hill; 100 m
 # brings it back to the usual density.
-M_OVERRIDE = {"mt-seymour": 50, "sun-peaks-resort": 100}
+M_OVERRIDE = {}  # Mt Seymour and Sun Peaks back on their recorded spacing (reverted)
 
 def lines_of(geom):
     if not geom:
