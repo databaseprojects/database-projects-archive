@@ -15,75 +15,75 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261030s",
-      names: "names.json?v=20261030s",
-      index: "contours/index.json?v=20261030s",
+      file: "hills.json?v=20261030t",
+      names: "names.json?v=20261030t",
+      index: "contours/index.json?v=20261030t",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261030s",
-      names: "alberta-names.json?v=20261030s",
-      index: "contours/alberta-index.json?v=20261030s",
+      file: "alberta.json?v=20261030t",
+      names: "alberta-names.json?v=20261030t",
+      index: "contours/alberta-index.json?v=20261030t",
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261030s",
-      names: "quebec-names.json?v=20261030s",
-      index: "contours/quebec-index.json?v=20261030s",
+      file: "quebec.json?v=20261030t",
+      names: "quebec-names.json?v=20261030t",
+      index: "contours/quebec-index.json?v=20261030t",
       label: "Quebec"
     },
     on: {
-      file: "ontario.json?v=20261030s",
-      names: "ontario-names.json?v=20261030s",
-      index: "contours/ontario-index.json?v=20261030s",
+      file: "ontario.json?v=20261030t",
+      names: "ontario-names.json?v=20261030t",
+      index: "contours/ontario-index.json?v=20261030t",
       label: "Ontario"
     },
     sk: {
-      file: "saskatchewan.json?v=20261030s",
-      names: "saskatchewan-names.json?v=20261030s",
-      index: "contours/saskatchewan-index.json?v=20261030s",
+      file: "saskatchewan.json?v=20261030t",
+      names: "saskatchewan-names.json?v=20261030t",
+      index: "contours/saskatchewan-index.json?v=20261030t",
       label: "Saskatchewan"
     },
     mb: {
-      file: "manitoba.json?v=20261030s",
-      names: "manitoba-names.json?v=20261030s",
-      index: "contours/manitoba-index.json?v=20261030s",
+      file: "manitoba.json?v=20261030t",
+      names: "manitoba-names.json?v=20261030t",
+      index: "contours/manitoba-index.json?v=20261030t",
       label: "Manitoba"
     },
     nb: {
-      file: "new-brunswick.json?v=20261030s",
-      names: "new-brunswick-names.json?v=20261030s",
-      index: "contours/new-brunswick-index.json?v=20261030s",
+      file: "new-brunswick.json?v=20261030t",
+      names: "new-brunswick-names.json?v=20261030t",
+      index: "contours/new-brunswick-index.json?v=20261030t",
       label: "New Brunswick"
     },
     nl: {
-      file: "newfoundland.json?v=20261030s",
-      names: "newfoundland-names.json?v=20261030s",
-      index: "contours/newfoundland-index.json?v=20261030s",
+      file: "newfoundland.json?v=20261030t",
+      names: "newfoundland-names.json?v=20261030t",
+      index: "contours/newfoundland-index.json?v=20261030t",
       label: "Newfoundland"
     },
     ns: {
-      file: "nova-scotia.json?v=20261030s",
-      names: "nova-scotia-names.json?v=20261030s",
-      index: "contours/nova-scotia-index.json?v=20261030s",
+      file: "nova-scotia.json?v=20261030t",
+      names: "nova-scotia-names.json?v=20261030t",
+      index: "contours/nova-scotia-index.json?v=20261030t",
       label: "Nova Scotia"
     },
     pe: {
-      file: "prince-edward-island.json?v=20261030s",
-      names: "prince-edward-island-names.json?v=20261030s",
-      index: "contours/prince-edward-island-index.json?v=20261030s",
+      file: "prince-edward-island.json?v=20261030t",
+      names: "prince-edward-island-names.json?v=20261030t",
+      index: "contours/prince-edward-island-index.json?v=20261030t",
       label: "Prince Edward Island"
     },
     yt: {
-      file: "yukon.json?v=20261030s",
-      names: "yukon-names.json?v=20261030s",
-      index: "contours/yukon-index.json?v=20261030s",
+      file: "yukon.json?v=20261030t",
+      names: "yukon-names.json?v=20261030t",
+      index: "contours/yukon-index.json?v=20261030t",
       label: "Yukon"
     },
     nt: {
-      file: "northwest-territories.json?v=20261030s",
-      names: "northwest-territories-names.json?v=20261030s",
-      index: "contours/northwest-territories-index.json?v=20261030s",
+      file: "northwest-territories.json?v=20261030t",
+      names: "northwest-territories-names.json?v=20261030t",
+      index: "contours/northwest-territories-index.json?v=20261030t",
       label: "Northwest Territories"
     }
   };
@@ -127,47 +127,47 @@
     tn: "Tennessee"
   };
   var US_FILE_VERSION = {
-    ca: "20261030s",
-    co: "20261030s",
-    id: "20261030s",
-    ma: "20261030s",
-    md: "20261030s",
-    me: "20261030s",
-    mi: "20261030s",
-    mt: "20261030s",
-    nh: "20261030s",
-    nj: "20261030s",
-    nm: "20261030s",
-    ny: "20261030s",
-    or: "20261030s",
-    pa: "20261030s",
-    vt: "20261030s",
-    wa: "20261030s",
-    wi: "20261030s",
-    wv: "20261030s",
-    wy: "20261030s",
-    mn: "20261030s",
-    az: "20261030s",
-    nv: "20261030s",
-    sd: "20261030s",
-    ut: "20261030s",
-    ct: "20261030s",
-    ri: "20261030s",
-    va: "20261030s",
-    oh: "20261030s",
-    il: "20261030s",
-    in: "20261030s",
-    ia: "20261030s",
-    nd: "20261030s",
-    mo: "20261030s",
-    nc: "20261030s",
-    al: "20261030s",
-    tn: "20261030s"
+    ca: "20261030t",
+    co: "20261030t",
+    id: "20261030t",
+    ma: "20261030t",
+    md: "20261030t",
+    me: "20261030t",
+    mi: "20261030t",
+    mt: "20261030t",
+    nh: "20261030t",
+    nj: "20261030t",
+    nm: "20261030t",
+    ny: "20261030t",
+    or: "20261030t",
+    pa: "20261030t",
+    vt: "20261030t",
+    wa: "20261030t",
+    wi: "20261030t",
+    wv: "20261030t",
+    wy: "20261030t",
+    mn: "20261030t",
+    az: "20261030t",
+    nv: "20261030t",
+    sd: "20261030t",
+    ut: "20261030t",
+    ct: "20261030t",
+    ri: "20261030t",
+    va: "20261030t",
+    oh: "20261030t",
+    il: "20261030t",
+    in: "20261030t",
+    ia: "20261030t",
+    nd: "20261030t",
+    mo: "20261030t",
+    nc: "20261030t",
+    al: "20261030t",
+    tn: "20261030t"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
-      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261030s"),
-      index: "contours/usa-index.json?v=20261030s",
+      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261030t"),
+      index: "contours/usa-index.json?v=20261030t",
       label: US_STATE_NAMES[id]
     };
   });
@@ -196,26 +196,26 @@
     ua: "Ukraine"
   };
   var EU_FILE_VERSION = {
-    fr: "20261030s",
-    ch: "20261030s",
-    at: "20261030s",
-    it: "20261030s",
-    no: "20261030s",
-    se: "20261030s",
-    fi: "20261030s",
-    es: "20261030s",
-    ad: "20261030s",
-    rs: "20261030s",
-    ua: "20261030s",
-    sk: "20261030s",
-    bg: "20261030s",
-    de: "20261030s",
-    cz: "20261030s"
+    fr: "20261030t",
+    ch: "20261030t",
+    at: "20261030t",
+    it: "20261030t",
+    no: "20261030t",
+    se: "20261030t",
+    fi: "20261030t",
+    es: "20261030t",
+    ad: "20261030t",
+    rs: "20261030t",
+    ua: "20261030t",
+    sk: "20261030t",
+    bg: "20261030t",
+    de: "20261030t",
+    cz: "20261030t"
   };
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
-      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261030s"),
-      index: "contours/europe-index.json?v=20261030s",
+      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261030t"),
+      index: "contours/europe-index.json?v=20261030t",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -694,7 +694,7 @@
     if (hill._filePromise) return hill._filePromise;
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
-      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261030s").then(function (res) {
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261030t").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
       }),
@@ -812,7 +812,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261030s";
+  var ASSET_V = "20261030t";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1859,7 +1859,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261030s").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261030t").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -4143,7 +4143,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261030s").then(function (res) {
+  fetch("hill-index.json?v=20261030t").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
