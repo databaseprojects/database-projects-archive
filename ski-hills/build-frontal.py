@@ -150,9 +150,10 @@ HORIZON_MIN_RUN = {
     "fernie-alpine-resort": 70,
     # Marmot. Only a real back-ridge run is hidden. Facing contours stay solid.
     "marmot-basin": 40,
-    # Kicking Horse. Grazes along the top ridge stay one stroke. A longer
-    # run behind the crest stays hidden, so the clip does not come back.
-    "kicking-horse-resort": 65,
+    # Kicking Horse. Was 65, which let back-face contours graze along the
+    # summit ridge and cross the front ones. 20 hides them; the short
+    # grazes on the open slopes still stay one stroke.
+    "kicking-horse-resort": 20,
     # Sunshine, left half. A short graze stays one stroke.
     "banff-sunshine-village": 80,
     # Bachelor. Medium grazes stay drawn so the elevation lines join.
