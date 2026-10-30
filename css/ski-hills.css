@@ -391,13 +391,13 @@
 
 .sh-hill polyline.sh-contour,
 .sh-hill path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.11);
+  stroke: rgba(0, 0, 0, 0.115);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
 .sh-lb polyline.sh-contour,
 .sh-lb path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.11);
+  stroke: rgba(0, 0, 0, 0.115);
   stroke-width: 0.65;
 }
 
@@ -409,6 +409,26 @@
   vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
   stroke-linecap: round;
+}
+
+/* Bird's-eye lines use the plan view widths. The sheets bake wider strokes
+   in viewBox units, so override them with the same screen-pixel widths the
+   plan view draws: runs and lifts at --sh-run (1.15px, Whistler 0.897px),
+   contours at 0.65px. Contour colour is unchanged. */
+.sh-lb .sh-frontal-run,
+.sh-lb .sh-frontal-lift {
+  stroke-width: var(--sh-run, 1.15px) !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+.sh-lb .sh-frame-art .sh-frontal-run,
+.sh-lb .sh-frame-art .sh-frontal-lift {
+  stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1)) !important;
+}
+
+.sh-lb .sh-frontal-contour {
+  stroke-width: 0.65px !important;
+  vector-effect: non-scaling-stroke !important;
 }
 
 /* Bird's-eye topo only. 10% toward white from black. The sheet
