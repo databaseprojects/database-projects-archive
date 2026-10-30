@@ -812,7 +812,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261030d";
+  var ASSET_V = "20261030e";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
