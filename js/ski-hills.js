@@ -15,15 +15,15 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261025zp",
+      file: "hills.json?v=20261030a",
       names: "names.json?v=20261016f",
-      index: "contours/index.json?v=20261016w",
+      index: "contours/index.json?v=20261030a",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261018y",
+      file: "alberta.json?v=20261030a",
       names: "alberta-names.json?v=20261016i",
-      index: "contours/alberta-index.json?v=20261017c",
+      index: "contours/alberta-index.json?v=20261030a",
       label: "Alberta"
     },
     qc: {
@@ -812,7 +812,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261025zq";
+  var ASSET_V = "20261030a";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -4143,7 +4143,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261023t").then(function (res) {
+  fetch("hill-index.json?v=20261030a").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
