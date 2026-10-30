@@ -317,7 +317,7 @@ CONTOUR_M = 20
 # Bird's-eye contour interval per hill. Sun Peaks (lines packed about twice
 # a typical hill's density) draws at 100 m; Mt Seymour draws at 40 m. They drew far
 # more lines than a typical sheet, so their ridges read as thick, merged ink.
-CONTOUR_M_HILL = {"sun-peaks-resort": 100, "mt-seymour": 40}
+CONTOUR_M_HILL = {}  # Sun Peaks and Mt Seymour back on the default spacing (reverted)
 # Was 0.85. About 22% thinner, every contour including the 100 m steps.
 # Runs stay 2.2 and lifts stay 1.7, unless the contour field is spread out.
 CONTOUR_W = 0.66
@@ -362,7 +362,8 @@ CAMERAS = {
     # 25.0, another 20° counter-clockwise. 355.0 is 50° less than 45.0,
     # which turns the drawing 50° clockwise; the plan view is turned to match.
     "cypress-mountain": {
-        "facing": 355.0,
+        # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
+        "facing": 315.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -400,7 +401,8 @@ CAMERAS = {
     # Runs behind a ridge fade at 10%, as on Revelstoke. The crowded back
     # ridges are thinned by the 3.0 px skyline pass in HORIZON_TOL.
     "mt-norquay": {
-        "facing": 238.6,
+        # 268.6: 30 degrees counter-clockwise from 238.6. Plan turned to match.
+        "facing": 268.6,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
