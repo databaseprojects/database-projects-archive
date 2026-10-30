@@ -6,3 +6,7 @@ Castle Mountain Resort only. Not wired into the site; live code and data untouch
 - Angle 241.1° was computed from the lifts' bottom-to-top direction (10 of 12 agree). Castle's bird's-eye view uses an automatic facing that is not stored.
 - A small, faint north arrow was added bottom right of the map (the site shows none).
 - Known gap: the stored contour and tree-wash data only cover the original north-up square, so the turned view has blank corners (top left, right side, bottom right). Filling them needs contours and tree wash rebuilt over a wider window.
+
+## Full-frame version (castle-mountain-resort-rotated-241-full.png)
+
+The gap above is fixed here. Castle's contours (MRDEM-30, 50 m, build-contours.py with BLEED 0.25 instead of 0.04) and plan tree wash (ESA WorldCover 10 m + Sentinel-2 canopy bands, build-tree-overlays.py --plan-only with a wider window) were rebuilt locally over about a 1.7 x 1.56 span of the card. They were used only for this render. The committed contour and tree data are unchanged. Same rotation, scale, clip and north arrow as above, and the corners are filled.
