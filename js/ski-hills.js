@@ -15,15 +15,15 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261030a",
+      file: "hills.json?v=20261030d",
       names: "names.json?v=20261016f",
-      index: "contours/index.json?v=20261030a",
+      index: "contours/index.json?v=20261030d",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261030a",
+      file: "alberta.json?v=20261030d",
       names: "alberta-names.json?v=20261016i",
-      index: "contours/alberta-index.json?v=20261030a",
+      index: "contours/alberta-index.json?v=20261030d",
       label: "Alberta"
     },
     qc: {
@@ -139,7 +139,7 @@
     nj: "20261023t",
     nm: "20261023t",
     ny: "20261023t",
-    or: "20261023t",
+    or: "20261030d",
     pa: "20261023t",
     vt: "20261023t",
     wa: "20261023t",
@@ -167,7 +167,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261018l"),
-      index: "contours/usa-index.json?v=20261022i",
+      index: "contours/usa-index.json?v=20261030d",
       label: US_STATE_NAMES[id]
     };
   });
@@ -812,7 +812,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261030a";
+  var ASSET_V = "20261030d";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -4143,7 +4143,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261030a").then(function (res) {
+  fetch("hill-index.json?v=20261030d").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
