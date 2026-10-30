@@ -120,6 +120,8 @@ FLOATING_HORIZON = {
     # Gentle. A 4.5 px dip is the small bleed at the top of the ski line
     # and the top-left corner. Shorter grazes stay drawn.
     "marmot-basin": 4.5,
+    # Norquay. Crowded back ridges hide more readily behind nearer ones.
+    "mt-norquay": 3.0,
     # Front and back sheets share this. Only the right third may hide.
     "mount-washington-alpine-resort": 3.0,
     # Top third and bottom third only. The middle ski area stays drawn.
@@ -372,9 +374,11 @@ CAMERAS = {
     # Banff only. Automatic facing was 311.9. 41.9 is 90° further clockwise,
     # which turns the bird's-eye drawing 90° counter-clockwise. 1.9 is 40°
     # less than 41.9, which turns the drawing 40° clockwise on screen.
-    # Edit this number.
+    # 131.9 is half a turn from the automatic 311.9: the camera stands at the
+    # Bourgeau base (north-west, lowest) and looks uphill to the summits
+    # (lifts climb toward ~130). Edit this number.
     "banff-sunshine-village": {
-        "facing": 1.9,
+        "facing": 131.9,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -387,11 +391,14 @@ CAMERAS = {
     # Mt Norquay only. Automatic facing was 68.6. 248.6 was 180° further,
     # which turns the bird's-eye drawing upside down. 238.6 is 10° less
     # than that, which turns the drawing 10° clockwise on screen.
+    # Runs behind a ridge fade at 10%, as on Revelstoke. The crowded back
+    # ridges are thinned by the 3.0 px skyline pass in HORIZON_TOL.
     "mt-norquay": {
         "facing": 238.6,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
     },
     # Mount Washington only. Automatic facing 217.2 is kept by orient() and
     # shows the north side. Black runs cluster north of centre (bearing
@@ -411,9 +418,10 @@ CAMERAS = {
     # the WSW. Back faces the Larch / Paradise / Ptarmigan / Saddleback bowls
     # (east of centre) from the ENE. Same Front / Back toggle as Washington.
     # The pair was 82.9 / 262.9. 47.9 and 227.9 are 35° less, which turns
-    # each drawing 35° clockwise. They stay 180° apart. Edit these numbers.
+    # each drawing 35° clockwise. 67.9 and 247.9 are 20° more, which turns
+    # each drawing 20° counter-clockwise. They stay 180° apart. Edit these numbers.
     "lake-louise-ski-area": {
-        "views": {"front": 47.9, "back": 227.9},
+        "views": {"front": 67.9, "back": 247.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -802,6 +810,8 @@ DEM_PAD = {
     "fernie-alpine-resort": 1.8,
     "marmot-basin": 1.8,
     "white-pass-ski-area": 1.8,
+    # Norquay's bottom-right corner was bare.
+    "mt-norquay": 1.8,
 }
 
 
