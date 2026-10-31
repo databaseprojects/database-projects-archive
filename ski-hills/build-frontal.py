@@ -137,6 +137,9 @@ FLOATING_HORIZON = {
     "whitewater-ski-resort": 2.0,
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
     "mt-bachelor": 3.5,
+    # Whistler. The 3 px pass from PR #306, kept. On its own it cut the
+    # far ridges into dashes; HORIZON_MIN_RUN and CONTOUR_HOLD join them.
+    "whistler-blackcomb": 3.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -160,6 +163,8 @@ HORIZON_MIN_RUN = {
     "mt-bachelor": 80,
     # Whitewater corners. A graze shorter than 12 samples stays drawn.
     "whitewater-ski-resort": 12,
+    # Whistler. Same as Bachelor: medium grazes stay drawn.
+    "whistler-blackcomb": 80,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -238,6 +243,12 @@ CONTOUR_HOLD = {
     # 60 px joins those grazes into one line. A longer hide is a real
     # ridge and still ends the stroke. Runs and lifts stay on MIN_RUN.
     "heavenly-mountain-resort": 60.0,
+    # Whistler bird's-eye. The top-right ridges and the centre-left ridge
+    # were broken by short skyline grazes, not by missing elevation: with
+    # occlusion off every line there runs unbroken. Top-right had 350 loose
+    # ends and centre-left 63; 100 px brings them to 104 and 4. A longer
+    # hide is a real back ridge and still ends the stroke.
+    "whistler-blackcomb": 100.0,
 }
 # Shortest stroke to draw, when that should not be the hold above.
 # Bachelor still joins skyline grazes at 100 px. That same number was also
@@ -246,6 +257,8 @@ CONTOUR_HOLD = {
 # A real ring is drawn at the same 12 px floor as every other hill.
 CONTOUR_DRAW = {
     "mt-bachelor": MIN_RUN,
+    # Whistler keeps the 12 px floor so small rings still draw.
+    "whistler-blackcomb": MIN_RUN,
 }
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
