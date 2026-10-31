@@ -684,6 +684,23 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path):
     ux_max = max((1000.0 - shift_880["dx"]) / s_scale, (1000.0 - shift_1000["dx"]) / shift_1000["s"], 1060.0)
     uy_min = min((0.0 - shift_880["dy"]) / s_scale, (0.0 - shift_1000["dy"]) / shift_1000["s"], -160.0)
     uy_max = max((880.0 - shift_880["dy"]) / s_scale, (1000.0 - shift_1000["dy"]) / shift_1000["s"], 1000.0)
+    # A zoomed-out or panned plan sets wider hill-index bounds than the runs.
+    # Cover the card and lightbox those bounds draw, plus 25 units of bleed.
+    try:
+        rows = json.loads((REPO_ROOT / "hill-index.json").read_text()).get("hills") or []
+        bb = next((r.get("bounds") for r in rows if r.get("slug") == slug), None)
+    except Exception:
+        bb = None
+    if bb:
+        bx0, by0, bx1, by1 = bb
+        for lim in (1000.0, 880.0):
+            sc = min(920.0 / (bx1 - bx0), (lim - 80.0) / (by1 - by0))
+            ddx = 500.0 - (bx0 + bx1) / 2.0 * sc
+            ddy = 40.0 + (lim - 80.0) / 2.0 - (by0 + by1) / 2.0 * sc
+            ux_min = min(ux_min, -ddx / sc - 25.0)
+            uy_min = min(uy_min, -ddy / sc - 25.0)
+            ux_max = max(ux_max, (1000.0 - ddx) / sc + 25.0)
+            uy_max = max(uy_max, (lim - ddy) / sc + 25.0)
 
     x0 = math.floor(ux_min / 10.0) * 10.0
     x1 = math.ceil(ux_max / 10.0) * 10.0
