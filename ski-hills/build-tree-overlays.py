@@ -565,7 +565,11 @@ def ensure_canopy(slug, box, wc_path):
     if not scenes:
         raise RuntimeError(f"no sentinel-2 scene for {slug}")
     last_err = None
-    for feat in scenes[:4]:
+    # A wide crop can straddle two Sentinel-2 tiles, so no one scene covers
+    # 60% of it. Each scene fills the cells still empty; stop at 60%.
+    mosaic = np.full((wc_h, wc_w), -1.0, np.float32)
+    used = []
+    for feat in scenes[:8]:
         try:
             red_href = feat["assets"]["red"]["href"]
             nir_href = feat["assets"]["nir"]["href"]
@@ -603,8 +607,13 @@ def ensure_canopy(slug, box, wc_path):
                 dst_nodata=-1.0,
                 resampling=Resampling.bilinear,
             )
-            if float((dst >= 0).mean()) < 0.6:
+            hole = mosaic < 0
+            mosaic[hole] = dst[hole]
+            used.append(feat)
+            if float((mosaic >= 0).mean()) < 0.6:
                 continue
+            dst = mosaic
+            feat = used[0]
             profile = {
                 "driver": "GTiff",
                 "height": wc_h,
@@ -619,7 +628,7 @@ def ensure_canopy(slug, box, wc_path):
             with rasterio.open(dest, "w", **profile) as out:
                 out.write(dst, 1)
             cloud = feat.get("properties", {}).get("eo:cloud_cover")
-            print("canopy", slug, feat["id"], "cloud", cloud, flush=True)
+            print("canopy", slug, "+".join(f["id"] for f in used), "cloud", cloud, flush=True)
             return dest
         except Exception as err:
             last_err = err
