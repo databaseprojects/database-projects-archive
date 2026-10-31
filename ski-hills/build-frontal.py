@@ -675,6 +675,12 @@ CAMERAS = {
     # it, so the drawing faced 352.4. 62.4 was 70° further. 107.4 is
     # another 45° further, which turns the bird's-eye drawing a further
     # 45° counter-clockwise. Edit this number.
+    # Stevens Pass only. The automatic render faced 46.9 (the 226.9 guess,
+    # flipped by orient()). 116.9 is 70° further clockwise, which turns the
+    # bird's-eye drawing 70° counter-clockwise. The plan is turned to match.
+    "stevens-pass": {
+        "facing": 116.9,
+    },
     "white-pass-ski-area": {
         "facing": 107.4,
         "elevation": 15.0,
@@ -2192,6 +2198,33 @@ def obbs_overlap(a, b, gap):
     return True
 
 
+# Optional back-bowl layer: runs (by centroid box) and lifts (by name) drawn
+# with an extra "sh-bowl" class, hidden until the viewer's toggle adds
+# "sh-bowl-on". The catalog marks the same runs ("b": 1) and "bowlLifts".
+BACK_BOWL = {
+    "stevens-pass": {
+        "name": "Mill Valley",
+        "lat_max": 47.735,
+        "lon_min": -121.086,
+        "lifts": ("Jupiter Express", "Southern Cross"),
+    },
+}
+
+
+def in_back_bowl(slug, feat, is_lift=False):
+    cfg = BACK_BOWL.get(slug)
+    if not cfg:
+        return False
+    if is_lift:
+        return feat.get("name") in cfg["lifts"]
+    pts = [p for ln in feat["lines"] for p in ln]
+    if not pts:
+        return False
+    lon = sum(p[0] for p in pts) / len(pts)
+    lat = sum(p[1] for p in pts) / len(pts)
+    return lat < cfg["lat_max"] and lon > cfg["lon_min"]
+
+
 def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
@@ -2781,7 +2814,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 colour,
                 run_stroke,
                 z_add=RUN_CLEAR,
-                css_class="sh-frontal-run",
+                css_class="sh-frontal-run" + (" sh-bowl" if in_back_bowl(slug, run) else ""),
                 occlude=True,
                 fade_opacity=ridge_fade,
                 chunks_out=pieces,
@@ -2802,7 +2835,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 lift_stroke,
                 z_add=LIFT_CLEAR,
                 dash="6 4",
-                css_class="sh-frontal-lift",
+                css_class="sh-frontal-lift" + (" sh-bowl" if in_back_bowl(slug, lift, True) else ""),
                 occlude=True,
                 chunks_out=lift_pieces if run_labels else None,
             )
