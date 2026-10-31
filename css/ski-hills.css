@@ -1384,3 +1384,18 @@ html.sh-prints-off .sh-cart-panel {
 svg [fill="#3a6b42"] {
   fill: #315b38 !important;
 }
+
+/* Print border: 0.125 in white margin on every map view (plan and bird's-eye),
+   as a share of the 8 x 8 in print (0.125 / 8 = 1.5625% per side). Padding on
+   the outer svg shrinks the whole sheet (map, caption, credit) uniformly into
+   the content box; the svg clips there, so nothing draws in the margin. */
+.sh-print {
+  --sh-print-border: 1.5625%;
+  box-sizing: border-box;
+  padding: var(--sh-print-border);
+  overflow: hidden;
+}
+.sh-lb .sh-print,
+.sh-frame-art .sh-print {
+  background: #fff;
+}

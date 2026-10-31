@@ -634,7 +634,7 @@
       return '<polyline class="sh-lift' + (bowlLifts.indexOf(i) >= 0 ? " sh-bowl" : "") + '" points="' + pts + '"></polyline>';
     }).join("");
     var holder = document.createElement("div");
-    holder.innerHTML = '<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + runs + lifts + "</svg>";
+    holder.innerHTML = '<svg class="sh-print" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + runs + lifts + "</svg>";
     return holder.querySelector("svg");
   }
 
@@ -649,6 +649,7 @@
     var art = document.createElement("span");
     art.className = "sh-hill-art";
     var holder = document.createElementNS(NS, "svg");
+    holder.setAttribute("class", "sh-print");
     holder.setAttribute("viewBox", "0 0 1000 1000");
     holder.setAttribute("preserveAspectRatio", "xMidYMid slice");
     holder.setAttribute("aria-hidden", "true");
@@ -2744,7 +2745,7 @@
   function mockCardSvg(hill) {
     var card = hill && hill.el;
     var svg = drawingSvg(hill);
-    svg.setAttribute("class", "sh-card");
+    svg.setAttribute("class", "sh-card sh-print");
     var shift = fitArt(svg, DRAW, hill && hill._bounds);
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
