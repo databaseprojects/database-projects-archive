@@ -1168,8 +1168,13 @@ def frontal_wash_markup(bands):
 
 
 def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, src_svg_path, out_svg_path, facing_override=None):
-    """Generate full-frame Bird's-eye treeWash path d across the entire DEM terrain sheet."""
-    pinfo = setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=facing_override)
+    """Generate full-frame Bird's-eye treeWash path d across the entire DEM terrain sheet.
+
+    SH_EDGE_MARGIN must match the --edge-margin the sheet was drawn with
+    (US sheets), or the trees are fitted to a different frame than the art.
+    """
+    edge_margin = float(os.environ.get("SH_EDGE_MARGIN") or 0.0)
+    pinfo = setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=facing_override, edge_margin=edge_margin)
     origin_lon = pinfo["origin_lon"]
     origin_lat = pinfo["origin_lat"]
     m_lon = pinfo["m_lon"]
