@@ -428,17 +428,19 @@
 
 /* Bird's-eye contours 32% lighter than the baked stroke-opacity
    (0.240-0.249 becomes 0.163-0.169). opacity multiplies with it.
-   Was 0.8; 15% less is 0.68. */
+   Was 0.8; 15% less is 0.68; another 15% less is 0.578. */
 .sh-lb .sh-frontal-contour {
-  opacity: 0.68;
+  opacity: 0.578;
   stroke-width: 0.65px !important;
   vector-effect: non-scaling-stroke !important;
 }
 
 /* Bird's-eye topo only. 10% toward white from black. The sheet
    writes the stroke on the element, so this has to win. Plan contours stay
-   on .sh-contour. Join, cap, and dash cover sheets that no longer repeat them. */
+   on .sh-contour. Join, cap, and dash cover sheets that no longer repeat them.
+   Opacity 0.85 makes the card bird's-eye 15% lighter than the baked stroke. */
 .sh-frontal-contour {
+  opacity: 0.85;
   stroke: #1a1a1a !important;
   fill: none;
   stroke-linejoin: round;
