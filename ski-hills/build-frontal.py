@@ -610,6 +610,12 @@ CAMERAS = {
     # it, so the drawing faced 352.4. 62.4 was 70° further. 107.4 is
     # another 45° further, which turns the bird's-eye drawing a further
     # 45° counter-clockwise. Edit this number.
+    # Stevens Pass only. The automatic render faced 46.9 (the 226.9 guess,
+    # flipped by orient()). 116.9 is 70° further clockwise, which turns the
+    # bird's-eye drawing 70° counter-clockwise. The plan is turned to match.
+    "stevens-pass": {
+        "facing": 116.9,
+    },
     "white-pass-ski-area": {
         "facing": 107.4,
         "elevation": 15.0,
