@@ -990,6 +990,10 @@ DEM_PAD = {
     "arapahoe-basin": 1.8,
     "winter-park-resort": 1.8,
     "sunlight-mountain-resort": 1.8,
+    # Lost Trail (facing 262.2). A small strip along the bottom-left and a
+    # thin strip along the top were past the DEM crop, so contours and the
+    # tree wash stopped short there.
+    "lost-trail": 1.8,
 }
 
 
