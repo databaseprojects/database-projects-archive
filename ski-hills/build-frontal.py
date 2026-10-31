@@ -143,6 +143,11 @@ FLOATING_HORIZON = {
     # Whistler. The 3 px pass from PR #306, kept. On its own it cut the
     # far ridges into dashes; HORIZON_MIN_RUN and CONTOUR_HOLD join them.
     "whistler-blackcomb": 3.0,
+    # Mt Baker, top-left and bottom-left corners only (HORIZON_REGION).
+    # Back slopes were drawing across the nearer ridge there. Baker had no
+    # floating horizon at all. 3.0 px still left most crossings; 1.0 px
+    # hides them while the corner contours stay full.
+    "mt-baker": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -164,6 +169,8 @@ HORIZON_MIN_RUN = {
     "mt-bachelor": 80,
     # Whitewater bottom-left. Only a 30+ sample stretch behind the ridge hides.
     "whitewater-ski-resort": 30,
+    # Mt Baker corners. A 4+ sample stretch behind the ridge hides.
+    "mt-baker": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -188,6 +195,12 @@ HORIZON_REGION = {
     "whitewater-ski-resort": {
         "x": ((-400.0, 300.0),),
         "y": ((780.0, 1400.0),),
+    },
+    # Mt Baker at facing 221.3. Left side, top and bottom corners only.
+    # The middle of the sheet stays on the skyline test.
+    "mt-baker": {
+        "x": ((-400.0, 420.0),),
+        "y": ((-400.0, 350.0), (650.0, 1400.0)),
     },
 }
 
@@ -650,6 +663,11 @@ CAMERAS = {
     # 49° North only. The automatic render faced 25.3 (the 205.3 guess,
     # flipped by orient()). 205.3 is 180° further and turns that bird's-eye
     # drawing upside down. The sheet still frames the runs. Edit this number.
+    # Mt Baker. Locked at the 221.3 the automatic render chose, so the
+    # wider DEM crop (DEM_PAD) cannot nudge the facing.
+    "mt-baker": {
+        "facing": 221.3,
+    },
     "49-north-mountain-resort": {
         "facing": 205.3,
         "elevation": 15.0,
@@ -938,6 +956,14 @@ DEM_PAD = {
     # Whitewater (facing 43.5). The bottom-left corner
     # was past the DEM crop, so its contours stopped short.
     "whitewater-ski-resort": 1.8,
+    # 49 Degrees North (facing 205.3). The run box is wide and shallow, so
+    # the 1.0 crop was only 171 DEM rows tall. The bird's-eye top-left and
+    # bottom-right corners (top and bottom thirds) were past it: no
+    # contours, and no trees, since the wash uses the same crop. 1.8 still
+    # left the top-left corner bare. 2.6 reaches every corner.
+    "49-north-mountain-resort": 2.6,
+    # Mt Baker (facing 221.3). The top-left corner was past the DEM crop.
+    "mt-baker": 1.8,
 }
 
 
