@@ -2,7 +2,7 @@
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
 The wash is four hard-edge density bands of the same green (#315b38), opacities
-0.08 / 0.10 / 0.12 / 0.13. Density is a summer Sentinel-2 canopy concentration
+0.06 / 0.09 / 0.11 / 0.12 (fewer bands: see BAND_OPACITY_BY_COUNT). Density is a summer Sentinel-2 canopy concentration
 on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
 belongs to one band. Kimberley's published wash is left as it is.
 
@@ -497,13 +497,24 @@ def paths_from_mask(mask, affine):
     return " ".join(subpaths)
 
 
+# Opacities depend on how many density bands a hill actually uses (2026-10-30):
+# 1 band -> 0.10; 2 -> 0.10/0.12; 3 -> 0.09/0.11/0.12; 4 -> 0.06/0.09/0.11/0.12.
+BAND_OPACITY_BY_COUNT = {
+    1: (0.10,),
+    2: (0.10, 0.12),
+    3: (0.09, 0.11, 0.12),
+    4: (0.06, 0.09, 0.11, 0.12),
+}
+
+
 def band_paths(labels, affine):
-    bands = []
-    for i, (_lo, _hi, opacity, name) in enumerate(TREE_BANDS, start=1):
+    found = []
+    for i, (_lo, _hi, _opacity, name) in enumerate(TREE_BANDS, start=1):
         d = paths_from_mask((labels == i).astype(np.uint8), affine)
         if d:
-            bands.append({"opacity": opacity, "name": name, "d": d})
-    return bands
+            found.append((name, d))
+    ops = BAND_OPACITY_BY_COUNT.get(len(found), ())
+    return [{"opacity": op, "name": name, "d": d} for op, (name, d) in zip(ops, found)]
 
 
 def _stac_scenes(box):
