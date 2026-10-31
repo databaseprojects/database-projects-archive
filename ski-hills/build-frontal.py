@@ -704,6 +704,10 @@ CAMERAS = {
     "pomerelle-mountain-resort": {
         "facing": 212.5,
     },
+    # Powder Mountain (Utah) only, not Lost Trail. Automatic 6.5; turned 180°.
+    "powder-mountain-ski-resort": {
+        "facing": 186.5,
+    },
     "white-pass-ski-area": {
         "facing": 107.4,
         "elevation": 15.0,
