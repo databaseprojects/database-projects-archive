@@ -769,12 +769,12 @@ CAMERAS = {
     "winter-park-resort": {"frame_scale": 0.95},
     "sunlight-mountain-resort": {"frame_scale": 0.95},
     # New England batch (US sheets, --edge-margin 70). post_scale 0.95 pulls
-    # the sheet back 5% after the margin fit. Killington also moves up 60
-    # units (6% of the frame). Gunstock is locked to the plan's north-up
+    # the sheet back 5% after the margin fit. Killington is pulled back a
+    # further 6% (0.95 / 1.06) with no pan. Gunstock is locked to the plan's north-up
     # facing (the automatic camera faced 208.4).
     "gunstock-recreation-area": {"facing": 0.0, "post_scale": 0.95},
     "stratton-mountain-resort": {"facing": 230.9, "post_scale": 0.95},
-    "killington-resort": {"facing": 250.5, "post_scale": 0.95, "pan_y": -60.0},
+    "killington-resort": {"facing": 250.5, "post_scale": 0.8962},
     "jay-peak-resort": {"facing": 242.0, "post_scale": 0.95},
     "mad-river-glen": {"facing": 254.2, "post_scale": 0.95},
     "blue-mountain-ski-resort": {"facing": 228.1, "post_scale": 0.95},
