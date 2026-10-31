@@ -1022,6 +1022,16 @@ def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, e
                     px, py = _base(sx, sy)
                     return _tx + (px - _cx) * _s, _ty + (py - _cy) * _s
 
+    # Same post-margin zoom-out and pan as build-frontal.build().
+    post_scale = cam.get("post_scale", 1.0)
+    pan_y = cam.get("pan_y", 0.0)
+    if post_scale != 1 or pan_y:
+        base_paper = paper
+
+        def paper(sx, sy, _base=base_paper, _s=post_scale, _dy=pan_y):
+            px, py = _base(sx, sy)
+            return 500.0 + (px - 500.0) * _s, 440.0 + (py - 440.0) * _s + _dy
+
     # Full-frame horizon skyline across the entire DEM sheet (not clipped to gx0..gx1, gy0..gy1).
     # Widen column range to [-120, 1120] so off-frame points never clamp into edge bins 0 or bins-1.
     px_lo, px_hi = -120.0, 1120.0
