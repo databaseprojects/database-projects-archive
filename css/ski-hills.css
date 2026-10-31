@@ -1360,6 +1360,9 @@ html.sh-prints-off .sh-cart-panel {
 .sh-frontal-tree-wash,
 .sh-frontal-tree-band,
 .sh-frontal-trees { display: none; }
+.sh-bowl { display: none; }
+.sh-bowl-on .sh-bowl { display: inline; }
+.sh-bowl-switch { margin-left: 12px; }
 .sh-trees-on .sh-frontal-tree-wash,
 .sh-trees-on .sh-frontal-tree-band,
 .sh-trees-on .sh-frontal-trees { display: inline; }

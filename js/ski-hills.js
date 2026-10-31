@@ -627,10 +627,11 @@
     }).map(function (run) {
       var pts = run && run.p ? run.p : run;
       if (!pts) return "";
-      return '<polyline class="' + runClass(run && run.d) + '" points="' + pts + '"></polyline>';
+      return '<polyline class="' + runClass(run && run.d) + (run && run.b ? " sh-bowl" : "") + '" points="' + pts + '"></polyline>';
     }).join("");
-    var lifts = (hill.lifts || []).map(function (pts) {
-      return '<polyline class="sh-lift" points="' + pts + '"></polyline>';
+    var bowlLifts = hill.bowlLifts || [];
+    var lifts = (hill.lifts || []).map(function (pts, i) {
+      return '<polyline class="sh-lift' + (bowlLifts.indexOf(i) >= 0 ? " sh-bowl" : "") + '" points="' + pts + '"></polyline>';
     }).join("");
     var holder = document.createElement("div");
     holder.innerHTML = '<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + runs + lifts + "</svg>";
@@ -1587,6 +1588,7 @@
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
+    if (lb._svg && card._hill && card._hill._bowlOn) lb._svg.classList.add("sh-bowl-on");
     if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
@@ -2952,6 +2954,7 @@
     setPlanHidden(svg, false);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
   }
 
   function paintRaised(svg, hill, lines, shift) {
@@ -2959,6 +2962,7 @@
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
   }
 
   function ensureFrontal(hill, done) {
@@ -4009,6 +4013,39 @@
         refreshMockArt(hill.el);
       });
     }
+    var bowl = null;
+    if (hill.bowl) {
+      if (hill._bowlOn == null) hill._bowlOn = false;
+      bowl = document.createElement("label");
+      bowl.className = "sh-tree-switch sh-bowl-switch";
+      var bowlBox = document.createElement("input");
+      bowlBox.type = "checkbox";
+      bowlBox.className = "sh-tree-switch-input";
+      bowlBox.setAttribute("role", "switch");
+      bowlBox.setAttribute("aria-label", hill.bowl);
+      bowlBox.checked = !!hill._bowlOn;
+      var bowlTrack = document.createElement("span");
+      bowlTrack.className = "sh-tree-switch-track";
+      bowlTrack.setAttribute("aria-hidden", "true");
+      var bowlKnob = document.createElement("span");
+      bowlKnob.className = "sh-tree-switch-knob";
+      bowlTrack.appendChild(bowlKnob);
+      var bowlText = document.createElement("span");
+      bowlText.className = "sh-tree-switch-label";
+      bowlText.textContent = hill.bowl;
+      bowl.appendChild(bowlBox);
+      bowl.appendChild(bowlTrack);
+      bowl.appendChild(bowlText);
+      bowl.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      bowlBox.addEventListener("change", function () {
+        hill._bowlOn = !!bowlBox.checked;
+        var lb = document.getElementById("sh-lb");
+        if (lb && lb._svg) lb._svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
+        refreshMockArt(hill.el);
+      });
+    }
     var views = sideViews(hill);
     var sideRow = null;
     var sideBtns = [];
@@ -4054,6 +4091,7 @@
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
     if (trees) wrap.appendChild(trees);
+    if (bowl) wrap.appendChild(bowl);
     wrap._sync = sync;
     return wrap;
   }
@@ -4109,6 +4147,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
+    if (card._hill && card._hill._bowlOn) svg.classList.add("sh-bowl-on");
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
