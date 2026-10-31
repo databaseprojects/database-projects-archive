@@ -740,6 +740,16 @@ CAMERAS = {
         "ridge_fade": 0.10,
     },
     "nakiska": {"frame_scale": 0.95},
+    # Colorado half turns. Each automatic facing (in brackets) plus 180°,
+    # which turns the bird's-eye drawing 180°. The plan is turned to match.
+    "crested-butte-mountain-resort": {"facing": 154.3},  # (334.3)
+    "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
+    "monarch-mountain": {"facing": 234.3},  # (54.3)
+    "arapahoe-basin": {"facing": 148.3},  # (328.3)
+    # Winter Park and Sunlight only. 0.95 pulls the sheet back 5% around
+    # the centre. The automatic camera stays.
+    "winter-park-resort": {"frame_scale": 0.95},
+    "sunlight-mountain-resort": {"frame_scale": 0.95},
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
@@ -965,6 +975,13 @@ DEM_PAD = {
     "49-north-mountain-resort": 2.6,
     # Mt Baker (facing 221.3). The top-left corner was past the DEM crop.
     "mt-baker": 1.8,
+    # Colorado half turns: the turned sheet reaches past the default crop.
+    "crested-butte-mountain-resort": 1.8,
+    "wolf-creek-ski-area": 1.8,
+    "monarch-mountain": 1.8,
+    "arapahoe-basin": 1.8,
+    "winter-park-resort": 1.8,
+    "sunlight-mountain-resort": 1.8,
 }
 
 
@@ -2235,6 +2252,17 @@ BACK_BOWL = {
         "lon_min": -121.086,
         "lifts": ("Jupiter Express", "Southern Cross"),
     },
+    # Arapahoe Basin's back side: Montezuma Bowl (south of the Lenawee
+    # ridge, Zuma Lift) and the Beavers / Steep Gullies (west, Beavers lift).
+    # Each box is lon_min, lon_max, lat_min, lat_max on the run centroid.
+    "arapahoe-basin": {
+        "name": "Back Side",
+        "boxes": (
+            (-106.0, -105.0, 39.0, 39.6235),
+            (-106.0, -105.8815, 39.6235, 39.6350),
+        ),
+        "lifts": ("Zuma Lift", "Beavers"),
+    },
 }
 
 
@@ -2249,6 +2277,8 @@ def in_back_bowl(slug, feat, is_lift=False):
         return False
     lon = sum(p[0] for p in pts) / len(pts)
     lat = sum(p[1] for p in pts) / len(pts)
+    if "boxes" in cfg:
+        return any(a <= lon <= b and c <= lat <= d for a, b, c, d in cfg["boxes"])
     return lat < cfg["lat_max"] and lon > cfg["lon_min"]
 
 
