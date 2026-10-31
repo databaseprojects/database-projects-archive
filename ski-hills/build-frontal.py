@@ -397,9 +397,10 @@ CAMERAS = {
     # less than 41.9, which turns the drawing 40° clockwise on screen.
     # 131.9 is half a turn from the automatic 311.9: the camera stands at the
     # Bourgeau base (north-west, lowest) and looks uphill to the summits
-    # (lifts climb toward ~130). Edit this number.
+    # (lifts climb toward ~130). 146.9 is 15° further clockwise, which
+    # turns that drawing 15° counter-clockwise on screen. Edit this number.
     "banff-sunshine-village": {
-        "facing": 131.9,
+        "facing": 146.9,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
