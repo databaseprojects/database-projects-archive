@@ -15,75 +15,75 @@
   var watch = null;
   var catalogs = {
     bc: {
-      file: "hills.json?v=20261030sp70",
-      names: "names.json?v=20261030sp70",
-      index: "contours/index.json?v=20261030sp70",
+      file: "hills.json?v=20261030spmv",
+      names: "names.json?v=20261030spmv",
+      index: "contours/index.json?v=20261030spmv",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261030sp70",
-      names: "alberta-names.json?v=20261030sp70",
-      index: "contours/alberta-index.json?v=20261030sp70",
+      file: "alberta.json?v=20261030spmv",
+      names: "alberta-names.json?v=20261030spmv",
+      index: "contours/alberta-index.json?v=20261030spmv",
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261030sp70",
-      names: "quebec-names.json?v=20261030sp70",
-      index: "contours/quebec-index.json?v=20261030sp70",
+      file: "quebec.json?v=20261030spmv",
+      names: "quebec-names.json?v=20261030spmv",
+      index: "contours/quebec-index.json?v=20261030spmv",
       label: "Quebec"
     },
     on: {
-      file: "ontario.json?v=20261030sp70",
-      names: "ontario-names.json?v=20261030sp70",
-      index: "contours/ontario-index.json?v=20261030sp70",
+      file: "ontario.json?v=20261030spmv",
+      names: "ontario-names.json?v=20261030spmv",
+      index: "contours/ontario-index.json?v=20261030spmv",
       label: "Ontario"
     },
     sk: {
-      file: "saskatchewan.json?v=20261030sp70",
-      names: "saskatchewan-names.json?v=20261030sp70",
-      index: "contours/saskatchewan-index.json?v=20261030sp70",
+      file: "saskatchewan.json?v=20261030spmv",
+      names: "saskatchewan-names.json?v=20261030spmv",
+      index: "contours/saskatchewan-index.json?v=20261030spmv",
       label: "Saskatchewan"
     },
     mb: {
-      file: "manitoba.json?v=20261030sp70",
-      names: "manitoba-names.json?v=20261030sp70",
-      index: "contours/manitoba-index.json?v=20261030sp70",
+      file: "manitoba.json?v=20261030spmv",
+      names: "manitoba-names.json?v=20261030spmv",
+      index: "contours/manitoba-index.json?v=20261030spmv",
       label: "Manitoba"
     },
     nb: {
-      file: "new-brunswick.json?v=20261030sp70",
-      names: "new-brunswick-names.json?v=20261030sp70",
-      index: "contours/new-brunswick-index.json?v=20261030sp70",
+      file: "new-brunswick.json?v=20261030spmv",
+      names: "new-brunswick-names.json?v=20261030spmv",
+      index: "contours/new-brunswick-index.json?v=20261030spmv",
       label: "New Brunswick"
     },
     nl: {
-      file: "newfoundland.json?v=20261030sp70",
-      names: "newfoundland-names.json?v=20261030sp70",
-      index: "contours/newfoundland-index.json?v=20261030sp70",
+      file: "newfoundland.json?v=20261030spmv",
+      names: "newfoundland-names.json?v=20261030spmv",
+      index: "contours/newfoundland-index.json?v=20261030spmv",
       label: "Newfoundland"
     },
     ns: {
-      file: "nova-scotia.json?v=20261030sp70",
-      names: "nova-scotia-names.json?v=20261030sp70",
-      index: "contours/nova-scotia-index.json?v=20261030sp70",
+      file: "nova-scotia.json?v=20261030spmv",
+      names: "nova-scotia-names.json?v=20261030spmv",
+      index: "contours/nova-scotia-index.json?v=20261030spmv",
       label: "Nova Scotia"
     },
     pe: {
-      file: "prince-edward-island.json?v=20261030sp70",
-      names: "prince-edward-island-names.json?v=20261030sp70",
-      index: "contours/prince-edward-island-index.json?v=20261030sp70",
+      file: "prince-edward-island.json?v=20261030spmv",
+      names: "prince-edward-island-names.json?v=20261030spmv",
+      index: "contours/prince-edward-island-index.json?v=20261030spmv",
       label: "Prince Edward Island"
     },
     yt: {
-      file: "yukon.json?v=20261030sp70",
-      names: "yukon-names.json?v=20261030sp70",
-      index: "contours/yukon-index.json?v=20261030sp70",
+      file: "yukon.json?v=20261030spmv",
+      names: "yukon-names.json?v=20261030spmv",
+      index: "contours/yukon-index.json?v=20261030spmv",
       label: "Yukon"
     },
     nt: {
-      file: "northwest-territories.json?v=20261030sp70",
-      names: "northwest-territories-names.json?v=20261030sp70",
-      index: "contours/northwest-territories-index.json?v=20261030sp70",
+      file: "northwest-territories.json?v=20261030spmv",
+      names: "northwest-territories-names.json?v=20261030spmv",
+      index: "contours/northwest-territories-index.json?v=20261030spmv",
       label: "Northwest Territories"
     }
   };
@@ -127,47 +127,47 @@
     tn: "Tennessee"
   };
   var US_FILE_VERSION = {
-    ca: "20261030sp70",
-    co: "20261030sp70",
-    id: "20261030sp70",
-    ma: "20261030sp70",
-    md: "20261030sp70",
-    me: "20261030sp70",
-    mi: "20261030sp70",
-    mt: "20261030sp70",
-    nh: "20261030sp70",
-    nj: "20261030sp70",
-    nm: "20261030sp70",
-    ny: "20261030sp70",
-    or: "20261030sp70",
-    pa: "20261030sp70",
-    vt: "20261030sp70",
-    wa: "20261030sp70",
-    wi: "20261030sp70",
-    wv: "20261030sp70",
-    wy: "20261030sp70",
-    mn: "20261030sp70",
-    az: "20261030sp70",
-    nv: "20261030sp70",
-    sd: "20261030sp70",
-    ut: "20261030sp70",
-    ct: "20261030sp70",
-    ri: "20261030sp70",
-    va: "20261030sp70",
-    oh: "20261030sp70",
-    il: "20261030sp70",
-    in: "20261030sp70",
-    ia: "20261030sp70",
-    nd: "20261030sp70",
-    mo: "20261030sp70",
-    nc: "20261030sp70",
-    al: "20261030sp70",
-    tn: "20261030sp70"
+    ca: "20261030spmv",
+    co: "20261030spmv",
+    id: "20261030spmv",
+    ma: "20261030spmv",
+    md: "20261030spmv",
+    me: "20261030spmv",
+    mi: "20261030spmv",
+    mt: "20261030spmv",
+    nh: "20261030spmv",
+    nj: "20261030spmv",
+    nm: "20261030spmv",
+    ny: "20261030spmv",
+    or: "20261030spmv",
+    pa: "20261030spmv",
+    vt: "20261030spmv",
+    wa: "20261030spmv",
+    wi: "20261030spmv",
+    wv: "20261030spmv",
+    wy: "20261030spmv",
+    mn: "20261030spmv",
+    az: "20261030spmv",
+    nv: "20261030spmv",
+    sd: "20261030spmv",
+    ut: "20261030spmv",
+    ct: "20261030spmv",
+    ri: "20261030spmv",
+    va: "20261030spmv",
+    oh: "20261030spmv",
+    il: "20261030spmv",
+    in: "20261030spmv",
+    ia: "20261030spmv",
+    nd: "20261030spmv",
+    mo: "20261030spmv",
+    nc: "20261030spmv",
+    al: "20261030spmv",
+    tn: "20261030spmv"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
-      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261030sp70"),
-      index: "contours/usa-index.json?v=20261030sp70",
+      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261030spmv"),
+      index: "contours/usa-index.json?v=20261030spmv",
       label: US_STATE_NAMES[id]
     };
   });
@@ -196,26 +196,26 @@
     ua: "Ukraine"
   };
   var EU_FILE_VERSION = {
-    fr: "20261030sp70",
-    ch: "20261030sp70",
-    at: "20261030sp70",
-    it: "20261030sp70",
-    no: "20261030sp70",
-    se: "20261030sp70",
-    fi: "20261030sp70",
-    es: "20261030sp70",
-    ad: "20261030sp70",
-    rs: "20261030sp70",
-    ua: "20261030sp70",
-    sk: "20261030sp70",
-    bg: "20261030sp70",
-    de: "20261030sp70",
-    cz: "20261030sp70"
+    fr: "20261030spmv",
+    ch: "20261030spmv",
+    at: "20261030spmv",
+    it: "20261030spmv",
+    no: "20261030spmv",
+    se: "20261030spmv",
+    fi: "20261030spmv",
+    es: "20261030spmv",
+    ad: "20261030spmv",
+    rs: "20261030spmv",
+    ua: "20261030spmv",
+    sk: "20261030spmv",
+    bg: "20261030spmv",
+    de: "20261030spmv",
+    cz: "20261030spmv"
   };
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
-      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261030sp70"),
-      index: "contours/europe-index.json?v=20261030sp70",
+      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261030spmv"),
+      index: "contours/europe-index.json?v=20261030spmv",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -627,10 +627,11 @@
     }).map(function (run) {
       var pts = run && run.p ? run.p : run;
       if (!pts) return "";
-      return '<polyline class="' + runClass(run && run.d) + '" points="' + pts + '"></polyline>';
+      return '<polyline class="' + runClass(run && run.d) + (run && run.b ? " sh-bowl" : "") + '" points="' + pts + '"></polyline>';
     }).join("");
-    var lifts = (hill.lifts || []).map(function (pts) {
-      return '<polyline class="sh-lift" points="' + pts + '"></polyline>';
+    var bowlLifts = hill.bowlLifts || [];
+    var lifts = (hill.lifts || []).map(function (pts, i) {
+      return '<polyline class="sh-lift' + (bowlLifts.indexOf(i) >= 0 ? " sh-bowl" : "") + '" points="' + pts + '"></polyline>';
     }).join("");
     var holder = document.createElement("div");
     holder.innerHTML = '<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + runs + lifts + "</svg>";
@@ -694,7 +695,7 @@
     if (hill._filePromise) return hill._filePromise;
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
-      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261030sp70").then(function (res) {
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261030spmv").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
       }),
@@ -812,7 +813,7 @@
     return list.indexOf(side) < 0 ? list[0] : side;
   }
 
-  var ASSET_V = "20261030sp70";
+  var ASSET_V = "20261030spmv";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1587,6 +1588,7 @@
     document.body.appendChild(lb);
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
+    if (lb._svg && card._hill && card._hill._bowlOn) lb._svg.classList.add("sh-bowl-on");
     if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
@@ -1859,7 +1861,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
-    boundariesPromise = fetch("boundaries.json?v=20261030sp70").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261030spmv").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -2952,6 +2954,7 @@
     setPlanHidden(svg, false);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
   }
 
   function paintRaised(svg, hill, lines, shift) {
@@ -2959,6 +2962,7 @@
     mountFrontal(svg, frontalArt(hill), hill);
     setPlanHidden(svg, true);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+    if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
   }
 
   function ensureFrontal(hill, done) {
@@ -4009,6 +4013,39 @@
         refreshMockArt(hill.el);
       });
     }
+    var bowl = null;
+    if (hill.bowl) {
+      if (hill._bowlOn == null) hill._bowlOn = false;
+      bowl = document.createElement("label");
+      bowl.className = "sh-tree-switch sh-bowl-switch";
+      var bowlBox = document.createElement("input");
+      bowlBox.type = "checkbox";
+      bowlBox.className = "sh-tree-switch-input";
+      bowlBox.setAttribute("role", "switch");
+      bowlBox.setAttribute("aria-label", hill.bowl);
+      bowlBox.checked = !!hill._bowlOn;
+      var bowlTrack = document.createElement("span");
+      bowlTrack.className = "sh-tree-switch-track";
+      bowlTrack.setAttribute("aria-hidden", "true");
+      var bowlKnob = document.createElement("span");
+      bowlKnob.className = "sh-tree-switch-knob";
+      bowlTrack.appendChild(bowlKnob);
+      var bowlText = document.createElement("span");
+      bowlText.className = "sh-tree-switch-label";
+      bowlText.textContent = hill.bowl;
+      bowl.appendChild(bowlBox);
+      bowl.appendChild(bowlTrack);
+      bowl.appendChild(bowlText);
+      bowl.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      bowlBox.addEventListener("change", function () {
+        hill._bowlOn = !!bowlBox.checked;
+        var lb = document.getElementById("sh-lb");
+        if (lb && lb._svg) lb._svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
+        refreshMockArt(hill.el);
+      });
+    }
     var views = sideViews(hill);
     var sideRow = null;
     var sideBtns = [];
@@ -4054,6 +4091,7 @@
     wrap.appendChild(group);
     if (sideRow) wrap.appendChild(sideRow);
     if (trees) wrap.appendChild(trees);
+    if (bowl) wrap.appendChild(bowl);
     wrap._sync = sync;
     return wrap;
   }
@@ -4109,6 +4147,7 @@
     var svg = mockCardSvg(card._hill);
     if (!svg) return;
     if (card._hill && card._hill._treesOn) svg.classList.add("sh-trees-on");
+    if (card._hill && card._hill._bowlOn) svg.classList.add("sh-bowl-on");
     svg.setAttribute("draggable", "false");
     svg.style.width = "100%";
     svg.style.height = "100%";
@@ -4143,7 +4182,7 @@
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
-  fetch("hill-index.json?v=20261030sp70").then(function (res) {
+  fetch("hill-index.json?v=20261030spmv").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
