@@ -148,6 +148,10 @@ FLOATING_HORIZON = {
     # floating horizon at all. 3.0 px still left most crossings; 1.0 px
     # hides them while the corner contours stay full.
     "mt-baker": 1.0,
+    # Alta, zoomed sheet at facing 149.2. Whole sheet, 1 px, as Sunshine:
+    # back slopes were drawing through the top ridges and the bottom
+    # ridges with no horizon pass at all.
+    "alta-ski-area": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -264,6 +268,8 @@ CONTOUR_HOLD = {
 CONTOUR_DRAW = {
     # Sunshine. Drops specks under 25 px left by the 1 px horizon.
     "banff-sunshine-village": 25.0,
+    # Alta. Same floor after its 1 px horizon.
+    "alta-ski-area": 25.0,
     "mt-bachelor": MIN_RUN,
     # Whistler keeps the 12 px floor so small rings still draw.
     "whistler-blackcomb": MIN_RUN,
@@ -282,6 +288,8 @@ CONTOUR_CLEAR_JOIN = {
     # Sunshine replaces its old 100 px blind hold, which redrew hidden
     # stretches straight through the bottom and top ridges.
     "banff-sunshine-village": 400.0,
+    # Alta. Same rule: a hidden gap is redrawn only where nothing is crossed.
+    "alta-ski-area": 400.0,
 }
 # Bird's-eye runs. Px under the crest of the drawn contours nearer than a
 # run sample. Past that the sample counts as behind a ridge and draws at
@@ -348,12 +356,14 @@ CONTOUR_KEEP = {
     # Whistler has the same 100 px hold, so the same keep: a drawn
     # piece of 12 px or more stays drawn.
     "whistler-blackcomb": MIN_RUN,
+    # Alta. A drawn piece of 12 px or more stays drawn.
+    "alta-ski-area": MIN_RUN,
 }
 # Bird's-eye only. A gap the CONTOUR_HOLD would fill stays hidden when
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area"}
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
 # top-left ridge were drawing the far slope through the crest. The later
@@ -768,6 +778,13 @@ CAMERAS = {
     "jay-peak-resort": {"facing": 242.0, "post_scale": 0.95},
     "mad-river-glen": {"facing": 254.2, "post_scale": 0.95},
     "blue-mountain-ski-resort": {"facing": 228.1, "post_scale": 0.95},
+    # Zoomed out x1.12 from the published sheet (2026-10-30): the published
+    # scale divided by 1.12.
+    "snowbird": {"facing": 339.6, "frame_scale": 0.931},
+    "snowbasin-resort": {"facing": 236.5, "frame_scale": 0.866},
+    "alta-ski-area": {"facing": 149.2, "frame_scale": 0.908},
+    # Sugarloaf keeps its published scale and facing.
+    "sugarloaf": {"facing": 191.2, "frame_scale": 0.784},
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
@@ -1014,7 +1031,18 @@ DEM_PAD = {
     # Pajarito (facing 214.2). The top-left corner and the bottom-right
     # corner were past the DEM crop, so contours and trees stopped short.
     "pajarito-mountain": 1.8,
+    # Snowbird, Snowbasin and Alta, zoomed out x1.12: the wider sheet
+    # reaches past the 1.0 crop at the corners.
+    "snowbird": 1.8,
+    "snowbasin-resort": 1.8,
+    "alta-ski-area": 1.8,
 }
+
+
+# Hills whose bird's-eye DEM skips MRDEM. Sugarloaf (Maine, facing 191):
+# MRDEM is blank south and east of the border, about a third of the crop,
+# which is the top and middle-left of the sheet, so no contours drew there.
+DEM_COPERNICUS = {"sugarloaf"}
 
 
 def wide_box(runs, lifts):
@@ -1096,7 +1124,9 @@ def ensure_dem(box):
         return
     minlon, minlat, maxlon, maxlat = box
     # Europe sits east of 35°W. Canada and the United States still try MRDEM first.
-    if minlon <= -35:
+    # MRDEM stops a little past the border. A hill in DEM_COPERNICUS goes
+    # straight to Copernicus, which covers both sides.
+    if minlon <= -35 and not (GEOM is not None and GEOM.name[: -len("-geom.json")] in DEM_COPERNICUS):
         src = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
         try:
             gdal.Warp(
