@@ -699,6 +699,10 @@ CAMERAS = {
     "stevens-pass": {
         "facing": 116.9,
     },
+    # Pomerelle only. The automatic render faced 32.5; turned 180°.
+    "pomerelle-mountain-resort": {
+        "facing": 212.5,
+    },
     "white-pass-ski-area": {
         "facing": 107.4,
         "elevation": 15.0,
