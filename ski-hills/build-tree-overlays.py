@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
-The wash is four hard-edge density bands of the same green (#3a6b42), opacities
+The wash is four hard-edge density bands of the same green (#315b38), opacities
 0.08 / 0.10 / 0.12 / 0.15. Density is a summer Sentinel-2 canopy concentration
 on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
 belongs to one band. Kimberley's published wash is left as it is.
@@ -1139,7 +1139,7 @@ def frontal_wash_markup(bands):
     for b in bands:
         parts.append(
             f'<g class="sh-frontal-tree-band sh-frontal-tree-band-{b["name"]}">'
-            f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="#3a6b42" '
+            f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="#315b38" '
             f'fill-opacity="{b["opacity"]:.2f}" fill-rule="evenodd" stroke="none"/>'
             f"</g>"
         )
