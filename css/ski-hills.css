@@ -426,10 +426,11 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1)) !important;
 }
 
-/* Bird's-eye contours 20% lighter than the baked stroke-opacity
-   (0.240-0.249 becomes 0.192-0.199). opacity multiplies with it. */
+/* Bird's-eye contours 32% lighter than the baked stroke-opacity
+   (0.240-0.249 becomes 0.163-0.169). opacity multiplies with it.
+   Was 0.8; 15% less is 0.68. */
 .sh-lb .sh-frontal-contour {
-  opacity: 0.8;
+  opacity: 0.68;
   stroke-width: 0.65px !important;
   vector-effect: non-scaling-stroke !important;
 }
@@ -1369,3 +1370,12 @@ html.sh-prints-off .sh-cart-panel {
   display: none;
 }
 
+
+/* Tree wash green ~15% darker (#3a6b42 -> #315b38). Overlay SVGs still bake
+   #3a6b42; this wins over the fill attribute. Band opacities are untouched. */
+.sh-frontal-tree-wash,
+.sh-plan-tree-wash,
+.sh-frontal-trees [fill="#3a6b42"],
+svg [fill="#3a6b42"] {
+  fill: #315b38 !important;
+}
