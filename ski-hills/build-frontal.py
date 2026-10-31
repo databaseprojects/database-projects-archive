@@ -260,6 +260,16 @@ CONTOUR_DRAW = {
     # Whistler keeps the 12 px floor so small rings still draw.
     "whistler-blackcomb": MIN_RUN,
 }
+# Bird's-eye only. Shortest visible contour piece the hold may hide, px.
+# Bachelor's 100 px hold joins skyline grazes, but the same hold also
+# hid every visible piece shorter than 100 px. Near the summit the top
+# five contours alternate short drawn and short hidden pieces, so the
+# hold wiped out about half of what was actually in view and left blank
+# gaps under the peak. With this set, the hold still fills gaps under
+# 100 px, and a drawn piece of 12 px or more stays drawn.
+CONTOUR_KEEP = {
+    "mt-bachelor": MIN_RUN,
+}
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
 # top-left ridge were drawing the far slope through the crest. The later
@@ -1188,7 +1198,7 @@ def _path_dist(pts):
     return dist
 
 
-def solid_flags(flags, pts, min_run=None):
+def solid_flags(flags, pts, min_run=None, keep_visible=None):
     """Hold visibility so a contour is not chopped into dashes.
 
     A one-sample spike is skyline noise. A hidden gap or a visible piece
@@ -1196,6 +1206,10 @@ def solid_flags(flags, pts, min_run=None):
     drawn, short pieces stay hidden, and a long occluded run ends where
     it actually goes behind the nearer slope. The hold is MIN_RUN unless
     a hill asks for a longer contour join.
+
+    keep_visible, when set, is the shortest visible piece the hold may
+    hide. A longer join then only fills hidden gaps; it does not also
+    erase the drawn pieces between them.
     """
     hold = MIN_RUN if min_run is None else min_run
     n = len(flags)
@@ -1221,7 +1235,8 @@ def solid_flags(flags, pts, min_run=None):
         changed = False
         new = flags[:]
         for ri, (s, e, flag, length) in enumerate(runs):
-            if length >= hold:
+            limit = keep_visible if (keep_visible is not None and not flag) else hold
+            if length >= limit:
                 continue
             left = runs[ri - 1] if ri else None
             right = runs[ri + 1] if ri + 1 < len(runs) else None
@@ -1384,7 +1399,7 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None):
         _release_short_horizon_runs(chunks, marked, min_run)
 
 
-def contour_lines(chunks, min_run=None, min_draw=None):
+def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None):
     """Visible runs after the short-gap hold. One entry per drawn stroke."""
     hold = MIN_RUN if min_run is None else min_run
     draw_at = hold if min_draw is None else min_draw
@@ -1392,7 +1407,7 @@ def contour_lines(chunks, min_run=None, min_draw=None):
     seen = set()
     kept = 0
     for chunk in chunks:
-        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk, hold)
+        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk, hold, keep_visible)
         part = []
         depth = None
 
@@ -1429,7 +1444,7 @@ def contour_lines(chunks, min_run=None, min_draw=None):
     return drawn, kept
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None):
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -1504,7 +1519,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             chunk.append((px, py, yr, hide))
         flush()
 
-    before, before_kept = contour_lines(chunks, contour_hold, contour_draw)
+    before, before_kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep)
     print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
 
     def tight_hide(px, py, spec=tight):
@@ -1533,7 +1548,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         return before, len(before)
     if float_tol is not None:
         apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
-    drawn, kept = contour_lines(chunks, contour_hold, contour_draw)
+    drawn, kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep)
     before_bag = {}
     for _yr, line in before:
         for px, py in line:
@@ -2331,6 +2346,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         else None,
         contour_hold=CONTOUR_HOLD.get(_hkey),
         contour_draw=CONTOUR_DRAW.get(_hkey),
+        contour_keep=CONTOUR_KEEP.get(_hkey),
         tight=CONTOUR_TIGHT.get(_hkey),
         depth_hide=depth_hide,
     )
