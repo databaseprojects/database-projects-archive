@@ -985,6 +985,9 @@ DEM_PAD = {
     # thin strip along the top were past the DEM crop, so contours and the
     # tree wash stopped short there.
     "lost-trail": 1.8,
+    # Pajarito (facing 214.2). The top-left corner and the bottom-right
+    # corner were past the DEM crop, so contours and trees stopped short.
+    "pajarito-mountain": 1.8,
 }
 
 
