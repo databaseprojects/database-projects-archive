@@ -134,6 +134,9 @@ FLOATING_HORIZON = {
     "banff-sunshine-village": 3.5,
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
     "mt-bachelor": 3.5,
+    # Whitewater at facing 43.5, bottom-left only (HORIZON_REGION). Back
+    # slopes behind the near foreground ridge were stacking on its face.
+    "whitewater-ski-resort": 3.5,
     # Whistler. The 3 px pass from PR #306, kept. On its own it cut the
     # far ridges into dashes; HORIZON_MIN_RUN and CONTOUR_HOLD join them.
     "whistler-blackcomb": 3.0,
@@ -158,6 +161,8 @@ HORIZON_MIN_RUN = {
     "banff-sunshine-village": 80,
     # Bachelor. Medium grazes stay drawn so the elevation lines join.
     "mt-bachelor": 80,
+    # Whitewater bottom-left. Only a 30+ sample stretch behind the ridge hides.
+    "whitewater-ski-resort": 30,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -181,6 +186,11 @@ HORIZON_REGION = {
     # Sunshine. Only the left half, where the elevation lines were breaking.
     "banff-sunshine-village": {
         "x": ((-400.0, 500.0),),
+    },
+    # Whitewater at facing 43.5. Bottom-left corner only.
+    "whitewater-ski-resort": {
+        "x": ((-400.0, 300.0),),
+        "y": ((780.0, 1400.0),),
     },
 }
 
@@ -711,12 +721,13 @@ CAMERAS = {
     },
     # Whitewater only. Automatic facing was 88.5 and orient() kept it.
     # 58.5 is 30° less, which turns the drawing 30° clockwise on screen.
-    # 148.5 is 90° further clockwise, which turns that drawing 90°
-    # counter-clockwise. Its old screen-space horizon bands (top-left and
+    # 43.5 is 15° less than 58.5, which turns the drawing 15° clockwise
+    # on screen. Its old screen-space horizon bands (top-left and
     # bottom-left corners) no longer matched the turned sheet and cut the
-    # top-left ridges, so Whitewater is back on the plain skyline test.
+    # top-left ridges, so they were removed. A bottom-left-only pass (below)
+    # hides back slopes stacked behind the near foreground ridge.
     "whitewater-ski-resort": {
-        "facing": 148.5,
+        "facing": 43.5,
     },
     # Castle only. Elevation 18 looks down a little more steeply than the
     # usual 15, the same bump as Panorama, so the ski lines clear the
@@ -854,7 +865,7 @@ DEM_PAD = {
     "mt-norquay": 1.8,
     # Mount Washington front. The top-right corner was past the DEM crop.
     "mount-washington-alpine-resort": 1.8,
-    # Whitewater after the 90° turn (facing 148.5). The bottom-left corner
+    # Whitewater (facing 43.5). The bottom-left corner
     # was past the DEM crop, so its contours stopped short.
     "whitewater-ski-resort": 1.8,
 }
