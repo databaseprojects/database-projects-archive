@@ -836,6 +836,8 @@ DEM_PAD = {
     "white-pass-ski-area": 1.8,
     # Norquay's bottom-right corner was bare.
     "mt-norquay": 1.8,
+    # Mount Washington front. The top-right corner was past the DEM crop.
+    "mount-washington-alpine-resort": 1.8,
 }
 
 
