@@ -757,6 +757,16 @@ CAMERAS = {
     # the centre. The automatic camera stays.
     "winter-park-resort": {"frame_scale": 0.95},
     "sunlight-mountain-resort": {"frame_scale": 0.95},
+    # New England batch (US sheets, --edge-margin 70). post_scale 0.95 pulls
+    # the sheet back 5% after the margin fit. Killington also moves up 60
+    # units (6% of the frame). Gunstock is locked to the plan's north-up
+    # facing (the automatic camera faced 208.4).
+    "gunstock-recreation-area": {"facing": 0.0, "post_scale": 0.95},
+    "stratton-mountain-resort": {"facing": 230.9, "post_scale": 0.95},
+    "killington-resort": {"facing": 250.5, "post_scale": 0.95, "pan_y": -60.0},
+    "jay-peak-resort": {"facing": 242.0, "post_scale": 0.95},
+    "mad-river-glen": {"facing": 254.2, "post_scale": 0.95},
+    "blue-mountain-ski-resort": {"facing": 228.1, "post_scale": 0.95},
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
@@ -964,6 +974,13 @@ def load_geom():
 # bird's-eye is not. Fernie's top-right, Marmot's top-left, and White Pass's
 # top edge need 1.8 to reach the frame, up to the edge fade.
 DEM_PAD = {
+    # New England batch and Blue Mountain: zoomed-out sheets reach past the default crop.
+    "gunstock-recreation-area": 1.8,
+    "stratton-mountain-resort": 1.8,
+    "killington-resort": 1.8,
+    "jay-peak-resort": 1.8,
+    "mad-river-glen": 1.8,
+    "blue-mountain-ski-resort": 1.8,
     "fernie-alpine-resort": 1.8,
     "marmot-basin": 1.8,
     "white-pass-ski-area": 1.8,
@@ -2296,7 +2313,7 @@ def in_back_bowl(slug, feat, is_lift=False):
     return lat < cfg["lat_max"] and lon > cfg["lon_min"]
 
 
-def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False):
+def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False, post_scale=1.0, pan_y=0.0):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)
@@ -2573,6 +2590,19 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     return _tx + (px - _cx) * _s, _ty + (py - _cy) * _s
 
                 fit_label += " margin %.3f" % margin_s
+
+    # Zoom-out and pan applied after the US edge-margin fit, so the margin
+    # fit cannot undo them. post_scale < 1 pulls the sheet back around the
+    # frame centre (500, 440, the area above the caption); pan_y < 0 moves
+    # the drawing up. Set per hill in CAMERAS.
+    if post_scale != 1 or pan_y:
+        base_paper = paper
+
+        def paper(sx, sy, _base=base_paper, _s=post_scale, _dy=pan_y):
+            px, py = _base(sx, sy)
+            return 500.0 + (px - 500.0) * _s, 440.0 + (py - 440.0) * _s + _dy
+
+        fit_label += " post %.3f pan %.1f" % (post_scale, pan_y)
 
     facing_deg = math.degrees(ang) % 360.0
     sun = resolve_sun(facing_deg, sun)
@@ -3252,6 +3282,8 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
         full_ground=cam.get("full_ground", False),
         frame_scale=cam.get("frame_scale", 1.0),
         edge_margin=edge_margin,
+        post_scale=cam.get("post_scale", 1.0),
+        pan_y=cam.get("pan_y", 0.0),
         frame_runs=frame_runs,
         ridge_fade=cam.get("ridge_fade", RIDGE_FADE),
         lift_width=cam.get("lift_width", LIFT_W),
