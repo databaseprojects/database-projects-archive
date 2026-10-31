@@ -158,8 +158,6 @@ HORIZON_MIN_RUN = {
     "banff-sunshine-village": 80,
     # Bachelor. Medium grazes stay drawn so the elevation lines join.
     "mt-bachelor": 80,
-    # Whistler. Same as Bachelor: medium grazes stay drawn.
-    "whistler-blackcomb": 80,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -234,9 +232,10 @@ CONTOUR_HOLD = {
     "heavenly-mountain-resort": 60.0,
     # Whistler bird's-eye. The top-right ridges and the centre-left ridge
     # were broken by short skyline grazes, not by missing elevation: with
-    # occlusion off every line there runs unbroken. Top-right had 350 loose
-    # ends and centre-left 63; 100 px brings them to 104 and 4. A longer
-    # hide is a real back ridge and still ends the stroke.
+    # occlusion off every line there runs unbroken. 100 px alone (#314)
+    # joined them but drew back faces across the ridges, so CONTOUR_NO_CROSS
+    # refuses any join that would cross a drawn contour, and Whistler's
+    # HORIZON_MIN_RUN 80 release was dropped for the same reason.
     "whistler-blackcomb": 100.0,
 }
 # Shortest stroke to draw, when that should not be the hold above.
@@ -258,7 +257,15 @@ CONTOUR_DRAW = {
 # 100 px, and a drawn piece of 12 px or more stays drawn.
 CONTOUR_KEEP = {
     "mt-bachelor": MIN_RUN,
+    # Whistler has the same 100 px hold, so the same keep: a drawn
+    # piece of 12 px or more stays drawn.
+    "whistler-blackcomb": MIN_RUN,
 }
+# Bird's-eye only. A gap the CONTOUR_HOLD would fill stays hidden when
+# the bridged piece would cross a contour the 12 px pass draws, which is
+# a back face showing through a ridge. Whistler's 100 px hold joined
+# the top-right and centre-left ridges but drew back faces across them.
+CONTOUR_NO_CROSS = {"whistler-blackcomb"}
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
 # top-left ridge were drawing the far slope through the crest. The later
@@ -1388,15 +1395,109 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None):
         _release_short_horizon_runs(chunks, marked, min_run)
 
 
-def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None):
+def _join_blocked(chunks, hold, keep_visible):
+    """Per-chunk flags where a long hold may not bridge across a contour.
+
+    The base pass uses MIN_RUN. A gap the longer hold fills is only kept
+    filled when the bridged piece crosses no contour drawn by the base
+    pass. A gap that would cross one is a back face showing through a
+    ridge, so it stays hidden.
+    """
+    from shapely.geometry import LineString
+    from shapely.strtree import STRtree
+
+    base_flags = []
+    segs = []
+    owner = []
+    for ci, chunk in enumerate(chunks):
+        raw = [hide for (_px, _py, _yr, hide) in chunk]
+        base = solid_flags(raw, chunk, MIN_RUN)
+        base_flags.append(base)
+        run = []
+        for (px, py, _yr, _h), flag in zip(chunk, base):
+            if flag:
+                if len(run) >= 2:
+                    segs.append(LineString(run))
+                    owner.append(ci)
+                run = []
+            else:
+                run.append((px, py))
+        if len(run) >= 2:
+            segs.append(LineString(run))
+            owner.append(ci)
+    tree = STRtree(segs) if segs else None
+    out = []
+    cands = []
+    for ci, chunk in enumerate(chunks):
+        raw = [hide for (_px, _py, _yr, hide) in chunk]
+        joined = solid_flags(raw, chunk, hold, keep_visible)
+        base = base_flags[ci]
+        n = len(chunk)
+        i = 0
+        while i < n:
+            if base[i] and not joined[i]:
+                j = i
+                while j < n and base[j] and not joined[j]:
+                    j += 1
+                lo, hi = max(i - 1, 0), min(j, n - 1)
+                pts = [(chunk[k][0], chunk[k][1]) for k in range(lo, hi + 1)]
+                if len(pts) >= 2:
+                    cands.append((LineString(pts), ci, i, j))
+                i = j
+            else:
+                i += 1
+        out.append(joined)
+    # Shortest bridges first. An accepted bridge also blocks a later one,
+    # so two filled gaps cannot cross each other either.
+    cands.sort(key=lambda c: c[0].length)
+    cell = 40.0
+    grid = {}
+    blocked = 0
+    for bridge, ci, i, j in cands:
+        bad = False
+        if tree is not None:
+            for k in tree.query(bridge):
+                if owner[k] != ci and bridge.crosses(segs[k]):
+                    bad = True
+                    break
+        x0, y0, x1, y1 = bridge.bounds
+        keys = [(gx, gy) for gx in range(int(x0 // cell), int(x1 // cell) + 1) for gy in range(int(y0 // cell), int(y1 // cell) + 1)]
+        if not bad:
+            seen_ids = set()
+            for key in keys:
+                for other, oc in grid.get(key, ()):
+                    if id(other) in seen_ids or oc == ci:
+                        continue
+                    seen_ids.add(id(other))
+                    if bridge.crosses(other):
+                        bad = True
+                        break
+                if bad:
+                    break
+        if bad:
+            for m in range(i, j):
+                out[ci][m] = True
+            blocked += 1
+        else:
+            for key in keys:
+                grid.setdefault(key, []).append((bridge, ci))
+    print("join_blocked", blocked)
+    return out
+
+
+def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cross=False):
     """Visible runs after the short-gap hold. One entry per drawn stroke."""
     hold = MIN_RUN if min_run is None else min_run
     draw_at = hold if min_draw is None else min_draw
     drawn = []
     seen = set()
     kept = 0
-    for chunk in chunks:
-        flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk, hold, keep_visible)
+    pre = _join_blocked(chunks, hold, keep_visible) if no_cross else None
+    for ci, chunk in enumerate(chunks):
+        if pre is not None:
+            flags = pre[ci]
+        else:
+            flags = solid_flags([hide for (_px, _py, _yr, hide) in chunk], chunk, hold, keep_visible)
         part = []
         depth = None
 
@@ -1508,7 +1609,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             chunk.append((px, py, yr, hide))
         flush()
 
-    before, before_kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep)
+    before, before_kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep, _hill in CONTOUR_NO_CROSS)
     print("occlusion", "kept", before_kept, "hidden", hidden, "lines", len(before))
 
     def tight_hide(px, py, spec=tight):
@@ -1537,7 +1638,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         return before, len(before)
     if float_tol is not None:
         apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
-    drawn, kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep)
+    drawn, kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep, _hill in CONTOUR_NO_CROSS)
     before_bag = {}
     for _yr, line in before:
         for px, py in line:
