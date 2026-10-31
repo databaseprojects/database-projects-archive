@@ -130,8 +130,11 @@ FLOATING_HORIZON = {
     "apex-mountain-resort": 3.0,
     # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
     "red-mountain-resort": 3.0,
-    # Left half only. The right side of Sunshine stays on the skyline test.
-    "banff-sunshine-village": 3.5,
+    # Sunshine, whole sheet, 1 px. Facing 146.9 put packed near faces at the
+    # bottom and the far ridges at the top; at 3.5 px, and only on the left
+    # half, back contours drew through those ridges (3,700 crossings).
+    # Gaps are rejoined by CONTOUR_CLEAR_JOIN only where nothing is crossed.
+    "banff-sunshine-village": 1.0,
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
     "mt-bachelor": 3.5,
     # Whitewater at facing 43.5, bottom-left only (HORIZON_REGION). Back
@@ -157,8 +160,6 @@ HORIZON_MIN_RUN = {
     # summit ridge and cross the front ones. 20 hides them; the short
     # grazes on the open slopes still stay one stroke.
     "kicking-horse-resort": 20,
-    # Sunshine, left half. A short graze stays one stroke.
-    "banff-sunshine-village": 80,
     # Bachelor. Medium grazes stay drawn so the elevation lines join.
     "mt-bachelor": 80,
     # Whitewater bottom-left. Only a 30+ sample stretch behind the ridge hides.
@@ -182,10 +183,6 @@ HORIZON_REGION = {
     # top-right corner. The slopes under that band are not tested.
     "red-mountain-resort": {
         "y": ((-400.0, 1000.0 / 3.0),),
-    },
-    # Sunshine. Only the left half, where the elevation lines were breaking.
-    "banff-sunshine-village": {
-        "x": ((-400.0, 500.0),),
     },
     # Whitewater at facing 43.5. Bottom-left corner only.
     "whitewater-ski-resort": {
@@ -228,8 +225,6 @@ MIN_RUN = 12.0
 CONTOUR_HOLD = {
     # Bachelor. 40 px still left medium gaps. 100 px joins those grazes.
     "mt-bachelor": 100.0,
-    # Sunshine. The left and top-left slopes were shattering on short dips.
-    "banff-sunshine-village": 100.0,
     # Revelstoke. Keeps the top-left ridge line one stroke between real hides.
     "revelstoke-mountain-resort": 60.0,
     # Fernie. 60 px pulls the upper ridge back into one stroke. The tight
@@ -254,6 +249,8 @@ CONTOUR_HOLD = {
 # 76 px around the tip — never reached the sheet. The join stays 100.
 # A real ring is drawn at the same 12 px floor as every other hill.
 CONTOUR_DRAW = {
+    # Sunshine. Drops specks under 25 px left by the 1 px horizon.
+    "banff-sunshine-village": 25.0,
     "mt-bachelor": MIN_RUN,
     # Whistler keeps the 12 px floor so small rings still draw.
     "whistler-blackcomb": MIN_RUN,
@@ -265,6 +262,74 @@ CONTOUR_DRAW = {
 # hold wiped out about half of what was actually in view and left blank
 # gaps under the peak. With this set, the hold still fills gaps under
 # 100 px, and a drawn piece of 12 px or more stays drawn.
+# Bird's-eye only. Px. After the floating horizon, a hidden gap up to
+# this long is drawn again only when it would cross no drawn contour.
+# See join_clear_gaps.
+CONTOUR_CLEAR_JOIN = {
+    # Sunshine replaces its old 100 px blind hold, which redrew hidden
+    # stretches straight through the bottom and top ridges.
+    "banff-sunshine-village": 400.0,
+}
+# Bird's-eye runs. Px under the crest of the drawn contours nearer than a
+# run sample. Past that the sample counts as behind a ridge and draws at
+# the hill's ridge_fade opacity; nothing is deleted. The 40 m skyline test
+# misses a low ridge close in front of a run.
+RUN_CONTOUR_HORIZON = {
+    # Sunshine. The green run at the bottom left passes behind a low ridge.
+    "banff-sunshine-village": 1.0,
+}
+LAST_CONTOUR_CHUNKS = []
+
+
+class ContourCrest:
+    """Screen crest of drawn contour samples, snapshotted every 6 m of depth."""
+
+    def __init__(self, chunks, col_of, step=6.0):
+        self.col_of = col_of
+        cols = col_of(1e9) + 1
+        pts = []
+        for chunk in chunks:
+            for k, (px, py, yr, hide) in enumerate(chunk):
+                if hide:
+                    continue
+                prev = chunk[k - 1] if k and not chunk[k - 1][3] else None
+                pts.append((yr, px, py, prev))
+        pts.sort(key=lambda t: t[0])
+        horizon = [1e9] * cols
+        self.keys = []
+        self.snaps = []
+        self.step = step
+        cur = None
+
+        def paint(px, py):
+            c = col_of(px)
+            if py < horizon[c]:
+                horizon[c] = py
+
+        for yr, ax, ay, prev in pts:
+            key = int(yr // step)
+            if key != cur:
+                self.keys.append(key * step)
+                self.snaps.append(horizon[:])
+                cur = key
+            paint(ax, ay)
+            if prev is not None and math.hypot(prev[0] - ax, prev[1] - ay) <= 26.0:
+                n = max(1, abs(col_of(prev[0]) - col_of(ax)))
+                for k in range(1, n):
+                    t = k / n
+                    paint(ax + (prev[0] - ax) * t, ay + (prev[1] - ay) * t)
+
+    def hides(self, px, py, yr, tol):
+        # Contours at least one depth step nearer than this point.
+        idx = bisect.bisect_right(self.keys, yr - self.step) - 1
+        if idx < 0:
+            return False
+        crest = self.snaps[idx]
+        c = self.col_of(px)
+        for j in (c - 1, c, c + 1):
+            if 0 <= j < len(crest) and crest[j] < 1e8 and py > crest[j] + tol:
+                return True
+        return False
 CONTOUR_KEEP = {
     "mt-bachelor": MIN_RUN,
     # Whistler has the same 100 px hold, so the same keep: a drawn
@@ -1544,7 +1609,76 @@ def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cro
     return drawn, kept
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None):
+def _seg_cross(a, b, c, d):
+    def o(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    return o(a, b, c) * o(a, b, d) < 0 and o(c, d, a) * o(c, d, b) < 0
+
+
+def join_clear_gaps(chunks, hold, max_gap, keep_visible=None):
+    """Draw a hidden gap again when drawing it would cross no visible contour.
+
+    Two contours of different heights can never both be seen at one screen
+    point, so a gap that would cross a drawn contour is a real hide behind
+    a nearer ridge and stays hidden. A gap that crosses nothing is a graze
+    and is drawn, so the line stays one stroke without clipping a ridge.
+    Only interior gaps up to max_gap px, between two drawn pieces of the
+    same contour, are tested.
+    """
+    cell = 20.0
+    grid = {}
+    flags_all = []
+    for ci, chunk in enumerate(chunks):
+        flags = solid_flags([h for (_x, _y, _z, h) in chunk], chunk, hold, keep_visible)
+        flags_all.append(flags)
+        for pi in range(len(chunk) - 1):
+            if flags[pi] or flags[pi + 1]:
+                continue
+            a = chunk[pi][:2]
+            b = chunk[pi + 1][:2]
+            for gx in range(int(min(a[0], b[0]) // cell), int(max(a[0], b[0]) // cell) + 1):
+                for gy in range(int(min(a[1], b[1]) // cell), int(max(a[1], b[1]) // cell) + 1):
+                    grid.setdefault((gx, gy), []).append((ci, pi, a, b))
+
+    def crosses(ci, base, pts):
+        for k in range(len(pts) - 1):
+            a, b = pts[k], pts[k + 1]
+            for gx in range(int(min(a[0], b[0]) // cell), int(max(a[0], b[0]) // cell) + 1):
+                for gy in range(int(min(a[1], b[1]) // cell), int(max(a[1], b[1]) // cell) + 1):
+                    for oc, opi, c, d in grid.get((gx, gy), ()):
+                        if oc == ci and abs(opi - (base + k)) <= 1:
+                            continue
+                        if _seg_cross(a, b, c, d):
+                            return True
+        return False
+
+    joined = 0
+    for ci, chunk in enumerate(chunks):
+        flags = flags_all[ci]
+        n = len(flags)
+        i = 0
+        while i < n:
+            if not flags[i]:
+                i += 1
+                continue
+            s = i
+            while i < n and flags[i]:
+                i += 1
+            e = i
+            if s == 0 or e >= n:
+                continue
+            pts = [p[:2] for p in chunk[s - 1:e + 1]]
+            length = sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(pts, pts[1:]))
+            if length > max_gap or crosses(ci, s - 1, pts):
+                continue
+            for pi in range(s, e):
+                px, py, yr, _h = chunk[pi]
+                chunk[pi] = (px, py, yr, False)
+            joined += 1
+    return joined
+
+
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None, clear_join=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -1648,6 +1782,9 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         return before, len(before)
     if float_tol is not None:
         apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
+    if clear_join is not None:
+        print("clearjoin", "max_gap", clear_join, "joined",
+              join_clear_gaps(chunks, contour_hold or MIN_RUN, clear_join, contour_keep))
     drawn, kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep, _hill in CONTOUR_NO_CROSS)
     before_bag = {}
     for _yr, line in before:
@@ -1681,6 +1818,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         "band_y", round(band, 1),
         *(("min_run", float_min_run) if float_min_run else ()),
     )
+    LAST_CONTOUR_CHUNKS[:] = [[(p[0], p[1], p[2], f) for p, f in zip(c, solid_flags([q[3] for q in c], c, contour_hold or MIN_RUN, contour_keep))] for c in chunks]
     return drawn, len(before)
 
 
@@ -2447,6 +2585,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         contour_hold=CONTOUR_HOLD.get(_hkey),
         contour_draw=CONTOUR_DRAW.get(_hkey),
         contour_keep=CONTOUR_KEEP.get(_hkey),
+        clear_join=CONTOUR_CLEAR_JOIN.get(_hkey),
         tight=CONTOUR_TIGHT.get(_hkey),
         depth_hide=depth_hide,
     )
@@ -2462,6 +2601,19 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             if top < 1e8 and yr - cdepth[j] >= DEPTH_BIAS and py >= top - RIDGE_MARGIN:
                 return True
         return False
+
+    run_probe = None
+    if RUN_CONTOUR_HORIZON.get(horizon_key(slug)) is not None:
+        run_probe = ContourCrest(LAST_CONTOUR_CHUNKS, col_of)
+    run_tol = RUN_CONTOUR_HORIZON.get(horizon_key(slug))
+
+    def covered_run(px, py, yr):
+        # Also behind when the drawn contours nearer than this point
+        # already crest above it on screen. A low near ridge that the
+        # 40 m skyline test misses still hides the run there.
+        if covered(px, py, yr):
+            return True
+        return run_probe is not None and run_probe.hides(px, py, yr, run_tol)
 
     def stroke(lines, colour, width, z_add=0.0, dash=None, css_class=None, occlude=False, fade_opacity=None, chunks_out=None):
         parts = []
@@ -2584,7 +2736,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     continue
                 xr, yr = rot(*metres(lon, lat))
                 px, py = paper(*project_xy(xr, yr, z + z_add))
-                hide = covered(px, py, yr) if occlude else False
+                hide = (covered_run if fade_opacity is not None else covered)(px, py, yr) if occlude else False
                 sampled.append((px, py, yr, hide))
             flush_sampled()
         return parts
