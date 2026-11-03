@@ -426,27 +426,26 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1)) !important;
 }
 
-/* Bird's-eye contours 32% lighter than the baked stroke-opacity
-   (0.240-0.249 becomes 0.163-0.169). opacity multiplies with it.
-   Was 0.8; 15% less is 0.68; another 15% less is 0.578. */
+/* Bird's-eye contours match the plan view contours: black at 0.1265
+   (the same as .sh-contour), 0.65px in the lightbox, and the plan card's
+   --sh-contour width on cards. The sheets bake stroke, stroke-opacity and
+   stroke-width on each element, so these have to win. */
 .sh-lb .sh-frontal-contour {
-  opacity: 0.578;
+  opacity: 1;
   stroke-width: 0.65px !important;
   vector-effect: non-scaling-stroke !important;
 }
 
-/* Bird's-eye topo only. 10% toward white from black. The sheet
-   writes the stroke on the element, so this has to win. Plan contours stay
-   on .sh-contour. Join, cap, and dash cover sheets that no longer repeat them.
-   Opacity 0.85 makes the card bird's-eye 15% lighter than the baked stroke. */
 .sh-frontal-contour {
-  opacity: 0.85;
-  stroke: #1a1a1a !important;
+  opacity: 1;
+  stroke: #000 !important;
+  stroke-opacity: 0.1265 !important;
+  stroke-width: var(--sh-contour, 0.17px) !important;
   fill: none;
   stroke-linejoin: round;
   stroke-linecap: round;
   stroke-dasharray: none;
-  vector-effect: none;
+  vector-effect: non-scaling-stroke !important;
 }
 
 .sh-hill polyline.sh-contour-shade,
