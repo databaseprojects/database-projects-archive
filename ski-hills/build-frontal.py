@@ -525,10 +525,12 @@ CAMERAS = {
     # looks from that south side back toward the hill. Back looks from the
     # north side. Front 26.7 is 20° more than 6.7, which turns the front
     # drawing 20° counter-clockwise; the plan view is turned to match.
+    # 46.7 is another 20° more, a further 20° counter-clockwise (Nov 4);
+    # the plan view is turned to match.
     # Edit these numbers. A second entry is enough for the page
     # to offer Front / Back.
     "mount-washington-alpine-resort": {
-        "views": {"front": 26.7, "back": 190.6},
+        "views": {"front": 46.7, "back": 190.6},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         # Draws both views smaller inside the frame. Same line weight.
@@ -813,8 +815,10 @@ CAMERAS = {
     # sheet back 14% around the centre. Edit the facing.
     # 106.8 is 30° more than 76.8, which turns the drawing 30°
     # counter-clockwise; the plan view is turned to match.
+    # 121.8 is another 15° more, a further 15° counter-clockwise (Nov 4);
+    # the plan view is turned to match.
     "revelstoke-mountain-resort": {
-        "facing": 106.8,
+        "facing": 121.8,
         "frame_scale": 0.86,
         # Runs that pass behind a ridge stay on the line at 10% opacity
         # across the whole mountain, the same treatment as Sunshine
