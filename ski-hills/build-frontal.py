@@ -128,6 +128,12 @@ FLOATING_HORIZON = {
     "castle-mountain-resort": 3.0,
     # Bottom third only. The upper two thirds stay drawn.
     "apex-mountain-resort": 3.0,
+    # Whistler Cross Country Connection. Bottom third only: back contours
+    # were drawing through the near ridges there (Nov 5).
+    "whistler-cross-country-connection": 3.0,
+    # Revelstoke. Top-right corner only: back contours clipped through
+    # ridges there after the 121.8 turn (Nov 5).
+    "revelstoke-mountain-resort": 3.0,
     # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
     "red-mountain-resort": 3.0,
     # Sunshine, whole sheet, 1 px. Facing 146.9 put packed near faces at the
@@ -186,6 +192,15 @@ HORIZON_REGION = {
     },
     "apex-mountain-resort": {
         "y": ((2000.0 / 3.0, 1400.0),),
+    },
+    # Whistler XC. Bottom third only, same band as Apex.
+    "whistler-cross-country-connection": {
+        "y": ((2000.0 / 3.0, 1400.0),),
+    },
+    # Revelstoke. Top-right corner only.
+    "revelstoke-mountain-resort": {
+        "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
+        "y": ((-400.0, 1000.0 / 3.0),),
     },
     "mount-washington-alpine-resort": {
         "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
@@ -252,6 +267,9 @@ CONTOUR_HOLD = {
     # 60 px joins those grazes into one line. A longer hide is a real
     # ridge and still ends the stroke. Runs and lifts stay on MIN_RUN.
     "heavenly-mountain-resort": 60.0,
+    # Whistler XC. Same 60 px hold as Heavenly/Revelstoke: short grazes in
+    # the bottom third join into one line after the floating-horizon pass.
+    "whistler-cross-country-connection": 60.0,
     # Whistler bird's-eye. The top-right ridges and the centre-left ridge
     # were broken by short skyline grazes, not by missing elevation: with
     # occlusion off every line there runs unbroken. 100 px alone (#314)
@@ -562,9 +580,48 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Purden / Mount Cain / Harper: lock the published automatic facing so
+    # a wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "purden-ski-village": {
+        "facing": 144.8,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "mount-cain-alpine-park": {
+        "facing": 40.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "harper-mountain": {
+        "facing": 143.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Hallis Lake only. Plan/bird's-eye were at facing 266.6. 71.6 is 165°
+    # further (266.6+165), which turns the drawing 165° counter-clockwise;
+    # the plan view is turned to match (Nov 5).
+    "hallis-lake-ski-trails": {
+        "facing": 71.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    # Nipika only. Automatic bird's-eye facing was 47.7. 67.7 is 20° further,
+    # which turns that drawing 20° counter-clockwise (Nov 5). Plan is turned
+    # separately 50° clockwise (facing 310.0) and is not locked to this.
+    "nipika": {
+        "facing": 67.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
     # guess, flipped by orient()). 187.6 is 180° further and turns that
-    # bird's-eye drawing upside down. Edit this number.
+    # bird's-eye drawing upside down. Plan was still at 0; turned to 187.6
+    # so plan matches bird's-eye (Nov 5). Edit this number.
     "caledonia-nordic-ski-center": {
         "facing": 187.6,
         "elevation": 15.0,
@@ -804,8 +861,11 @@ CAMERAS = {
     "big-white-ski-resort": {"run_width": 1.36, "lift_width": 1.05},
     # Sun Peaks only. Run and lift strokes are 11% under the defaults
     # (2.2 and 1.7), halfway to Whistler's 22%. Runs that pass behind a
-    # ridge stay on the line at 10% opacity. The automatic camera stays.
+    # ridge stay on the line at 10% opacity. Plan was at facing 329.55;
+    # 14.55 is 45° further (329.55+45), which turns the drawing 45°
+    # counter-clockwise; the plan view is turned to match (Nov 5).
     "sun-peaks-resort": {
+        "facing": 14.55,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
@@ -1010,6 +1070,14 @@ DEM_PAD = {
     "mt-norquay": 1.8,
     # Mount Washington front. The top-right corner was past the DEM crop.
     "mount-washington-alpine-resort": 1.8,
+    # Nov 5: rotated/tilted frames left corners past the default 1.0 crop,
+    # so contours and tree wash were empty there. Same fix as Fernie/Marmot.
+    "purden-ski-village": 1.8,
+    "mount-cain-alpine-park": 1.8,
+    "harper-mountain": 1.8,
+    "nipika": 2.2,
+    # Hallis Lake turned 165°; corners need the wider 2.6 crop.
+    "hallis-lake-ski-trails": 2.6,
     # Whitewater (facing 43.5). The bottom-left corner
     # was past the DEM crop, so its contours stopped short.
     "whitewater-ski-resort": 1.8,
