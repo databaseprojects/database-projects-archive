@@ -580,6 +580,26 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Purden / Mount Cain / Harper: lock the published automatic facing so
+    # a wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "purden-ski-village": {
+        "facing": 144.8,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "mount-cain-alpine-park": {
+        "facing": 40.6,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
+    "harper-mountain": {
+        "facing": 143.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Hallis Lake only. Plan/bird's-eye were at facing 266.6. 71.6 is 165°
     # further (266.6+165), which turns the drawing 165° counter-clockwise;
     # the plan view is turned to match (Nov 5).
@@ -1050,6 +1070,14 @@ DEM_PAD = {
     "mt-norquay": 1.8,
     # Mount Washington front. The top-right corner was past the DEM crop.
     "mount-washington-alpine-resort": 1.8,
+    # Nov 5: rotated/tilted frames left corners past the default 1.0 crop,
+    # so contours and tree wash were empty there. Same fix as Fernie/Marmot.
+    "purden-ski-village": 1.8,
+    "mount-cain-alpine-park": 1.8,
+    "harper-mountain": 1.8,
+    "nipika": 2.2,
+    # Hallis Lake turned 165°; corners need the wider 2.6 crop.
+    "hallis-lake-ski-trails": 2.6,
     # Whitewater (facing 43.5). The bottom-left corner
     # was past the DEM crop, so its contours stopped short.
     "whitewater-ski-resort": 1.8,
