@@ -815,6 +815,17 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         "ridge_fade": 0.10,
     },
+    # Bear Mountain (CA / San Bernardino) only. Automatic facing was 7.39
+    # (the 187.39 guess, flipped by orient()). 267.4 is 100° less, which
+    # turns the bird's-eye drawing 100° clockwise. Plan view was turned
+    # 180° separately (7.39 → 187.39) and is not locked to this (Nov 5).
+    "bear-mountain": {
+        "facing": 267.4,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
     # White Pass only. The automatic guess was 172.4 and orient() flipped
     # it, so the drawing faced 352.4. 62.4 was 70° further. 107.4 is
     # another 45° further, which turns the bird's-eye drawing a further
@@ -1313,6 +1324,10 @@ DEM_PAD = {
     # contours and the tree wash need the same widen used for Murray Ridge
     # / Attitash / Stoneham.
     "mount-rose-ski-tahoe": 2.6,
+    # Bear Mountain (facing 267.4, 100° CW). Turned sheet corners reach past
+    # the default 1.0 crop, so contours and the tree wash need a wider DEM
+    # pad (same as Bear Valley / Attitash / Stoneham).
+    "bear-mountain": 2.6,
 }
 
 
