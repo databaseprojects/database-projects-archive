@@ -845,6 +845,17 @@ CAMERAS = {
         "ridge_fade": 0.10,
     },
     "nakiska": {"frame_scale": 0.95},
+    # Purgatory Resort only. The automatic render faced 10.7 (the 190.7
+    # guess, flipped by orient()). 190.7 is 180° further and turns that
+    # bird's-eye drawing upside down. Plan view is unchanged (Nov 5).
+    "purgatory-resort": {
+        "facing": 190.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
     # Colorado half turns. Each automatic facing (in brackets) plus 180°,
     # which turns the bird's-eye drawing 180°. The plan is turned to match.
     "crested-butte-mountain-resort": {"facing": 154.3},  # (334.3)
@@ -1171,6 +1182,9 @@ DEM_PAD = {
     "arapahoe-basin": 1.8,
     "winter-park-resort": 1.8,
     "sunlight-mountain-resort": 1.8,
+    # Purgatory Resort (facing 190.7, 180° turn). Corners past default 1.0 crop
+    # after the turn; 1.8 reaches the frame (same as other Colorado half turns).
+    "purgatory-resort": 1.8,
     # Lost Trail (facing 262.2). A small strip along the bottom-left and a
     # thin strip along the top were past the DEM crop, so contours and the
     # tree wash stopped short there.
