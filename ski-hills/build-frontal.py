@@ -1017,6 +1017,13 @@ CAMERAS = {
         "facing": 264.4,
         "frame_scale": 0.870,
     },
+    # Lutsen Mountains only. Automatic bird's-eye facing was 309.1. 269.1 is
+    # 40° less, which turns the drawing 40° clockwise on screen. No bird's-eye
+    # zoom (frame_scale stays 1.0). Facing locked so a wider DEM_PAD cannot
+    # nudge orient() (2026-11-05).
+    "lutsen-mountains": {
+        "facing": 269.1,
+    },
 }
 
 
@@ -1242,6 +1249,11 @@ DEM_PAD = {
     # frame edges. Remaining BR thin spots are real non-forest / base area
     # (same note as Sommet Saint-Sauveur).
     "station-touristique-stoneham": 2.6,
+    # Lutsen Mountains: plan zoomed out x1.10 and bird's-eye turned 40°
+    # clockwise. Wider sheet / rotated corners reach past the default 1.0
+    # crop, so contours and the tree wash need the same widen used for
+    # Mont-Sainte-Anne / Snowbird / Sasquatch (2026-11-05).
+    "lutsen-mountains": 1.8,
     # Angel Fire Resort (NM). Bird's-eye top-right and bottom-left corners
     # were past the default 1.0 crop, so contours and the tree wash stopped
     # short there. 1.8 reaches both corners (Lost Trail / Pajarito / Fernie).
