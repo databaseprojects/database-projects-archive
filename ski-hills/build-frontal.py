@@ -1113,6 +1113,11 @@ DEM_PAD = {
     # Sasquatch (facing 318.1). The bottom-right corner was past the DEM
     # crop, so contours and the tree wash stopped short there.
     "sasquatch-mountain-resort": 1.8,
+    # Caledonia Nordic (facing 187.6, 180° flip). Default 1.0 left corners and
+    # the left half of the tree wash past the DEM/WorldCover crop (left wash
+    # alpha ~22 vs right ~29). 2.6 fills the frame and equalizes left/right
+    # wash density. Same approach as Hallis / 49° North.
+    "caledonia-nordic-ski-center": 2.6,
 }
 
 
