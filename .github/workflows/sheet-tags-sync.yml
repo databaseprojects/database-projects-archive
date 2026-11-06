@@ -1,0 +1,72 @@
+# On-demand sync from the Found Photographs Google Sheet into
+# found-photographs/photo-tags.json on the Pages branch.
+#
+# Pages stays on "Deploy from a branch" (cursor/archive-portfolio-b69f).
+# A GITHUB_TOKEN push does not start that build, so the push uses the
+# fine-grained PAT in the Actions secret SHEET_SYNC_TOKEN. That is the
+# same token the sheet script stores. A push by that token runs the
+# normal branch Pages build.
+
+name: Sync Found Photographs tags
+
+on:
+  repository_dispatch:
+    types: [sheet-sync]
+  workflow_dispatch:
+
+concurrency:
+  group: sheet-tags-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Require the sheet sync token
+        env:
+          SHEET_SYNC_TOKEN: ${{ secrets.SHEET_SYNC_TOKEN }}
+        run: |
+          if [ -z "$SHEET_SYNC_TOKEN" ]; then
+            echo "SHEET_SYNC_TOKEN is not set. Add it under Settings > Secrets and variables > Actions."
+            echo "Use the same fine-grained token as the sheet script: this repository only, Contents read and write."
+            exit 1
+          fi
+
+      - name: Checkout converter
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: repo
+          persist-credentials: false
+
+      - name: Checkout Pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: cursor/archive-portfolio-b69f
+          path: live
+          token: ${{ secrets.SHEET_SYNC_TOKEN }}
+          persist-credentials: true
+
+      - name: Rebuild photo-tags.json
+        working-directory: live
+        run: python3 "$GITHUB_WORKSPACE/repo/.github/scripts/sheet_to_tags.py" found-photographs/photo-tags.json
+
+      - name: Commit and push when the file changed
+        id: commit
+        working-directory: live
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- found-photographs/photo-tags.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "photo-tags.json is unchanged"
+            exit 0
+          fi
+          git add -- found-photographs/photo-tags.json
+          git commit -m "Sync Found Photographs tags from the Google Sheet."
+          git push origin HEAD:cursor/archive-portfolio-b69f
+          echo "changed=true" >> "$GITHUB_OUTPUT"
