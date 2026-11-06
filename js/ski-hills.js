@@ -231,6 +231,18 @@
   var catalogReady = {};
   var catalogPromise = {};
   var SQUARE = 1000;
+
+  // Shared with ski-hills/layout_spec.py. Print white margin is 4 mm on the
+  // 8×8 in sheet (~1.9685%), applied as CSS padding on .sh-print — artwork
+  // fills the 0..1000 viewBox; redraws must not inset by this in coordinates.
+  var SH_LAYOUT = {
+    PRINT_MARGIN_MM: 4,
+    PRINT_MARGIN_PCT: 1.968503937,
+    FRAME: 1000,
+    PLAN_ART_PAD: 48,
+    FIT_ART_PAD: 40
+  };
+
   var BAND = 120;
   var DRAW = SQUARE - BAND;
   var view = "grid";
@@ -776,7 +788,7 @@
 
   function fitArt(svg, limitY, box) {
     if (!box) box = boundsOf(svg);
-    var pad = 40;
+    var pad = SH_LAYOUT.FIT_ART_PAD;
     var limit = limitY == null ? DRAW : limitY;
     if (!box) return { s: 1, dx: 0, dy: 0, clip: limit };
     var bw = Math.max(box.maxX - box.minX, 1);
@@ -820,7 +832,7 @@
   }
 
 
-  var ASSET_V = "20261105cmt";
+  var ASSET_V = "20261105pm4";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";

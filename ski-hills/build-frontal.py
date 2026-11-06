@@ -2817,6 +2817,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     # projection nearly square, so the topo reaches the card edges
     # instead of sitting in a white gutter. The page caption is painted
     # over the bottom band. Uniform scale: x and y stay true.
+    # DEM fit gutter inside the 1000-unit sheet (not the 4 mm print margin).
     margin = 4
     view = 1000 - 2 * margin
     data_w = max(maxx - minx, 1)
