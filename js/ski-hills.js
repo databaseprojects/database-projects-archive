@@ -820,7 +820,7 @@
   }
 
 
-  var ASSET_V = "20261105all";
+  var ASSET_V = "20261105bvr";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
