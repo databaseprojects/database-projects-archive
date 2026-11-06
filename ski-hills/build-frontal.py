@@ -727,6 +727,15 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Holiday Valley (NY). Lock the pre-pad automatic camera (211.7) so a
+    # wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "holiday-valley": {
+        "facing": 211.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
     # Shames Mountain only. The automatic render faced 334.2 and orient()
     # kept it. 4.2 is 30° further, which turns the bird's-eye drawing
     # 30° counter-clockwise. Edit this number.
@@ -1287,6 +1296,12 @@ DEM_PAD = {
     # still left BL/BR sparse; 2.6 reaches both corners (Lost Trail /
     # Fernie / Stoneham pattern). Plan zoom is separate; no BE frame_scale.
     "attitash-mountain-resort": 2.6,
+    # Holiday Valley (NY). Bird's-eye top-right / top-left / bottom-left were
+    # past the default 1.0 DEM/WorldCover crop, so contours and the tree wash
+    # stopped short there. 1.8 and 2.6 still left TR/BL sparse; 4.0 reaches the
+    # frame (Le Massif / Harper pattern). Remaining TR thin spots look like
+    # real non-forest / base area.
+    "holiday-valley": 4.0,
 }
 
 
