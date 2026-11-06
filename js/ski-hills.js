@@ -16,75 +16,75 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261105msa10",
-      names: "names.json?v=20261105msa10",
-      index: "contours/index.json?v=20261105msa10",
+      file: "hills.json?v=20261105msz10",
+      names: "names.json?v=20261105msz10",
+      index: "contours/index.json?v=20261105msz10",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261105msa10",
-      names: "alberta-names.json?v=20261105msa10",
-      index: "contours/alberta-index.json?v=20261105msa10",
+      file: "alberta.json?v=20261105msz10",
+      names: "alberta-names.json?v=20261105msz10",
+      index: "contours/alberta-index.json?v=20261105msz10",
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261105msa10",
-      names: "quebec-names.json?v=20261105msa10",
-      index: "contours/quebec-index.json?v=20261105msa10",
+      file: "quebec.json?v=20261105msz10",
+      names: "quebec-names.json?v=20261105msz10",
+      index: "contours/quebec-index.json?v=20261105msz10",
       label: "Quebec"
     },
     on: {
-      file: "ontario.json?v=20261105msa10",
-      names: "ontario-names.json?v=20261105msa10",
-      index: "contours/ontario-index.json?v=20261105msa10",
+      file: "ontario.json?v=20261105msz10",
+      names: "ontario-names.json?v=20261105msz10",
+      index: "contours/ontario-index.json?v=20261105msz10",
       label: "Ontario"
     },
     sk: {
-      file: "saskatchewan.json?v=20261105msa10",
-      names: "saskatchewan-names.json?v=20261105msa10",
-      index: "contours/saskatchewan-index.json?v=20261105msa10",
+      file: "saskatchewan.json?v=20261105msz10",
+      names: "saskatchewan-names.json?v=20261105msz10",
+      index: "contours/saskatchewan-index.json?v=20261105msz10",
       label: "Saskatchewan"
     },
     mb: {
-      file: "manitoba.json?v=20261105msa10",
-      names: "manitoba-names.json?v=20261105msa10",
-      index: "contours/manitoba-index.json?v=20261105msa10",
+      file: "manitoba.json?v=20261105msz10",
+      names: "manitoba-names.json?v=20261105msz10",
+      index: "contours/manitoba-index.json?v=20261105msz10",
       label: "Manitoba"
     },
     nb: {
-      file: "new-brunswick.json?v=20261105msa10",
-      names: "new-brunswick-names.json?v=20261105msa10",
-      index: "contours/new-brunswick-index.json?v=20261105msa10",
+      file: "new-brunswick.json?v=20261105msz10",
+      names: "new-brunswick-names.json?v=20261105msz10",
+      index: "contours/new-brunswick-index.json?v=20261105msz10",
       label: "New Brunswick"
     },
     nl: {
-      file: "newfoundland.json?v=20261105msa10",
-      names: "newfoundland-names.json?v=20261105msa10",
-      index: "contours/newfoundland-index.json?v=20261105msa10",
+      file: "newfoundland.json?v=20261105msz10",
+      names: "newfoundland-names.json?v=20261105msz10",
+      index: "contours/newfoundland-index.json?v=20261105msz10",
       label: "Newfoundland"
     },
     ns: {
-      file: "nova-scotia.json?v=20261105msa10",
-      names: "nova-scotia-names.json?v=20261105msa10",
-      index: "contours/nova-scotia-index.json?v=20261105msa10",
+      file: "nova-scotia.json?v=20261105msz10",
+      names: "nova-scotia-names.json?v=20261105msz10",
+      index: "contours/nova-scotia-index.json?v=20261105msz10",
       label: "Nova Scotia"
     },
     pe: {
-      file: "prince-edward-island.json?v=20261105msa10",
-      names: "prince-edward-island-names.json?v=20261105msa10",
-      index: "contours/prince-edward-island-index.json?v=20261105msa10",
+      file: "prince-edward-island.json?v=20261105msz10",
+      names: "prince-edward-island-names.json?v=20261105msz10",
+      index: "contours/prince-edward-island-index.json?v=20261105msz10",
       label: "Prince Edward Island"
     },
     yt: {
-      file: "yukon.json?v=20261105msa10",
-      names: "yukon-names.json?v=20261105msa10",
-      index: "contours/yukon-index.json?v=20261105msa10",
+      file: "yukon.json?v=20261105msz10",
+      names: "yukon-names.json?v=20261105msz10",
+      index: "contours/yukon-index.json?v=20261105msz10",
       label: "Yukon"
     },
     nt: {
-      file: "northwest-territories.json?v=20261105msa10",
-      names: "northwest-territories-names.json?v=20261105msa10",
-      index: "contours/northwest-territories-index.json?v=20261105msa10",
+      file: "northwest-territories.json?v=20261105msz10",
+      names: "northwest-territories-names.json?v=20261105msz10",
+      index: "contours/northwest-territories-index.json?v=20261105msz10",
       label: "Northwest Territories"
     }
   };
@@ -129,47 +129,47 @@
   };
   var US_FILE_VERSION = {
 
-    ca: "20261105msa10",
-    co: "20261105msa10",
-    id: "20261105msa10",
-    ma: "20261105msa10",
-    md: "20261105msa10",
-    me: "20261105msa10",
-    mi: "20261105msa10",
-    mt: "20261105msa10",
-    nh: "20261105msa10",
-    nj: "20261105msa10",
-    nm: "20261105msa10",
-    ny: "20261105msa10",
-    or: "20261105msa10",
-    pa: "20261105msa10",
-    vt: "20261105msa10",
-    wa: "20261105msa10",
-    wi: "20261105msa10",
-    wv: "20261105msa10",
-    wy: "20261105msa10",
-    mn: "20261105msa10",
-    az: "20261105msa10",
-    nv: "20261105msa10",
-    sd: "20261105msa10",
-    ut: "20261105msa10",
-    ct: "20261105msa10",
-    ri: "20261105msa10",
-    va: "20261105msa10",
-    oh: "20261105msa10",
-    il: "20261105msa10",
-    in: "20261105msa10",
-    ia: "20261105msa10",
-    nd: "20261105msa10",
-    mo: "20261105msa10",
-    nc: "20261105msa10",
-    al: "20261105msa10",
-    tn: "20261105msa10"
+    ca: "20261105msz10",
+    co: "20261105msz10",
+    id: "20261105msz10",
+    ma: "20261105msz10",
+    md: "20261105msz10",
+    me: "20261105msz10",
+    mi: "20261105msz10",
+    mt: "20261105msz10",
+    nh: "20261105msz10",
+    nj: "20261105msz10",
+    nm: "20261105msz10",
+    ny: "20261105msz10",
+    or: "20261105msz10",
+    pa: "20261105msz10",
+    vt: "20261105msz10",
+    wa: "20261105msz10",
+    wi: "20261105msz10",
+    wv: "20261105msz10",
+    wy: "20261105msz10",
+    mn: "20261105msz10",
+    az: "20261105msz10",
+    nv: "20261105msz10",
+    sd: "20261105msz10",
+    ut: "20261105msz10",
+    ct: "20261105msz10",
+    ri: "20261105msz10",
+    va: "20261105msz10",
+    oh: "20261105msz10",
+    il: "20261105msz10",
+    in: "20261105msz10",
+    ia: "20261105msz10",
+    nd: "20261105msz10",
+    mo: "20261105msz10",
+    nc: "20261105msz10",
+    al: "20261105msz10",
+    tn: "20261105msz10"
   };
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
-      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105msa10"),
-      index: "contours/usa-index.json?v=20261105msa10",
+      file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105msz10"),
+      index: "contours/usa-index.json?v=20261105msz10",
       label: US_STATE_NAMES[id]
     };
   });
@@ -199,26 +199,26 @@
   };
   var EU_FILE_VERSION = {
 
-    fr: "20261105msa10",
-    ch: "20261105msa10",
-    at: "20261105msa10",
-    it: "20261105msa10",
-    no: "20261105msa10",
-    se: "20261105msa10",
-    fi: "20261105msa10",
-    es: "20261105msa10",
-    ad: "20261105msa10",
-    rs: "20261105msa10",
-    ua: "20261105msa10",
-    sk: "20261105msa10",
-    bg: "20261105msa10",
-    de: "20261105msa10",
-    cz: "20261105msa10"
+    fr: "20261105msz10",
+    ch: "20261105msz10",
+    at: "20261105msz10",
+    it: "20261105msz10",
+    no: "20261105msz10",
+    se: "20261105msz10",
+    fi: "20261105msz10",
+    es: "20261105msz10",
+    ad: "20261105msz10",
+    rs: "20261105msz10",
+    ua: "20261105msz10",
+    sk: "20261105msz10",
+    bg: "20261105msz10",
+    de: "20261105msz10",
+    cz: "20261105msz10"
   };
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
-      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261105msa10"),
-      index: "contours/europe-index.json?v=20261105msa10",
+      file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261105msz10"),
+      index: "contours/europe-index.json?v=20261105msz10",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -700,7 +700,7 @@
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
 
-      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261105msa10").then(function (res) {
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261105msz10").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
       }),
@@ -819,7 +819,7 @@
   }
 
 
-  var ASSET_V = "20261105msa10";
+  var ASSET_V = "20261105msz10";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1868,7 +1868,7 @@
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
 
-    boundariesPromise = fetch("boundaries.json?v=20261105msa10").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261105msz10").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -4190,7 +4190,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261105msa10").then(function (res) {
+  fetch("hill-index.json?v=20261105msz10").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
