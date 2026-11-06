@@ -161,6 +161,10 @@ FLOATING_HORIZON = {
     # back slopes were drawing through the top ridges and the bottom
     # ridges with no horizon pass at all.
     "alta-ski-area": 1.0,
+    # Bogus Basin. Top half: back slopes were drawing through nearer ridges
+    # (Banff Sunshine / Alta 1 px whole-sheet pattern, limited to the top
+    # half via HORIZON_REGION).
+    "bogus-basin-mountain-recreation-area": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -187,6 +191,9 @@ HORIZON_MIN_RUN = {
     # Harper top-right. Only a 4+ sample stretch behind the ridge hides,
     # so short crest grazes stay one stroke.
     "harper-mountain": 4,
+    # Bogus Basin top half. A 4+ sample stretch behind the ridge hides
+    # (same as Baker / Harper corners).
+    "bogus-basin-mountain-recreation-area": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -231,6 +238,12 @@ HORIZON_REGION = {
     "mt-baker": {
         "x": ((-400.0, 420.0),),
         "y": ((-400.0, 350.0), (650.0, 1400.0)),
+    },
+    # Bogus Basin. Top half only (y grows downward). Back slopes through
+    # nearer ridges were stacking on the upper sheet; lower slopes stay on
+    # the skyline test (Red Mountain top-third pattern).
+    "bogus-basin-mountain-recreation-area": {
+        "y": ((-400.0, 500.0),),
     },
 }
 
@@ -288,6 +301,10 @@ CONTOUR_HOLD = {
     # refuses any join that would cross a drawn contour, and Whistler's
     # HORIZON_MIN_RUN 80 release was dropped for the same reason.
     "whistler-blackcomb": 100.0,
+    # Mt Baker. Top elevation lines were broken by short skyline grazes
+    # (Heavenly / Fernie / Revelstoke 60 px pattern). Joins those grazes
+    # into continuous strokes; longer hides stay real ridge gaps.
+    "mt-baker": 60.0,
 }
 # Shortest stroke to draw, when that should not be the hold above.
 # Bachelor still joins skyline grazes at 100 px. That same number was also
@@ -719,12 +736,56 @@ CAMERAS = {
     # Mount Rose Ski Tahoe only. The automatic render faced 18.8 (the 198.8
     # guess, flipped by orient()). 198.8 is 180° further and turns that
     # bird's-eye drawing upside down. Edit this number.
+    # Mount Rose Ski Tahoe only. Zoomed out x1.15 from the published sheet
+    # (2026-11-05): frame_scale 1/1.15 pulls the bird's-eye back 15% around
+    # the centre. Facing stays locked at 198.8 (180° from automatic 18.8)
+    # so a wider DEM_PAD cannot nudge orient(). Plan zoom is separate
+    # (hill-index bounds x1.10).
     "mount-rose-ski-tahoe": {
         "facing": 198.8,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "frame_scale": 0.870,
         # Runs that pass behind a ridge stay on the line at 10% opacity.
+        "ridge_fade": 0.10,
+    },
+    # Holiday Valley (NY). Lock the pre-pad automatic camera (211.7) so a
+    # wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "holiday-valley": {
+        "facing": 211.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
+    # Camelback Mountain Resort (PA). Lock the pre-pad automatic camera
+    # (184.7) so a wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "camelback-mountain-resort": {
+        "facing": 184.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
+    # Bogus Basin. Lock the pre-pad automatic camera (169.96) so horizon
+    # and DEM_PAD edits cannot flip orient().
+    "bogus-basin-mountain-recreation-area": {
+        "facing": 169.96,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
+    # Sierra-at-Tahoe. Zoomed out x1.05 from the published sheet
+    # (frame_scale 1/1.05). Lock facing at automatic 128.65 so DEM_PAD for
+    # bottom-left trees cannot flip orient().
+    "sierra-at-tahoe-ski-resort": {
+        "facing": 128.65,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "frame_scale": 0.952,
         "ridge_fade": 0.10,
     },
     # Shames Mountain only. The automatic render faced 334.2 and orient()
@@ -795,6 +856,17 @@ CAMERAS = {
     # orient() (Nov 5 standing tree-fill rule).
     "bear-valley": {
         "views": {"front": 179.9, "back": 359.9},
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
+    # Bear Mountain (CA / San Bernardino) only. Automatic facing was 7.39
+    # (the 187.39 guess, flipped by orient()). 267.4 is 100° less, which
+    # turns the bird's-eye drawing 100° clockwise. Plan view was turned
+    # 180° separately (7.39 → 187.39) and is not locked to this (Nov 5).
+    "bear-mountain": {
+        "facing": 267.4,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -1287,6 +1359,30 @@ DEM_PAD = {
     # still left BL/BR sparse; 2.6 reaches both corners (Lost Trail /
     # Fernie / Stoneham pattern). Plan zoom is separate; no BE frame_scale.
     "attitash-mountain-resort": 2.6,
+    # Holiday Valley (NY). Bird's-eye top-right / top-left / bottom-left were
+    # past the default 1.0 DEM/WorldCover crop, so contours and the tree wash
+    # stopped short there. 1.8 and 2.6 still left TR/BL sparse; 4.0 reaches the
+    # frame (Le Massif / Harper pattern). Remaining TR thin spots look like
+    # real non-forest / base area.
+    "holiday-valley": 4.0,
+    # Mount Rose Ski Tahoe, plan zoomed out x1.10 and bird's-eye x1.15:
+    # the wider sheet reaches past the default 1.0 crop at the corners, so
+    # contours and the tree wash need the same widen used for Murray Ridge
+    # / Attitash / Stoneham.
+    "mount-rose-ski-tahoe": 2.6,
+    # Bear Mountain (facing 267.4, 100° CW). Turned sheet corners reach past
+    # the default 1.0 crop, so contours and the tree wash need a wider DEM
+    # pad (same as Bear Valley / Attitash / Stoneham).
+    "bear-mountain": 2.6,
+    # Camelback Mountain Resort (PA). Bird's-eye top edge trees were past the
+    # default 1.0 DEM/WorldCover crop, so contours and the tree wash stopped
+    # short there. 2.6 reaches the top of the frame (Attitash / Bear Valley /
+    # Stoneham pattern). Plan 180° flip is separate; no BE frame_scale change.
+    "camelback-mountain-resort": 2.6,
+    # Sierra-at-Tahoe, plan+bird's-eye zoomed out x1.05. Bottom-left trees
+    # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
+    # corner (Attitash / Stoneham / Bear Valley pattern).
+    "sierra-at-tahoe-ski-resort": 2.6,
 }
 
 
