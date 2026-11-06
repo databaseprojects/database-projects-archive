@@ -16,75 +16,75 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261105bak",
-      names: "names.json?v=20261105bak",
-      index: "contours/index.json?v=20261105bak",
+      file: "hills.json?v=20261105cmt",
+      names: "names.json?v=20261105cmt",
+      index: "contours/index.json?v=20261105cmt",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261105bak",
-      names: "alberta-names.json?v=20261105bak",
-      index: "contours/alberta-index.json?v=20261105bak",
+      file: "alberta.json?v=20261105cmt",
+      names: "alberta-names.json?v=20261105cmt",
+      index: "contours/alberta-index.json?v=20261105cmt",
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261105bak",
-      names: "quebec-names.json?v=20261105bak",
-      index: "contours/quebec-index.json?v=20261105bak",
+      file: "quebec.json?v=20261105cmt",
+      names: "quebec-names.json?v=20261105cmt",
+      index: "contours/quebec-index.json?v=20261105cmt",
       label: "Quebec"
     },
     on: {
-      file: "ontario.json?v=20261105bak",
-      names: "ontario-names.json?v=20261105bak",
-      index: "contours/ontario-index.json?v=20261105bak",
+      file: "ontario.json?v=20261105cmt",
+      names: "ontario-names.json?v=20261105cmt",
+      index: "contours/ontario-index.json?v=20261105cmt",
       label: "Ontario"
     },
     sk: {
-      file: "saskatchewan.json?v=20261105bak",
-      names: "saskatchewan-names.json?v=20261105bak",
-      index: "contours/saskatchewan-index.json?v=20261105bak",
+      file: "saskatchewan.json?v=20261105cmt",
+      names: "saskatchewan-names.json?v=20261105cmt",
+      index: "contours/saskatchewan-index.json?v=20261105cmt",
       label: "Saskatchewan"
     },
     mb: {
-      file: "manitoba.json?v=20261105bak",
-      names: "manitoba-names.json?v=20261105bak",
-      index: "contours/manitoba-index.json?v=20261105bak",
+      file: "manitoba.json?v=20261105cmt",
+      names: "manitoba-names.json?v=20261105cmt",
+      index: "contours/manitoba-index.json?v=20261105cmt",
       label: "Manitoba"
     },
     nb: {
-      file: "new-brunswick.json?v=20261105bak",
-      names: "new-brunswick-names.json?v=20261105bak",
-      index: "contours/new-brunswick-index.json?v=20261105bak",
+      file: "new-brunswick.json?v=20261105cmt",
+      names: "new-brunswick-names.json?v=20261105cmt",
+      index: "contours/new-brunswick-index.json?v=20261105cmt",
       label: "New Brunswick"
     },
     nl: {
-      file: "newfoundland.json?v=20261105bak",
-      names: "newfoundland-names.json?v=20261105bak",
-      index: "contours/newfoundland-index.json?v=20261105bak",
+      file: "newfoundland.json?v=20261105cmt",
+      names: "newfoundland-names.json?v=20261105cmt",
+      index: "contours/newfoundland-index.json?v=20261105cmt",
       label: "Newfoundland"
     },
     ns: {
-      file: "nova-scotia.json?v=20261105bak",
-      names: "nova-scotia-names.json?v=20261105bak",
-      index: "contours/nova-scotia-index.json?v=20261105bak",
+      file: "nova-scotia.json?v=20261105cmt",
+      names: "nova-scotia-names.json?v=20261105cmt",
+      index: "contours/nova-scotia-index.json?v=20261105cmt",
       label: "Nova Scotia"
     },
     pe: {
-      file: "prince-edward-island.json?v=20261105bak",
-      names: "prince-edward-island-names.json?v=20261105bak",
-      index: "contours/prince-edward-island-index.json?v=20261105bak",
+      file: "prince-edward-island.json?v=20261105cmt",
+      names: "prince-edward-island-names.json?v=20261105cmt",
+      index: "contours/prince-edward-island-index.json?v=20261105cmt",
       label: "Prince Edward Island"
     },
     yt: {
-      file: "yukon.json?v=20261105bak",
-      names: "yukon-names.json?v=20261105bak",
-      index: "contours/yukon-index.json?v=20261105bak",
+      file: "yukon.json?v=20261105cmt",
+      names: "yukon-names.json?v=20261105cmt",
+      index: "contours/yukon-index.json?v=20261105cmt",
       label: "Yukon"
     },
     nt: {
-      file: "northwest-territories.json?v=20261105bak",
-      names: "northwest-territories-names.json?v=20261105bak",
-      index: "contours/northwest-territories-index.json?v=20261105bak",
+      file: "northwest-territories.json?v=20261105cmt",
+      names: "northwest-territories-names.json?v=20261105cmt",
+      index: "contours/northwest-territories-index.json?v=20261105cmt",
       label: "Northwest Territories"
     }
   };
@@ -169,7 +169,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: "contours/usa-index.json?v=20261105bak",
+      index: "contours/usa-index.json?v=20261105cmt",
       label: US_STATE_NAMES[id]
     };
   });
@@ -218,7 +218,7 @@
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
       file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261105g50"),
-      index: "contours/europe-index.json?v=20261105bak",
+      index: "contours/europe-index.json?v=20261105cmt",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -700,7 +700,7 @@
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
 
-      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261105bak").then(function (res) {
+      fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261105cmt").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
       }),
@@ -820,7 +820,7 @@
   }
 
 
-  var ASSET_V = "20261105bak";
+  var ASSET_V = "20261105cmt";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1869,7 +1869,7 @@
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
 
-    boundariesPromise = fetch("boundaries.json?v=20261105bak").then(function (res) {
+    boundariesPromise = fetch("boundaries.json?v=20261105cmt").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
     }).then(function (data) {
@@ -4191,7 +4191,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261105bak").then(function (res) {
+  fetch("hill-index.json?v=20261105cmt").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
