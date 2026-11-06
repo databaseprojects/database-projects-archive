@@ -886,8 +886,21 @@ CAMERAS = {
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
+    # Station touristique Stoneham only. Zoomed out x1.05 from the published
+    # sheet (2026-11-05): frame_scale 1/1.05 pulls the sheet back ~5% around
+    # the centre. Automatic facing stays.
+    "station-touristique-stoneham": {"frame_scale": 0.952},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    # Mont Tremblant only. Automatic bird's-eye facing was 139.03. 319.03 is
+    # 180° further (139.03+180), which turns that drawing 180° (Nov 5).
+    # Plan view is unchanged except for a separate 10% zoom-out of bounds.
+    "mont-tremblant-resort-station-mont-tremblant": {
+        "facing": 319.03,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     "murray-ridge": {"frame_scale": 0.870},
     # Sommet Saint-Sauveur only. Zoomed out x1.10 from the published sheet (2026-11-05):
     # frame_scale 1/1.10 pulls the sheet back 10% around the centre. Facing locked
@@ -1121,6 +1134,9 @@ def load_geom():
 # bird's-eye is not. Fernie's top-right, Marmot's top-left, and White Pass's
 # top edge need 1.8 to reach the frame, up to the edge fade.
 DEM_PAD = {
+    # Mont Tremblant, bird's-eye turned 180°: 2.6 fills edge trees after the turn
+    # (same as Hallis / Mount Washington top-right).
+    "mont-tremblant-resort-station-mont-tremblant": 2.6,
     # New England batch and Blue Mountain: zoomed-out sheets reach past the default crop.
     "gunstock-recreation-area": 1.8,
     "stratton-mountain-resort": 1.8,
@@ -1218,6 +1234,11 @@ DEM_PAD = {
     # the zoomed bird's-eye bottom edge short; 4.0 reaches the frame after
     # the 15% pull-back (rotated lat/lon crop vs bird's-eye corners).
     "le-massif": 4.0,
+    # Station touristique Stoneham, zoomed out x1.05: BR+TL and other edges
+    # past the default 1.0 crop. 1.8 still left TL short; 2.6 fills the zoomed
+    # frame edges. Remaining BR thin spots are real non-forest / base area
+    # (same note as Sommet Saint-Sauveur).
+    "station-touristique-stoneham": 2.6,
 }
 
 
