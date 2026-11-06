@@ -646,6 +646,16 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # North Star Hill only. Automatic facing was 319.2 and orient() kept it.
+    # 294.2 is 25° less, which turns the bird's-eye drawing 25° clockwise
+    # (Nov 5). Plan was turned separately 35° clockwise (319.25 -> 284.25).
+    # Edit this number.
+    "unnamed-hill-21": {
+        "facing": 294.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Camrose Nordic only. The automatic render faced 291.2 (the 111.2
     # guess, flipped by orient()). Locking 111.2 turns that drawing
     # upside down. Edit this number.
@@ -1129,6 +1139,9 @@ DEM_PAD = {
     # Pajarito (facing 214.2). The top-left corner and the bottom-right
     # corner were past the DEM crop, so contours and trees stopped short.
     "pajarito-mountain": 1.8,
+    # North Star Hill (facing 294.2). Plan 35° CW + bird's-eye 25° CW; 1.8
+    # still left the bottom-right corner bare. 2.6 reaches every corner.
+    "unnamed-hill-21": 2.6,
     # Snowbird, Snowbasin and Alta, zoomed out x1.12: the wider sheet
     # reaches past the 1.0 crop at the corners.
     "snowbird": 1.8,
