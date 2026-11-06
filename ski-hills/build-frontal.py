@@ -890,6 +890,9 @@ CAMERAS = {
     # sheet (2026-11-05): frame_scale 1/1.05 pulls the sheet back ~5% around
     # the centre. Automatic facing stays.
     "station-touristique-stoneham": {"frame_scale": 0.952},
+    # Cannon Mountain only. Zoomed out x1.05 from the published sheet (2026-11-05):
+    # frame_scale 1/1.05 pulls the sheet back ~5% around the centre. Automatic facing stays.
+    "cannon-mountain": {"frame_scale": 0.952},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     # Mont Tremblant only. Automatic bird's-eye facing was 139.03. 319.03 is
@@ -1013,6 +1016,13 @@ CAMERAS = {
     "le-massif": {
         "facing": 264.4,
         "frame_scale": 0.870,
+    },
+    # Lutsen Mountains only. Automatic bird's-eye facing was 309.1. 269.1 is
+    # 40° less, which turns the drawing 40° clockwise on screen. No bird's-eye
+    # zoom (frame_scale stays 1.0). Facing locked so a wider DEM_PAD cannot
+    # nudge orient() (2026-11-05).
+    "lutsen-mountains": {
+        "facing": 269.1,
     },
 }
 
@@ -1239,10 +1249,17 @@ DEM_PAD = {
     # frame edges. Remaining BR thin spots are real non-forest / base area
     # (same note as Sommet Saint-Sauveur).
     "station-touristique-stoneham": 2.6,
+    # Lutsen Mountains: plan zoomed out x1.10 and bird's-eye turned 40°
+    # clockwise. Wider sheet / rotated corners reach past the default 1.0
+    # crop, so contours and the tree wash need the same widen used for
+    # Mont-Sainte-Anne / Snowbird / Sasquatch (2026-11-05).
+    "lutsen-mountains": 1.8,
     # Angel Fire Resort (NM). Bird's-eye top-right and bottom-left corners
     # were past the default 1.0 crop, so contours and the tree wash stopped
     # short there. 1.8 reaches both corners (Lost Trail / Pajarito / Fernie).
     "angel-fire-resort": 1.8,
+    # Cannon Mountain, zoomed out x1.05: widen DEM crop so edge trees reach the
+    "cannon-mountain": 2.6,
 }
 
 
