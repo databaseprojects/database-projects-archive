@@ -205,6 +205,15 @@ else:
 
 sys.path.insert(0, str(REPO_ROOT))
 from lean_paths import compact_abs_d, compact_point_list, compact_points
+from layout_spec import (
+    FIT_ART_PAD,
+    FRAME,
+    PLAN_ART_PAD,
+    PLAN_ART_SIZE,
+    PRINT_MARGIN_MM,
+    PRINT_MARGIN_SVG,
+    assert_print_margin_contract,
+)
 import importlib.util
 
 spec = importlib.util.spec_from_file_location("build_frontal", str(REPO_ROOT / "build-frontal.py"))
@@ -651,8 +660,8 @@ def fit_art_shift(hill, limit_y=880):
             ys.append(y)
     min_x, max_x = min(xs), max(xs)
     min_y, max_y = min(ys), max(ys)
-    pad = 40.0
-    square = 1000.0
+    pad = FIT_ART_PAD
+    square = FRAME
     bw = max(max_x - min_x, 1.0)
     bh = max(max_y - min_y, 1.0)
     s = min((square - pad * 2.0) / bw, (limit_y - pad * 2.0) / bh)
@@ -672,14 +681,15 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path):
     minx, maxx = min(xs), max(xs)
     miny, maxy = min(ys), max(ys)
     span = max(maxx - minx, maxy - miny, 1.0)
-    PAD = 48.0
-    SIZE = 904.0
+    PAD = PLAN_ART_PAD
+    SIZE = PLAN_ART_SIZE
 
     shift_880 = fit_art_shift(hill, 880)
     shift_1000 = fit_art_shift(hill, 1000)
     s_scale = shift_880["s"]
 
-    # Unshifted bounds covering both 1000x880 lightbox and 1000x1000 card with margin
+    # Unshifted bounds covering both 1000x880 lightbox and 1000x1000 card.
+    # Print white margin (PRINT_MARGIN_MM mm) is CSS on .sh-print — do not inset here.
     ux_min = min((0.0 - shift_880["dx"]) / s_scale, (0.0 - shift_1000["dx"]) / shift_1000["s"], -60.0)
     ux_max = max((1000.0 - shift_880["dx"]) / s_scale, (1000.0 - shift_1000["dx"]) / shift_1000["s"], 1060.0)
     uy_min = min((0.0 - shift_880["dy"]) / s_scale, (0.0 - shift_1000["dy"]) / shift_1000["s"], -160.0)
@@ -907,6 +917,7 @@ def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, e
     ys = [c[1] for c in cells]
     minx, maxx = min(xs), max(xs)
     miny, maxy = min(ys), max(ys)
+    # DEM fit gutter inside the 1000-unit sheet (not the 4 mm print margin).
     margin = 4
     view = 1000 - 2 * margin
     data_w = max(maxx - minx, 1)
@@ -1712,6 +1723,8 @@ def main():
         print(row.get("status"), row.get("slug"), (row.get("error") or "")[:240], flush=True)
     (Path("/tmp") / "tree-overlay-summary.json").write_text(json.dumps(summary))
 
+
+assert_print_margin_contract()
 
 if __name__ == "__main__":
     main()
