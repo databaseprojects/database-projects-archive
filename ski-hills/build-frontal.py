@@ -719,11 +719,17 @@ CAMERAS = {
     # Mount Rose Ski Tahoe only. The automatic render faced 18.8 (the 198.8
     # guess, flipped by orient()). 198.8 is 180° further and turns that
     # bird's-eye drawing upside down. Edit this number.
+    # Mount Rose Ski Tahoe only. Zoomed out x1.15 from the published sheet
+    # (2026-11-05): frame_scale 1/1.15 pulls the bird's-eye back 15% around
+    # the centre. Facing stays locked at 198.8 (180° from automatic 18.8)
+    # so a wider DEM_PAD cannot nudge orient(). Plan zoom is separate
+    # (hill-index bounds x1.10).
     "mount-rose-ski-tahoe": {
         "facing": 198.8,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "frame_scale": 0.870,
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
@@ -1302,6 +1308,11 @@ DEM_PAD = {
     # frame (Le Massif / Harper pattern). Remaining TR thin spots look like
     # real non-forest / base area.
     "holiday-valley": 4.0,
+    # Mount Rose Ski Tahoe, plan zoomed out x1.10 and bird's-eye x1.15:
+    # the wider sheet reaches past the default 1.0 crop at the corners, so
+    # contours and the tree wash need the same widen used for Murray Ridge
+    # / Attitash / Stoneham.
+    "mount-rose-ski-tahoe": 2.6,
 }
 
 
