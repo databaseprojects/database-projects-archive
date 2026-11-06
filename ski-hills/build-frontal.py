@@ -1156,13 +1156,13 @@ DEM_PAD = {
     # alpha ~22 vs right ~29). 2.6 fills the frame and equalizes left/right
     # wash density. Same approach as Hallis / 49° North.
     "caledonia-nordic-ski-center": 2.6,
-    # Murray Ridge, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
-    "murray-ridge": 1.8,
+    # Murray Ridge, zoomed out x1.15: 1.8 still left the top-left corner short
+    # of trees; 2.6 fills the new frame edges (same pad as Caledonia / Washington).
+    "murray-ridge": 2.6,
     # Ski Mont Blanc (Quebec). Bird's-eye top-right trees were slightly
     # short of the frame (and bottom-left too). Subtle DEM_PAD 1.4 (from
     # default 1.0) reaches both corners without a large widen.
     "ski-mont-blanc": 1.4,
-
 }
 
 
