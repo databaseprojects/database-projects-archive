@@ -301,6 +301,10 @@ CONTOUR_HOLD = {
     # refuses any join that would cross a drawn contour, and Whistler's
     # HORIZON_MIN_RUN 80 release was dropped for the same reason.
     "whistler-blackcomb": 100.0,
+    # Mt Baker. Top elevation lines were broken by short skyline grazes
+    # (Heavenly / Fernie / Revelstoke 60 px pattern). Joins those grazes
+    # into continuous strokes; longer hides stay real ridge gaps.
+    "mt-baker": 60.0,
 }
 # Shortest stroke to draw, when that should not be the hold above.
 # Bachelor still joins skyline grazes at 100 px. That same number was also
