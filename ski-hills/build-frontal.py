@@ -1068,8 +1068,10 @@ DEM_PAD = {
     "white-pass-ski-area": 1.8,
     # Norquay's bottom-right corner was bare.
     "mt-norquay": 1.8,
-    # Mount Washington front. The top-right corner was past the DEM crop.
-    "mount-washington-alpine-resort": 1.8,
+    # Mount Washington front (facing 46.7). After the Nov 4 20° turn the
+    # top-right corner was still past the 1.8 crop, so contours and trees
+    # stopped short there. 2.6 reaches the frame, same as Hallis / Lost Trail.
+    "mount-washington-alpine-resort": 2.6,
     # Nov 5: rotated/tilted frames left corners past the default 1.0 crop,
     # so contours and tree wash were empty there. Same fix as Fernie/Marmot.
     "purden-ski-village": 1.8,
