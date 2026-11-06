@@ -1108,6 +1108,9 @@ DEM_PAD = {
     "snowbird": 1.8,
     "snowbasin-resort": 1.8,
     "alta-ski-area": 1.8,
+    # Sasquatch (facing 318.1). The bottom-right corner was past the DEM
+    # crop, so contours and the tree wash stopped short there.
+    "sasquatch-mountain-resort": 1.8,
 }
 
 
