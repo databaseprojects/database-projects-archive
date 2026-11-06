@@ -878,6 +878,10 @@ CAMERAS = {
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     "murray-ridge": {"frame_scale": 0.870},
+    # Sommet Saint-Sauveur only. Zoomed out x1.10 from the published sheet (2026-11-05):
+    # frame_scale 1/1.10 pulls the sheet back 10% around the centre. Facing locked
+    # at the pre-pad automatic camera so a wider DEM_PAD cannot nudge it.
+    "sommet-saint-sauveur": {"facing": 177.6, "frame_scale": 0.909},
     # Whistler only. Run and lift strokes are 22% under the defaults
     # (2.2 and 1.7). Automatic facing was 155.4. 143.4 is 12° less, which
     # turns the drawing 12° clockwise on screen. 143.4 is 15° more than
@@ -1156,13 +1160,18 @@ DEM_PAD = {
     # alpha ~22 vs right ~29). 2.6 fills the frame and equalizes left/right
     # wash density. Same approach as Hallis / 49° North.
     "caledonia-nordic-ski-center": 2.6,
-    # Murray Ridge, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
-    "murray-ridge": 1.8,
+    # Murray Ridge, zoomed out x1.15: 1.8 still left the top-left corner short
+    # of trees; 2.6 fills the new frame edges (same pad as Caledonia / Washington).
+    "murray-ridge": 2.6,
     # Ski Mont Blanc (Quebec). Bird's-eye top-right trees were slightly
     # short of the frame (and bottom-left too). Subtle DEM_PAD 1.4 (from
     # default 1.0) reaches both corners without a large widen.
     "ski-mont-blanc": 1.4,
-
+    # Sommet Saint-Sauveur, zoomed out x1.10: top banner and edge tree wash
+    # were past the default 1.0 crop. 1.8 closes the top gap and fills the
+    # edges the zoom opens (Lost Trail / Fernie / Sasquatch). 2.6 did not
+    # further fill remaining empty bottom/right (real non-forest / village).
+    "sommet-saint-sauveur": 1.8,
 }
 
 
