@@ -890,6 +890,9 @@ CAMERAS = {
     # sheet (2026-11-05): frame_scale 1/1.05 pulls the sheet back ~5% around
     # the centre. Automatic facing stays.
     "station-touristique-stoneham": {"frame_scale": 0.952},
+    # Cannon Mountain only. Zoomed out x1.05 from the published sheet (2026-11-05):
+    # frame_scale 1/1.05 pulls the sheet back ~5% around the centre. Automatic facing stays.
+    "cannon-mountain": {"frame_scale": 0.952},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     # Mont Tremblant only. Automatic bird's-eye facing was 139.03. 319.03 is
@@ -1243,6 +1246,8 @@ DEM_PAD = {
     # were past the default 1.0 crop, so contours and the tree wash stopped
     # short there. 1.8 reaches both corners (Lost Trail / Pajarito / Fernie).
     "angel-fire-resort": 1.8,
+    # Cannon Mountain, zoomed out x1.05: widen DEM crop so edge trees reach the
+    "cannon-mountain": 2.6,
 }
 
 
