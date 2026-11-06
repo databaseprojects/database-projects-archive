@@ -879,6 +879,10 @@ CAMERAS = {
     # sheet (2026-11-05): frame_scale 1/1.05 pulls the sheet back ~5% around
     # the centre. Automatic facing stays.
     "station-touristique-stoneham": {"frame_scale": 0.952},
+    # Attitash Mountain Resort only. Facing locked at the pre-pad automatic
+    # camera (161.9) so DEM_PAD 2.6 for BL/BR tree corners cannot nudge it.
+    # No bird's-eye frame_scale change — plan zoom is separate (hill-index bounds).
+    "attitash-mountain-resort": {"facing": 161.9},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     "murray-ridge": {"frame_scale": 0.870},
@@ -1213,6 +1217,11 @@ DEM_PAD = {
     # frame edges. Remaining BR thin spots are real non-forest / base area
     # (same note as Sommet Saint-Sauveur).
     "station-touristique-stoneham": 2.6,
+    # Attitash Mountain Resort: bird's-eye bottom-left and bottom-right
+    # corners were past the default 1.0 crop (trees stopped short). 1.8
+    # still left BL/BR sparse; 2.6 reaches both corners (Lost Trail /
+    # Fernie / Stoneham pattern). Plan zoom is separate; no BE frame_scale.
+    "attitash-mountain-resort": 2.6,
 }
 
 
