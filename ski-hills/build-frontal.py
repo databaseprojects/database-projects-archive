@@ -1113,6 +1113,10 @@ DEM_PAD = {
     # Sasquatch (facing 318.1). The bottom-right corner was past the DEM
     # crop, so contours and the tree wash stopped short there.
     "sasquatch-mountain-resort": 1.8,
+    # Ski Mont Blanc (Quebec). Bird's-eye top-right trees were slightly
+    # short of the frame (and bottom-left too). Subtle DEM_PAD 1.4 (from
+    # default 1.0) reaches both corners without a large widen.
+    "ski-mont-blanc": 1.4,
 }
 
 
