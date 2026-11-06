@@ -742,6 +742,15 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         "ridge_fade": 0.10,
     },
+    # Camelback Mountain Resort (PA). Lock the pre-pad automatic camera
+    # (184.7) so a wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
+    "camelback-mountain-resort": {
+        "facing": 184.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
     # Shames Mountain only. The automatic render faced 334.2 and orient()
     # kept it. 4.2 is 30° further, which turns the bird's-eye drawing
     # 30° counter-clockwise. Edit this number.
@@ -1328,6 +1337,11 @@ DEM_PAD = {
     # the default 1.0 crop, so contours and the tree wash need a wider DEM
     # pad (same as Bear Valley / Attitash / Stoneham).
     "bear-mountain": 2.6,
+    # Camelback Mountain Resort (PA). Bird's-eye top edge trees were past the
+    # default 1.0 DEM/WorldCover crop, so contours and the tree wash stopped
+    # short there. 2.6 reaches the top of the frame (Attitash / Bear Valley /
+    # Stoneham pattern). Plan 180° flip is separate; no BE frame_scale change.
+    "camelback-mountain-resort": 2.6,
 }
 
 
