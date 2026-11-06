@@ -1256,13 +1256,10 @@ DEM_PAD = {
     # wash stopped short there on plan and bird's-eye. 1.8 and 2.6 still left
     # the zoomed bird's-eye bottom edge short; 4.0 reaches the frame after
     # the 15% pull-back (rotated lat/lon crop vs bird's-eye corners).
-    "le-massif": 4.0,
-    # Station touristique Stoneham, zoomed out x1.05: BR+TL and other edges
-    # past the default 1.0 crop. 1.8 still left TL short; 2.6 fills the zoomed
-    # frame edges. Remaining BR thin spots are real non-forest / base area
-    # (same note as Sommet Saint-Sauveur).
-    "station-touristique-stoneham": 2.6,
-    # Lutsen Mountains: plan zoomed out x1.10 and bird's-eye turned 40°
+    "le-massif": 4.0,    # Angel Fire Resort (NM). Bird's-eye top-right and bottom-left corners
+    # were past the default 1.0 crop, so contours and the tree wash stopped
+    # short there. 1.8 reaches both corners (Lost Trail / Pajarito / Fernie).
+    "angel-fire-resort": 1.8,    # Lutsen Mountains: plan zoomed out x1.10 and bird's-eye turned 40°
     # clockwise. Wider sheet / rotated corners reach past the default 1.0
     # crop, so contours and the tree wash need the same widen used for
     # Mont-Sainte-Anne / Snowbird / Sasquatch (2026-11-05).
@@ -1278,6 +1275,12 @@ DEM_PAD = {
     # contours and the tree wash stop short there. 2.6 reaches the frame
     # (same as Mount Washington / Hallis / Stoneham).
     "bear-valley": 2.6,
+    # Station touristique Stoneham, zoomed out x1.05: BR+TL and other edges
+    # past the default 1.0 crop. 1.8 still left TL short; 2.6 fills the zoomed
+    # frame edges. Remaining BR thin spots are real non-forest / base area
+    # (same note as Sommet Saint-Sauveur).
+    "station-touristique-stoneham": 2.6,
+
 }
 
 
