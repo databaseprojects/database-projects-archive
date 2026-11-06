@@ -977,6 +977,12 @@ CAMERAS = {
     "mont-sutton": {
         "frame_scale": 0.870,
     },
+    # Mont-Sainte-Anne only. Zoomed out x1.10 from the published sheet
+    # (2026-11-05): frame_scale 1/1.10 pulls the sheet back 10% around the
+    # centre. Automatic facing stays.
+    "mont-sainte-anne": {
+        "frame_scale": 0.909,
+    },
 }
 
 
@@ -1181,6 +1187,10 @@ DEM_PAD = {
 
     # Mont Sutton, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
     "mont-sutton": 1.8,
+    # Mont-Sainte-Anne, zoomed out x1.10: the wider sheet reaches past the
+    # 1.0 crop at the corners, so contours and the tree wash need the same
+    # widen used for Snowbird / Sasquatch.
+    "mont-sainte-anne": 1.8,
 }
 
 
