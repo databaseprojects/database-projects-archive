@@ -1239,6 +1239,10 @@ DEM_PAD = {
     # frame edges. Remaining BR thin spots are real non-forest / base area
     # (same note as Sommet Saint-Sauveur).
     "station-touristique-stoneham": 2.6,
+    # Angel Fire Resort (NM). Bird's-eye top-right and bottom-left corners
+    # were past the default 1.0 crop, so contours and the tree wash stopped
+    # short there. 1.8 reaches both corners (Lost Trail / Pajarito / Fernie).
+    "angel-fire-resort": 1.8,
 }
 
 
