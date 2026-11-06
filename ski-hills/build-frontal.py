@@ -971,6 +971,12 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "ridge_fade": 0.10,
     },
+
+    # Mont Sutton only. Zoomed out x1.15 from the published sheet (2026-11-05):
+    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    "mont-sutton": {
+        "frame_scale": 0.870,
+    },
 }
 
 
@@ -1172,6 +1178,9 @@ DEM_PAD = {
     # edges the zoom opens (Lost Trail / Fernie / Sasquatch). 2.6 did not
     # further fill remaining empty bottom/right (real non-forest / village).
     "sommet-saint-sauveur": 1.8,
+
+    # Mont Sutton, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
+    "mont-sutton": 1.8,
 }
 
 
