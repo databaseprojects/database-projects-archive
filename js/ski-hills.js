@@ -803,7 +803,8 @@
   var SIDE_VIEWS = {
     "mount-washington-alpine-resort": ["front", "back"],
     "lake-louise-ski-area": ["front", "back"],
-    "mt-spokane": ["front", "back"]
+    "mt-spokane": ["front", "back"],
+    "bear-valley": ["front", "back"]
   };
 
   function sideViews(hill) {
@@ -819,7 +820,7 @@
   }
 
 
-  var ASSET_V = "20261105cmr";
+  var ASSET_V = "20261105bvr";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
