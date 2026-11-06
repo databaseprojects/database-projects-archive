@@ -971,16 +971,23 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "ridge_fade": 0.10,
     },
+
+    # Mont Sutton only. Zoomed out x1.15 from the published sheet (2026-11-05):
+    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    "mont-sutton": {
+        "frame_scale": 0.870,
+    },
     # Mont-Sainte-Anne only. Zoomed out x1.10 from the published sheet
     # (2026-11-05): frame_scale 1/1.10 pulls the sheet back 10% around the
     # centre. Automatic facing stays.
     "mont-sainte-anne": {
         "frame_scale": 0.909,
     },
-
-    # Mont Sutton only. Zoomed out x1.15 from the published sheet (2026-11-05):
-    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
-    "mont-sutton": {
+    # Le Massif only. Zoomed out x1.15 from the published sheet (frame_scale
+    # 1/1.15): more terrain visible in the bird's-eye. Facing locked at the
+    # automatic 264.4 so a wider DEM_PAD cannot nudge orient().
+    "le-massif": {
+        "facing": 264.4,
         "frame_scale": 0.870,
     },
 }
@@ -1184,13 +1191,19 @@ DEM_PAD = {
     # edges the zoom opens (Lost Trail / Fernie / Sasquatch). 2.6 did not
     # further fill remaining empty bottom/right (real non-forest / village).
     "sommet-saint-sauveur": 1.8,
+
+    # Mont Sutton, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
+    "mont-sutton": 1.8,
     # Mont-Sainte-Anne, zoomed out x1.10: the wider sheet reaches past the
     # 1.0 crop at the corners, so contours and the tree wash need the same
     # widen used for Snowbird / Sasquatch.
     "mont-sainte-anne": 1.8,
-
-    # Mont Sutton, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
-    "mont-sutton": 1.8,
+    # Le Massif (zoomed out x1.15, frame_scale 0.870). Bottom-left and other
+    # frame edges were past the default 1.0 crop, so contours and the tree
+    # wash stopped short there on plan and bird's-eye. 1.8 and 2.6 still left
+    # the zoomed bird's-eye bottom edge short; 4.0 reaches the frame after
+    # the 15% pull-back (rotated lat/lon crop vs bird's-eye corners).
+    "le-massif": 4.0,
 }
 
 
