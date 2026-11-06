@@ -967,6 +967,12 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "ridge_fade": 0.10,
     },
+
+    # Mont Sutton only. Zoomed out x1.15 from the published sheet (2026-11-05):
+    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    "mont-sutton": {
+        "frame_scale": 0.870,
+    },
 }
 
 
@@ -1163,6 +1169,9 @@ DEM_PAD = {
     # short of the frame (and bottom-left too). Subtle DEM_PAD 1.4 (from
     # default 1.0) reaches both corners without a large widen.
     "ski-mont-blanc": 1.4,
+
+    # Mont Sutton, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
+    "mont-sutton": 1.8,
 }
 
 
