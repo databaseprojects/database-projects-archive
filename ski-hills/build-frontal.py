@@ -847,6 +847,9 @@ CAMERAS = {
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
+    # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
+    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    "murray-ridge": {"frame_scale": 0.870},
     # Whistler only. Run and lift strokes are 22% under the defaults
     # (2.2 and 1.7). Automatic facing was 155.4. 143.4 is 12° less, which
     # turns the drawing 12° clockwise on screen. 143.4 is 15° more than
@@ -1118,6 +1121,8 @@ DEM_PAD = {
     # alpha ~22 vs right ~29). 2.6 fills the frame and equalizes left/right
     # wash density. Same approach as Hallis / 49° North.
     "caledonia-nordic-ski-center": 2.6,
+    # Murray Ridge, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
+    "murray-ridge": 1.8,
 }
 
 
