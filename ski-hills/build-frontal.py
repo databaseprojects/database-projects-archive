@@ -773,6 +773,17 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         "ridge_fade": 0.10,
     },
+    # Sierra-at-Tahoe. Zoomed out x1.05 from the published sheet
+    # (frame_scale 1/1.05). Lock facing at automatic 128.65 so DEM_PAD for
+    # bottom-left trees cannot flip orient().
+    "sierra-at-tahoe-ski-resort": {
+        "facing": 128.65,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "frame_scale": 0.952,
+        "ridge_fade": 0.10,
+    },
     # Shames Mountain only. The automatic render faced 334.2 and orient()
     # kept it. 4.2 is 30° further, which turns the bird's-eye drawing
     # 30° counter-clockwise. Edit this number.
@@ -1364,6 +1375,10 @@ DEM_PAD = {
     # short there. 2.6 reaches the top of the frame (Attitash / Bear Valley /
     # Stoneham pattern). Plan 180° flip is separate; no BE frame_scale change.
     "camelback-mountain-resort": 2.6,
+    # Sierra-at-Tahoe, plan+bird's-eye zoomed out x1.05. Bottom-left trees
+    # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
+    # corner (Attitash / Stoneham / Bear Valley pattern).
+    "sierra-at-tahoe-ski-resort": 2.6,
 }
 
 
