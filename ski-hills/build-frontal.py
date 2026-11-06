@@ -886,6 +886,10 @@ CAMERAS = {
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
+    # Station touristique Stoneham only. Zoomed out x1.05 from the published
+    # sheet (2026-11-05): frame_scale 1/1.05 pulls the sheet back ~5% around
+    # the centre. Automatic facing stays.
+    "station-touristique-stoneham": {"frame_scale": 0.952},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     "murray-ridge": {"frame_scale": 0.870},
@@ -1218,6 +1222,12 @@ DEM_PAD = {
     # the zoomed bird's-eye bottom edge short; 4.0 reaches the frame after
     # the 15% pull-back (rotated lat/lon crop vs bird's-eye corners).
     "le-massif": 4.0,
+
+    # Station touristique Stoneham, zoomed out x1.05: BR+TL and other edges
+    # past the default 1.0 crop. 1.8 still left TL short; 2.6 fills the zoomed
+    # frame edges. Remaining BR thin spots are real non-forest / base area
+    # (same note as Sommet Saint-Sauveur).
+    "station-touristique-stoneham": 2.6,
 }
 
 
