@@ -787,6 +787,19 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
+    # Bear Valley (CA) only. Automatic facing was 359.9 and orient() flipped
+    # it to 179.9, which is the published front bird's-eye. Back is the
+    # straight opposite (359.9), a rear side view of the same hill. Same
+    # Front / Back toggle as Mount Washington / Lake Louise / Mt Spokane.
+    # Edit these numbers. Locking both stops a wider DEM_PAD from flipping
+    # orient() (Nov 5 standing tree-fill rule).
+    "bear-valley": {
+        "views": {"front": 179.9, "back": 359.9},
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
     # White Pass only. The automatic guess was 172.4 and orient() flipped
     # it, so the drawing faced 352.4. 62.4 was 70° further. 107.4 is
     # another 45° further, which turns the bird's-eye drawing a further
@@ -1260,7 +1273,13 @@ DEM_PAD = {
     "angel-fire-resort": 1.8,
     # Cannon Mountain, zoomed out x1.05: widen DEM crop so edge trees reach the
     "cannon-mountain": 2.6,
+    # Bear Valley Front (179.9) and Back/rear (359.9). Both facings and the
+    # Front/Back pair can leave frame corners past the default 1.0 crop, so
+    # contours and the tree wash stop short there. 2.6 reaches the frame
+    # (same as Mount Washington / Hallis / Stoneham).
+    "bear-valley": 2.6,
 }
+
 
 
 # Hills whose bird's-eye DEM skips MRDEM. Sugarloaf (Maine, facing 191):
