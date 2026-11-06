@@ -134,6 +134,9 @@ FLOATING_HORIZON = {
     # Revelstoke. Top-right corner only: back contours clipped through
     # ridges there after the 121.8 turn (Nov 5).
     "revelstoke-mountain-resort": 3.0,
+    # Harper. Top-right corner only: back contours clipped through
+    # ridges there after the locked facing (Nov 5). 1.0 px like Baker.
+    "harper-mountain": 1.0,
     # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
     "red-mountain-resort": 3.0,
     # Sunshine, whole sheet, 1 px. Facing 146.9 put packed near faces at the
@@ -181,6 +184,9 @@ HORIZON_MIN_RUN = {
     "whitewater-ski-resort": 30,
     # Mt Baker corners. A 4+ sample stretch behind the ridge hides.
     "mt-baker": 4,
+    # Harper top-right. Only a 4+ sample stretch behind the ridge hides,
+    # so short crest grazes stay one stroke.
+    "harper-mountain": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -417,6 +423,13 @@ CONTOUR_TIGHT = {
         "tol": 1.5,
         "min_run": 12,
         "y": (2000.0 / 3.0, 1400.0),
+    },
+    # Harper. Top-right crest: pull back faces off the near ridge there.
+    "harper-mountain": {
+        "tol": 1.2,
+        "min_run": 12,
+        "x": (1000.0 * 2.0 / 3.0, 1400.0),
+        "y": (-400.0, 1000.0 / 3.0),
     },
 }
 # Runs only, and only where a hill asks. Tol is pixels below a nearer
@@ -1076,7 +1089,10 @@ DEM_PAD = {
     # so contours and tree wash were empty there. Same fix as Fernie/Marmot.
     "purden-ski-village": 1.8,
     "mount-cain-alpine-park": 1.8,
-    "harper-mountain": 1.8,
+        # Harper. 1.8 still left the top-right banner corner bare of trees
+    # and contours; 2.6/4.0 still sparse there. 5.0 reaches the frame
+    # edge (same pattern as Caledonia after its flip).
+    "harper-mountain": 5.0,
     "nipika": 2.2,
     # Hallis Lake turned 165°; corners need the wider 2.6 crop.
     "hallis-lake-ski-trails": 2.6,
