@@ -15,6 +15,7 @@
   var watch = null;
   var catalogs = {
     bc: {
+
       file: "hills.json?v=20261105smb",
       names: "names.json?v=20261105smb",
       index: "contours/index.json?v=20261105smb",
@@ -127,6 +128,7 @@
     tn: "Tennessee"
   };
   var US_FILE_VERSION = {
+
     ca: "20261105smb",
     co: "20261105smb",
     id: "20261105smb",
@@ -196,6 +198,7 @@
     ua: "Ukraine"
   };
   var EU_FILE_VERSION = {
+
     fr: "20261105smb",
     ch: "20261105smb",
     at: "20261105smb",
@@ -696,6 +699,7 @@
     if (hill._filePromise) return hill._filePromise;
     var spec = catalogs[catalogCode(hill)];
     hill._filePromise = Promise.all([
+
       fetch("europe/" + hill.region + "/" + hill.slug + ".json?v=20261105smb").then(function (res) {
         if (!res.ok) throw new Error(hill.slug);
         return res.json();
@@ -813,6 +817,7 @@
     var side = hill._side || list[0];
     return list.indexOf(side) < 0 ? list[0] : side;
   }
+
 
   var ASSET_V = "20261105smb";
 
@@ -1862,6 +1867,7 @@
   function ensureBoundaries() {
     if (boundaries) return Promise.resolve(boundaries);
     if (boundariesPromise) return boundariesPromise;
+
     boundariesPromise = fetch("boundaries.json?v=20261105smb").then(function (res) {
       if (!res.ok) throw new Error("boundaries");
       return res.json();
@@ -4182,6 +4188,7 @@
 
   ensureCart();
   onIdle(function () { ensureBoundaries().catch(function () {}); });
+
 
   fetch("hill-index.json?v=20261105smb").then(function (res) {
     if (!res.ok) throw new Error("index");
