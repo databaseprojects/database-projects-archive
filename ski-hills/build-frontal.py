@@ -983,6 +983,13 @@ CAMERAS = {
     "mont-sainte-anne": {
         "frame_scale": 0.909,
     },
+    # Le Massif only. Zoomed out x1.15 from the published sheet (frame_scale
+    # 1/1.15): more terrain visible in the bird's-eye. Facing locked at the
+    # automatic 264.4 so a wider DEM_PAD cannot nudge orient().
+    "le-massif": {
+        "facing": 264.4,
+        "frame_scale": 0.870,
+    },
 }
 
 
@@ -1191,6 +1198,12 @@ DEM_PAD = {
     # 1.0 crop at the corners, so contours and the tree wash need the same
     # widen used for Snowbird / Sasquatch.
     "mont-sainte-anne": 1.8,
+    # Le Massif (zoomed out x1.15, frame_scale 0.870). Bottom-left and other
+    # frame edges were past the default 1.0 crop, so contours and the tree
+    # wash stopped short there on plan and bird's-eye. 1.8 and 2.6 still left
+    # the zoomed bird's-eye bottom edge short; 4.0 reaches the frame after
+    # the 15% pull-back (rotated lat/lon crop vs bird's-eye corners).
+    "le-massif": 4.0,
 }
 
 
