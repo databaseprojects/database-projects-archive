@@ -161,6 +161,10 @@ FLOATING_HORIZON = {
     # back slopes were drawing through the top ridges and the bottom
     # ridges with no horizon pass at all.
     "alta-ski-area": 1.0,
+    # Bogus Basin. Top half: back slopes were drawing through nearer ridges
+    # (Banff Sunshine / Alta 1 px whole-sheet pattern, limited to the top
+    # half via HORIZON_REGION).
+    "bogus-basin-mountain-recreation-area": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -187,6 +191,9 @@ HORIZON_MIN_RUN = {
     # Harper top-right. Only a 4+ sample stretch behind the ridge hides,
     # so short crest grazes stay one stroke.
     "harper-mountain": 4,
+    # Bogus Basin top half. A 4+ sample stretch behind the ridge hides
+    # (same as Baker / Harper corners).
+    "bogus-basin-mountain-recreation-area": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -231,6 +238,12 @@ HORIZON_REGION = {
     "mt-baker": {
         "x": ((-400.0, 420.0),),
         "y": ((-400.0, 350.0), (650.0, 1400.0)),
+    },
+    # Bogus Basin. Top half only (y grows downward). Back slopes through
+    # nearer ridges were stacking on the upper sheet; lower slopes stay on
+    # the skyline test (Red Mountain top-third pattern).
+    "bogus-basin-mountain-recreation-area": {
+        "y": ((-400.0, 500.0),),
     },
 }
 
@@ -746,6 +759,15 @@ CAMERAS = {
     # (184.7) so a wider DEM_PAD cannot flip orient() (Nov 5 tree-corner fix).
     "camelback-mountain-resort": {
         "facing": 184.7,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "ridge_fade": 0.10,
+    },
+    # Bogus Basin. Lock the pre-pad automatic camera (169.96) so horizon
+    # and DEM_PAD edits cannot flip orient().
+    "bogus-basin-mountain-recreation-area": {
+        "facing": 169.96,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
