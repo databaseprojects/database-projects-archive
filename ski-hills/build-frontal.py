@@ -208,6 +208,11 @@ HORIZON_REGION = {
         "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
         "y": ((-400.0, 1000.0 / 3.0),),
     },
+    # Harper. Top-right corner only, same band as Revelstoke.
+    "harper-mountain": {
+        "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
+        "y": ((-400.0, 1000.0 / 3.0),),
+    },
     "mount-washington-alpine-resort": {
         "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
     },
@@ -641,6 +646,16 @@ CAMERAS = {
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
+    # North Star Hill only. Automatic facing was 319.2 and orient() kept it.
+    # 294.2 is 25° less, which turns the bird's-eye drawing 25° clockwise
+    # (Nov 5). Plan was turned separately 35° clockwise (319.25 -> 284.25).
+    # Edit this number.
+    "unnamed-hill-21": {
+        "facing": 294.2,
+        "elevation": 15.0,
+        "depth_scale": DEPTH_SCALE,
+        "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+    },
     # Camrose Nordic only. The automatic render faced 291.2 (the 111.2
     # guess, flipped by orient()). Locking 111.2 turns that drawing
     # upside down. Edit this number.
@@ -860,6 +875,9 @@ CAMERAS = {
     # Kicking Horse only. 0.86 pulls the sheet back 14% around the centre,
     # the same pull-back as Revelstoke.
     "kicking-horse-resort": {"frame_scale": 0.86},
+    # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
+    # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
+    "murray-ridge": {"frame_scale": 0.870},
     # Whistler only. Run and lift strokes are 22% under the defaults
     # (2.2 and 1.7). Automatic facing was 155.4. 143.4 is 12° less, which
     # turns the drawing 12° clockwise on screen. 143.4 is 15° more than
@@ -1089,7 +1107,7 @@ DEM_PAD = {
     # so contours and tree wash were empty there. Same fix as Fernie/Marmot.
     "purden-ski-village": 1.8,
     "mount-cain-alpine-park": 1.8,
-        # Harper. 1.8 still left the top-right banner corner bare of trees
+    # Harper. 1.8 still left the top-right banner corner bare of trees
     # and contours; 2.6/4.0 still sparse there. 5.0 reaches the frame
     # edge (same pattern as Caledonia after its flip).
     "harper-mountain": 5.0,
@@ -1121,6 +1139,9 @@ DEM_PAD = {
     # Pajarito (facing 214.2). The top-left corner and the bottom-right
     # corner were past the DEM crop, so contours and trees stopped short.
     "pajarito-mountain": 1.8,
+    # North Star Hill (facing 294.2). Plan 35° CW + bird's-eye 25° CW; 1.8
+    # still left the bottom-right corner bare. 2.6 reaches every corner.
+    "unnamed-hill-21": 2.6,
     # Snowbird, Snowbasin and Alta, zoomed out x1.12: the wider sheet
     # reaches past the 1.0 crop at the corners.
     "snowbird": 1.8,
@@ -1129,11 +1150,19 @@ DEM_PAD = {
     # Sasquatch (facing 318.1). The bottom-right corner was past the DEM
     # crop, so contours and the tree wash stopped short there.
     "sasquatch-mountain-resort": 1.8,
+
     # Caledonia Nordic (facing 187.6, 180° flip). Default 1.0 left corners and
     # the left half of the tree wash past the DEM/WorldCover crop (left wash
     # alpha ~22 vs right ~29). 2.6 fills the frame and equalizes left/right
     # wash density. Same approach as Hallis / 49° North.
     "caledonia-nordic-ski-center": 2.6,
+    # Murray Ridge, zoomed out x1.15: the wider sheet reaches past the 1.0 crop.
+    "murray-ridge": 1.8,
+    # Ski Mont Blanc (Quebec). Bird's-eye top-right trees were slightly
+    # short of the frame (and bottom-left too). Subtle DEM_PAD 1.4 (from
+    # default 1.0) reaches both corners without a large widen.
+    "ski-mont-blanc": 1.4,
+
 }
 
 
