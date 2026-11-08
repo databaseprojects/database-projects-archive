@@ -1,4 +1,4 @@
-/* Vacant storefronts: multi-select tag filter, column slider, hover, shuffle, lightbox map. */
+/* Vacant storefronts: column slider, hover, shuffle, lightbox map. */
 (function () {
   var COL_KEY = "vsfZoomCols";
   var GPS_KEY = "vsfGpsOn";
@@ -236,6 +236,8 @@
   }
 
   function selected() {
+    /* The tag buttons are gone. A saved or leftover filter must not hide photos. */
+    if (!document.getElementById("vsf-tags")) return [];
     var out = [];
     document.querySelectorAll(".vsf-tag.active").forEach(function (b) {
       var f = b.getAttribute("data-filter");
@@ -324,7 +326,7 @@
   function applyFilter(btn) {
     var g = grid();
     var h = hold();
-    if (!g || !h) return;
+    if (!g || !h || !document.getElementById("vsf-tags")) return;
     var filter = btn.getAttribute("data-filter") || "all";
     if (filter === "all") {
       document.querySelectorAll(".vsf-tag").forEach(function (b) {
@@ -748,7 +750,7 @@
     if (!g) return;
     Array.prototype.forEach.call(g.querySelectorAll("img"), function (img) {
       var src = img.getAttribute("src");
-      if (!src) return;
+      if (!src || img.getAttribute("loading") === "lazy") return;
       img.decoding = "sync";
       img.loading = "eager";
       try { img.fetchPriority = "high"; } catch (err) {}
@@ -773,6 +775,15 @@
 
   wakeImages();
   openArrival();
+  if (!document.getElementById("vsf-tags")) {
+    var parked = hold();
+    var home = grid();
+    if (parked && home) {
+      Array.prototype.forEach.call(parked.querySelectorAll(".vsf-tile"), function (tile) {
+        home.appendChild(tile);
+      });
+    }
+  }
   setCount(allTiles().length, allTiles().length);
   setCols(phoneSlider() ? 4 : storedCols(), false);
   syncGpsButton();
@@ -900,36 +911,6 @@
       hoverScale();
     }, 150);
   });
-})();
-
-/* Tag list folds behind a plain "tags" label. Remember the choice. */
-(function () {
-  var TAGS_KEY = "vsfTagsOpen";
-
-  function syncTagsFold() {
-    var open = document.documentElement.classList.contains("vsf-tags-open");
-    var btn = document.getElementById("vsf-tags-toggle");
-    var drop = document.getElementById("vsf-tagdrop");
-    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
-    if (drop) drop.setAttribute("aria-hidden", open ? "false" : "true");
-  }
-
-  function setTagsFold(open) {
-    document.documentElement.classList.add("vsf-tags-motion");
-    document.documentElement.classList.toggle("vsf-tags-open", !!open);
-    try { localStorage.setItem(TAGS_KEY, open ? "1" : "0"); } catch (e) {}
-    syncTagsFold();
-  }
-
-  syncTagsFold();
-  var tagsToggle = document.getElementById("vsf-tags-toggle");
-  if (tagsToggle) {
-    tagsToggle.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      setTagsFold(!document.documentElement.classList.contains("vsf-tags-open"));
-    });
-  }
 })();
 
 /* Page title disclosure, same open and close as Found Photographs. */
