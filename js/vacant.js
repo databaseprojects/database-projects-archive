@@ -115,7 +115,8 @@
     if (!cur) return;
     var gap = n > 1 ? Math.max(0, (w - cur * n) / (n - 1)) : 0;
     var w5 = (w - gap * 4) / 5;
-    var s = Math.max(1.08, Math.min(HOVER_CAP, (w5 * HOVER_BOOST) / cur));
+    var grown = Math.min(HOVER_CAP, (w5 * HOVER_BOOST) / cur);
+    var s = Math.max(1.04, 1 + Math.max(0, grown - 1) * 0.5);
     g.style.setProperty("--vsf-hs", s.toFixed(3));
   }
 
@@ -430,7 +431,7 @@
     if (e.relatedTarget && tile.contains(e.relatedTarget)) return;
     var g = grid();
     if (!g) return;
-    var s = parseFloat(g.style.getPropertyValue("--vsf-hs")) || 1.3;
+    var s = parseFloat(g.style.getPropertyValue("--vsf-hs")) || 1.15;
     var r = tile.getBoundingClientRect();
     var cs = getComputedStyle(tile);
     var cur = parseFloat(cs.scale);
