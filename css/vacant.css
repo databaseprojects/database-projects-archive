@@ -422,10 +422,10 @@ html.vsf-tags-open .vsf-tags {
 }
 
 .vsf-tile:hover {
-  scale: var(--vsf-hs, 1.15);
+  scale: var(--vsf-hs, 1.075);
   translate: var(--vsf-tx, 0px) var(--vsf-ty, 0px);
   z-index: 20;
-  box-shadow: 0 calc(8px / var(--vsf-hs, 1.15)) calc(24px / var(--vsf-hs, 1.15)) rgba(0, 0, 0, 0.3);
+  box-shadow: 0 calc(8px / var(--vsf-hs, 1.075)) calc(24px / var(--vsf-hs, 1.075)) rgba(0, 0, 0, 0.3);
   transition: opacity 0.35s ease, scale 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), translate 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
 }
 
