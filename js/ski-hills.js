@@ -1373,20 +1373,25 @@
     parent.appendChild(line);
   }
 
+  // Small uppercase headings (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE).
+  // 7 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 12.17 units.
+  // Ski Hill Maps print re-render uses the same 7 pt value.
+  var FIELD_LABEL_SIZE = 12.17;
+
   function fieldLabel(str, x, y) {
     var text = document.createElementNS(NS, "text");
     text.setAttribute("class", "sh-field-label");
     text.setAttribute("x", x.toFixed(1));
     text.setAttribute("y", y.toFixed(1));
     text.setAttribute("font-family", "Courier New, Courier, monospace");
-    text.setAttribute("font-size", "9");
+    text.setAttribute("font-size", String(FIELD_LABEL_SIZE));
     text.setAttribute("style", "fill:rgba(0,0,0,0.55);letter-spacing:0.16em");
     text.textContent = str;
     return text;
   }
 
   function labelWidth(str) {
-    var size = 9;
+    var size = FIELD_LABEL_SIZE;
     return textWidth(str, size) + Math.max(str.length - 1, 0) * size * 0.16;
   }
 
