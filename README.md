@@ -15,7 +15,7 @@ On the Car Colours map, every selectable area (a city or a neighbourhood) draws 
 The index is a small Courier filing line: uppercase, tracked out, with a black rule. Two records are open on this slice.
 
 - [Home](./) — title, a short note, and the index
-- [Vacant](vacant-storefronts/) — storefront photographs, tag filter, column slider, hover, lightbox with a location map
+- [Vacant](vacant/) — storefront photographs, tag filter, column slider, hover, lightbox with a location map
 - [Found Photographs](found-photographs/) — print-like grid, row and table layouts, floating antigravity, hover, front/back flip, lightbox
 
 The other names in the index are placeholders.
