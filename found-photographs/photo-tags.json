@@ -1,9 +1,18 @@
 {
   "cloudName": "vtyvhdpv",
-  "featuredTags": ["black-and-white", "colour", "sepia"],
+  "featuredTags": [
+    "black-and-white",
+    "colour",
+    "sepia"
+  ],
   "minTagCount": 3,
   "tagGroups": [
-    ["black-and-white", "colour", "color", "sepia"]
+    [
+      "black-and-white",
+      "colour",
+      "color",
+      "sepia"
+    ]
   ],
   "photos": [
     {
@@ -25,7 +34,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0018_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0018_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0018_b_sharp",
         "text": "Stamped number \"983 D\" (printed sideways). No handwriting."
       }
     },
@@ -44,7 +53,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0019_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0019_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0019_b_sharp",
         "text": "Pencil: \"Lullman's [?] Home / Alberni B.C\". Small pink \"25\" in the top-right corner."
       }
     },
@@ -67,7 +76,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0020_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0020_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0020_b_sharp",
         "text": "Pen on a torn patch of green album paper: \"My Home\". (Front margin is printed \"AUG 1961\".)"
       }
     },
@@ -105,7 +114,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0022_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0022_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0022_b_sharp",
         "text": "Stamped number \"943 B\". No handwriting."
       }
     },
@@ -156,7 +165,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0026_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0026_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0026_b_sharp",
         "text": "Pen: \"Our House.\" Stamped number \"867\". KODAK PAPER watermark."
       }
     },
@@ -197,7 +206,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0028_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0028_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0028_b_sharp",
         "text": "No handwriting. Album glue residue; partial stamp cut off at the bottom edge, possibly \"964 Y\" [?]."
       }
     },
@@ -219,7 +228,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0029_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0029_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0029_b_sharp",
         "text": "Pen: \"A recent photo of / No. 7 Crosby St.\""
       }
     },
@@ -241,7 +250,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0030_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0030_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0030_b_sharp",
         "text": "Pen: \"#21 Addis Ababa - Dec. 1973 / Tsega [?] Villa / December 1973\"."
       }
     },
@@ -265,7 +274,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0031_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0031_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0031_b_sharp",
         "text": "Pen: \"July 1965\". Stamped number \"648 D\". KODAK PAPER watermark."
       }
     },
@@ -301,7 +310,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0033_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0033_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0033_b_sharp",
         "text": "Stamped number \"914\". No handwriting."
       }
     },
@@ -319,7 +328,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0034_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0034_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0034_b_sharp",
         "text": "Stamped number \"322 X\". No handwriting."
       }
     },
@@ -357,7 +366,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0036_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0036_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0036_b_sharp",
         "text": "Faded upside-down rubber stamp: \"THE NEW DECKE[?] ... DEC 6 19[?] ... REGINA, SASK.\" Pencil \"57\" [?] in the corner."
       }
     },
@@ -378,7 +387,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0037_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0037_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0037_b_sharp",
         "text": "Stamped number \"666\" with a pencil check mark. Faint offset marks."
       }
     },
@@ -397,7 +406,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0038_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0038_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0038_b_sharp",
         "text": "Stamped number \"019\" [?]. Faint VELOX paper mark and a faint date stamp \"MAY ... 19[?]\", mostly illegible."
       }
     },
@@ -452,7 +461,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0041_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0041_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0041_b_sharp",
         "text": "Blank (staining only)."
       }
     },
@@ -486,7 +495,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0043_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0043_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0043_b_sharp",
         "text": "Pencil: \"6\"."
       }
     },
@@ -557,7 +566,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0047_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0047_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0047_b_sharp",
         "text": "Pen: \"Large House / Laings (home at left) / & Dumaurier at rt. / at Peacock Court. / 1968\". KODAK PAPER watermark."
       }
     },
@@ -574,7 +583,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0055_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0055_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0055_b_sharp",
         "text": "Green ink: \"Please return\". \"REMOVE TO EXPOSE ADHESIVE\" tape strips top and bottom."
       }
     },
@@ -596,7 +605,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0056_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0056_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0056_b_sharp",
         "text": "No handwriting. \"REMOVE TO EXPOSE ADHESIVE\" tape strips top and bottom; Kodak paper mark."
       }
     },
@@ -614,7 +623,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0057_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0057_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0057_b_sharp",
         "text": "Pink ink: \"Roses / Summer '74\". (Front margin also reads \"SUMMER '74\".)"
       }
     },
@@ -650,7 +659,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0060_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0060_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0060_b_sharp",
         "text": "Green ink: \"Please return\". \"REMOVE TO EXPOSE ADHESIVE\" tape strips top and bottom."
       }
     },
@@ -770,7 +779,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0070_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0070_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0070_b_sharp",
         "text": "Blank (orange album-residue stripes only)."
       }
     },
@@ -792,7 +801,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0071_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0071_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0071_b_sharp",
         "text": "Pen: \"Finished house with 'sold' sign in window. Earl's trees, new houses, etc. / Earl, Dad, Mom. / March 23, 1958.\""
       }
     },
@@ -815,7 +824,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0072_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0072_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0072_b_sharp",
         "text": "Pen: \"New house with exterior white stucco, plastered inside, duroid roof on. / Mom, Earl, Dad. / Sept. 22, 1957\""
       }
     },
@@ -836,7 +845,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0073_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0073_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0073_b_sharp",
         "text": "Pen: \"Plywood roof & sides on plus backfill in. at house we built at 6922 Fremlin St. / Aug. 18, 1957 / Notice trees, etc. New '57 Dodge.\" Partial stamp \"18[?]\"."
       }
     },
@@ -857,7 +866,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0074_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0074_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0074_b_sharp",
         "text": "Pen: \"#2 / Henry VIII's [?] bedroom is on the left corner. Henry the VIII was on the right. I was up and sat on his bed. It's not open to the public. But Howard knows everyone in town so has a little drag [?]\" "
       }
     },
@@ -877,7 +886,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0075_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0075_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0075_b_sharp",
         "text": "Pen: \"Sept 12/48. Mt. Stephen [?] Pass 4,061 ft. in Cascade Range. Washington\". Stamped number \"1090\" [?] (upside down)."
       }
     },
@@ -898,7 +907,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0079_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0079_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0079_b_sharp",
         "text": "Stamped number \"564 L\". No handwriting."
       }
     },
@@ -920,7 +929,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0083_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0083_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0083_b_sharp",
         "text": "Red ink: \"Autumn 1943\". VELOX paper mark."
       }
     },
@@ -939,7 +948,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0085_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0085_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0085_b_sharp",
         "text": "Stamped number \"241\". No handwriting."
       }
     },
@@ -957,7 +966,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0096_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0096_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0096_b_sharp",
         "text": "Pen: \"Parade Simpson\"."
       }
     },
@@ -975,7 +984,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0097_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0097_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0097_b_sharp",
         "text": "Pen: \"Simpson Parade\"."
       }
     },
@@ -992,7 +1001,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0104_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0104_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0104_b_sharp",
         "text": "Pencil: \"4\"."
       }
     },
@@ -1040,7 +1049,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0109_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0109_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0109_b_sharp",
         "text": "Stamped number \"926\". No handwriting."
       }
     },
@@ -1061,7 +1070,7 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0110_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0110_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0110_b_sharp",
         "text": "Pencil (sideways): \"This is some of the fellows and the castle that we lived in when in [crossed-out E] England.\" Purple stamp \"18\"; small faint boxed stamps, illegible."
       }
     },
@@ -1082,9 +1091,4504 @@
       ],
       "back": {
         "file": "FastFoto_2026_08_0111_b",
-        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0111_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0111_b_sharp",
         "text": "Pencil (Swedish): \"Vita fjällkor från Jämtland\" (white mountain cows from Jämtland). Brown stains; Gevaert paper mark."
       }
+    },
+    {
+      "file": "FastFoto_2026_07_0001_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0001_a",
+      "tags": [
+        "outdoor",
+        "farm",
+        "farmhouse",
+        "barn",
+        "gambrel roof",
+        "outbuildings",
+        "field",
+        "dirt road",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0008_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0008_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "dog",
+        "animal",
+        "hat",
+        "hillside",
+        "field",
+        "conifer",
+        "shadow",
+        "damaged print",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0008_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0008_b",
+        "text": "Pencil numbers: \"4725\" and \"7409\" [?] (a \"1\" beneath). Torn notch on the right edge."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0009_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0009_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "collie",
+        "snow",
+        "winter",
+        "house",
+        "lap siding",
+        "windows",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0010_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0010_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "child",
+        "family",
+        "dog",
+        "animal",
+        "barrel",
+        "doorway",
+        "front steps",
+        "stucco",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0011_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0011_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "puppies",
+        "headscarf",
+        "grass",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0012_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0012_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "coat",
+        "hat",
+        "handbag",
+        "garden",
+        "fence",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0012_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0012_b",
+        "text": "No handwriting. Orange striped album-paper residue; small mark \"A\" [?] in the lower right."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0013_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0013_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "dog",
+        "animal",
+        "collie",
+        "snow",
+        "winter",
+        "house",
+        "brick",
+        "fence",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0013_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0013_b",
+        "text": "Red Kodak stamp: \"THIS IS A KODACOLOR PRINT / Made by Kodak / DECEMBER 1962 R...\". Heavy brown album-glue staining around the edges."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0014_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0014_a",
+      "tags": [
+        "indoor",
+        "people",
+        "woman",
+        "cat",
+        "animal",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0015_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0015_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "leash",
+        "snow",
+        "winter",
+        "street",
+        "apartment building",
+        "balcony",
+        "church",
+        "steeple",
+        "bare trees",
+        "car",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0016_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0016_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "cows",
+        "animal",
+        "pasture",
+        "field",
+        "tree",
+        "forest",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0016_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0016_b",
+        "text": "Pencil: \"Bessie\". Faint blue stamped number \"8 54\" with illegible sideways stamped text."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0019_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0019_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "striped sweater",
+        "field",
+        "farm",
+        "cows",
+        "animal",
+        "fence",
+        "shed",
+        "tree",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0020_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0020_a",
+      "tags": [
+        "indoor",
+        "christmas tree",
+        "christmas",
+        "presents",
+        "armchair",
+        "sofa",
+        "blinds",
+        "rug",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0021_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0021_a",
+      "tags": [
+        "outdoor",
+        "animal",
+        "penguins",
+        "zoo",
+        "rocks",
+        "pool",
+        "water",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0022_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0022_b",
+      "tags": [
+        "outdoor",
+        "lake",
+        "boat wake",
+        "water",
+        "waves",
+        "islands",
+        "hills",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0022_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0022_a",
+        "text": "Stamped number \"594\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0023_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0023_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "tree",
+        "conifer",
+        "shrubs",
+        "underexposed",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0024_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0024_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "car",
+        "vintage car",
+        "river",
+        "mountains",
+        "snow",
+        "forest",
+        "conifer",
+        "dirt road",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0024_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0024_b",
+        "text": "Pen: \"Big Bend Hyway\" [Big Bend Highway]. Stamped number \"299 K\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0025_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0025_a",
+      "tags": [
+        "outdoor",
+        "totem pole",
+        "building",
+        "tree",
+        "shrubs",
+        "road",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0025_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0025_b",
+        "text": "Pen: \"Wrangell / Alaska\" and \"-41-\". Pencil: \"923 / $2\". Pen signature at bottom: \"B. J. Dumont\" [?]."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0026_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0026_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "man",
+        "horse",
+        "animal",
+        "equestrian",
+        "riding helmet",
+        "horse show",
+        "tents",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0026_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0026_b",
+        "text": "Pen: \"July 1950. / Myself on Symphony. / at the three counties Horse Show. / I was fourth in the showing class, but I had just got the best riding prize in the Photo\". Stamped number \"990 A\" [?] (printed sideways)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0027_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0027_a",
+      "tags": [
+        "indoor",
+        "living room",
+        "christmas tree",
+        "christmas",
+        "television",
+        "lamp",
+        "armchair",
+        "clock",
+        "chandelier",
+        "curtains",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0028_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0028_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "snow",
+        "winter",
+        "snowbank",
+        "bare trees",
+        "conifer",
+        "chimney",
+        "road",
+        "stained print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0029_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0029_a",
+      "tags": [
+        "outdoor",
+        "farm",
+        "barn",
+        "horses",
+        "animal",
+        "fence",
+        "pasture",
+        "tree",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0030_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0030_a",
+      "tags": [
+        "outdoor",
+        "field",
+        "ploughed field",
+        "horses",
+        "animal",
+        "bare trees",
+        "fence",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0030_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0030_b",
+        "text": "Stamped number \"641\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0031_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0031_a",
+      "tags": [
+        "outdoor",
+        "field",
+        "horse",
+        "animal",
+        "faded",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0033_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0033_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "gables",
+        "trellis",
+        "shrubs",
+        "lawn",
+        "tree",
+        "lap siding",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0033_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0033_b",
+        "text": "Stamped number \"A 67\". SELO paper watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0034_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0034_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "rowboat",
+        "boat",
+        "lake",
+        "water",
+        "shoreline",
+        "forest",
+        "hat",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0034_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0034_b",
+        "text": "Pen: \"Cooking Lake\". Faint oval stamp, illegible."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0035_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0035_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "house",
+        "two-storey",
+        "porch",
+        "exterior stairs",
+        "lap siding",
+        "conifer",
+        "forest",
+        "hat",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0036_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0036_a",
+      "tags": [
+        "indoor",
+        "flowers",
+        "roses",
+        "vase",
+        "table",
+        "checked tablecloth",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0037_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0037_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "lap siding",
+        "window",
+        "wooden fence",
+        "bird",
+        "parrot",
+        "animal",
+        "bare trees",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0038_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0038_a",
+      "tags": [
+        "indoor",
+        "radio equipment",
+        "electronics",
+        "control panel",
+        "telephone",
+        "equipment rack",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0039_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0039_a",
+      "tags": [
+        "aerial view",
+        "airplane window",
+        "clouds",
+        "sky",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0040_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0040_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "fishing",
+        "fish",
+        "fishing rod",
+        "boat",
+        "lake",
+        "water",
+        "pipe",
+        "cap",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0041_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0041_a",
+      "tags": [
+        "outdoor",
+        "tree",
+        "wire fence",
+        "tall grass",
+        "blurry",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0042_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0042_a",
+      "tags": [
+        "outdoor",
+        "lamb",
+        "sheep",
+        "animal",
+        "field",
+        "fence",
+        "barbed wire",
+        "river valley",
+        "hills",
+        "tree",
+        "handwritten caption",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0042_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0042_b",
+        "text": "Pen: \"a Little Lamb down near the River / July '60\". Stamped number \"227\"."
+      },
+      "frontText": "Front caption (pen, blue): \"Little Lamb down near the River\""
+    },
+    {
+      "file": "FastFoto_2026_07_0043_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0043_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "boy",
+        "dog",
+        "animal",
+        "barn",
+        "doorway",
+        "straw",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0044_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0044_a",
+      "tags": [
+        "outdoor",
+        "cats",
+        "kittens",
+        "animal",
+        "barn",
+        "doorway",
+        "straw",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0045_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0045_a",
+      "tags": [
+        "indoor",
+        "living room",
+        "dog",
+        "animal",
+        "armchair",
+        "sofa",
+        "chair",
+        "clock",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0046_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0046_a",
+      "tags": [
+        "outdoor",
+        "dog",
+        "puppy",
+        "animal",
+        "barn",
+        "doorway",
+        "bucket",
+        "sacks",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0047_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0047_a",
+      "tags": [
+        "outdoor",
+        "cabin",
+        "mountains",
+        "forest",
+        "conifer",
+        "fence",
+        "dirt road",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0047_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0047_b",
+        "text": "Stamped number \"158 A\" [?] (printed sideways). Small patch of album paper stuck in the centre. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0048_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0048_a",
+      "tags": [
+        "outdoor",
+        "lake",
+        "mountains",
+        "water",
+        "shoreline",
+        "handwritten caption",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0048_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0048_b",
+        "text": "Stamped number \"158 A\" [?] (printed sideways). No handwriting."
+      },
+      "frontText": "Front caption (pen, blue): \"Arrow Lakes Renatta [?]\""
+    },
+    {
+      "file": "FastFoto_2026_07_0049_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0049_a",
+      "tags": [
+        "indoor",
+        "christmas tree",
+        "christmas",
+        "christmas cards",
+        "armchair",
+        "archway",
+        "curtains",
+        "dated print",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0049_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0049_b",
+        "text": "Pen: \"Christmas / Tree '59 / Dec. 24\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0050_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0050_a",
+      "tags": [
+        "outdoor",
+        "parade",
+        "horses",
+        "riders",
+        "animal",
+        "crowd",
+        "people",
+        "street",
+        "building",
+        "handwritten caption",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0050_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0050_b",
+        "text": "Pen: \"Med Hat / Stamp. '60\" [Medicine Hat Stampede 1960]. Stamped number \"535\"."
+      },
+      "frontText": "Front caption (pen, blue), mostly illegible: \"M[?]d[?] ... [?] Parade\""
+    },
+    {
+      "file": "FastFoto_2026_07_0051_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0051_a",
+      "tags": [
+        "outdoor",
+        "horse",
+        "pony",
+        "animal",
+        "snow",
+        "winter",
+        "fence",
+        "bare trees",
+        "farm",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0052_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0052_a",
+      "tags": [
+        "outdoor",
+        "parade",
+        "elephants",
+        "animal",
+        "riders",
+        "people",
+        "crowd",
+        "street",
+        "stampede",
+        "house",
+        "tree",
+        "handwritten caption",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0052_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0052_b",
+        "text": "Pen: \"Cal Stampede '60 / Elephants\" [Calgary Stampede 1960]. Stamped number \"227\"."
+      },
+      "frontText": "Front caption (pen, blue): \"ELEPHANTS @ Stampede\""
+    },
+    {
+      "file": "FastFoto_2026_07_0053_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0053_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "car",
+        "vintage car",
+        "tall grass",
+        "tree",
+        "conifer",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0053_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0053_b",
+        "text": "Pencil \"LG\" [?] in the corner. Pen (blue capitals): \"GARPIE'S [?] FIRST / CAR 1930's (EARLY) / HAS PLASTIC WINDOWS\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0054_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0054_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "child",
+        "house",
+        "cottage",
+        "front door",
+        "front steps",
+        "lap siding",
+        "chair",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0054_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0054_b",
+        "text": "Stamped number \"235 T\" [?] (upside down). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0055_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0055_a",
+      "tags": [
+        "outdoor",
+        "bridge",
+        "river",
+        "barge",
+        "boat",
+        "dock",
+        "crease",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0055_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0055_b",
+        "text": "Stamped number \"571\" (printed sideways). Crease across the lower third. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0056_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0056_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "porch",
+        "columns",
+        "front door",
+        "lap siding",
+        "tall grass",
+        "tree",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0057_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0057_a",
+      "tags": [
+        "outdoor",
+        "airport",
+        "airplane",
+        "bus",
+        "car",
+        "parking lot",
+        "window view",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0058_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0058_a",
+      "tags": [
+        "outdoor",
+        "dog",
+        "puppies",
+        "spaniel",
+        "animal",
+        "log cabin",
+        "window",
+        "snow",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0058_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0058_b",
+        "text": "Pen (blue): \"1935\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0059_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0059_a",
+      "tags": [
+        "indoor",
+        "window",
+        "armchair",
+        "chair",
+        "table",
+        "curtains",
+        "plant",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0059_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0059_b",
+        "text": "Stamped number \"937\" (upside down). Foxing stains along the right side. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0060_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0060_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "hunting",
+        "deer",
+        "snow",
+        "winter",
+        "forest",
+        "conifer",
+        "fence",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0060_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0060_a",
+        "text": "Stamped number \"B31\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0061_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0061_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "pack horse",
+        "horse",
+        "animal",
+        "mountains",
+        "conifer",
+        "hat",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0061_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0061_a",
+        "text": "Blue stamp: \"60¢\" [?] (printed sideways). Foxing stains. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0062_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0062_a",
+      "tags": [
+        "outdoor",
+        "airplane",
+        "field",
+        "sky",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0063_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0063_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "hat",
+        "coat",
+        "fur collar",
+        "vintage fashion",
+        "porch",
+        "iron railings",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0064_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0064_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "fur pelts",
+        "trapping",
+        "hunting",
+        "brick",
+        "building",
+        "windows",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0065_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0065_a",
+      "tags": [
+        "outdoor",
+        "pickup truck",
+        "truck",
+        "building",
+        "arched windows",
+        "snow",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0065_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0065_b",
+        "text": "Pen: \"Feb. 77 / my truck in front of JPL powerhouse\" [JPL = Jasper Park Lodge?]."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0066_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0066_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "car",
+        "mercedes-benz",
+        "licence plate",
+        "road",
+        "bare trees",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0067_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0067_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "car",
+        "convertible",
+        "sports car",
+        "licence plate",
+        "industrial",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0068_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0068_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "coupe",
+        "conifer",
+        "fence",
+        "road",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0069_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0069_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "tree",
+        "road",
+        "house",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0070_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0070_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "snow",
+        "winter",
+        "snowbank",
+        "lumber",
+        "building",
+        "decorative border",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0070_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0070_b",
+        "text": "No handwriting. Heavy black album-paper residue; faint small blue marks [?]."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0071_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0071_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "car",
+        "vintage car",
+        "running board",
+        "building",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0071_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0071_b",
+        "text": "No handwriting legible. Heavy grey-brown album-paper residue partly covering a faint blue stamp (illegible)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0072_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0072_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "waterfront",
+        "lake",
+        "pavilion",
+        "road",
+        "tree",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0072_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0072_b",
+        "text": "Stamped number \"219\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0073_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0073_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "parking lot",
+        "hotel",
+        "palm trees",
+        "people",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0073_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0073_b",
+        "text": "Pencil: \"Caliente Mex / Racing Grounds / 8/37\". Stamped number \"B60\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0074_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0074_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "coupe",
+        "ocean",
+        "patio",
+        "chairs",
+        "shrubs",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0075_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0075_a",
+      "tags": [
+        "outdoor",
+        "log cabin",
+        "cabin",
+        "4x4",
+        "car",
+        "conifer",
+        "tree",
+        "dated print",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0075_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0075_b",
+        "text": "Pen: \"Engineers Night Cabin / Jasper Park Lodge / June '77\" and \"West Side\". Faint printed photo-paper backprint."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0076_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0076_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "car",
+        "vintage car",
+        "dog",
+        "animal",
+        "tree",
+        "damaged print",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0076_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0076_b",
+        "text": "Pencil: \"Hartland and Fido. Hartland is on Shearsmith's car at Fleetwood. 1986\" (corrected in blue pen to \"1936\"), then an arrow to \"Dukie\". Small blue mark lower left."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0077_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0077_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "car",
+        "vintage car",
+        "house",
+        "porch",
+        "shrubs",
+        "hydrangea",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0077_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0077_b",
+        "text": "No handwriting. Heavy brown album-glue staining over most of the back."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0079_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0079_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "field",
+        "wildflowers",
+        "fireweed",
+        "people",
+        "man",
+        "tree",
+        "colour shift",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0079_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0079_b",
+        "text": "Small red date stamp \"10 Aug 76\" (printed sideways). Red adhesive marks. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0080_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0080_a",
+      "tags": [
+        "outdoor",
+        "log cabin",
+        "cabin",
+        "people",
+        "mountains",
+        "conifer",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0081_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0081_a",
+      "tags": [
+        "outdoor",
+        "tents",
+        "camp",
+        "forest",
+        "birch",
+        "mountains",
+        "shrubs",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0082_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0082_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "car",
+        "vintage car",
+        "snow",
+        "winter",
+        "house",
+        "photo corners",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0082_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0082_b",
+        "text": "No handwriting. Four black album photo corners."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0083_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0083_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "grille",
+        "licence plate",
+        "tree",
+        "photo corners",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0083_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0083_b",
+        "text": "No handwriting. Four black album photo corners."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0084_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0084_a",
+      "tags": [
+        "outdoor",
+        "ship",
+        "steamship",
+        "smokestacks",
+        "lifeboats",
+        "dock",
+        "people",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0084_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0084_b",
+        "text": "Stamped number \"58\" (printed sideways). One black album photo corner. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0085_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0085_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "grille",
+        "licence plate",
+        "road",
+        "houses",
+        "utility pole",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0085_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0085_b",
+        "text": "Stamped number \"200\" (upside down). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0086_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0086_a",
+      "tags": [
+        "outdoor",
+        "car",
+        "vintage car",
+        "whitewall tires",
+        "lawn",
+        "houses",
+        "utility pole",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0086_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0086_b",
+        "text": "Stamped number \"972\" (upside down). KODAK VELOX PAPER watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0087_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0087_a",
+      "tags": [
+        "outdoor",
+        "ship",
+        "ferry",
+        "deck",
+        "railings",
+        "life ring",
+        "people",
+        "man",
+        "woman",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0087_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0087_b",
+        "text": "Stamped number \"972\" (upside down). KODAK VELOX PAPER watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0088_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0088_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "porch",
+        "front steps",
+        "columns",
+        "windows",
+        "sidewalk",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0088_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0088_b",
+        "text": "Pen: \"about 1950\". Water staining."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0089_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0089_a",
+      "tags": [
+        "outdoor",
+        "farm",
+        "field",
+        "ploughed field",
+        "buildings",
+        "windmill",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0089_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0089_b",
+        "text": "Pen: \"River Road\". Stamped number \"40\" (upside down). Stains and a torn corner."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0090_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0090_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "garden",
+        "flowers",
+        "lawn",
+        "conifer",
+        "utility pole",
+        "dated print",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0090_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0090_b",
+        "text": "No handwriting. Black album-paper residue spots."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0091_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0091_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "farmhouse",
+        "snow",
+        "winter",
+        "field",
+        "prairie",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0091_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0091_b",
+        "text": "Stamped number \"068\" [?] (printed sideways). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0092_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0092_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "craftsman",
+        "porch",
+        "front steps",
+        "snow",
+        "winter",
+        "shrubs",
+        "street",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0092_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0092_b",
+        "text": "Pen: \"Jan. 1952\". Stamped number \"460\" (upside down)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0093_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0093_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "craftsman",
+        "porch",
+        "front steps",
+        "columns",
+        "snow",
+        "winter",
+        "shrubs",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0093_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0093_b",
+        "text": "Pen: \"about 1950\". Light staining."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0094_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0094_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "brick",
+        "porch",
+        "dormer",
+        "hedge",
+        "lawn",
+        "photo corners",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0096_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0096_a",
+      "tags": [
+        "outdoor",
+        "greenhouse",
+        "garden",
+        "snow",
+        "winter",
+        "power lines",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0096_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0096_b",
+        "text": "Pen: \"about 1945\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0097_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0097_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "cottage",
+        "gables",
+        "front door",
+        "shutters",
+        "lawn",
+        "tree",
+        "crease",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0098_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0098_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "street",
+        "road",
+        "sidewalk",
+        "utility pole",
+        "tree",
+        "picket fence",
+        "people",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0098_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0098_b",
+        "text": "Pink stamped number \"564 P\". VELOX paper watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0099_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0099_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "trellis",
+        "garden",
+        "shrubs",
+        "picket fence",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0099_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0099_b",
+        "text": "Pink stamped number \"564 P\". VELOX paper watermark. Faint pencil traces along the top edge, illegible."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0100_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0100_a",
+      "tags": [
+        "outdoor",
+        "forest",
+        "conifer",
+        "ravine",
+        "house",
+        "utility pole",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0101_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0101_a",
+      "tags": [
+        "outdoor",
+        "log cabin",
+        "cabin",
+        "snow",
+        "winter",
+        "icicles",
+        "people",
+        "man",
+        "dated print",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0101_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0101_b",
+        "text": "Stamped number \"A 303\". No handwriting. Heavy black album-paper residue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0102_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0102_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "hat",
+        "house",
+        "porch",
+        "chimney",
+        "lap siding",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0102_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0102_a",
+        "text": "Faint stamped number \"082\" [?] (printed sideways). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0103_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0103_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "house",
+        "bungalow",
+        "porch",
+        "front steps",
+        "front door",
+        "shrubs",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0103_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0103_b",
+        "text": "Pencil: \"Bob, 1947\". Stamped number \"071\" [?] (printed sideways)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0104_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0104_b",
+      "tags": [
+        "outdoor",
+        "backyard",
+        "vegetable garden",
+        "garden",
+        "shed",
+        "house",
+        "utility pole",
+        "street",
+        "cats",
+        "animal",
+        "photo corners",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0104_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0104_a",
+        "text": "Pencil: \"/41\". Stamped number \"790 N\" (printed sideways). Four black album photo corners."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0105_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0105_b",
+      "tags": [
+        "outdoor",
+        "gopher",
+        "ground squirrel",
+        "animal",
+        "barrel",
+        "lumber",
+        "photo corners",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0105_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0105_a",
+        "text": "Pencil: \"Summer/41\". Stamped number \"790 N\" (printed sideways). Four black album photo corners."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0106_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0106_b",
+      "tags": [
+        "outdoor",
+        "squirrel",
+        "black squirrel",
+        "animal",
+        "park",
+        "snow",
+        "winter",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0106_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0106_a",
+        "text": "Pen: \"Black squirrel in / Stanley Park / Jan. 18, 1950\". Blue stamped number \"843 E\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0107_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0107_b",
+      "tags": [
+        "outdoor",
+        "sheep",
+        "animal",
+        "forest",
+        "conifer",
+        "grass",
+        "mailbox",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0107_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0107_a",
+        "text": "Pen: \"Baa! / South of the Border\" and \"Aug. 1949\". Stamped number \"889\" [?] (printed sideways)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0108_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0108_b",
+      "tags": [
+        "outdoor",
+        "seagull",
+        "bird",
+        "animal",
+        "ferry",
+        "deck",
+        "railings",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0108_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0108_a",
+        "text": "Pink stamped number \"860 P\" (printed sideways). VELOX paper watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0109_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0109_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "boy",
+        "dog",
+        "animal",
+        "wooden fence",
+        "tree",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0109_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0109_a",
+        "text": "Pencil: \"1937\" (written sideways)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0110_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0110_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "rowboat",
+        "boat",
+        "river",
+        "willow",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0110_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0110_b",
+        "text": "Pen: \"Lady of the lake, grounded again.\" Green stamped number \"012\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0111_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0111_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "portrait",
+        "smiling",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0111_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0111_b",
+        "text": "Stamped number \"247\" (printed sideways). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0113_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0113_a",
+      "tags": [
+        "outdoor",
+        "totem pole",
+        "carving",
+        "cemetery",
+        "cross",
+        "grave marker",
+        "clouds",
+        "conifer",
+        "dated print",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0113_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0113_b",
+        "text": "Pencil: \"Totem Poles (Graveyard) / Alert Bay, B.C.\" Blue stamp: \"- WEEK OF - / AUG 4 1958 / MUNSHAW COLOUR PRINT\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0114_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0114_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "sea stacks",
+        "cliffs",
+        "driftwood",
+        "people",
+        "man",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0114_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0114_b",
+        "text": "No handwriting. Pale blue paper back with black album-paper residue; faint sideways printing at the right edge, illegible."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0115_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0115_a",
+      "tags": [
+        "outdoor",
+        "building",
+        "motel",
+        "garden",
+        "flowers",
+        "tree",
+        "pine",
+        "dirt road",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0116_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0116_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "ranch house",
+        "field",
+        "wildflowers",
+        "tree",
+        "light leak",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0117_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0117_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "stone",
+        "dormer",
+        "shrubs",
+        "lawn",
+        "conifer",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0117_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0117_b",
+        "text": "Stamped number \"166 R\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0118_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0118_a",
+      "tags": [
+        "outdoor",
+        "lake",
+        "water",
+        "waves",
+        "clouds",
+        "sky",
+        "shoreline",
+        "light leak",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0118_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0118_b",
+        "text": "Red Kodak stamp: \"THIS IS A KODACOLOR PRINT / Made by Kodak / AUGUST 1960 R\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0119_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0119_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "boy",
+        "donkeys",
+        "animal",
+        "riders",
+        "hills",
+        "field",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0119_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0119_b",
+        "text": "Stamped number \"113\" (upside down). Foxing stains. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0120_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0120_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "lap siding",
+        "back door",
+        "steps",
+        "shrubs",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0121_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0121_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "diamond window",
+        "front door",
+        "front steps",
+        "car",
+        "lawn",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0121_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0121_b",
+        "text": "Pen: a circled \"1\" then \"on\", and \"Leonard & Lise [?] O'Doherty's home / Aug '74\". Printed \"REMOVE TO EXPOSE ADHESIVE\" strips top and bottom."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0122_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0122_b",
+      "tags": [
+        "outdoor",
+        "cow",
+        "animal",
+        "pasture",
+        "tree",
+        "tall grass",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0122_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0122_a",
+        "text": "Stamped number \"[?]19\" (printed sideways, partly faded). VELOX paper watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0123_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0123_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "labrador",
+        "leash",
+        "field",
+        "tree",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0123_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0123_a",
+        "text": "No handwriting. Faint printed photo-paper backprint."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0124_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0124_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "puppy",
+        "animal",
+        "garage door",
+        "driveway",
+        "shrubs",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0124_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0124_a",
+        "text": "Pen: \"June 1958 / Arthur & the kittens\". Stamped number \"087\" [?] (upside down, cut off at the top edge)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0125_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0125_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "lawn",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0125_a",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0125_a",
+        "text": "Red pencil: \"1958\". Stamped number \"596\" (upside down, cut off at the top edge). KODAK VELOX PAPER watermark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0126_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0126_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "german shepherd",
+        "log cabin",
+        "cabin",
+        "snow",
+        "winter",
+        "snowbank",
+        "lamp",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0127_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0127_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "german shepherd",
+        "log cabin",
+        "cabin",
+        "snow",
+        "winter",
+        "snowbank",
+        "lamp",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0128_b",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0128_b",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "german shepherd",
+        "log cabin",
+        "cabin",
+        "snow",
+        "winter",
+        "snowbank",
+        "lamp",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0129_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0129_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "dog",
+        "animal",
+        "hat",
+        "shirtless",
+        "tall grass",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0130_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0130_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "german shepherd",
+        "house",
+        "lawn",
+        "conifer",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0131_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0131_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "puppies",
+        "chair",
+        "doorway",
+        "porch",
+        "stained print",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0131_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0131_b",
+        "text": "Stamped number \"666\". Pencil check mark. Foxing along the edges. No other handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0132_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0132_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "fence",
+        "garden",
+        "handwritten caption",
+        "sepia"
+      ],
+      "frontText": "Front caption (pencil): \"Margaret & Brownie\" [?]"
+    },
+    {
+      "file": "FastFoto_2026_07_0133_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0133_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "water-ski show",
+        "ski jump",
+        "ramp",
+        "lake",
+        "water",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0134_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0134_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "water-ski show",
+        "lake",
+        "water",
+        "spray",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0135_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0135_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "water-ski show",
+        "ski jump",
+        "ramp",
+        "cypress gardens",
+        "sign",
+        "lake",
+        "palm trees",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0136_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0136_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "water-ski show",
+        "speedboat",
+        "boat",
+        "lake",
+        "grandstand",
+        "crowd",
+        "palm trees",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0137_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0137_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "water-ski show",
+        "speedboat",
+        "boat",
+        "lake",
+        "spray",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0138_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0138_a",
+      "tags": [
+        "outdoor",
+        "water skiing",
+        "kite skiing",
+        "kite",
+        "sky",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0139_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0139_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "lap siding",
+        "window",
+        "awning",
+        "potted plants",
+        "table",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0139_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0139_b",
+        "text": "Stamped \"C 050\" and \"JULY 1959\" (printed sideways). Munshaw backprint with logo and faint round watermarks."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0140_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0140_a",
+      "tags": [
+        "outdoor",
+        "speedboat",
+        "boat race",
+        "boat",
+        "river",
+        "slough",
+        "handwritten caption",
+        "blurry",
+        "colour"
+      ],
+      "frontText": "Front caption (pen, blue): \"SAMMAMISH Slough Race\""
+    },
+    {
+      "file": "FastFoto_2026_07_0141_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0141_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "dog",
+        "animal",
+        "collie",
+        "field",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0141_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0141_b",
+        "text": "Pen (written sideways): \"This summer again.\" Faint stamped number \"32[?]\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0142_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0142_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "family",
+        "picnic",
+        "picnic basket",
+        "dog",
+        "animal",
+        "hillside",
+        "rocks",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0142_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0142_b",
+        "text": "Pen: \"Taken in the Lake District / Sept 1962 / Jeff & Ann live here\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0143_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0143_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "dog",
+        "animal",
+        "begging",
+        "doorway",
+        "shrubs",
+        "decorative border",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0143_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0143_b",
+        "text": "Pen: \"Bryng [?] Willis / 6 months\". Stamped number \"15[?]\" (upside down)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0144_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0144_a",
+      "tags": [
+        "indoor",
+        "dog",
+        "cat",
+        "animal",
+        "birdcage",
+        "rug",
+        "sunlight",
+        "curtains",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0145_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0145_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "dog",
+        "animal",
+        "collie",
+        "snow",
+        "winter",
+        "fence",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0145_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0145_b",
+        "text": "Stamped number \"A24\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0146_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0146_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "collie",
+        "doorway",
+        "porch",
+        "front steps",
+        "lap siding",
+        "snow",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0147_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0147_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "hat",
+        "dress",
+        "vintage fashion",
+        "hedge",
+        "sidewalk",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0147_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0147_b",
+        "text": "Pencil: \"Thier [?] Sept. 20th 1928. / Regents Park\". Large pencil \"6\" and \"29\" [?] (sideways). Foxing."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0148_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0148_a",
+      "tags": [
+        "indoor",
+        "people",
+        "child",
+        "girl",
+        "boy",
+        "dog",
+        "animal",
+        "collie",
+        "christmas tree",
+        "suit",
+        "tie",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0148_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0148_b",
+        "text": "Pen: \"JAY. RON / & GIRLIE.\""
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0149_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0149_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "cat",
+        "animal",
+        "fur coat",
+        "porch",
+        "front steps",
+        "doorway",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0150_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0150_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "boy",
+        "dog",
+        "animal",
+        "hillside",
+        "bare trees",
+        "crate",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0151_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0151_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "cat",
+        "animal",
+        "lap siding",
+        "house",
+        "dress",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0152_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0152_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "garage",
+        "car",
+        "trailer",
+        "yard",
+        "colour shift",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0152_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0152_b",
+        "text": "No handwriting. Vertical streaks of brown album glue residue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0153_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0153_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "begging",
+        "suspenders",
+        "fence",
+        "brick path",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0153_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0153_b",
+        "text": "Pen: \"Mr Harn [?] / Died 2 May / 55\". Stamped \"15 SEP 1947\" (sideways). Pencil along the bottom edge (upside down): \"Died 2nd May 1955\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0154_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0154_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "dog",
+        "animal",
+        "lawn",
+        "tree",
+        "conifer",
+        "dated print",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0154_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0154_b",
+        "text": "Pencil: \"Summer 1957\". KODAK VELOX PAPER watermark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0156_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0156_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "child",
+        "family",
+        "dog",
+        "animal",
+        "chickens",
+        "shed",
+        "farm",
+        "tree",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0157_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0157_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "collie",
+        "cot",
+        "lawn",
+        "houses",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0157_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0157_b",
+        "text": "Stamp (sideways): \"PROCESSED / JUL 16 1947\", with a round lab stamp, partly illegible. Stamped number \"105\" [?]. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0158_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0158_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "dog",
+        "animal",
+        "wooden fence",
+        "pine",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0159_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0159_a",
+      "tags": [
+        "indoor",
+        "people",
+        "man",
+        "dog",
+        "puppy",
+        "animal",
+        "cabin",
+        "table",
+        "chair",
+        "wood panelling",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0159_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0159_b",
+        "text": "Stamped number \"003\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0160_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0160_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "striped shirt",
+        "lawn",
+        "conifer",
+        "house",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0161_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0161_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "swimsuit",
+        "beach",
+        "pebbles",
+        "lake",
+        "water",
+        "dog",
+        "animal",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0162_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0162_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "dress",
+        "lawn",
+        "house",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0163_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0163_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "boy",
+        "dog",
+        "puppy",
+        "animal",
+        "lap siding",
+        "house",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0164_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0164_a",
+      "tags": [
+        "indoor",
+        "people",
+        "woman",
+        "child",
+        "cat",
+        "animal",
+        "hat",
+        "chair",
+        "faded",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0164_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0164_b",
+        "text": "Stamped number \"7 116\". VELOX watermark. Black album-corner residue. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0165_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0165_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "chihuahua",
+        "road",
+        "lake",
+        "mountains",
+        "boat",
+        "clouds",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0166_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0166_a",
+      "tags": [
+        "outdoor",
+        "dog sled",
+        "sled dogs",
+        "dogs",
+        "animal",
+        "field",
+        "people",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0166_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0166_b",
+        "text": "Blue stamped number \"12\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0167_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0167_a",
+      "tags": [
+        "indoor",
+        "people",
+        "woman",
+        "dog",
+        "puppy",
+        "animal",
+        "window",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0168_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0168_a",
+      "tags": [
+        "indoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "samoyed",
+        "bookshelf",
+        "books",
+        "lamp",
+        "tie",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0169_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0169_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "garden",
+        "lawn",
+        "palm trees",
+        "tree",
+        "dated print",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0170_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0170_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "front steps",
+        "shrubs",
+        "lawn",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0171_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0171_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "front steps",
+        "house",
+        "lap siding",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0172_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0172_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "dog",
+        "animal",
+        "leash",
+        "beach",
+        "driftwood",
+        "pebbles",
+        "ocean",
+        "camera",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0173_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0173_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "railway tracks",
+        "picket fence",
+        "house",
+        "utility pole",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0174_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0174_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "dog",
+        "animal",
+        "rocks",
+        "garden",
+        "forest",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0174_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0174_b",
+        "text": "Pen: \"July 1957 / Bobby 8 / Betty 6 / goats 1 week / sorry its only a / rear view of 1 goat\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0175_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0175_a",
+      "tags": [
+        "outdoor",
+        "dog",
+        "animal",
+        "porch",
+        "deck",
+        "concrete block",
+        "window",
+        "gingerbread trim",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0176_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0176_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "girl",
+        "dog",
+        "poodle",
+        "animal",
+        "path",
+        "shrubs",
+        "forest",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0177_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0177_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "cat",
+        "animal",
+        "apron",
+        "house",
+        "porch",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0178_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0178_a",
+      "tags": [
+        "outdoor",
+        "dog",
+        "puppy",
+        "animal",
+        "wagon",
+        "forest",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0179_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0179_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "front steps",
+        "doorway",
+        "building",
+        "stained print",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0179_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0179_b",
+        "text": "Stamped number \"757\". VELOX diamond watermarks. Foxing. Pencil mark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0180_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0180_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "dog",
+        "animal",
+        "collie",
+        "field",
+        "tie",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0182_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0182_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "rider",
+        "saddle",
+        "farm",
+        "log building",
+        "fence",
+        "cap",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0183_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0183_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "horse and buggy",
+        "buggy",
+        "road",
+        "railway",
+        "fence",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0183_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0183_b",
+        "text": "No handwriting. Large brown stain from album glue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0184_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0184_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horses",
+        "animal",
+        "team of horses",
+        "harness",
+        "farm",
+        "field",
+        "fence",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0184_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0184_b",
+        "text": "No handwriting. Brown and black album-paper residue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0185_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0185_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "boy",
+        "horse",
+        "animal",
+        "saddle",
+        "farm",
+        "house",
+        "lap siding",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0185_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0185_b",
+        "text": "Stamped number \"075\" [?], partly covered by residue. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0186_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0186_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "cows",
+        "animal",
+        "dairy cow",
+        "farm",
+        "barn",
+        "decorative border",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0186_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0186_b",
+        "text": "Faint blue stamped number \"49[?]\". Heavy black album-paper residue. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0187_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0187_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "pony",
+        "animal",
+        "farm",
+        "cap",
+        "crease",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0187_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0187_b",
+        "text": "Faint pencil \"75\" [?]. No other handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0188_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0188_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "horse and buggy",
+        "buggy",
+        "road",
+        "tree",
+        "hedge",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0188_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0188_b",
+        "text": "Pencil: \"A picture of the very / best [photo, crossed out] pony for you\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0189_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0189_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "horse",
+        "animal",
+        "rider",
+        "overalls",
+        "farm",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0190_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0190_a",
+      "tags": [
+        "outdoor",
+        "horse",
+        "animal",
+        "stone building",
+        "farm",
+        "crease",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0190_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0190_b",
+        "text": "Blue pencil star. Pencil \"14\" [?] (upside down). No other handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0192_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0192_a",
+      "tags": [
+        "outdoor",
+        "horses",
+        "animal",
+        "field",
+        "tree",
+        "prairie",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0193_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0193_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "harness",
+        "hat",
+        "tree",
+        "aspen",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0194_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0194_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "horse",
+        "animal",
+        "rider",
+        "hat",
+        "farm",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0194_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0194_b",
+        "text": "Pen (cut off at the left edge): \"[N]orman with / Jerry in Tom's / ten gallon Hat / [?] on Polly - Norm[s] / cow Poney.\" Stamped number \"434\" [?] (sideways). Brown album-corner residue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0195_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0195_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horse",
+        "animal",
+        "rider",
+        "log cabin",
+        "cabin",
+        "chimney",
+        "farm",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0198_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0198_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "horses",
+        "foal",
+        "animal",
+        "hat",
+        "field",
+        "prairie",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0199_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0199_a",
+      "tags": [
+        "outdoor",
+        "horse",
+        "animal",
+        "barn",
+        "fence",
+        "farm",
+        "crease",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0199_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0199_b",
+        "text": "Pen: \"July 2 - 1934 / Bill - 14 yrs. - 3[?]\". Green stamped number \"18[?]\" (sideways)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0202_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0202_a",
+      "tags": [
+        "outdoor",
+        "ocean",
+        "coastline",
+        "rocks",
+        "waves",
+        "conifer",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0203_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0203_a",
+      "tags": [
+        "outdoor",
+        "ocean",
+        "swimming",
+        "water",
+        "waves",
+        "people",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0206_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0206_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "rocks",
+        "pandanus tree",
+        "palm",
+        "people",
+        "couple",
+        "colour shift",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0206_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0206_b",
+        "text": "No handwriting. Horizontal streaks of album glue residue."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0207_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0207_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "waves",
+        "sand",
+        "hills",
+        "sunbathing",
+        "people",
+        "swimsuit",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0208_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0208_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "surfboard",
+        "people",
+        "man",
+        "obstruction",
+        "finger in frame",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0209_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0209_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "sand",
+        "people",
+        "child",
+        "handwritten caption",
+        "dated print",
+        "colour shift",
+        "colour"
+      ],
+      "frontText": "Front caption (pen): \"Allan [?] & Colin at Long Beach\"; top margin pencil \"1975\""
+    },
+    {
+      "file": "FastFoto_2026_07_0210_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0210_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "turquoise water",
+        "sky",
+        "people",
+        "colour"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0210_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0210_b",
+        "text": "Printed lab backprint (sideways): \"010 NA 0ANA0N1 NNN 0 4089 / <No. 20A> / 14106\". FUJIFILM Fujicolor Crystal Archive Paper watermark. No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0212_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0212_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "sand",
+        "reflections",
+        "people",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0213_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0213_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "sand",
+        "ocean",
+        "pine trees",
+        "crowd",
+        "people",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0214_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0214_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "crowd",
+        "people",
+        "sunbathing",
+        "umbrellas",
+        "sand",
+        "ocean",
+        "printed caption",
+        "black-and-white"
+      ],
+      "frontText": "Printed caption on photo: \"At Canada's Perfect Sea Beach, Youghal N.B.\""
+    },
+    {
+      "file": "FastFoto_2026_07_0215_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0215_a",
+      "tags": [
+        "outdoor",
+        "coastline",
+        "beach",
+        "ocean",
+        "waves",
+        "hills",
+        "aerial view",
+        "haze",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0215_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0215_b",
+        "text": "Stamped number \"521\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0216_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0216_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "driftwood",
+        "sand",
+        "ocean",
+        "islands",
+        "clouds",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0219_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0219_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "lake",
+        "crowd",
+        "people",
+        "lifeguard tower",
+        "boats",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0220_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0220_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "sand",
+        "forest",
+        "conifer",
+        "sky",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0221_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0221_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "waikiki",
+        "diamond head",
+        "hotels",
+        "high-rise",
+        "sunbathing",
+        "deck chair",
+        "people",
+        "clouds",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0223_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0223_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "lake",
+        "tent",
+        "boats",
+        "hills",
+        "people",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0224_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0224_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "sand",
+        "ocean",
+        "wooden posts",
+        "people",
+        "clouds",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0225_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0225_a",
+      "tags": [
+        "outdoor",
+        "lake",
+        "swimming",
+        "swimsuit",
+        "people",
+        "man",
+        "water",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0226_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0226_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "picnic",
+        "family",
+        "people",
+        "man",
+        "woman",
+        "child",
+        "swimsuit",
+        "blanket",
+        "mountains",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0228_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0228_a",
+      "tags": [
+        "outdoor",
+        "swimming",
+        "water",
+        "people",
+        "child",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0229_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0229_a",
+      "tags": [
+        "outdoor",
+        "lake",
+        "swimming",
+        "swimsuit",
+        "people",
+        "woman",
+        "pebbles",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0229_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0229_b",
+        "text": "Pencil: \"800\". Stamped number \"[?]26 N\" (upside down, cut off at the top edge). VELOX watermark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0230_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0230_a",
+      "tags": [
+        "outdoor",
+        "ocean",
+        "swimming",
+        "people",
+        "palm trees",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0231_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0231_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "waikiki",
+        "diamond head",
+        "ocean",
+        "people",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0232_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0232_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "sand",
+        "ocean",
+        "waves",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0233_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0233_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "waves",
+        "people",
+        "woman",
+        "child",
+        "swim cap",
+        "swimsuit",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0234_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0234_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "ocean",
+        "people",
+        "woman",
+        "child",
+        "swim cap",
+        "swimsuit",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0236_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0236_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "crowd",
+        "people",
+        "vintage fashion",
+        "ocean",
+        "boats",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0238_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0238_a",
+      "tags": [
+        "outdoor",
+        "bay",
+        "ocean",
+        "shoreline",
+        "forest",
+        "conifer",
+        "island",
+        "dock",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0239_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0239_a",
+      "tags": [
+        "outdoor",
+        "beach",
+        "sand",
+        "lake",
+        "crowd",
+        "people",
+        "swimming",
+        "hills",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0239_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0239_b",
+        "text": "Pencil: \"Shuswap\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0240_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0240_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "gables",
+        "chimney",
+        "brick",
+        "lawn",
+        "victorian",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0240_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0240_b",
+        "text": "Pencil: \"2\" [?]. No other handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0241_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0241_a",
+      "tags": [
+        "outdoor",
+        "cabin",
+        "deck",
+        "snow",
+        "winter",
+        "forest",
+        "conifer",
+        "bare trees",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0241_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0241_b",
+        "text": "Pen (written sideways): \"Our cottage / Hopkins Ldg / BC. / Winter 45-50\". Stamped number \"772\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0242_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0242_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "lap siding",
+        "porch",
+        "awning",
+        "chimney",
+        "sidewalk",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0243_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0243_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "chalet",
+        "balcony",
+        "forest",
+        "bare trees",
+        "snow",
+        "winter",
+        "autumn leaves",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0244_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0244_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "barn",
+        "under construction",
+        "truck",
+        "conifer",
+        "dirt",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0245_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0245_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "house",
+        "bungalow",
+        "porch",
+        "columns",
+        "car",
+        "dirt road",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0246_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0246_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "front steps",
+        "lawn",
+        "tree",
+        "conifer",
+        "shrubs",
+        "shadow",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0246_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0246_b",
+        "text": "Pencil: \"4755 Sixth Ave W / Vancouver\". Stamped number \"289\". KODAK VELOX PAPER watermark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0247_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0247_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "mansion",
+        "brick",
+        "dormer",
+        "chimney",
+        "hedge",
+        "lawn",
+        "tree",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0248_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0248_a",
+      "tags": [
+        "aerial view",
+        "airplane window",
+        "airplane wing",
+        "mountains",
+        "mount rainier",
+        "snow",
+        "handwritten caption",
+        "colour"
+      ],
+      "frontText": "Front caption (pen, blue): \"Mt. Rainier\""
+    },
+    {
+      "file": "FastFoto_2026_07_0249_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0249_a",
+      "tags": [
+        "aerial view",
+        "airplane window",
+        "mountains",
+        "cascade range",
+        "snow",
+        "handwritten caption",
+        "colour"
+      ],
+      "frontText": "Front caption (pen, blue): \"Cascade Range\""
+    },
+    {
+      "file": "FastFoto_2026_07_0251_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0251_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "tudor",
+        "chimney",
+        "garden",
+        "conifer",
+        "driveway",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0251_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0251_b",
+        "text": "Stamped number \"120\" [?] (partly faded). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0252_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0252_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "tudor",
+        "half-timbering",
+        "conifer",
+        "shrubs",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0253_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0253_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "tudor",
+        "half-timbering",
+        "conifer",
+        "hedge",
+        "road",
+        "people",
+        "dated print",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0254_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0254_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "tudor",
+        "half-timbering",
+        "garage",
+        "shrubs",
+        "tree",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0254_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0254_b",
+        "text": "Pen: \"5510 Chancellor, Nov/56\". Green stamped number \"122\" [?] (upside down)."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0255_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0255_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "cottage",
+        "shingle siding",
+        "chair",
+        "tree",
+        "yard",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0255_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0255_b",
+        "text": "No handwriting. KODAK VELOX PAPER watermarks. A row of punched holes along the right edge."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0256_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0256_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "gambrel roof",
+        "awnings",
+        "porch",
+        "tree",
+        "lawn",
+        "people",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0257_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0257_a",
+      "tags": [
+        "outdoor",
+        "houses",
+        "bungalow",
+        "front steps",
+        "tree",
+        "garden",
+        "shrubs",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0257_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0257_b",
+        "text": "Stamped number \"537A\". Red KODATONE logo stamp (upside down). No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0258_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0258_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "veranda",
+        "porch",
+        "columns",
+        "front steps",
+        "lawn",
+        "tree",
+        "crease",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0258_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0258_b",
+        "text": "Small pencil marks only. Foxing and a creased corner."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0259_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0259_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "tudor",
+        "half-timbering",
+        "snow",
+        "winter",
+        "field",
+        "shrubs",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0259_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0259_b",
+        "text": "Pencil: \"O.S.A. / Olds, Alta\" [?]. Stamped number \"279\" [?] (upside down). VELOX watermark."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0260_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0260_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "child",
+        "house",
+        "bungalow",
+        "front door",
+        "front steps",
+        "bay window",
+        "snow",
+        "winter",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0260_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0260_b",
+        "text": "Pencil: \"Mar. 52\". Stamped number \"677\". Stains."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0261_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0261_a",
+      "tags": [
+        "outdoor",
+        "cabin",
+        "deck",
+        "snow",
+        "winter",
+        "conifer",
+        "light leak",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0261_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0261_b",
+        "text": "Stamped number \"772\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0262_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0262_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "house",
+        "front steps",
+        "porch",
+        "walkway",
+        "flags",
+        "conifer",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0263_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0263_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "tudor",
+        "half-timbering",
+        "snow",
+        "winter",
+        "bare trees",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0263_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0263_b",
+        "text": "Pen: \"Front of house during / big snow storm / Sent to me by Ron whilst I was / in London during the Winter of 1962\"."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0264_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0264_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "windows",
+        "steps",
+        "snow",
+        "winter",
+        "shrubs",
+        "sepia"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0264_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0264_b",
+        "text": "Stamped number \"026\". No handwriting."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0265_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0265_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "brick",
+        "chimney",
+        "shrubs",
+        "lawn",
+        "sidewalk",
+        "clouds",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0266_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0266_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "woman",
+        "child",
+        "family",
+        "car",
+        "vintage car",
+        "house",
+        "two-storey",
+        "brick",
+        "yard",
+        "black-and-white"
+      ],
+      "back": {
+        "file": "FastFoto_2026_07_0266_b",
+        "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0266_b",
+        "text": "Stamped number \"769\". Pencil \"M\" [?]."
+      }
+    },
+    {
+      "file": "FastFoto_2026_07_0267_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0267_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "van",
+        "car",
+        "tree",
+        "houses",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0268_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0268_a",
+      "tags": [
+        "outdoor",
+        "camper",
+        "pickup truck",
+        "truck",
+        "boat",
+        "trailer",
+        "campground",
+        "forest",
+        "conifer",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_07_0269_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_07_0269_a",
+      "tags": [
+        "outdoor",
+        "camper",
+        "pickup truck",
+        "truck",
+        "boat",
+        "trailer",
+        "road",
+        "forest",
+        "conifer",
+        "clouds",
+        "handwritten caption",
+        "colour"
+      ],
+      "frontText": "Front caption (pen, blue): \"ON OUR WAY to BAKER LAKE\""
+    },
+    {
+      "file": "FastFoto_2026_08_0023_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0023_a",
+      "tags": [
+        "outdoor",
+        "log cabin",
+        "cabin",
+        "snow",
+        "winter",
+        "power lines",
+        "utility pole",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0076_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0076_a",
+      "tags": [
+        "outdoor",
+        "houses",
+        "snow",
+        "winter",
+        "conifer",
+        "bare trees",
+        "garden",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0077_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0077_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "two-storey",
+        "stone",
+        "garage",
+        "dormer",
+        "tree",
+        "conifer",
+        "snow",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0078_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0078_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "front steps",
+        "lap siding",
+        "chimney",
+        "houses",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0080_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0080_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "front door",
+        "front steps",
+        "people",
+        "woman",
+        "snow",
+        "winter",
+        "willow",
+        "conifer",
+        "shrubs",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0081_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0081_a",
+      "tags": [
+        "outdoor",
+        "front steps",
+        "stairs",
+        "doormat",
+        "ball",
+        "hedge",
+        "doorway",
+        "light leak",
+        "colour shift",
+        "colour"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0082_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0082_a",
+      "tags": [
+        "outdoor",
+        "house",
+        "bungalow",
+        "front door",
+        "picture window",
+        "front steps",
+        "driveway",
+        "tall grass",
+        "handwritten caption",
+        "colour"
+      ],
+      "frontText": "Front caption (pen, blue): top \"A HOUSE IN SIDNEY  THE HOKS SR.\" / bottom \"LOOKED AT TO BUY\""
+    },
+    {
+      "file": "FastFoto_2026_08_0084_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0084_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "house",
+        "bungalow",
+        "craftsman",
+        "porch",
+        "dormer",
+        "garden",
+        "shrubs",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0086_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0086_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "woman",
+        "house",
+        "porch",
+        "front steps",
+        "front door",
+        "columns",
+        "faded",
+        "sepia"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0087_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0087_a",
+      "tags": [
+        "outdoor",
+        "people",
+        "man",
+        "child",
+        "house",
+        "stucco",
+        "balustrade",
+        "front steps",
+        "snow",
+        "winter",
+        "bare trees",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0089_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0089_a",
+      "tags": [
+        "outdoor",
+        "staircase",
+        "railings",
+        "iron fence",
+        "steps",
+        "shadows",
+        "black-and-white"
+      ]
+    },
+    {
+      "file": "FastFoto_2026_08_0090_a",
+      "publicId": "found-photographs/found-photographs/FastFoto_2026_08_0090_a",
+      "tags": [
+        "outdoor",
+        "cabin",
+        "forest",
+        "conifer",
+        "tree",
+        "light leak",
+        "black-and-white"
+      ]
     }
   ]
 }
