@@ -17,13 +17,13 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110r2",
+      file: "hills.json?v=20261110rot",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261105cmt",
+      file: "alberta.json?v=20261110rot",
       names: "alberta-names.json?v=20261105cmt",
       index: R2_BASE + "contours/alberta-index.json?v=20261105cmt",
       label: "Alberta"
@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261105pm4";
+  var ASSET_V = "20261110rot";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1039,8 +1039,7 @@
   // the banner. WebKit does not clip that bleed to the SVG viewport, so this
   // wrapper keeps them on the sheet. Full width, and one unit short of the
   // banner (y = 879) so the pale tree row just above it does not print.
-  // One id per SVG: the
-  // lightbox and the framed copy are both in the document.
+  // One id per SVG: the lightbox and the framed copy are both in the document.
   function clipFrontalTrees(svg, trees) {
     if (!svg || !trees) return;
     var parent = trees.parentNode;
