@@ -145,6 +145,7 @@ FLOATING_HORIZON = {
     # Gaps are rejoined by CONTOUR_CLEAR_JOIN only where nothing is crossed.
     "banff-sunshine-village": 1.0,
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
+    # The upper-left flank is exempt: see BACHELOR_FLANK.
     "mt-bachelor": 3.5,
     # Whitewater at facing 43.5, bottom-left only (HORIZON_REGION). Back
     # slopes behind the near foreground ridge were stacking on its face.
@@ -258,8 +259,24 @@ def horizon_key(slug):
     return slug
 
 
+# Mt. Bachelor, facing 187.9. The left side of the sheet is the east flank,
+# a very gentle tangent up to the summit tip. The skyline test treats that
+# slope as behind the crest (terrain a short step in front still sits above
+# it on screen), so every contour from about 2300 m to the summit is dropped
+# and the upper-left of the cone is blank. Points in this band stay drawn.
+# The rest of the sheet keeps the usual hide. Screen y grows downward.
+BACHELOR_FLANK = {"x": (260.0, 530.0), "y": (140.0, 270.0)}
+
+
+def bachelor_flank(px, py):
+    band = BACHELOR_FLANK
+    return band["x"][0] <= px <= band["x"][1] and band["y"][0] <= py <= band["y"][1]
+
+
 def horizon_hides(slug, px, py):
     """True when this screen point is inside the hill's floating-horizon band."""
+    if horizon_key(slug) == "mt-bachelor" and bachelor_flank(px, py):
+        return False
     region = HORIZON_REGION.get(horizon_key(slug))
     if not region:
         return True
@@ -930,7 +947,8 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
-    "nakiska": {"frame_scale": 0.95},
+    # Recovered camera 60°; 40° is 20° clockwise on screen (Nov 10). Framing stays 0.95.
+    "nakiska": {"facing": 40.0, "frame_scale": 0.95},
     # Purgatory Resort only. The automatic render faced 10.7 (the 190.7
     # guess, flipped by orient()). 190.7 is 180° further and turns that
     # bird's-eye drawing upside down. Plan view is unchanged (Nov 5).
@@ -2200,6 +2218,9 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
                 ):
                     hide = True
                     break
+            # Bachelor's gentle upper-left tangent. See BACHELOR_FLANK.
+            if hide and _hill == "mt-bachelor" and bachelor_flank(px, py):
+                hide = False
             # Screen-cell test, this hill only. A spur that is not the
             # skyline still owns the pixels it covers. The short-gap hold
             # still applies, so a one-sample miss on the near face returns.
@@ -3097,7 +3118,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         float_tol=FLOATING_HORIZON.get(_hkey),
         float_min_run=HORIZON_MIN_RUN.get(_hkey),
         float_hide=(lambda px, py, key=_hkey: horizon_hides(key, px, py))
-        if _hkey in HORIZON_REGION
+        if _hkey in HORIZON_REGION or _hkey == "mt-bachelor"
         else None,
         contour_hold=CONTOUR_HOLD.get(_hkey),
         contour_draw=CONTOUR_DRAW.get(_hkey),
