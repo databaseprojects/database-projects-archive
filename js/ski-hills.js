@@ -836,11 +836,15 @@
 
 
   var ASSET_V = "20261110rot";
+  // Mt. Bachelor frontal only. Upper-left contours were restored.
+  // Contour JSON, wash, and every other hill stay on ASSET_V.
+  var FRONTAL_V = { "mt-bachelor": "20261110bach" };
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return R2_BASE + "frontal/" + file + ".svg?v=" + ASSET_V;
+    var v = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
+    return R2_BASE + "frontal/" + file + ".svg?v=" + v;
   }
 
   function frontalArt(hill) {
@@ -1163,7 +1167,8 @@
     if (hill._washSvgLoading[url]) return;
     hill._washSvgLoading[url] = true;
     begin();
-    fetch(url.replace(".svg?v=", ".wash.svg?v=")).then(function (res) {
+    var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
+    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + ASSET_V)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
     }).then(function (frag) {
