@@ -947,7 +947,8 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
-    "nakiska": {"frame_scale": 0.95},
+    # Recovered camera 60°; 40° is 20° clockwise on screen (Nov 10). Framing stays 0.95.
+    "nakiska": {"facing": 40.0, "frame_scale": 0.95},
     # Purgatory Resort only. The automatic render faced 10.7 (the 190.7
     # guess, flipped by orient()). 190.7 is 180° further and turns that
     # bird's-eye drawing upside down. Plan view is unchanged (Nov 5).
