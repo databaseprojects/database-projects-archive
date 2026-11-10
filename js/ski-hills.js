@@ -17,13 +17,13 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110pln",
+      file: "hills.json?v=20261110rot",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261110pln",
+      file: "alberta.json?v=20261110rot",
       names: "alberta-names.json?v=20261105cmt",
       index: R2_BASE + "contours/alberta-index.json?v=20261105cmt",
       label: "Alberta"
@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261110pln";
+  var ASSET_V = "20261110rot";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   // Contour JSON, wash, and every other hill stay on ASSET_V.
   var FRONTAL_V = { "mt-bachelor": "20261110bach" };
