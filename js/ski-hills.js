@@ -1,5 +1,6 @@
 /* Ski Hills. Drawings are local. The map loads only after Map is opened. */
 (function () {
+  var R2_BASE = "https://ski-hills.databaseprojects.workers.dev/";
   var grid = document.getElementById("sh-grid");
   var count = document.querySelector(".sh-count");
   var tags = document.querySelector(".sh-tags");
@@ -16,75 +17,75 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110b3",
+      file: "hills.json?v=20261110r2",
       names: "names.json?v=20261105cmt",
-      index: "contours/index.json?v=20261105cmt",
+      index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
     },
     ab: {
       file: "alberta.json?v=20261105cmt",
       names: "alberta-names.json?v=20261105cmt",
-      index: "contours/alberta-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/alberta-index.json?v=20261105cmt",
       label: "Alberta"
     },
     qc: {
       file: "quebec.json?v=20261105cmt",
       names: "quebec-names.json?v=20261105cmt",
-      index: "contours/quebec-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/quebec-index.json?v=20261105cmt",
       label: "Quebec"
     },
     on: {
       file: "ontario.json?v=20261105cmt",
       names: "ontario-names.json?v=20261105cmt",
-      index: "contours/ontario-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/ontario-index.json?v=20261105cmt",
       label: "Ontario"
     },
     sk: {
       file: "saskatchewan.json?v=20261105cmt",
       names: "saskatchewan-names.json?v=20261105cmt",
-      index: "contours/saskatchewan-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/saskatchewan-index.json?v=20261105cmt",
       label: "Saskatchewan"
     },
     mb: {
       file: "manitoba.json?v=20261105cmt",
       names: "manitoba-names.json?v=20261105cmt",
-      index: "contours/manitoba-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/manitoba-index.json?v=20261105cmt",
       label: "Manitoba"
     },
     nb: {
       file: "new-brunswick.json?v=20261105cmt",
       names: "new-brunswick-names.json?v=20261105cmt",
-      index: "contours/new-brunswick-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/new-brunswick-index.json?v=20261105cmt",
       label: "New Brunswick"
     },
     nl: {
       file: "newfoundland.json?v=20261105cmt",
       names: "newfoundland-names.json?v=20261105cmt",
-      index: "contours/newfoundland-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/newfoundland-index.json?v=20261105cmt",
       label: "Newfoundland"
     },
     ns: {
       file: "nova-scotia.json?v=20261105cmt",
       names: "nova-scotia-names.json?v=20261105cmt",
-      index: "contours/nova-scotia-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/nova-scotia-index.json?v=20261105cmt",
       label: "Nova Scotia"
     },
     pe: {
       file: "prince-edward-island.json?v=20261105cmt",
       names: "prince-edward-island-names.json?v=20261105cmt",
-      index: "contours/prince-edward-island-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/prince-edward-island-index.json?v=20261105cmt",
       label: "Prince Edward Island"
     },
     yt: {
       file: "yukon.json?v=20261105cmt",
       names: "yukon-names.json?v=20261105cmt",
-      index: "contours/yukon-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/yukon-index.json?v=20261105cmt",
       label: "Yukon"
     },
     nt: {
       file: "northwest-territories.json?v=20261105cmt",
       names: "northwest-territories-names.json?v=20261105cmt",
-      index: "contours/northwest-territories-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/northwest-territories-index.json?v=20261105cmt",
       label: "Northwest Territories"
     }
   };
@@ -169,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: "contours/usa-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/usa-index.json?v=20261105cmt",
       label: US_STATE_NAMES[id]
     };
   });
@@ -218,7 +219,7 @@
   EU_COUNTRIES.forEach(function (id) {
     catalogs["eu-" + id] = {
       file: "europe/" + id + ".json?v=" + (EU_FILE_VERSION[id] || "20261105g50"),
-      index: "contours/europe-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/europe-index.json?v=20261105cmt",
       label: EU_COUNTRY_NAMES[id]
     };
   });
@@ -839,7 +840,7 @@
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
     var file = side ? hill.slug + "-" + side : hill.slug;
-    return "frontal/" + file + ".svg?v=" + ASSET_V;
+    return R2_BASE + "frontal/" + file + ".svg?v=" + ASSET_V;
   }
 
   function frontalArt(hill) {
@@ -981,7 +982,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch("contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
+    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1096,7 +1097,7 @@
       else if (!card._washJsonLoading) {
         card._washJsonLoading = true;
         begin();
-        fetch("contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
+        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
           if (!res.ok) throw new Error("wash");
           return res.json();
         }).then(function (data) {
