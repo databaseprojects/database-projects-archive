@@ -8,3 +8,4 @@
 ## Ski hill rotations (standing rule from Billy)
 
 3. Whenever any ski hill view is rotated (plan, bird's eye, or back view), every empty corner or gap that opens up must be filled in the same job with genuine DEM elevation data: topo contours and trees, matching the existing style, line weights and tree bands. Do this without being asked. Never leave a rotated view with blank corners, and never invent or hand-draw terrain.
+4. What "rotate" means in a bird's-eye (frontal or back) view: turn the terrain about the peak's vertical axis in 3D with the camera locked (same tilt, height, distance, FOV and framing). Never spin the finished image flat in 2D, because that looks like the camera orbiting. Keep every existing run, lift, contour and tree path (no new linework): re-project each point using its real DEM elevation through the turn with the same camera, then fill only the newly exposed edges and corners from genuine DEM data. Plan-view rotations are plain 2D turns.
