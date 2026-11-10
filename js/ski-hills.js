@@ -1376,10 +1376,15 @@
     parent.appendChild(line);
   }
 
-  // Every string on the map banner, headings and values.
+  // Banner values, including the hill name.
   // 10 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
   var BANNER_PT = 10;
-  var FIELD_LABEL_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
+  var BANNER_VALUE_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
+  // Small uppercase headings above each value
+  // (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE).
+  // 6.5 pt on the same sheet → 11.3 units.
+  var HEADING_PT = 6.5;
+  var FIELD_LABEL_SIZE = Math.round((HEADING_PT / 0.575) * 100) / 100;
 
   function fieldLabel(str, x, y) {
     var text = document.createElementNS(NS, "text");
@@ -1486,13 +1491,13 @@
     var gps = gpsText(hill);
     hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
-    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: FIELD_LABEL_SIZE }].concat(top), DRAW, FIELD_LABEL_SIZE);
+    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: BANNER_VALUE_SIZE }].concat(top), DRAW, BANNER_VALUE_SIZE);
     var second = [];
-    if (loc) second.push({ label: "REGION", text: loc, size: FIELD_LABEL_SIZE });
+    if (loc) second.push({ label: "REGION", text: loc, size: BANNER_VALUE_SIZE });
     var country = hill.province === "us" ? "USA" : hill.province === "eu" ? ((hill.region && EU_COUNTRY_NAMES[hill.region]) || "") : "Canada";
-    if (country) second.push({ label: "COUNTRY", text: country, size: FIELD_LABEL_SIZE });
-    if (gps) second.push({ label: "GPS", text: gps, size: FIELD_LABEL_SIZE });
-    if (second.length) placeRow(cap, second, DRAW + BAND / 2, FIELD_LABEL_SIZE);
+    if (country) second.push({ label: "COUNTRY", text: country, size: BANNER_VALUE_SIZE });
+    if (gps) second.push({ label: "GPS", text: gps, size: BANNER_VALUE_SIZE });
+    if (second.length) placeRow(cap, second, DRAW + BAND / 2, BANNER_VALUE_SIZE);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
     return SQUARE;
