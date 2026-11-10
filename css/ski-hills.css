@@ -391,13 +391,13 @@
 
 .sh-hill polyline.sh-contour,
 .sh-hill path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.1265);
+  stroke: rgba(0, 0, 0, 0.14);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
 .sh-lb polyline.sh-contour,
 .sh-lb path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.1265);
+  stroke: rgba(0, 0, 0, 0.14);
   stroke-width: 0.65;
 }
 
@@ -426,7 +426,7 @@
   stroke-width: calc(var(--sh-run, 1.15px) * var(--sh-frame-scale, 1)) !important;
 }
 
-/* Bird's-eye contours match the plan view contours: black at 0.1265
+/* Bird's-eye contours match the plan view contours: black at 0.14
    (the same as .sh-contour), 0.65px in the lightbox, and the plan card's
    --sh-contour width on cards. The sheets bake stroke, stroke-opacity and
    stroke-width on each element, so these have to win. */
@@ -439,7 +439,7 @@
 .sh-frontal-contour {
   opacity: 1;
   stroke: #000 !important;
-  stroke-opacity: 0.1265 !important;
+  stroke-opacity: 0.14 !important;
   stroke-width: var(--sh-contour, 0.17px) !important;
   fill: none;
   stroke-linejoin: round;
@@ -460,28 +460,28 @@
 .sh-lb polyline.sh-contour-shade[data-depth="1"],
 .sh-hill path.sh-contour-shade[data-depth="1"],
 .sh-lb path.sh-contour-shade[data-depth="1"] {
-  stroke: rgba(0, 0, 0, 0.14);
+  stroke: rgba(0, 0, 0, 0.1549);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="2"],
 .sh-lb polyline.sh-contour-shade[data-depth="2"],
 .sh-hill path.sh-contour-shade[data-depth="2"],
 .sh-lb path.sh-contour-shade[data-depth="2"] {
-  stroke: rgba(0, 0, 0, 0.18);
+  stroke: rgba(0, 0, 0, 0.1992);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="3"],
 .sh-lb polyline.sh-contour-shade[data-depth="3"],
 .sh-hill path.sh-contour-shade[data-depth="3"],
 .sh-lb path.sh-contour-shade[data-depth="3"] {
-  stroke: rgba(0, 0, 0, 0.22);
+  stroke: rgba(0, 0, 0, 0.2435);
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="4"],
 .sh-lb polyline.sh-contour-shade[data-depth="4"],
 .sh-hill path.sh-contour-shade[data-depth="4"],
 .sh-lb path.sh-contour-shade[data-depth="4"] {
-  stroke: rgba(0, 0, 0, 0.26);
+  stroke: rgba(0, 0, 0, 0.2877);
 }
 
 .sh-hill line,
