@@ -1384,14 +1384,14 @@ svg [fill="#3a6b42"] {
   fill: #315b38 !important;
 }
 
-/* Print border: 4 mm white margin on every map view (plan and bird's-eye),
-   as a share of the 8 x 8 in print (4 mm / 203.2 mm = 1.968503937% per side).
+/* Print border: 0.25 in (6.35 mm) white margin on every map view (plan and bird's-eye),
+   as a share of the 8 x 8 in print (6.35 mm / 203.2 mm = 3.125% per side).
    Source of truth: ski-hills/layout_spec.py (PRINT_MARGIN_MM). Padding on the
    outer svg shrinks the whole sheet (map, caption, credit) uniformly into the
    content box; the svg clips there, so nothing draws in the margin. Artwork
    fills the 0..1000 viewBox; do not inset redraws by this margin in coordinates. */
 .sh-print {
-  --sh-print-border: 1.968503937%;
+  --sh-print-border: 3.125%;
   box-sizing: border-box;
   padding: var(--sh-print-border);
   overflow: hidden;

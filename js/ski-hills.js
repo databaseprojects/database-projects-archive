@@ -232,12 +232,14 @@
   var catalogPromise = {};
   var SQUARE = 1000;
 
-  // Shared with ski-hills/layout_spec.py. Print white margin is 4 mm on the
-  // 8×8 in sheet (~1.9685%), applied as CSS padding on .sh-print — artwork
-  // fills the 0..1000 viewBox; redraws must not inset by this in coordinates.
+  // Shared with ski-hills/layout_spec.py. Print white margin is 0.25 in
+  // (6.35 mm) on the 8×8 in sheet (3.125%), applied as CSS padding on
+  // .sh-print — artwork fills the 0..1000 viewBox; redraws must not inset
+  // by this in coordinates. PLAN_ART_PAD and FIT_ART_PAD are fit pads, not
+  // this margin, so trees still meet the frame edge.
   var SH_LAYOUT = {
-    PRINT_MARGIN_MM: 4,
-    PRINT_MARGIN_PCT: 1.968503937,
+    PRINT_MARGIN_MM: 6.35,
+    PRINT_MARGIN_PCT: 3.125,
     FRAME: 1000,
     PLAN_ART_PAD: 48,
     FIT_ART_PAD: 40
