@@ -542,8 +542,8 @@ CAMERAS = {
     # 25.0, another 20° counter-clockwise. 355.0 is 50° less than 45.0,
     # which turns the drawing 50° clockwise; the plan view is turned to match.
     "cypress-mountain": {
-        # 295: 20° clockwise from 315 (Nov 10). Plan turned to match.
-        "facing": 295.0,
+        # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
+        "facing": 315.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -582,8 +582,8 @@ CAMERAS = {
     # Runs behind a ridge fade at 10%, as on Revelstoke. The crowded back
     # ridges are thinned by the 3.0 px skyline pass in HORIZON_TOL.
     "mt-norquay": {
-        # 288.6: 20° counter-clockwise from 268.6 (Nov 10). Plan turned to match.
-        "facing": 288.6,
+        # 268.6: 30 degrees counter-clockwise from 238.6. Plan turned to match.
+        "facing": 268.6,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -614,8 +614,7 @@ CAMERAS = {
     # each drawing 35° clockwise. Back 247.9 is 20° more, which turns
     # the back drawing 20° counter-clockwise; front stays 47.9. They stay 180° apart. Edit these numbers.
     "lake-louise-ski-area": {
-        # 2.9 / 202.9: 45° clockwise from 47.9 / 247.9 (Nov 10). Plan not turned.
-        "views": {"front": 2.9, "back": 202.9},
+        "views": {"front": 47.9, "back": 247.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -947,8 +946,7 @@ CAMERAS = {
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
     },
-    # Recovered camera 60°; 40° is 20° clockwise on screen (Nov 10). Framing stays 0.95.
-    "nakiska": {"facing": 40.0, "frame_scale": 0.95},
+    "nakiska": {"frame_scale": 0.95},
     # Purgatory Resort only. The automatic render faced 10.7 (the 190.7
     # guess, flipped by orient()). 190.7 is 180° further and turns that
     # bird's-eye drawing upside down. Plan view is unchanged (Nov 5).
@@ -1035,8 +1033,7 @@ CAMERAS = {
     # 14.55 is 45° further (329.55+45), which turns the drawing 45°
     # counter-clockwise; the plan view is turned to match (Nov 5).
     "sun-peaks-resort": {
-        # 329.55: 45° clockwise from 14.55 (Nov 10). Plan turned to match.
-        "facing": 329.55,
+        "facing": 14.55,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
@@ -1096,8 +1093,7 @@ CAMERAS = {
     # top-left ridges, so they were removed. A bottom-left-only pass (below)
     # hides back slopes stacked behind the near foreground ridge.
     "whitewater-ski-resort": {
-        # 88.5: 45° counter-clockwise from 43.5 (Nov 10). Plan turned to match.
-        "facing": 88.5,
+        "facing": 43.5,
     },
     # Castle only. Elevation 18 looks down a little more steeply than the
     # usual 15, the same bump as Panorama, so the ski lines clear the
