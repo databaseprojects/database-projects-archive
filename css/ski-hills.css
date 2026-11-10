@@ -1375,13 +1375,13 @@ html.sh-prints-off .sh-cart-panel {
 }
 
 
-/* Tree wash green ~15% darker (#3a6b42 -> #315b38). Overlay SVGs still bake
+/* Tree wash green ~30% darker (#3a6b42 -> #284b2e). Overlay SVGs still bake
    #3a6b42; this wins over the fill attribute. Band opacities are untouched. */
 .sh-frontal-tree-wash,
 .sh-plan-tree-wash,
 .sh-frontal-trees [fill="#3a6b42"],
 svg [fill="#3a6b42"] {
-  fill: #315b38 !important;
+  fill: #284b2e !important;
 }
 
 /* Print border: 0.25 in (6.35 mm) white margin on every map view (plan and bird's-eye),
