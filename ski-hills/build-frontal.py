@@ -147,8 +147,8 @@ FLOATING_HORIZON = {
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
     # The upper-left flank is exempt: see BACHELOR_FLANK.
     "mt-bachelor": 3.5,
-    # Whitewater at facing 43.5, bottom-left only (HORIZON_REGION). Back
-    # slopes behind the near foreground ridge were stacking on its face.
+    # Whitewater, bottom-left only (HORIZON_REGION). Back slopes behind
+    # the near foreground ridge were stacking on its face at facing 43.5.
     "whitewater-ski-resort": 3.5,
     # Whistler. The 3 px pass from PR #306, kept. On its own it cut the
     # far ridges into dashes; HORIZON_MIN_RUN and CONTOUR_HOLD join them.
@@ -229,7 +229,7 @@ HORIZON_REGION = {
     "red-mountain-resort": {
         "y": ((-400.0, 1000.0 / 3.0),),
     },
-    # Whitewater at facing 43.5. Bottom-left corner only.
+    # Whitewater. Bottom-left corner only (screen space, kept at facing 88.5).
     "whitewater-ski-resort": {
         "x": ((-400.0, 300.0),),
         "y": ((780.0, 1400.0),),
@@ -1092,8 +1092,11 @@ CAMERAS = {
     # bottom-left corners) no longer matched the turned sheet and cut the
     # top-left ridges, so they were removed. A bottom-left-only pass (below)
     # hides back slopes stacked behind the near foreground ridge.
+    # 88.5 is 45° more than 43.5 (43.5+45), which turns the drawing 45°
+    # counter-clockwise; the plan view is turned to match (Nov 10).
+    # Locked so a wider DEM_PAD cannot flip orient().
     "whitewater-ski-resort": {
-        "facing": 43.5,
+        "facing": 88.5,
     },
     # Castle only. Elevation 18 looks down a little more steeply than the
     # usual 15, the same bump as Panorama, so the ski lines clear the
@@ -1280,8 +1283,10 @@ DEM_PAD = {
     "nipika": 2.2,
     # Hallis Lake turned 165°; corners need the wider 2.6 crop.
     "hallis-lake-ski-trails": 2.6,
-    # Whitewater (facing 43.5). The bottom-left corner
-    # was past the DEM crop, so its contours stopped short.
+    # Whitewater (facing 88.5, 45° counter-clockwise from 43.5). 1.8
+    # still puts every tilted corner inside the DEM crop. Contour gaps
+    # at the 1000×879 corners are the sheet margin, not an empty crop.
+    # Locked facing so this pad cannot flip orient().
     "whitewater-ski-resort": 1.8,
     # 49 Degrees North (facing 205.3). The run box is wide and shallow, so
     # the 1.0 crop was only 171 DEM rows tall. The bird's-eye top-left and

@@ -17,9 +17,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110r2",
+      file: "hills.json?v=20261110ww",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261105cmt",
+      index: R2_BASE + "contours/index.json?v=20261110ww",
       label: "British Columbia"
     },
     ab: {
@@ -837,7 +837,9 @@
 
   var ASSET_V = "20261110rev";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
-  var FRONTAL_V = { "mt-bachelor": "20261110bach" };
+  // Whitewater frontal and plan were turned together (facing 88.5).
+  var FRONTAL_V = { "mt-bachelor": "20261110bach", "whitewater-ski-resort": "20261110ww" };
+  var CONTOUR_V = { "whitewater-ski-resort": "20261110ww" };
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -985,7 +987,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
+    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + ((card.id && CONTOUR_V[card.id]) || ASSET_V)).then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1142,7 +1144,7 @@
       else if (!card._washJsonLoading) {
         card._washJsonLoading = true;
         begin();
-        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
+        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + ((card.id && CONTOUR_V[card.id]) || ASSET_V)).then(function (res) {
           if (!res.ok) throw new Error("wash");
           return res.json();
         }).then(function (data) {
@@ -1167,7 +1169,8 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + ASSET_V)).then(function (res) {
+    var washFileV = (hill && hill.slug === "whitewater-ski-resort" && FRONTAL_V[hill.slug]) ? FRONTAL_V[hill.slug] : ASSET_V;
+    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
     }).then(function (frag) {
@@ -4271,7 +4274,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261105cmt").then(function (res) {
+  fetch("hill-index.json?v=20261110ww").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
