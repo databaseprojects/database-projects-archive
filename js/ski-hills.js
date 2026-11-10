@@ -1037,8 +1037,10 @@
 
   // Bird's-eye trees are drawn 20 units outside the viewBox and down through
   // the banner. WebKit does not clip that bleed to the SVG viewport, so this
-  // wrapper keeps them on the sheet above the banner (y = 880). One id per
-  // SVG: the lightbox and the framed copy are both in the document.
+  // wrapper keeps them on the sheet above the banner (y = 880). Two units in
+  // from the left and right frame edges drops the pale tree pixel that
+  // otherwise sits on that edge just above the banner. One id per SVG: the
+  // lightbox and the framed copy are both in the document.
   function clipFrontalTrees(svg, trees) {
     if (!svg || !trees) return;
     var parent = trees.parentNode;
@@ -1062,9 +1064,9 @@
     clip.setAttribute("class", "sh-tree-clip-path");
     clip.setAttribute("clipPathUnits", "userSpaceOnUse");
     var rect = document.createElementNS(NS, "rect");
-    rect.setAttribute("x", "0");
+    rect.setAttribute("x", "2");
     rect.setAttribute("y", "0");
-    rect.setAttribute("width", String(SQUARE));
+    rect.setAttribute("width", String(SQUARE - 4));
     rect.setAttribute("height", String(DRAW));
     clip.appendChild(rect);
     defs.appendChild(clip);
