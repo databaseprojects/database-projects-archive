@@ -1149,9 +1149,9 @@
     var gw = Math.min(maxW, maxH);
     if (gw < 1) return;
     var scale = w / gw;
-    g.style.setProperty("--sh-stroke", (1.15 * scale).toFixed(3) + "px");
+    g.style.setProperty("--sh-stroke", (1.3166 * scale).toFixed(3) + "px");
     var cols = parseInt(g.getAttribute("data-columns") || "6", 10);
-    var contour = 0.65 * scale;
+    var contour = 0.7058 * scale;
     // Largest four sizes are 5–8 columns. From 9 columns down, thicken
     // gently to 1.5x the scaled width at 20 columns.
     if (cols >= 9) {
