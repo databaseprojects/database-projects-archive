@@ -17,13 +17,13 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110r2",
+      file: "hills.json?v=20261110rot",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261105cmt",
+      file: "alberta.json?v=20261110rot",
       names: "alberta-names.json?v=20261105cmt",
       index: R2_BASE + "contours/alberta-index.json?v=20261105cmt",
       label: "Alberta"
@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261105pm4";
+  var ASSET_V = "20261110rot";
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
