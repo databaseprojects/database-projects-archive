@@ -1511,7 +1511,7 @@ def hard_edge_ready(slug):
     return True
 
 
-def _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands):
+def _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands):
     src_c = json.loads(contour_path.read_text())
     src_c["lines"] = [
         compact_point_list(line) if isinstance(line, str) else line
@@ -1540,7 +1540,6 @@ def _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands):
         src_c.pop("treeBands", None)
     c_bytes = json.dumps(src_c, separators=(",", ":"))
     dst_c_slug.write_text(c_bytes)
-    dst_c_id.write_text(c_bytes)
     return len(tree_wash_d or "")
 
 
@@ -1574,12 +1573,11 @@ def generate_overlay(slug):
     conc_path = ensure_canopy(slug, box, wc_path)
 
     dst_c_slug = OUT_CONTOURS / f"{slug}.json"
-    dst_c_id = OUT_CONTOURS / f"{hid}.json"
     tree_wash_len = 0
     if not FRONTAL_ONLY and contour_path.exists():
         geom_raw = json.loads(geom_path.read_text())
         tree_wash_d, _, _, bands = generate_plan_tree_wash(slug, hill, geom_raw, wc_path, conc_path)
-        tree_wash_len = _write_plan_bands(contour_path, dst_c_slug, dst_c_id, tree_wash_d, bands)
+        tree_wash_len = _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands)
     elif dst_c_slug.exists():
         tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", "") or "")
 
