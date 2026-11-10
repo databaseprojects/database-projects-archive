@@ -16,7 +16,7 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261105cmt",
+      file: "hills.json?v=20261110b3",
       names: "names.json?v=20261105cmt",
       index: "contours/index.json?v=20261105cmt",
       label: "British Columbia"
@@ -1415,7 +1415,9 @@
       return fields.map(function (field, i) {
         var sz = sizes[i];
         var valueW = field.keys ? keysWidth(field.keys, sz) : textWidth(field.text, sz);
-        return Math.max(labelWidth(field.label), valueW) + inset * 2;
+        // Extra room on the right of COUNTRY so the label stays off the divider beside it.
+        var countryPad = field.label === "COUNTRY" ? 16 : 0;
+        return Math.max(labelWidth(field.label), valueW) + inset * 2 + countryPad;
       });
     }
     widths = measure();
@@ -1441,7 +1443,7 @@
     var valueY = y + rowH - 16;
     fields.forEach(function (field, i) {
       var size = sizes[i];
-      if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
+      if (i && field.label !== "RUNS" && field.label !== "COUNTRY") hairline(parent, x, y + 8, x, y + rowH - 8);
       var inner = x + inset;
       parent.appendChild(fieldLabel(field.label, inner, y + 20));
       if (field.keys) {
