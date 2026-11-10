@@ -1035,6 +1035,46 @@
     return "";
   }
 
+  // Bird's-eye trees are drawn 20 units outside the viewBox and down through
+  // the banner. WebKit does not clip that bleed to the SVG viewport, so this
+  // wrapper keeps them on the sheet above the banner (y = 880). One id per
+  // SVG: the lightbox and the framed copy are both in the document.
+  function clipFrontalTrees(svg, trees) {
+    if (!svg || !trees) return;
+    var parent = trees.parentNode;
+    if (parent && parent.getAttribute("class") === "sh-tree-clip") return;
+    var defs = null;
+    var child = svg.firstChild;
+    while (child) {
+      if (child.nodeType === 1 && child.localName === "defs" && child.parentNode === svg) {
+        defs = child;
+        break;
+      }
+      child = child.nextSibling;
+    }
+    if (!defs) {
+      defs = document.createElementNS(NS, "defs");
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    var id = "sh-tree-clip-" + (++clipSerial);
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", id);
+    clip.setAttribute("class", "sh-tree-clip-path");
+    clip.setAttribute("clipPathUnits", "userSpaceOnUse");
+    var rect = document.createElementNS(NS, "rect");
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", String(SQUARE));
+    rect.setAttribute("height", String(DRAW));
+    clip.appendChild(rect);
+    defs.appendChild(clip);
+    var wrap = document.createElementNS(NS, "g");
+    wrap.setAttribute("class", "sh-tree-clip");
+    wrap.setAttribute("clip-path", "url(#" + id + ")");
+    parent.insertBefore(wrap, trees);
+    wrap.appendChild(trees);
+  }
+
   function mountLiveTrees(hill, group) {
     var lb = document.getElementById("sh-lb");
     if (!group || !lb || !hill || lb._card !== hill.el || !lb._svg) return;
@@ -1047,6 +1087,7 @@
     var mask = host.querySelector('g[mask*="sh-contour-fade-"]');
     if (mask) host.insertBefore(imported, mask);
     else host.appendChild(imported);
+    clipFrontalTrees(lb._svg, imported);
   }
 
   function applyPlanWash(card, data) {
@@ -2952,6 +2993,9 @@
     if (old && old.parentNode) old.parentNode.removeChild(old);
     var plate = svg.querySelector(".sh-frontal-plate");
     if (plate && plate.parentNode) plate.parentNode.removeChild(plate);
+    Array.prototype.forEach.call(svg.querySelectorAll("clipPath.sh-tree-clip-path"), function (node) {
+      if (node.parentNode) node.parentNode.removeChild(node);
+    });
   }
 
   function mountFrontal(svg, markup, hill) {
@@ -2969,6 +3013,8 @@
     Array.prototype.forEach.call(art.childNodes, function (node) {
       if (node.nodeType === 1) g.appendChild(document.importNode(node, true));
     });
+    var trees = g.querySelector(".sh-frontal-trees");
+    if (trees) clipFrontalTrees(svg, trees);
     var cap = svg.querySelector(".sh-caption");
     if (cap) {
       svg.insertBefore(g, cap);
