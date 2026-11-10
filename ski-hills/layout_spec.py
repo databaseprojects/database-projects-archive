@@ -1,9 +1,8 @@
 """Shared ski-hill layout constants.
 
-Print white margin (Billy 2026-10-31, confirmed 2026-11-05): **4 mm** on every
-side of the 8 × 8 in print. Replaces the older 0.125 in print border. The
-website chrome border is a separate concern; when site and print share one
-map frame (``.sh-print``), use this print margin.
+Print white margin (Billy 2026-11-10): **0.25 in (6.35 mm)** on every
+side of the 8 × 8 in print. The website frame border is the same 0.25 in.
+When site and print share one map frame (``.sh-print``), use this print margin.
 
 Artwork (contours, runs, lifts, tree wash) is authored in the full
 0 … FRAME viewBox. The print margin is applied as CSS padding on ``.sh-print``
@@ -23,7 +22,7 @@ CSS print margin keeps the white rim on every view.
 from __future__ import annotations
 
 # --- Print white margin (shared by every hill view) ---------------------------
-PRINT_MARGIN_MM = 4.0
+PRINT_MARGIN_MM = 6.35  # 0.25 in
 PRINT_SIDE_IN = 8.0
 MM_PER_IN = 25.4
 
@@ -31,8 +30,9 @@ PRINT_MARGIN_FRAC = PRINT_MARGIN_MM / (PRINT_SIDE_IN * MM_PER_IN)
 PRINT_MARGIN_PCT = PRINT_MARGIN_FRAC * 100.0  # CSS --sh-print-border
 PRINT_MARGIN_SVG = PRINT_MARGIN_FRAC * 1000.0  # same fraction on a 1000-unit frame
 
-# Older website-only border (do not use for print / shared .sh-print frame).
-WEBSITE_BORDER_IN = 0.125
+# Website frame border, in inches. Same 0.25 in as the print margin.
+# The shared .sh-print frame is painted by PRINT_MARGIN_MM, not this constant.
+WEBSITE_BORDER_IN = 0.25
 
 # --- Plan view frame ---------------------------------------------------------
 FRAME = 1000.0
@@ -53,6 +53,8 @@ def css_print_border() -> str:
 
 def assert_print_margin_contract() -> None:
     """Sanity checks so a bad edit fails loudly in rebuilds."""
-    assert PRINT_MARGIN_MM == 4.0
-    assert abs(PRINT_MARGIN_PCT - (4.0 / (8.0 * 25.4) * 100.0)) < 1e-9
+    assert PRINT_MARGIN_MM == 6.35
+    assert WEBSITE_BORDER_IN == 0.25
+    assert abs(PRINT_MARGIN_MM - (WEBSITE_BORDER_IN * MM_PER_IN)) < 1e-9
+    assert abs(PRINT_MARGIN_PCT - (6.35 / (8.0 * 25.4) * 100.0)) < 1e-9
     assert abs(PLAN_ART_SIZE - 904.0) < 1e-9

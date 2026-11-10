@@ -917,7 +917,7 @@ def setup_frontal_projection(slug, runs, lifts, arr, gt, facing_override=None, e
     ys = [c[1] for c in cells]
     minx, maxx = min(xs), max(xs)
     miny, maxy = min(ys), max(ys)
-    # DEM fit gutter inside the 1000-unit sheet (not the 4 mm print margin).
+    # DEM fit gutter inside the 1000-unit sheet (not the 0.25 in / 6.35 mm print margin).
     margin = 4
     view = 1000 - 2 * margin
     data_w = max(maxx - minx, 1)
