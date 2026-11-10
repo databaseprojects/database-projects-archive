@@ -1375,10 +1375,10 @@
     parent.appendChild(line);
   }
 
-  // Small uppercase headings (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE).
-  // 7 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 12.17 units.
-  // Ski Hill Maps print re-render uses the same 7 pt value.
-  var FIELD_LABEL_SIZE = 12.17;
+  // Every string on the map banner, headings and values.
+  // 10 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
+  var BANNER_PT = 10;
+  var FIELD_LABEL_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
 
   function fieldLabel(str, x, y) {
     var text = document.createElementNS(NS, "text");
@@ -1422,11 +1422,13 @@
     function usedWidth() {
       return widths.reduce(function (sum, w) { return sum + w; }, 0);
     }
+    // 10 pt is the size. A row wider than the sheet steps down, and stops at
+    // 12 units, so a very long name stays on the row instead of running off it.
     while (usedWidth() > SQUARE) {
       var max = 0;
       sizes.forEach(function (sz) { if (sz > max) max = sz; });
       if (max <= 12) break;
-      sizes = sizes.map(function (sz) { return sz === max ? sz - 1 : sz; });
+      sizes = sizes.map(function (sz) { return sz === max ? Math.max(12, sz - 1) : sz; });
       widths = measure();
     }
     var extra = SQUARE - usedWidth();
@@ -1481,13 +1483,13 @@
     var gps = gpsText(hill);
     hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
-    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: 20 }].concat(top), DRAW, 16);
+    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: FIELD_LABEL_SIZE }].concat(top), DRAW, FIELD_LABEL_SIZE);
     var second = [];
-    if (loc) second.push({ label: "REGION", text: loc, size: 20 });
+    if (loc) second.push({ label: "REGION", text: loc, size: FIELD_LABEL_SIZE });
     var country = hill.province === "us" ? "USA" : hill.province === "eu" ? ((hill.region && EU_COUNTRY_NAMES[hill.region]) || "") : "Canada";
-    if (country) second.push({ label: "COUNTRY", text: country, size: 20 });
-    if (gps) second.push({ label: "GPS", text: gps, size: 20 });
-    if (second.length) placeRow(cap, second, DRAW + BAND / 2, 20);
+    if (country) second.push({ label: "COUNTRY", text: country, size: FIELD_LABEL_SIZE });
+    if (gps) second.push({ label: "GPS", text: gps, size: FIELD_LABEL_SIZE });
+    if (second.length) placeRow(cap, second, DRAW + BAND / 2, FIELD_LABEL_SIZE);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
     return SQUARE;
