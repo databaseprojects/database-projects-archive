@@ -1153,6 +1153,13 @@ CAMERAS = {
     "whitecap-mountain": {
         "facing": 233.9,
     },
+    # Sundance Resort only. Automatic facing was 38.9 (orient() flipped
+    # default 218.9 so the summit sat away from the viewer). 138.9 is 100°
+    # counter-clockwise from 38.9. Facing is locked so a wider DEM_PAD cannot
+    # nudge orient() after the turn.
+    "sundance-resort": {
+        "facing": 138.9,
+    },
 }
 
 
@@ -1428,6 +1435,11 @@ DEM_PAD = {
     # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
     # corner (Attitash / Stoneham / Bear Valley pattern).
     "sierra-at-tahoe-ski-resort": 2.6,
+    # Sundance Resort (facing 138.9, 100° CCW). Top-left and bottom-right
+    # corners were past the default 1.0 crop, so contours and the tree wash
+    # stopped short there. 2.6 reaches the frame (Bear Mountain / Attitash /
+    # Bear Valley pattern after a large turn).
+    "sundance-resort": 2.6,
 }
 
 
