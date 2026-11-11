@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261105g50",
+    ut: "20261110sdc",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261110spr";
+  var ASSET_V = "20261110sdc";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = { "mt-bachelor": "20261110bach" };
 
