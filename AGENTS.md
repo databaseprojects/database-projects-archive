@@ -23,3 +23,11 @@ When a hill's area grows or a new hill is added, save the new files once to `/wo
 ## Filling missing trees or contours (standing rule from Billy)
 
 7. "Fill in missing trees" (or "fill in the missing trees"), and the same request for contours or any other named feature in a corner or region of a ski hill view, bird's-eye or plan: first check that area of the current view and confirm what is genuinely missing (trees, contours, or both) versus real open ground. Then widen that hill's elevation, forest map and canopy coverage (the DEM_PAD entry in `ski-hills/build-frontal.py`, then re-run the setup script and the builds) so genuine data reaches those areas, and re-render with the full four-band tree layer and contours in the existing style. This works the same way as filling corners after a rotation (rule 3). Keep every other element as it is.
+
+## Zooming out (standing instruction from Billy)
+
+When Billy says "zoom out" with a hill name and a percentage, zoom that hill's view out by that percentage, so the hill sits smaller with more surrounding terrain, and fill the newly shown edges with genuine elevation, contour and four-band tree data. Never crop or stretch.
+- Bird's-eye: set that hill's `frame_scale` in `ski-hills/build-frontal.py` to 1 / (1 + percentage), for example 0.943 for 6% or 0.909 for 10%, and lock its current `facing` so the camera angle stays the same. Widen its DEM_PAD as needed so the edges fill (rule 3).
+- Plan: widen that hill's boundary box in the hill index by the same percentage around its centre, as in the Tremblant, Mount Rose, Boyne and Lutsen plan zoom-outs.
+- When Billy names one view, change only that view. When he names both or says the whole hill, do both. When it's unclear which view he means, ask before building.
+- Then render, check the corners and edges, make an old-versus-new preview, merge and publish (R2, Drive and Pages), and report the new scale or boundary values, the PR number, and confirmation that it's live.
