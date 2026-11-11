@@ -393,6 +393,10 @@
   stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1));
 }
 
+.sh-frame-art polyline.sh-lift {
+  stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1));
+}
+
 .sh-hill polyline.sh-contour,
 .sh-hill path.sh-contour {
   stroke: rgba(0, 0, 0, 0.20);
