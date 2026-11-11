@@ -1442,7 +1442,7 @@
     var sw = size * 0.04;
     var dropW = cap * 0.72;
     return {
-      gap: Math.max(2.8, size * 0.18) * 1.05,
+      gap: Math.max(2.8, size * 0.18) * 1.155,
       sw: sw,
       cap: cap,
       dropW: dropW,
@@ -1506,6 +1506,7 @@
 
   function contentWidth(field, size) {
     var w = field.keys ? keysWidth(field.keys, size) : textWidth(field.text, size);
+    if (field.unit) w += iconMetrics(size).gap + textWidth(field.unit, size);
     if (field.label === "DROP" || field.label === "BASE") w += iconAdvance(field.label, size);
     return w;
   }
@@ -1595,6 +1596,12 @@
         text.node.setAttribute("x", cursor.toFixed(1));
         text.node.setAttribute("y", baseline.toFixed(1));
         parent.appendChild(text.node);
+        if (field.unit) {
+          var unit = textPart(field.unit, size);
+          unit.node.setAttribute("x", (cursor + text.w + iconMetrics(size).gap).toFixed(2));
+          unit.node.setAttribute("y", baseline.toFixed(1));
+          parent.appendChild(unit.node);
+        }
       }
       x += widths[i];
     });
@@ -1613,8 +1620,8 @@
       if (keys.length) top.push({ label: "RUNS", keys: keys });
     }
     if (hill.type && TYPES[hill.type]) top.push({ label: "TYPE", text: TYPES[hill.type] });
-    if (typeof hill.drop === "number") top.push({ label: "DROP", text: hill.drop + " m" });
-    if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
+    if (typeof hill.drop === "number") top.push({ label: "DROP", text: String(hill.drop), unit: "m" });
+    if (typeof hill.base === "number") top.push({ label: "BASE", text: String(hill.base), unit: "m" });
     var loc = locationText(hill);
     var gps = gpsText(hill);
     hairline(cap, 0, DRAW + ROW_H, SQUARE, DRAW + ROW_H);
