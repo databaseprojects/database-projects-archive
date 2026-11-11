@@ -1418,7 +1418,7 @@
     var line = document.createElementNS(NS, "polyline");
     line.setAttribute("class", "sh-rule");
     line.setAttribute("points", x1.toFixed(1) + "," + y1.toFixed(1) + " " + x2.toFixed(1) + "," + y2.toFixed(1));
-    line.setAttribute("style", "stroke:rgba(0,0,0,0.4);stroke-width:0.65;stroke-linecap:butt;fill:none");
+    line.setAttribute("style", "stroke:#b3b3b3;stroke-width:0.65;stroke-linecap:butt;fill:none");
     parent.appendChild(line);
   }
 
@@ -1430,44 +1430,27 @@
   var NAME_SIZE = 12;
   // One gap from a divider, or the outer edge, to the cell's content.
   var CELL_INSET = 18;
+  // Each caption row, between its horizontal rules. Was BAND / 2 (60).
+  var ROW_H = 40;
+  // Shared shift below the row centre, 10% of ROW_H. Positive is downward.
+  var ROW_NUDGE = 4;
 
   function iconMetrics(size) {
     var cap = size * 0.62;
     return {
-      gap: Math.max(3.2, size * 0.22),
+      gap: Math.max(2.8, size * 0.18),
       sw: Math.max(1.15, size * 0.09),
       dropW: cap * 0.70,
       dropH: cap * 0.58,
-      // Flat ground patch: wide, low, skewed so the sides are not vertical.
-      rx: cap * 0.58,
-      ry: cap * 0.30,
-      skew: 1.05
+      // Short stroke under the arrowhead's point.
+      stem: cap * 0.42,
+      // Short stroke standing on the text baseline.
+      baseH: cap * 0.62
     };
   }
 
-  function groundShape(m) {
-    var W = m.rx * 2;
-    var H = m.ry * 2;
-    var S = H * m.skew;
-    // Shallow ground plane. Top edge sits a little to the right of the bottom.
-    var raw = [
-      { x: -W / 2 + S * 0.42, y: -H / 2 },
-      { x: W / 2 + S * 0.08, y: -H / 2 },
-      { x: W / 2 - S * 0.22, y: H / 2 },
-      { x: -W / 2 - S * 0.36, y: H / 2 }
-    ];
-    var minX = raw[0].x;
-    var maxX = raw[0].x;
-    raw.forEach(function (p) {
-      if (p.x < minX) minX = p.x;
-      if (p.x > maxX) maxX = p.x;
-    });
-    return { raw: raw, minX: minX, width: maxX - minX, H: H };
-  }
-
-  // Drop is the arrowhead only. Base is a flat ground patch, seen from above.
-  // Both are drawn with y = 0 at the row's vertical centre. advance is the
-  // room they take to the left of the number, including the gap before it.
+  // Drop: y = 0 is the centre of the V, with a short line under the point.
+  // Base: y = 0 is the text baseline; the line stands on it, beside the number.
   function fieldIcon(label, size) {
     var drop = label === "DROP";
     var m = iconMetrics(size);
@@ -1490,49 +1473,35 @@
       path.setAttribute("stroke-linejoin", "round");
       path.setAttribute("vector-effect", "none");
       g.appendChild(path);
-      return path;
     }
     var markW;
     if (drop) {
       var cx = pad + m.dropW / 2;
+      var tip = m.dropH / 2;
       stroke([
         "M", pad.toFixed(2), (-m.dropH / 2).toFixed(2),
-        "L", cx.toFixed(2), (m.dropH / 2).toFixed(2),
+        "L", cx.toFixed(2), tip.toFixed(2),
         "L", (pad + m.dropW).toFixed(2), (-m.dropH / 2).toFixed(2)
+      ].join(" "));
+      stroke([
+        "M", cx.toFixed(2), tip.toFixed(2),
+        "L", cx.toFixed(2), (tip + m.stem).toFixed(2)
       ].join(" "));
       markW = m.dropW + m.sw;
     } else {
-      var shape = groundShape(m);
-      var d = shape.raw.map(function (p, i) {
-        return (i ? "L" : "M") + (p.x - shape.minX + pad).toFixed(2) + " " + p.y.toFixed(2);
-      }).join(" ") + " Z";
-      stroke(d);
-      // Two short contour marks, inset from the slanted sides.
-      function groundDash(y, lenFrac) {
-        var top = shape.raw[0];
-        var botL = shape.raw[3];
-        var botR = shape.raw[2];
-        var topR = shape.raw[1];
-        var t = (y - top.y) / (botL.y - top.y);
-        var left = top.x + (botL.x - top.x) * t;
-        var right = topR.x + (botR.x - topR.x) * t;
-        var mid = (left + right) / 2;
-        var half = (right - left) * lenFrac / 2;
-        var x1 = mid - half - shape.minX + pad;
-        var x2 = mid + half - shape.minX + pad;
-        stroke("M" + x1.toFixed(2) + " " + y.toFixed(2) + " L" + x2.toFixed(2) + " " + y.toFixed(2));
-      }
-      groundDash(-shape.H * 0.12, 0.28);
-      groundDash(shape.H * 0.22, 0.42);
-      markW = shape.width + m.sw;
+      stroke([
+        "M", pad.toFixed(2), (-m.baseH).toFixed(2),
+        "L", pad.toFixed(2), "0"
+      ].join(" "));
+      markW = m.sw;
     }
     return { node: g, advance: markW + m.gap };
   }
 
   function iconAdvance(label, size) {
     var m = iconMetrics(size);
-    var markW = label === "DROP" ? m.dropW : groundShape(m).width;
-    return markW + m.sw + m.gap;
+    var markW = label === "DROP" ? m.dropW + m.sw : m.sw;
+    return markW + m.gap;
   }
 
   function contentWidth(field, size) {
@@ -1563,7 +1532,7 @@
   }
 
   function placeRow(parent, fields, y, startSize) {
-    var rowH = BAND / 2;
+    var rowH = ROW_H;
     var sizes = fields.map(function (field) { return field.size || startSize; });
     var widths = [];
     function measure() {
@@ -1593,18 +1562,23 @@
     var extra = SQUARE - usedWidth();
     if (extra > 0 && widths.length) widths[0] += extra;
     var x = 0;
-    var rowMid = y + rowH / 2;
+    // Slightly below the row centre. One offset for every value and its icon.
+    var center = y + rowH / 2 + ROW_NUDGE;
     fields.forEach(function (field, i) {
       var size = sizes[i];
-      if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
+      // No rule between the name and the runs, or between the region and the country.
+      if (i && field.label !== "RUNS" && field.label !== "COUNTRY") {
+        hairline(parent, x, y + 8, x, y + rowH - 8);
+      }
       var cw = contentWidth(field, size);
       // First cell stays flush left. Any wider cell centres its content.
       var left = i === 0 ? x + CELL_INSET : x + (widths[i] - cw) / 2;
-      var baseline = valueBaseline(rowMid, size);
+      var baseline = valueBaseline(center, size);
       var cursor = left;
       if (field.label === "DROP" || field.label === "BASE") {
         var icon = fieldIcon(field.label, size);
-        icon.node.setAttribute("transform", "translate(" + cursor.toFixed(2) + " " + rowMid.toFixed(2) + ")");
+        var iconY = field.label === "BASE" ? baseline : center;
+        icon.node.setAttribute("transform", "translate(" + cursor.toFixed(2) + " " + iconY.toFixed(2) + ")");
         parent.appendChild(icon.node);
         cursor += icon.advance;
       }
@@ -1645,14 +1619,15 @@
     var loc = locationText(hill);
     var gps = gpsText(hill);
     hairline(cap, 0, DRAW, SQUARE, DRAW);
-    hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
+    hairline(cap, 0, DRAW + ROW_H, SQUARE, DRAW + ROW_H);
+    hairline(cap, 0, DRAW + ROW_H * 2, SQUARE, DRAW + ROW_H * 2);
     placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: NAME_SIZE }].concat(top), DRAW, BANNER_VALUE_SIZE);
     var second = [];
     if (loc) second.push({ label: "REGION", text: loc, size: BANNER_VALUE_SIZE });
     var country = hill.province === "us" ? "USA" : hill.province === "eu" ? ((hill.region && EU_COUNTRY_NAMES[hill.region]) || "") : "Canada";
     if (country) second.push({ label: "COUNTRY", text: country, size: BANNER_VALUE_SIZE });
     if (gps) second.push({ label: "GPS", text: gps, size: BANNER_VALUE_SIZE });
-    if (second.length) placeRow(cap, second, DRAW + BAND / 2, BANNER_VALUE_SIZE);
+    if (second.length) placeRow(cap, second, DRAW + ROW_H, BANNER_VALUE_SIZE);
     svg.appendChild(cap);
     svg.setAttribute("viewBox", "0 0 " + SQUARE + " " + SQUARE);
     return SQUARE;
