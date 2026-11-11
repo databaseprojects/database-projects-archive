@@ -16,4 +16,4 @@
 
 ## Ski hill build inputs
 
-6. `ski-hills/build-frontal.py` needs two working files per hill: the runs/lifts geometry `<slug>-geom.json` (lon/lat) and the pre-cut elevation `<slug>-dem-wide.tif`. The originals were made on Loops' machine (Billy's Grok Bot box) in its temp folder `/tmp`. They are not in Cloudflare or Google Drive. Copies of all 20 hills' files are committed in `ski-hills/build-inputs/`, and that is where a cloud agent gets them. The script reads `ski-hills/build-inputs/` first and falls back to `/tmp`. Cypress uses `cypress-mountain-geom.json` and `cypress-dem-wide.tif`. Run from the repo root, e.g. `python3 ski-hills/build-frontal.py cypress-mountain`. Commit any new input file to `ski-hills/build-inputs/`.
+6. Before building a hill, run `python3 ski-hills/setup-build-inputs.py <slug>`, which fetches runs and lifts from OpenSkiMap. The DEM is cut automatically from MRDEM (Canada) or Copernicus by the build. Cypress is the worked example.
