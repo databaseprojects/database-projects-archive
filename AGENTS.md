@@ -19,3 +19,7 @@
 6. Before building a hill, run the setup script with the hill's name (`python3 ski-hills/setup-build-inputs.py <slug>`). It gathers the runs and lifts, elevation, forest map and canopy files from the cache. Use those cached files as they are. When the script fetches a new hill from the original sources, list the new files in the pull request so Loops can add them to the cache.
 
 When a hill's area grows or a new hill is added, save the new files once to `/workspace/ski-cache/<slug>/` and to the R2 bucket under `build-inputs/<slug>/`. See `ski-hills/build-inputs.md`.
+
+## Filling missing trees or contours (standing rule from Billy)
+
+7. "Fill in missing trees" (or "fill in the missing trees"), and the same request for contours or any other named feature in a corner or region of a ski hill view, bird's-eye or plan: first check that area of the current view and confirm what is genuinely missing (trees, contours, or both) versus real open ground. Then widen that hill's elevation, forest map and canopy coverage (the DEM_PAD entry in `ski-hills/build-frontal.py`, then re-run the setup script and the builds) so genuine data reaches those areas, and re-render with the full four-band tree layer and contours in the existing style. This works the same way as filling corners after a rotation (rule 3). Keep every other element as it is.
