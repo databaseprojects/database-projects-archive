@@ -1422,12 +1422,13 @@
     parent.appendChild(line);
   }
 
-  // Banner values, including the hill name.
-  // 10 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
+  // 10 pt on the 8×8 in print. Same conversion as commit 87688d08:
+  // 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
   var BANNER_PT = 10;
   var BANNER_VALUE_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
-  // Hill name only. Same SVG user units as BANNER_VALUE_SIZE (1000 units = 8 in).
-  var NAME_SIZE = 12;
+  // Hill name only, 12 pt on the same sheet → 20.87 units.
+  var NAME_PT = 12;
+  var NAME_SIZE = Math.round((NAME_PT / 0.575) * 100) / 100;
   // One gap from a divider, or the outer edge, to the cell's content.
   var CELL_INSET = 18;
   // Each caption row, between its horizontal rules. Was BAND / 2 (60).
@@ -1436,25 +1437,32 @@
   var ROW_NUDGE = 4;
 
   function iconMetrics(size) {
-    var cap = size * 0.62;
+    // Courier New cap height is 0.575 em and the regular stem is 0.04 em.
+    var cap = size * 0.575;
+    var sw = size * 0.04;
+    var dropW = cap * 0.72;
     return {
       gap: Math.max(2.8, size * 0.18),
-      sw: Math.max(1.15, size * 0.09),
-      dropW: cap * 0.70,
-      dropH: cap * 0.58,
-      // Short stroke under the arrowhead's point.
-      stem: cap * 0.42,
-      // Short stroke standing on the text baseline.
-      baseH: cap * 0.62
+      sw: sw,
+      cap: cap,
+      dropW: dropW,
+      // Clear space between the arrowhead tip and the ground line.
+      groundGap: Math.max(sw * 2.2, cap * 0.14)
     };
   }
 
-  // Drop: y = 0 is the centre of the V, with a short line under the point.
-  // Base: y = 0 is the text baseline; the line stands on it, beside the number.
+  // y = 0 is the value's glyph centre. Drop is a V with a ground line under
+  // the tip. Base is that same ground line, beside the number.
   function fieldIcon(label, size) {
     var drop = label === "DROP";
     var m = iconMetrics(size);
     var pad = m.sw / 2;
+    var left = pad;
+    var right = pad + m.dropW;
+    var cx = (left + right) / 2;
+    var top = -m.cap / 2;
+    var tip = m.cap / 2;
+    var groundY = tip + m.groundGap;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-field-icon");
     g.setAttribute("role", "img");
@@ -1474,34 +1482,23 @@
       path.setAttribute("vector-effect", "none");
       g.appendChild(path);
     }
-    var markW;
     if (drop) {
-      var cx = pad + m.dropW / 2;
-      var tip = m.dropH / 2;
       stroke([
-        "M", pad.toFixed(2), (-m.dropH / 2).toFixed(2),
+        "M", left.toFixed(2), top.toFixed(2),
         "L", cx.toFixed(2), tip.toFixed(2),
-        "L", (pad + m.dropW).toFixed(2), (-m.dropH / 2).toFixed(2)
+        "L", right.toFixed(2), top.toFixed(2)
       ].join(" "));
-      stroke([
-        "M", cx.toFixed(2), tip.toFixed(2),
-        "L", cx.toFixed(2), (tip + m.stem).toFixed(2)
-      ].join(" "));
-      markW = m.dropW + m.sw;
-    } else {
-      stroke([
-        "M", pad.toFixed(2), (-m.baseH).toFixed(2),
-        "L", pad.toFixed(2), "0"
-      ].join(" "));
-      markW = m.sw;
     }
-    return { node: g, advance: markW + m.gap };
+    stroke([
+      "M", left.toFixed(2), groundY.toFixed(2),
+      "L", right.toFixed(2), groundY.toFixed(2)
+    ].join(" "));
+    return { node: g, advance: m.dropW + m.sw + m.gap };
   }
 
   function iconAdvance(label, size) {
     var m = iconMetrics(size);
-    var markW = label === "DROP" ? m.dropW + m.sw : m.sw;
-    return markW + m.gap;
+    return m.dropW + m.sw + m.gap;
   }
 
   function contentWidth(field, size) {
@@ -1577,8 +1574,7 @@
       var cursor = left;
       if (field.label === "DROP" || field.label === "BASE") {
         var icon = fieldIcon(field.label, size);
-        var iconY = field.label === "BASE" ? baseline : center;
-        icon.node.setAttribute("transform", "translate(" + cursor.toFixed(2) + " " + iconY.toFixed(2) + ")");
+        icon.node.setAttribute("transform", "translate(" + cursor.toFixed(2) + " " + center.toFixed(2) + ")");
         parent.appendChild(icon.node);
         cursor += icon.advance;
       }
