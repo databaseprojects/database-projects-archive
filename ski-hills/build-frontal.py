@@ -547,12 +547,16 @@ CAMERAS = {
     # the drawing 45° counter-clockwise on screen. 45.0 is 20° more than
     # 25.0, another 20° counter-clockwise. 355.0 is 50° less than 45.0,
     # which turns the drawing 50° clockwise; the plan view is turned to match.
+    # Cypress only. Zoomed out x1.06 from the published sheet (2026-11-10):
+    # frame_scale 1/1.06 pulls the bird's-eye back 6% around the centre.
+    # Facing stays locked at 330.0. Plan view is unchanged.
     "cypress-mountain": {
         # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
         "facing": 330.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        "frame_scale": 0.943,
     },
     # Grouse only. 0.95 pulls the sheet back 5% around the centre.
     # The automatic camera stays.
@@ -3741,6 +3745,7 @@ def render_cypress(frame_runs=None):
         depth_scale=cam["depth_scale"],
         sun=cam.get("sun"),
         run_width=cam.get("run_width", 2.2),
+        frame_scale=cam.get("frame_scale", 1.0),
         frame_runs=frame_runs,
         ridge_fade=cam.get("ridge_fade", RIDGE_FADE),
         lift_width=cam.get("lift_width", LIFT_W),
