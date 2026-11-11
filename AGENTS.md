@@ -20,6 +20,6 @@
 
 When a hill's area grows or a new hill is added, save the new files once to `/workspace/ski-cache/<slug>/` and to the R2 bucket under `build-inputs/<slug>/`. See `ski-hills/build-inputs.md`.
 
-## Filling missing trees (standing rule from Billy)
+## Filling missing trees or contours (standing rule from Billy)
 
-7. "Fill in missing trees" (or "fill in the missing trees") on a ski hill view, bird's-eye or plan: find every part of that view where the tree layer stops short or is incomplete, widen that hill's elevation, forest map and canopy coverage (the DEM_PAD entry in `ski-hills/build-frontal.py`, then re-run the setup script and the tree overlay build) so genuine data reaches those areas, and re-render with the full four-band tree layer in the existing style. This works the same way as filling corners after a rotation (rule 3). Keep every other element as it is.
+7. "Fill in missing trees" (or "fill in the missing trees"), and the same request for contours or any other named feature in a corner or region of a ski hill view, bird's-eye or plan: first check that area of the current view and confirm what is genuinely missing (trees, contours, or both) versus real open ground. Then widen that hill's elevation, forest map and canopy coverage (the DEM_PAD entry in `ski-hills/build-frontal.py`, then re-run the setup script and the builds) so genuine data reaches those areas, and re-render with the full four-band tree layer and contours in the existing style. This works the same way as filling corners after a rotation (rule 3). Keep every other element as it is.
