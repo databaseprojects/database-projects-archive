@@ -1426,20 +1426,52 @@
   // 10 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
   var BANNER_PT = 10;
   var BANNER_VALUE_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
-  // Column widths still use the heading metrics
-  // (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE) so the row
-  // does not reflow. The heading text itself is not drawn.
-  // 6.5 pt on the same sheet → 11.3 units.
-  var HEADING_PT = 6.5;
-  var FIELD_LABEL_SIZE = Math.round((HEADING_PT / 0.575) * 100) / 100;
+  // Hill name only. Same SVG user units as BANNER_VALUE_SIZE (1000 units = 8 in).
+  var NAME_SIZE = 12;
+  // One gap from a divider, or the outer edge, to the cell's content.
+  var CELL_INSET = 18;
 
-  // Cap-height mark sitting on the value baseline, immediately left of the
-  // number. Drop is a down arrow; base is a short horizontal line.
-  function fieldIcon(label, x, baseline, size) {
-    var drop = label === "DROP";
+  function iconMetrics(size) {
     var cap = size * 0.62;
-    var gap = size * 0.22;
-    var sw = Math.max(1.15, size * 0.09);
+    return {
+      gap: Math.max(3.2, size * 0.22),
+      sw: Math.max(1.15, size * 0.09),
+      dropW: cap * 0.70,
+      dropH: cap * 0.58,
+      // Flat ground patch: wide, low, skewed so the sides are not vertical.
+      rx: cap * 0.58,
+      ry: cap * 0.30,
+      skew: 1.05
+    };
+  }
+
+  function groundShape(m) {
+    var W = m.rx * 2;
+    var H = m.ry * 2;
+    var S = H * m.skew;
+    // Shallow ground plane. Top edge sits a little to the right of the bottom.
+    var raw = [
+      { x: -W / 2 + S * 0.42, y: -H / 2 },
+      { x: W / 2 + S * 0.08, y: -H / 2 },
+      { x: W / 2 - S * 0.22, y: H / 2 },
+      { x: -W / 2 - S * 0.36, y: H / 2 }
+    ];
+    var minX = raw[0].x;
+    var maxX = raw[0].x;
+    raw.forEach(function (p) {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+    });
+    return { raw: raw, minX: minX, width: maxX - minX, H: H };
+  }
+
+  // Drop is the arrowhead only. Base is a flat ground patch, seen from above.
+  // Both are drawn with y = 0 at the row's vertical centre. advance is the
+  // room they take to the left of the number, including the gap before it.
+  function fieldIcon(label, size) {
+    var drop = label === "DROP";
+    var m = iconMetrics(size);
+    var pad = m.sw / 2;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-field-icon");
     g.setAttribute("role", "img");
@@ -1448,42 +1480,77 @@
     var title = document.createElementNS(NS, "title");
     title.textContent = name;
     g.appendChild(title);
-    var path = document.createElementNS(NS, "path");
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "#111");
-    path.setAttribute("stroke-width", sw.toFixed(2));
-    path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-linejoin", "round");
-    path.setAttribute("vector-effect", "none");
-    if (drop) {
-      var w = cap * 0.7;
-      var left = x - gap - w;
-      var top = baseline - cap;
-      var mid = left + w / 2;
-      var tip = baseline - sw * 0.15;
-      var stemEnd = top + cap * 0.56;
-      var wingY = top + cap * 0.42;
-      var wing = w * 0.48;
-      path.setAttribute("d", [
-        "M", mid.toFixed(2), (top + sw * 0.2).toFixed(2),
-        "L", mid.toFixed(2), stemEnd.toFixed(2),
-        "M", (mid - wing).toFixed(2), wingY.toFixed(2),
-        "L", mid.toFixed(2), tip.toFixed(2),
-        "L", (mid + wing).toFixed(2), wingY.toFixed(2)
-      ].join(" "));
-    } else {
-      var width = cap * 0.9;
-      var x0 = x - gap - width;
-      var y = baseline - cap * 0.5;
-      path.setAttribute("d", "M" + x0.toFixed(2) + " " + y.toFixed(2) + " L" + (x0 + width).toFixed(2) + " " + y.toFixed(2));
+    function stroke(d) {
+      var path = document.createElementNS(NS, "path");
+      path.setAttribute("d", d);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "#111");
+      path.setAttribute("stroke-width", m.sw.toFixed(2));
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      path.setAttribute("vector-effect", "none");
+      g.appendChild(path);
+      return path;
     }
-    g.appendChild(path);
-    return g;
+    var markW;
+    if (drop) {
+      var cx = pad + m.dropW / 2;
+      stroke([
+        "M", pad.toFixed(2), (-m.dropH / 2).toFixed(2),
+        "L", cx.toFixed(2), (m.dropH / 2).toFixed(2),
+        "L", (pad + m.dropW).toFixed(2), (-m.dropH / 2).toFixed(2)
+      ].join(" "));
+      markW = m.dropW + m.sw;
+    } else {
+      var shape = groundShape(m);
+      var d = shape.raw.map(function (p, i) {
+        return (i ? "L" : "M") + (p.x - shape.minX + pad).toFixed(2) + " " + p.y.toFixed(2);
+      }).join(" ") + " Z";
+      stroke(d);
+      // Two short contour marks, inset from the slanted sides.
+      function groundDash(y, lenFrac) {
+        var top = shape.raw[0];
+        var botL = shape.raw[3];
+        var botR = shape.raw[2];
+        var topR = shape.raw[1];
+        var t = (y - top.y) / (botL.y - top.y);
+        var left = top.x + (botL.x - top.x) * t;
+        var right = topR.x + (botR.x - topR.x) * t;
+        var mid = (left + right) / 2;
+        var half = (right - left) * lenFrac / 2;
+        var x1 = mid - half - shape.minX + pad;
+        var x2 = mid + half - shape.minX + pad;
+        stroke("M" + x1.toFixed(2) + " " + y.toFixed(2) + " L" + x2.toFixed(2) + " " + y.toFixed(2));
+      }
+      groundDash(-shape.H * 0.12, 0.28);
+      groundDash(shape.H * 0.22, 0.42);
+      markW = shape.width + m.sw;
+    }
+    return { node: g, advance: markW + m.gap };
   }
 
-  function labelWidth(str) {
-    var size = FIELD_LABEL_SIZE;
-    return textWidth(str, size) + Math.max(str.length - 1, 0) * size * 0.16;
+  function iconAdvance(label, size) {
+    var m = iconMetrics(size);
+    var markW = label === "DROP" ? m.dropW : groundShape(m).width;
+    return markW + m.sw + m.gap;
+  }
+
+  function contentWidth(field, size) {
+    var w = field.keys ? keysWidth(field.keys, size) : textWidth(field.text, size);
+    if (field.label === "DROP" || field.label === "BASE") w += iconAdvance(field.label, size);
+    return w;
+  }
+
+  // Baseline whose glyph box (capitals and figures) is centred on rowMid.
+  function valueBaseline(rowMid, size) {
+    var canvas = textWidth.canvas || (textWidth.canvas = document.createElement("canvas"));
+    var ctx = canvas.getContext("2d");
+    ctx.font = size + "px 'Courier New', Courier, monospace";
+    var box = ctx.measureText("H8");
+    var ascent = box.actualBoundingBoxAscent;
+    var descent = box.actualBoundingBoxDescent || 0;
+    if (!(ascent > 0)) ascent = size * 0.62;
+    return rowMid + (ascent - descent) / 2;
   }
 
   function keysWidth(keys, size) {
@@ -1495,62 +1562,65 @@
     }, 0);
   }
 
-  function placeRow(parent, fields, y, startSize, alignRight) {
+  function placeRow(parent, fields, y, startSize) {
     var rowH = BAND / 2;
-    var inset = 18;
     var sizes = fields.map(function (field) { return field.size || startSize; });
     var widths = [];
     function measure() {
       return fields.map(function (field, i) {
-        var sz = sizes[i];
-        var valueW = field.keys ? keysWidth(field.keys, sz) : textWidth(field.text, sz);
-        // Extra room on the right of COUNTRY so the value stays off the divider beside it.
-        var countryPad = field.label === "COUNTRY" ? 16 : 0;
-        return Math.max(labelWidth(field.label), valueW) + inset * 2 + countryPad;
+        return contentWidth(field, sizes[i]) + CELL_INSET * 2;
       });
     }
     widths = measure();
     function usedWidth() {
       return widths.reduce(function (sum, w) { return sum + w; }, 0);
     }
-    // 10 pt is the size. A row wider than the sheet steps down, and stops at
-    // 12 units, so a very long name stays on the row instead of running off it.
+    // 10 pt is the size of the values. A row wider than the sheet steps those
+    // down, and stops at 12 units. The hill name stays at NAME_SIZE.
     while (usedWidth() > SQUARE) {
       var max = 0;
-      sizes.forEach(function (sz) { if (sz > max) max = sz; });
+      sizes.forEach(function (sz, i) {
+        if (fields[i].label === "NAME") return;
+        if (sz > max) max = sz;
+      });
       if (max <= 12) break;
-      sizes = sizes.map(function (sz) { return sz === max ? Math.max(12, sz - 1) : sz; });
+      sizes = sizes.map(function (sz, i) {
+        if (fields[i].label === "NAME") return sz;
+        return sz === max ? Math.max(12, sz - 1) : sz;
+      });
       widths = measure();
     }
     var extra = SQUARE - usedWidth();
-    var lead = 0;
-    if (extra > 0) {
-      if (alignRight) lead = extra;
-      else if (widths.length) widths[0] += extra;
-    }
-    var x = lead;
-    var valueY = y + rowH - 16;
+    if (extra > 0 && widths.length) widths[0] += extra;
+    var x = 0;
+    var rowMid = y + rowH / 2;
     fields.forEach(function (field, i) {
       var size = sizes[i];
-      if (i && field.label !== "RUNS" && field.label !== "COUNTRY") hairline(parent, x, y + 8, x, y + rowH - 8);
-      var inner = x + inset;
+      if (i) hairline(parent, x, y + 8, x, y + rowH - 8);
+      var cw = contentWidth(field, size);
+      // First cell stays flush left. Any wider cell centres its content.
+      var left = i === 0 ? x + CELL_INSET : x + (widths[i] - cw) / 2;
+      var baseline = valueBaseline(rowMid, size);
+      var cursor = left;
       if (field.label === "DROP" || field.label === "BASE") {
-        parent.appendChild(fieldIcon(field.label, inner, valueY, size));
+        var icon = fieldIcon(field.label, size);
+        icon.node.setAttribute("transform", "translate(" + cursor.toFixed(2) + " " + rowMid.toFixed(2) + ")");
+        parent.appendChild(icon.node);
+        cursor += icon.advance;
       }
       if (field.keys) {
-        var cursor = inner;
         var between = Math.max(14, size * 0.8);
         field.keys.forEach(function (key, ki) {
           if (ki) cursor += between;
           var part = keyPart(key.key, key.n, size);
-          part.node.setAttribute("transform", "translate(" + cursor.toFixed(1) + " " + valueY.toFixed(1) + ")");
+          part.node.setAttribute("transform", "translate(" + cursor.toFixed(1) + " " + baseline.toFixed(1) + ")");
           parent.appendChild(part.node);
           cursor += part.w;
         });
       } else {
         var text = textPart(field.text, size);
-        text.node.setAttribute("x", inner.toFixed(1));
-        text.node.setAttribute("y", valueY.toFixed(1));
+        text.node.setAttribute("x", cursor.toFixed(1));
+        text.node.setAttribute("y", baseline.toFixed(1));
         parent.appendChild(text.node);
       }
       x += widths[i];
@@ -1576,7 +1646,7 @@
     var gps = gpsText(hill);
     hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + BAND / 2, SQUARE, DRAW + BAND / 2);
-    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: BANNER_VALUE_SIZE }].concat(top), DRAW, BANNER_VALUE_SIZE);
+    placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: NAME_SIZE }].concat(top), DRAW, BANNER_VALUE_SIZE);
     var second = [];
     if (loc) second.push({ label: "REGION", text: loc, size: BANNER_VALUE_SIZE });
     var country = hill.province === "us" ? "USA" : hill.province === "eu" ? ((hill.region && EU_COUNTRY_NAMES[hill.region]) || "") : "Canada";
