@@ -56,9 +56,18 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from lean_paths import compact_points
 
-GEOM = Path("/tmp/cypress-geom.json")
+# Build inputs (runs/lifts geometry and pre-cut DEM) live in ski-hills/build-inputs/.
+# Falls back to /tmp only if a file is not there.
+BUILD_INPUTS = Path(__file__).resolve().parent / "build-inputs"
+
+
+def _input(name):
+    p = BUILD_INPUTS / name
+    return p if p.exists() or not Path("/tmp", name).exists() else Path("/tmp", name)
+
+GEOM = _input("cypress-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.
-DEM = Path("/tmp/cypress-dem-wide.tif")
+DEM = _input("cypress-dem-wide.tif")
 Z_SCALE = 1.5
 # Ground depth (yr, toward the camera) is multiplied by this before
 # projection. 1 is true scale. Cypress sets 2 so contour spacing tracks
@@ -3648,8 +3657,8 @@ def render_default(slug, edge_margin=0.0, frame_runs=None):
     in the geom file is a subset, so the crop, facing, and frame stay put.
     """
     global GEOM, DEM
-    GEOM = Path(f"/tmp/{slug}-geom.json")
-    DEM = Path(f"/tmp/{slug}-dem-wide.tif")
+    GEOM = _input(f"{slug}-geom.json")
+    DEM = _input(f"{slug}-dem-wide.tif")
     cam = CAMERAS.get(slug) or {}
     runs, lifts = load_geom()
     sheet = frame_runs if frame_runs is not None else runs
@@ -3695,8 +3704,8 @@ def render_cypress(frame_runs=None):
     """Hand-set Cypress facing. Same sheet as before, plus the default sun."""
     global GEOM, DEM
     slug = "cypress-mountain"
-    GEOM = Path("/tmp/cypress-geom.json")
-    DEM = Path("/tmp/cypress-dem-wide.tif")
+    GEOM = _input("cypress-geom.json")
+    DEM = _input("cypress-dem-wide.tif")
     cam = CAMERAS[slug]
     runs, lifts = load_geom()
     sheet = frame_runs if frame_runs is not None else runs
@@ -3726,8 +3735,8 @@ def render_cypress(frame_runs=None):
 def render_views(slug, edge_margin=0.0, frame_runs=None):
     """Write one locked frontal SVG per hand-set view, named {slug}-{view}.svg."""
     global GEOM, DEM
-    GEOM = Path(f"/tmp/{slug}-geom.json")
-    DEM = Path(f"/tmp/{slug}-dem-wide.tif")
+    GEOM = _input(f"{slug}-geom.json")
+    DEM = _input(f"{slug}-dem-wide.tif")
     cam = CAMERAS.get(slug) or {}
     views = cam.get("views") or {}
     if not views:
@@ -3774,7 +3783,7 @@ def main():
             draw()
         except Exception as err:
             print("fail", slug, err)
-            dem = Path("/tmp/cypress-dem-wide.tif" if slug == "cypress-mountain" else f"/tmp/{slug}-dem-wide.tif")
+            dem = _input("cypress-dem-wide.tif" if slug == "cypress-mountain" else f"{slug}-dem-wide.tif")
             if dem.exists():
                 dem.unlink()
             try:

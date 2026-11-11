@@ -13,3 +13,7 @@
 ## Camera shifts (standing rule from Billy)
 
 5. A "camera shift" on a bird's-eye view: change that hill's facing angle in the build script, re-render the bird's-eye from the elevation data with the full four-band tree layer, keep every other element as it is, and open the PR for same-day merge.
+
+## Ski hill build inputs
+
+6. The runs/lifts geometry (`<slug>-geom.json`, lon/lat) and pre-cut elevation (`<slug>-dem-wide.tif`) that `ski-hills/build-frontal.py` reads live in `ski-hills/build-inputs/`. The script reads them from there (falling back to `/tmp` only if a file is missing). Run builds from the repo root, e.g. `python3 ski-hills/build-frontal.py cypress-mountain`. When you make a new input for a hill, commit it to `ski-hills/build-inputs/`.
