@@ -17,7 +17,7 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110spk",
+      file: "hills.json?v=20261110spr",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261105g50",
+    ut: "20261110sdc",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",

@@ -1063,9 +1063,8 @@ CAMERAS = {
     # ridge stay on the line at 10% opacity. Plan was at facing 329.55;
     # 14.55 is 45° further (329.55+45), which turns the drawing 45°
     # counter-clockwise; the plan view is turned to match (Nov 5).
-    # 224.55 is 150° clockwise from 14.55 (Nov 10); the plan view is turned 150° clockwise to match (14.55° → 224.55° CCW from north-up).
     "sun-peaks-resort": {
-        "facing": 224.55,
+        "facing": 14.55,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
@@ -1168,6 +1167,13 @@ CAMERAS = {
     # nudge orient() after the turn.
     "whitecap-mountain": {
         "facing": 233.9,
+    },
+    # Sundance Resort only. Automatic facing was 38.9 (orient() flipped
+    # default 218.9 so the summit sat away from the viewer). 138.9 is 100°
+    # counter-clockwise from 38.9. Facing is locked so a wider DEM_PAD cannot
+    # nudge orient() after the turn.
+    "sundance-resort": {
+        "facing": 138.9,
     },
 }
 
@@ -1444,11 +1450,11 @@ DEM_PAD = {
     # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
     # corner (Attitash / Stoneham / Bear Valley pattern).
     "sierra-at-tahoe-ski-resort": 2.6,
-    # Sun Peaks (facing 224.55, 150° CW). After the plan's 150° clockwise
-    # turn, the top of the fitted frame was past the default 1.0 DEM crop,
-    # so contours and trees stopped along a straight horizontal edge. 1.8
-    # reaches that edge (Fernie / Marmot / Lost Trail pattern).
-    "sun-peaks-resort": 1.8,
+    # Sundance Resort (facing 138.9, 100° CCW). Top-left and bottom-right
+    # corners were past the default 1.0 crop, so contours and the tree wash
+    # stopped short there. 2.6 reaches the frame (Bear Mountain / Attitash /
+    # Bear Valley pattern after a large turn).
+    "sundance-resort": 2.6,
 }
 
 
