@@ -1442,7 +1442,7 @@
     var sw = size * 0.04;
     var dropW = cap * 0.72;
     return {
-      gap: Math.max(2.8, size * 0.18),
+      gap: Math.max(2.8, size * 0.18) * 1.05,
       sw: sw,
       cap: cap,
       dropW: dropW,
@@ -1460,9 +1460,9 @@
     var left = pad;
     var right = pad + m.dropW;
     var cx = (left + right) / 2;
-    // Ground line stays put: old tip was at the cap bottom, then the original gap.
-    var groundY = m.cap / 2 + m.groundGap;
-    // Stout arrowhead, about 58% as tall as it is wide, with twice the old gap.
+    // Bottom edge of the stroke (groundY + sw/2) is the text baseline.
+    // The arrowhead keeps its gap above that line.
+    var groundY = valueBaseline(0, size) - m.sw / 2;
     var vHeight = m.dropW * 0.58;
     var tip = groundY - m.groundGap * 2;
     var top = tip - vHeight;
