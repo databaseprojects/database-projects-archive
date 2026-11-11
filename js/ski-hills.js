@@ -1426,22 +1426,59 @@
   // 10 pt on the 8×8 in print: 1000 units = 8 in, 0.575 pt per unit → 17.39 units.
   var BANNER_PT = 10;
   var BANNER_VALUE_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
-  // Small uppercase headings above each value
-  // (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE).
+  // Column widths still use the heading metrics
+  // (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE) so the row
+  // does not reflow. The heading text itself is not drawn.
   // 6.5 pt on the same sheet → 11.3 units.
   var HEADING_PT = 6.5;
   var FIELD_LABEL_SIZE = Math.round((HEADING_PT / 0.575) * 100) / 100;
 
-  function fieldLabel(str, x, y) {
-    var text = document.createElementNS(NS, "text");
-    text.setAttribute("class", "sh-field-label");
-    text.setAttribute("x", x.toFixed(1));
-    text.setAttribute("y", y.toFixed(1));
-    text.setAttribute("font-family", "Courier New, Courier, monospace");
-    text.setAttribute("font-size", String(FIELD_LABEL_SIZE));
-    text.setAttribute("style", "fill:rgba(0,0,0,0.55);letter-spacing:0.16em");
-    text.textContent = str;
-    return text;
+  // Cap-height mark sitting on the value baseline, immediately left of the
+  // number. Drop is a down arrow; base is a short horizontal line.
+  function fieldIcon(label, x, baseline, size) {
+    var drop = label === "DROP";
+    var cap = size * 0.62;
+    var gap = size * 0.22;
+    var sw = Math.max(1.15, size * 0.09);
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "sh-field-icon");
+    g.setAttribute("role", "img");
+    var name = drop ? "vertical drop" : "base elevation";
+    g.setAttribute("aria-label", name);
+    var title = document.createElementNS(NS, "title");
+    title.textContent = name;
+    g.appendChild(title);
+    var path = document.createElementNS(NS, "path");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "#111");
+    path.setAttribute("stroke-width", sw.toFixed(2));
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    path.setAttribute("vector-effect", "none");
+    if (drop) {
+      var w = cap * 0.7;
+      var left = x - gap - w;
+      var top = baseline - cap;
+      var mid = left + w / 2;
+      var tip = baseline - sw * 0.15;
+      var stemEnd = top + cap * 0.56;
+      var wingY = top + cap * 0.42;
+      var wing = w * 0.48;
+      path.setAttribute("d", [
+        "M", mid.toFixed(2), (top + sw * 0.2).toFixed(2),
+        "L", mid.toFixed(2), stemEnd.toFixed(2),
+        "M", (mid - wing).toFixed(2), wingY.toFixed(2),
+        "L", mid.toFixed(2), tip.toFixed(2),
+        "L", (mid + wing).toFixed(2), wingY.toFixed(2)
+      ].join(" "));
+    } else {
+      var width = cap * 0.9;
+      var x0 = x - gap - width;
+      var y = baseline - cap * 0.5;
+      path.setAttribute("d", "M" + x0.toFixed(2) + " " + y.toFixed(2) + " L" + (x0 + width).toFixed(2) + " " + y.toFixed(2));
+    }
+    g.appendChild(path);
+    return g;
   }
 
   function labelWidth(str) {
@@ -1467,7 +1504,7 @@
       return fields.map(function (field, i) {
         var sz = sizes[i];
         var valueW = field.keys ? keysWidth(field.keys, sz) : textWidth(field.text, sz);
-        // Extra room on the right of COUNTRY so the label stays off the divider beside it.
+        // Extra room on the right of COUNTRY so the value stays off the divider beside it.
         var countryPad = field.label === "COUNTRY" ? 16 : 0;
         return Math.max(labelWidth(field.label), valueW) + inset * 2 + countryPad;
       });
@@ -1497,7 +1534,9 @@
       var size = sizes[i];
       if (i && field.label !== "RUNS" && field.label !== "COUNTRY") hairline(parent, x, y + 8, x, y + rowH - 8);
       var inner = x + inset;
-      parent.appendChild(fieldLabel(field.label, inner, y + 20));
+      if (field.label === "DROP" || field.label === "BASE") {
+        parent.appendChild(fieldIcon(field.label, inner, valueY, size));
+      }
       if (field.keys) {
         var cursor = inner;
         var between = Math.max(14, size * 0.8);
