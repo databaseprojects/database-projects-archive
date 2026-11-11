@@ -31,3 +31,7 @@ When Billy says "zoom out" with a hill name and a percentage, zoom that hill's v
 - Plan: widen that hill's boundary box in the hill index by the same percentage around its centre, as in the Tremblant, Mount Rose, Boyne and Lutsen plan zoom-outs.
 - When Billy names one view, change only that view. When he names both or says the whole hill, do both. When it's unclear which view he means, ask before building.
 - Then render, check the corners and edges, make an old-versus-new preview, merge and publish (R2, Drive and Pages), and report the new scale or boundary values, the PR number, and confirmation that it's live.
+
+## Clipping through ridges (standing instruction from Billy)
+
+"Clipping through ridges" means contour lines, runs or other terrain drawing in a bird's-eye view that carry straight through a ridge face instead of stopping where the ridge hides them, as if the ridge weren't there. When Billy asks for a ridge-clipping check on a hill, check the whole mountain, not only the area he points at. Find every place where a line that should be hidden behind nearer terrain is drawn at full strength. Fix it in the build's hidden-line handling so those lines stop at the ridge, with runs behind a ridge kept as the 10% faded line (ridge_fade 0.10). Then re-render from the elevation data with the full four-band trees, keep everything else as it is, preview old versus new, merge and publish, and report where clipping was found and what changed.
