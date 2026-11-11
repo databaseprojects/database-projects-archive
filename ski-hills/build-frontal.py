@@ -537,13 +537,11 @@ CONTRAST_GREY_HI = 252
 SOFT_GREY_LO = 156
 SOFT_GREY_HI = 250
 CAMERAS = {
-    # Cypress only. 0 looks due north. 45.0 is 45° further, which turns
-    # the drawing 45° counter-clockwise on screen. 45.0 is 20° more than
-    # 25.0, another 20° counter-clockwise. 355.0 is 50° less than 45.0,
-    # which turns the drawing 50° clockwise; the plan view is turned to match.
+    # Cypress only. 0 looks due north. 315 looked northwest. 300 is 15°
+    # less: the camera moves to the viewer's right around the peak and
+    # still looks at the hill. The plan view is not turned.
     "cypress-mountain": {
-        # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
-        "facing": 315.0,
+        "facing": 300.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
