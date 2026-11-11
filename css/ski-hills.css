@@ -1392,6 +1392,15 @@ svg [fill="#3a6b42"] {
   fill: #284b2e !important;
 }
 
+/* Soften every tree-cover step by one multiplier. Band fill-opacities stay
+   baked; group opacity scales them once, on the outermost container of each
+   view. Nested bands are not restated, so the factor is not compounded. */
+.sh-plan-tree-wash,
+.sh-frontal-trees {
+  --sh-tree-soften: 0.7;
+  opacity: var(--sh-tree-soften);
+}
+
 /* Print border: 0.25 in (6.35 mm) white margin on every map view (plan and bird's-eye),
    as a share of the 8 x 8 in print (6.35 mm / 203.2 mm = 3.125% per side).
    Source of truth: ski-hills/layout_spec.py (PRINT_MARGIN_MM). Padding on the
