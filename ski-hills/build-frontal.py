@@ -1005,6 +1005,12 @@ CAMERAS = {
     # camera (161.9) so DEM_PAD 2.6 for BL/BR tree corners cannot nudge it.
     # No bird's-eye frame_scale change — plan zoom is separate (hill-index bounds).
     "attitash-mountain-resort": {"facing": 161.9},
+    # Black Mountain (NH). Lock the pre-pad automatic camera (334.3) so a
+    # wider DEM_PAD cannot flip orient(). Top-left trees and contours were
+    # past the default 1.0 crop (same pattern as Fernie / Marmot / Holiday
+    # Valley / Mont Blanc). Rebuild with --edge-margin 70 and SH_EDGE_MARGIN=70
+    # (US sheet).
+    "black-mountain": {"facing": 334.3},
     # Murray Ridge only. Zoomed out x1.15 from the published sheet (2026-11-05):
     # frame_scale 1/1.15 pulls the sheet back 15% around the centre.
     # Mont Tremblant only. Automatic bird's-eye facing was 139.03. 319.03 is
@@ -1372,6 +1378,11 @@ DEM_PAD = {
     "angel-fire-resort": 1.8,
     # Cannon Mountain, zoomed out x1.05: widen DEM crop so edge trees reach the
     "cannon-mountain": 2.6,
+    # Black Mountain (NH). Bird's-eye top-left was past the default 1.0
+    # DEM/WorldCover crop, so contours and the tree wash stopped short
+    # along a straight diagonal. 1.8 reaches the corner (Fernie / Marmot /
+    # Pajarito / Angel Fire pattern). Plan top-left was already filled.
+    "black-mountain": 1.8,
     # Bear Valley Front (179.9) and Back/rear (359.9). Both facings and the
     # Front/Back pair can leave frame corners past the default 1.0 crop, so
     # contours and the tree wash stop short there. 2.6 reaches the frame
