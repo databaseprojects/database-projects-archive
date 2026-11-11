@@ -391,13 +391,13 @@
 
 .sh-hill polyline.sh-contour,
 .sh-hill path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.14);
+  stroke: rgba(0, 0, 0, 0.20);
   stroke-width: var(--sh-contour, 0.17px);
 }
 
 .sh-lb polyline.sh-contour,
 .sh-lb path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.14);
+  stroke: rgba(0, 0, 0, 0.20);
   stroke-width: 0.7058;
 }
 
@@ -426,7 +426,7 @@
   stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1)) !important;
 }
 
-/* Bird's-eye contours match the plan view contours: black at 0.14
+/* Bird's-eye contours match the plan view contours: black at 0.20
    (the same as .sh-contour), 0.7058px in the lightbox, and the plan card's
    --sh-contour width on cards. The sheets bake stroke, stroke-opacity and
    stroke-width on each element, so these have to win. */
@@ -439,7 +439,7 @@
 .sh-frontal-contour {
   opacity: 1;
   stroke: #000 !important;
-  stroke-opacity: 0.14 !important;
+  stroke-opacity: 0.20 !important;
   stroke-width: var(--sh-contour, 0.17px) !important;
   fill: none;
   stroke-linejoin: round;
