@@ -1431,10 +1431,10 @@
   var NAME_SIZE = Math.round((NAME_PT / 0.575) * 100) / 100;
   // One gap from a divider, or the outer edge, to the cell's content.
   var CELL_INSET = 18;
-  // Each caption row, between its horizontal rules. Was BAND / 2 (60).
-  var ROW_H = 40;
+  // Each caption row. Was 60 (BAND / 2), then 40; now 42, still inside the 120 band.
+  var ROW_H = 42;
   // Shared shift below the row centre, 10% of ROW_H. Positive is downward.
-  var ROW_NUDGE = 4;
+  var ROW_NUDGE = 4.2;
 
   function iconMetrics(size) {
     // Courier New cap height is 0.575 em and the regular stem is 0.04 em.
@@ -1460,9 +1460,12 @@
     var left = pad;
     var right = pad + m.dropW;
     var cx = (left + right) / 2;
-    var top = -m.cap / 2;
-    var tip = m.cap / 2;
-    var groundY = tip + m.groundGap;
+    // Ground line stays put: old tip was at the cap bottom, then the original gap.
+    var groundY = m.cap / 2 + m.groundGap;
+    // Stout arrowhead, about 58% as tall as it is wide, with twice the old gap.
+    var vHeight = m.dropW * 0.58;
+    var tip = groundY - m.groundGap * 2;
+    var top = tip - vHeight;
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-field-icon");
     g.setAttribute("role", "img");
@@ -1614,9 +1617,7 @@
     if (typeof hill.base === "number") top.push({ label: "BASE", text: hill.base + " m" });
     var loc = locationText(hill);
     var gps = gpsText(hill);
-    hairline(cap, 0, DRAW, SQUARE, DRAW);
     hairline(cap, 0, DRAW + ROW_H, SQUARE, DRAW + ROW_H);
-    hairline(cap, 0, DRAW + ROW_H * 2, SQUARE, DRAW + ROW_H * 2);
     placeRow(cap, [{ label: "NAME", text: hill.name || "Unnamed hill", size: NAME_SIZE }].concat(top), DRAW, BANNER_VALUE_SIZE);
     var second = [];
     if (loc) second.push({ label: "REGION", text: loc, size: BANNER_VALUE_SIZE });
