@@ -12,4 +12,4 @@
 
 ## Camera shifts (standing rule from Billy)
 
-5. A "camera shift" on a bird's-eye view means: change that hill's facing angle in the build script and re-render the bird's-eye from the elevation data, with the full four-band tree layer (the same bands and opacities as before; never fewer). Do not redraw or change anything else (runs, lifts, banner text, style, other hills). Open the PR for a same-day merge. Never slide, translate, crop or shift the existing drawing instead (PR #449 did this and left empty edges). PR #448 used the right method but its trees came out with two bands instead of four, so check the band count before opening the PR.
+5. A "camera shift" on a bird's-eye view: change that hill's facing angle in the build script, re-render the bird's-eye from the elevation data with the full four-band tree layer, keep every other element as it is, and open the PR for same-day merge.
