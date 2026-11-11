@@ -35,3 +35,11 @@ When Billy says "zoom out" with a hill name and a percentage, zoom that hill's v
 ## Clipping through ridges (standing instruction from Billy)
 
 "Clipping through ridges" means contour lines, runs or other terrain drawing in a bird's-eye view that carry straight through a ridge face instead of stopping where the ridge hides them, as if the ridge weren't there. When Billy asks for a ridge-clipping check on a hill, check the whole mountain, not only the area he points at. Find every place where a line that should be hidden behind nearer terrain is drawn at full strength. Fix it in the build's hidden-line handling so those lines stop at the ridge, with runs behind a ridge kept as the 10% faded line (ridge_fade 0.10). Then re-render from the elevation data with the full four-band trees, keep everything else as it is, preview old versus new, merge and publish, and report where clipping was found and what changed.
+
+### Finding clipping quickly
+
+When Billy points at a ridge (or asks for a ridge pass), find the clipping with a coarse discovery method: sample every nth point along each contour, run and lift, or test against a depth tolerance band on a single depth buffer. Keep discovery coarse. Exact per-line intersection work overanalyzes a ridge of thousands of segments and balloons the runtime, so look closely only where the coarse pass flags something. Make a quick, targeted correction at the flagged ridge, then re-render, preview, merge and publish as usual.
+
+### Ready-made agent machines
+
+Cursor agent computers should come with the mapping tools used in ridge-clipping and ski hill re-renders pre-installed: GDAL and its Python bindings, rasterio, and the other elevation, forest-map and canopy data tools that `ski-hills/build-frontal.py` and the related scripts need. Put that install in the repo's Cursor environment setup (for example a `.cursor` environment Dockerfile or install step). An agent on a fresh machine can then start at once, with that roughly two-minute install already done.
