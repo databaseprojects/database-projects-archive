@@ -17,7 +17,7 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110r2",
+      file: "hills.json?v=20261110spk",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261110cpr";
+  var ASSET_V = "20261110spk";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = { "mt-bachelor": "20261110bach" };
 

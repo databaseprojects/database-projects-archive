@@ -1048,8 +1048,9 @@ CAMERAS = {
     # ridge stay on the line at 10% opacity. Plan was at facing 329.55;
     # 14.55 is 45° further (329.55+45), which turns the drawing 45°
     # counter-clockwise; the plan view is turned to match (Nov 5).
+    # 224.55 is 150° clockwise from 14.55 (Nov 10); the plan view is turned 150° clockwise to match (14.55° → 224.55° CCW from north-up).
     "sun-peaks-resort": {
-        "facing": 14.55,
+        "facing": 224.55,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
@@ -1428,6 +1429,11 @@ DEM_PAD = {
     # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
     # corner (Attitash / Stoneham / Bear Valley pattern).
     "sierra-at-tahoe-ski-resort": 2.6,
+    # Sun Peaks (facing 224.55, 150° CW). After the plan's 150° clockwise
+    # turn, the top of the fitted frame was past the default 1.0 DEM crop,
+    # so contours and trees stopped along a straight horizontal edge. 1.8
+    # reaches that edge (Fernie / Marmot / Lost Trail pattern).
+    "sun-peaks-resort": 1.8,
 }
 
 
