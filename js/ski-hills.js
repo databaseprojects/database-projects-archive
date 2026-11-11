@@ -1441,8 +1441,10 @@
     var cap = size * 0.575;
     var sw = size * 0.04;
     var dropW = cap * 0.72;
+    var iconGap = Math.max(2.8, size * 0.18) * 1.155;
     return {
-      gap: Math.max(2.8, size * 0.18) * 1.155,
+      gap: iconGap,
+      unitGap: iconGap * 1.1,
       sw: sw,
       cap: cap,
       dropW: dropW,
@@ -1506,7 +1508,7 @@
 
   function contentWidth(field, size) {
     var w = field.keys ? keysWidth(field.keys, size) : textWidth(field.text, size);
-    if (field.unit) w += iconMetrics(size).gap + textWidth(field.unit, size);
+    if (field.unit) w += iconMetrics(size).unitGap + textWidth(field.unit, size);
     if (field.label === "DROP" || field.label === "BASE") w += iconAdvance(field.label, size);
     return w;
   }
@@ -1598,7 +1600,7 @@
         parent.appendChild(text.node);
         if (field.unit) {
           var unit = textPart(field.unit, size);
-          unit.node.setAttribute("x", (cursor + text.w + iconMetrics(size).gap).toFixed(2));
+          unit.node.setAttribute("x", (cursor + text.w + iconMetrics(size).unitGap).toFixed(2));
           unit.node.setAttribute("y", baseline.toFixed(1));
           parent.appendChild(unit.node);
         }
