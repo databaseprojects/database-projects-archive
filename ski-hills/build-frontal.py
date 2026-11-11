@@ -1142,6 +1142,13 @@ CAMERAS = {
     "lutsen-mountains": {
         "facing": 269.1,
     },
+    # Whitecap Mountain only. Automatic facing was 53.9 (orient() flipped
+    # default 233.9 so the summit sat away from the viewer). 233.9 is 180°
+    # clockwise from 53.9. Facing is locked so a wider DEM_PAD cannot
+    # nudge orient() after the turn.
+    "whitecap-mountain": {
+        "facing": 233.9,
+    },
 }
 
 
