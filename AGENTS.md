@@ -39,3 +39,7 @@ When Billy says "zoom out" with a hill name and a percentage, zoom that hill's v
 ### Finding clipping quickly
 
 When Billy points at a ridge (or asks for a ridge pass), find the clipping with a coarse discovery method: sample every nth point along each contour, run and lift, or test against a depth tolerance band on a single depth buffer. Keep discovery coarse. Exact per-line intersection work overanalyzes a ridge of thousands of segments and balloons the runtime, so look closely only where the coarse pass flags something. Make a quick, targeted correction at the flagged ridge, then re-render, preview, merge and publish as usual.
+
+### Ready-made agent machines
+
+Cursor agent computers should come with the mapping tools used in ridge-clipping and ski hill re-renders pre-installed: GDAL and its Python bindings, rasterio, and the other elevation, forest-map and canopy data tools that `ski-hills/build-frontal.py` and the related scripts need. Put that install in the repo's Cursor environment setup (for example a `.cursor` environment Dockerfile or install step). An agent on a fresh machine can then start at once, with that roughly two-minute install already done.
