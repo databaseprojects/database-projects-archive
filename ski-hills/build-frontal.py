@@ -55,16 +55,12 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from lean_paths import compact_points
-
-# Build inputs (runs/lifts geometry and pre-cut DEM) are written to
-# ski-hills/build-inputs/ by setup-build-inputs.py. Falls back to /tmp
-# only if a file is not there.
-BUILD_INPUTS = Path(__file__).resolve().parent / "build-inputs"
+from build_paths import BUILD_INPUTS, locate_input
 
 
 def _input(name):
-    p = BUILD_INPUTS / name
-    return p if p.exists() or not Path("/tmp", name).exists() else Path("/tmp", name)
+    """Read a working file from build-inputs, then the ski-cache, then /tmp."""
+    return locate_input(name)
 
 GEOM = _input("cypress-mountain-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.

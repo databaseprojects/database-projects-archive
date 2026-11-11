@@ -205,6 +205,7 @@ else:
 
 sys.path.insert(0, str(REPO_ROOT))
 from lean_paths import compact_abs_d, compact_point_list, compact_points
+from build_paths import BUILD_INPUTS, canopy_name, dem_name, geom_name, locate_input, worldcover_name
 from layout_spec import (
     FIT_ART_PAD,
     FRAME,
@@ -309,9 +310,7 @@ def load_hill_records():
 
 
 def geom_file(slug):
-    if slug == "cypress-mountain" and Path("/tmp/cypress-geom.json").exists():
-        return Path("/tmp/cypress-geom.json")
-    return Path(f"/tmp/{slug}-geom.json")
+    return locate_input(geom_name(slug), slug)
 
 
 def materialize_missing_geom(by_slug, slugs):
@@ -396,7 +395,9 @@ def materialize_missing_geom(by_slug, slugs):
         if not geom:
             continue
         payload = {"runs": geom, "lifts": slot["geom_lifts"]}
-        Path(f"/tmp/{hill['slug']}-geom.json").write_text(json.dumps(payload, ensure_ascii=False))
+        dest = BUILD_INPUTS / geom_name(hill["slug"])
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(json.dumps(payload, ensure_ascii=False))
         wrote += 1
     print("wrote", wrote, "geom files of", len(needed), "missing", flush=True)
     return wrote
@@ -424,9 +425,11 @@ def worldcover_sources(box):
 
 
 def ensure_worldcover(slug, box):
-    wc_path = Path(f"/tmp/{slug}-worldcover-10m.tif")
+    wc_path = locate_input(worldcover_name(slug), slug)
     if wc_path.exists() and wc_path.stat().st_size > 1000:
         return wc_path
+    wc_path = BUILD_INPUTS / worldcover_name(slug)
+    wc_path.parent.mkdir(parents=True, exist_ok=True)
     if slug == "kimberley-alpine-resort" and Path("/workspace/kimberley-trees/kimberley-worldcover-10m.tif").exists():
         shutil.copyfile("/workspace/kimberley-trees/kimberley-worldcover-10m.tif", wc_path)
         return wc_path
@@ -560,7 +563,10 @@ def ensure_canopy(slug, box, wc_path):
     stretched raw values from about 0.30..0.95. That range is a summer
     Sentinel-2 NDVI. Each hill gets the same product, `{slug}-canopy-conc-10m.tif`.
     """
-    dest = Path(f"/tmp/{slug}-canopy-conc-10m.tif")
+    dest = locate_input(canopy_name(slug), slug)
+    if not (dest.exists() and dest.stat().st_size > 1000):
+        dest = BUILD_INPUTS / canopy_name(slug)
+        dest.parent.mkdir(parents=True, exist_ok=True)
     with rasterio.open(wc_path) as wc:
         wc_tf = wc.transform
         wc_h, wc_w = wc.height, wc.width
@@ -1562,7 +1568,7 @@ def generate_overlay(slug):
         return {"slug": slug, "name": name, "status": "no-drawing", "sec": round(time.time() - t0, 1)}
 
     bf.GEOM = geom_path
-    bf.DEM = Path("/tmp/cypress-dem-wide.tif" if slug == "cypress-mountain" else f"/tmp/{slug}-dem-wide.tif")
+    bf.DEM = locate_input(dem_name(slug), slug)
     runs, lifts = bf.load_geom()
     if not runs:
         return {"slug": slug, "name": name, "status": "no-geom", "sec": round(time.time() - t0, 1)}
