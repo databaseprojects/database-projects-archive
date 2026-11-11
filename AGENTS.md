@@ -16,4 +16,4 @@
 
 ## Ski hill build inputs
 
-6. The runs/lifts geometry (`<slug>-geom.json`, lon/lat) and pre-cut elevation (`<slug>-dem-wide.tif`) that `ski-hills/build-frontal.py` reads live in `ski-hills/build-inputs/`. The script reads them from there (falling back to `/tmp` only if a file is missing). Run builds from the repo root, e.g. `python3 ski-hills/build-frontal.py cypress-mountain`. When you make a new input for a hill, commit it to `ski-hills/build-inputs/`.
+6. `ski-hills/build-frontal.py` needs two working files per hill: the runs/lifts geometry `<slug>-geom.json` (lon/lat) and the pre-cut elevation `<slug>-dem-wide.tif`. The originals were made on Loops' machine (Billy's Grok Bot box) in its temp folder `/tmp`. They are not in Cloudflare or Google Drive. Copies of all 20 hills' files are committed in `ski-hills/build-inputs/`, and that is where a cloud agent gets them. The script reads `ski-hills/build-inputs/` first and falls back to `/tmp`. Cypress uses `cypress-mountain-geom.json` and `cypress-dem-wide.tif`. Run from the repo root, e.g. `python3 ski-hills/build-frontal.py cypress-mountain`. Commit any new input file to `ski-hills/build-inputs/`.

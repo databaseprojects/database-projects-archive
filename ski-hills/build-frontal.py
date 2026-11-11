@@ -65,7 +65,7 @@ def _input(name):
     p = BUILD_INPUTS / name
     return p if p.exists() or not Path("/tmp", name).exists() else Path("/tmp", name)
 
-GEOM = _input("cypress-geom.json")
+GEOM = _input("cypress-mountain-geom.json")
 # Wider than the old tight crop so the contour field reaches the frame.
 DEM = _input("cypress-dem-wide.tif")
 Z_SCALE = 1.5
@@ -3704,7 +3704,7 @@ def render_cypress(frame_runs=None):
     """Hand-set Cypress facing. Same sheet as before, plus the default sun."""
     global GEOM, DEM
     slug = "cypress-mountain"
-    GEOM = _input("cypress-geom.json")
+    GEOM = _input("cypress-mountain-geom.json")
     DEM = _input("cypress-dem-wide.tif")
     cam = CAMERAS[slug]
     runs, lifts = load_geom()
