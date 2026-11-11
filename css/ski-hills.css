@@ -379,6 +379,10 @@
   stroke-width: var(--sh-run, 1.3166px);
 }
 
+.sh-lb polyline.sh-lift {
+  stroke-width: var(--sh-run, 1.3166px);
+}
+
 .sh-hill[id="whistler-blackcomb"] polyline.sh-run {
   stroke-width: calc(var(--sh-stroke, 0.3px) * 0.78);
 }
