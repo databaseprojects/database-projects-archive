@@ -172,6 +172,12 @@ FLOATING_HORIZON = {
     # (Banff Sunshine / Alta 1 px whole-sheet pattern, limited to the top
     # half via HORIZON_REGION).
     "bogus-basin-mountain-recreation-area": 1.0,
+    # Sun Valley, Bald Mountain. Whole sheet, 2 px. Back-face contours were
+    # drawing through the far crest along the top, the left-hand spur, and
+    # the foreground folds at the bottom. 1 px nicked the open slopes; 2 px
+    # stops those crossings. CONTOUR_CLEAR_JOIN puts a graze back when it
+    # crosses nothing.
+    "sun-valley-bald-mountain": 2.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -359,6 +365,9 @@ CONTOUR_CLEAR_JOIN = {
     "banff-sunshine-village": 400.0,
     # Alta. Same rule: a hidden gap is redrawn only where nothing is crossed.
     "alta-ski-area": 400.0,
+    # Sun Valley. A hidden graze up to 200 px is drawn again when it crosses
+    # no contour, so the 2 px horizon does not break the open slopes.
+    "sun-valley-bald-mountain": 200.0,
 }
 # Bird's-eye runs. Px under the crest of the drawn contours nearer than a
 # run sample. Past that the sample counts as behind a ridge and draws at
@@ -493,6 +502,22 @@ RUN_HORIZON = {
     "revelstoke-mountain-resort": {
         "tol": 1.2,
         "min_run": 10,
+    },
+}
+# Runs only, and only where a hill asks. The column skyline misses a run
+# drawn across a ridge face when that face is not the highest sample in
+# the column. A sample this many metres behind the nearest terrain in its
+# screen cell fades at the hill's ridge_fade. The 12 px hold still joins
+# a shorter graze, so a facing run is not cut into dashes.
+RUN_DEPTH = {
+    # Sun Valley. The blue run on the upper mountain, just under the crest
+    # and left of centre, crosses a ridge at full strength (about 100 m
+    # behind the face). 40 m also faded runs that only graze a steep
+    # slope. 90 m keeps those solid and still fades the ridge crossing.
+    "sun-valley-bald-mountain": {
+        "cell": 4.0,
+        "reach": 8.0,
+        "tol": 90.0,
     },
 }
 LIFT_CLEAR = 12.0
@@ -1890,6 +1915,46 @@ class DepthGrid:
         return best
 
 
+def _refine_run_depth(samples, grid):
+    """Hide a run where it crosses a ridge the column skyline missed.
+
+    Points are added only where that hide starts or stops, so a run that
+    stays in view keeps the vertices it already had.
+    """
+
+    def behind(px, py, yr):
+        near = grid.nearest(px, py)
+        return near < 1e8 and yr - near >= grid.tol
+
+    out = []
+    for i, (px, py, yr, sky) in enumerate(samples):
+        hide = sky or behind(px, py, yr)
+        if not out:
+            out.append((px, py, yr, hide))
+            continue
+        ax, ay, ayr, ah = out[-1]
+        if ah and hide:
+            out.append((px, py, yr, hide))
+            continue
+        dist = math.hypot(px - ax, py - ay)
+        steps = max(1, int(dist / 6.0))
+        mids = []
+        crossed = False
+        for k in range(1, steps):
+            t = k / steps
+            x = ax + (px - ax) * t
+            y = ay + (py - ay) * t
+            z = ayr + (yr - ayr) * t
+            h = behind(x, y, z)
+            if h != ah:
+                crossed = True
+            mids.append((x, y, z, h))
+        if crossed or hide != ah:
+            out.extend(mids)
+        out.append((px, py, yr, hide))
+    return out
+
+
 def _horizon_runs(marked):
     """Consecutive samples this pass hid, one run per contour."""
     by_chunk = {}
@@ -3142,6 +3207,15 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             "tol", depth_grid.tol,
         )
 
+    run_depth = None
+    run_depth_spec = RUN_DEPTH.get(horizon_key(slug))
+    if run_depth_spec:
+        run_depth = DepthGrid(
+            run_depth_spec["cell"], run_depth_spec["tol"], run_depth_spec["reach"]
+        )
+        for yr, (px, py) in samples:
+            run_depth.add(px, py, yr)
+
     _hkey = horizon_key(slug)
     contours, stroke_lines = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
@@ -3266,6 +3340,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                     emit([(p[0], p[1]) for p in sampled])
                     sampled = []
                     return
+                # Runs only. Lifts stay on the column skyline. A hill with
+                # no RUN_DEPTH entry skips this, so its strokes are unchanged.
+                if run_depth is not None and fade_opacity is not None:
+                    sampled = _refine_run_depth(sampled, run_depth)
                 tighten_run(sampled)
                 flags = solid_flags(
                     [p[3] for p in sampled],
