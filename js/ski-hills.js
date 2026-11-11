@@ -1441,10 +1441,12 @@
     var cap = size * 0.575;
     var sw = size * 0.04;
     var dropW = cap * 0.72;
-    var iconGap = Math.max(2.8, size * 0.18) * 1.155;
+    // 3.8 and 4.3 units at the 10 pt size (17.39), and the same fraction of the em otherwise.
+    var iconGap = size * (3.8 / 17.39);
+    var unitGap = size * (4.3 / 17.39);
     return {
       gap: iconGap,
-      unitGap: iconGap * 1.1,
+      unitGap: unitGap,
       sw: sw,
       cap: cap,
       dropW: dropW,
