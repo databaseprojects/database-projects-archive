@@ -106,6 +106,17 @@ DEPTH_GRIDS = {
         "y": (2000.0 / 3.0, 1400.0),
     },
 }
+# Metres behind the nearest DEM surface at the same screen pixel.
+# The run-window skyline never sees terrain outside that window, so a
+# foreground ridge and the near side of a summit crest do not hide the
+# contour that crosses them. A hill listed here also tests a 2000px
+# z-buffer of the whole DEM. 12 m is tight enough to stop those crossings
+# on Sunlight. The facing ski slope is not behind anything, so it stays
+# one stroke. Hills not listed skip the test.
+ZBUF_TOL = {
+    "sunlight-mountain-resort": 12.0,
+}
+ZBUF_N = 2000
 # Each hill has its own tolerance, in pixels. The skyline test leaves
 # both faces of the jagged peaks, so those contours cross. Screen y grows
 # downward. A farther sample more than this far below the highest nearer
@@ -977,7 +988,11 @@ CAMERAS = {
     # Winter Park and Sunlight only. 0.95 pulls the sheet back 5% around
     # the centre. The automatic camera stays.
     "winter-park-resort": {"frame_scale": 0.95},
-    "sunlight-mountain-resort": {"frame_scale": 0.95},
+    # Sunlight. frame_scale stays 0.95 and the automatic camera stays.
+    # Runs that pass behind a ridge stay on the line at 10% opacity.
+    # ZBUF_TOL stops the foreground and summit contours that draw through
+    # those ridges.
+    "sunlight-mountain-resort": {"frame_scale": 0.95, "ridge_fade": 0.10},
     # New England batch (US sheets, --edge-margin 70). post_scale 0.95 pulls
     # the sheet back 5% after the margin fit. Killington is pulled back a
     # further 6% (0.95 / 1.06) with no pan. Gunstock is locked to the plan's north-up
@@ -2189,7 +2204,118 @@ def join_clear_gaps(chunks, hold, max_gap, keep_visible=None):
     return joined
 
 
-def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None, clear_join=None):
+def zbuf_at(zbuf, px, py):
+    """Nearest DEM depth (smaller yr is nearer) at this sheet pixel."""
+    n = zbuf.shape[0]
+    x = int(round(px / 1000.0 * (n - 1)))
+    y = int(round(py / 1000.0 * (n - 1)))
+    if x < 0 or y < 0 or x >= n or y >= n:
+        return None
+    d = float(zbuf[y, x])
+    if d < 1e8:
+        return d
+    best = None
+    for dy in (-1, 0, 1):
+        for dx in (-1, 0, 1):
+            xx, yy = x + dx, y + dy
+            if xx < 0 or yy < 0 or xx >= n or yy >= n:
+                continue
+            v = float(zbuf[yy, xx])
+            if v < 1e8 and (best is None or v < best):
+                best = v
+    return best
+
+
+def _zbuf_tri(zbuf, pts):
+    """Paint one DEM triangle. Nearest depth wins. Returns True if it drew."""
+    import numpy as np
+
+    (x0, y0, d0), (x1, y1, d1), (x2, y2, d2) = pts
+    xs = (x0, x1, x2)
+    ys = (y0, y1, y2)
+    if max(xs) < -20 or min(xs) > 1020 or max(ys) < -20 or min(ys) > 1020:
+        return False
+    n = zbuf.shape[0]
+
+    def to_f(v):
+        return v / 1000.0 * (n - 1)
+
+    fx = [to_f(v) for v in xs]
+    fy = [to_f(v) for v in ys]
+    minx = max(0, int(math.floor(min(fx))))
+    maxx = min(n - 1, int(math.ceil(max(fx))))
+    miny = max(0, int(math.floor(min(fy))))
+    maxy = min(n - 1, int(math.ceil(max(fy))))
+    if minx > maxx or miny > maxy:
+        return False
+    ax, ay = fx[0], fy[0]
+    bx, by = fx[1] - ax, fy[1] - ay
+    cx, cy = fx[2] - ax, fy[2] - ay
+    den = bx * cy - by * cx
+    if abs(den) < 1e-8:
+        return False
+    width = maxx - minx + 1
+    height = maxy - miny + 1
+    if width * height > 40000:
+        return False
+    inv = 1.0 / den
+    jj = np.arange(minx, maxx + 1, dtype=np.float64) + 0.5
+    ii = np.arange(miny, maxy + 1, dtype=np.float64) + 0.5
+    gx = jj[None, :] - ax
+    gy = ii[:, None] - ay
+    v = (gx * cy - gy * cx) * inv
+    w = (gy * bx - gx * by) * inv
+    u = 1.0 - v - w
+    mask = (u >= -0.02) & (v >= -0.02) & (w >= -0.02)
+    if not mask.any():
+        return False
+    depth = u * d0 + v * d1 + w * d2
+    sub = zbuf[miny : maxy + 1, minx : maxx + 1]
+    nearer = mask & (depth < sub)
+    sub[nearer] = depth[nearer]
+    return True
+
+
+def dem_zbuffer(arr, gt, paper, project_xy, metres, rot):
+    """2000px depth buffer of the whole DEM at this camera. Smaller yr is nearer."""
+    import numpy as np
+
+    h, w = len(arr), len(arr[0])
+    pxs = [None] * (h * w)
+    pys = [None] * (h * w)
+    yrs = [None] * (h * w)
+    for r in range(h):
+        lat = gt[3] + r * gt[5]
+        row = r * w
+        for c in range(w):
+            z = arr[r][c]
+            if z != z:
+                continue
+            lon = gt[0] + c * gt[1]
+            xr, yr = rot(*metres(lon, lat))
+            px, py = paper(*project_xy(xr, yr, z))
+            i = row + c
+            pxs[i] = px
+            pys[i] = py
+            yrs[i] = yr
+    zbuf = np.full((ZBUF_N, ZBUF_N), np.inf, np.float64)
+    tris = 0
+    for r in range(h - 1):
+        for c in range(w - 1):
+            corners = (r * w + c, r * w + c + 1, (r + 1) * w + c, (r + 1) * w + c + 1)
+            if any(pxs[i] is None for i in corners):
+                continue
+            i00, i10, i01, i11 = corners
+            for tri in ((i00, i10, i01), (i10, i11, i01)):
+                pts = [(pxs[i], pys[i], yrs[i]) for i in tri]
+                if _zbuf_tri(zbuf, pts):
+                    tris += 1
+    covered = int(np.isfinite(zbuf).sum())
+    print("zbuf", "n", ZBUF_N, "tris", tris, "covered", covered)
+    return zbuf
+
+
+def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None, clear_join=None, zbuf=None, zbuf_tol=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
     A point is hidden only when terrain DEPTH_BIAS metres in front of it
@@ -2207,6 +2333,10 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     pass does not change run or lift width. float_min_run, when set,
     draws a horizon dip that is shorter than that many samples.
     float_hide(px, py), when set, keeps the hide inside that screen band.
+
+    zbuf, when set, hides a point that sits zbuf_tol metres behind the
+    nearest DEM surface at that pixel. Hills without ZBUF_TOL leave it
+    unset. The short-gap hold still applies.
     """
     _hill = GEOM.name[: -len("-geom.json")] if GEOM.name.endswith("-geom.json") else ""
     raw = marching_contours(arr, gt, CONTOUR_M_HILL.get(_hill, CONTOUR_M))
@@ -2261,6 +2391,13 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
             ):
                 near = depth_grid.nearest(px, py)
                 if near < 1e8 and yr - near >= depth_grid.tol:
+                    hide = True
+            # Whole-DEM z-buffer, this hill only. The run-window skyline
+            # does not contain a foreground ridge, so a contour can draw
+            # straight through that face. The short-gap hold still applies.
+            if zbuf is not None and not hide and zbuf_tol:
+                near = zbuf_at(zbuf, px, py)
+                if near is not None and yr - near >= zbuf_tol:
                     hide = True
             if hide:
                 hidden += 1
@@ -3143,6 +3280,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         )
 
     _hkey = horizon_key(slug)
+    zbuf_tol = ZBUF_TOL.get(horizon_key(slug))
+    zbuf = None
+    if zbuf_tol:
+        zbuf = dem_zbuffer(arr, gt, paper, project_xy, metres, rot)
     contours, stroke_lines = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
         float_tol=FLOATING_HORIZON.get(_hkey),
@@ -3156,6 +3297,8 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         clear_join=CONTOUR_CLEAR_JOIN.get(_hkey),
         tight=CONTOUR_TIGHT.get(_hkey),
         depth_hide=depth_hide,
+        zbuf=zbuf,
+        zbuf_tol=zbuf_tol,
     )
 
     def covered(px, py, yr):
@@ -3167,6 +3310,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 continue
             top = crest[j]
             if top < 1e8 and yr - cdepth[j] >= DEPTH_BIAS and py >= top - RIDGE_MARGIN:
+                return True
+        if zbuf is not None and zbuf_tol:
+            near = zbuf_at(zbuf, px, py)
+            if near is not None and yr - near >= zbuf_tol:
                 return True
         return False
 
