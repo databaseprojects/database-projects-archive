@@ -835,7 +835,7 @@
   }
 
 
-  var ASSET_V = "20261110rev";
+  var ASSET_V = "20261110cyp";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = { "mt-bachelor": "20261110bach" };
 

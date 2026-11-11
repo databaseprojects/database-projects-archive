@@ -549,7 +549,7 @@ CAMERAS = {
     # which turns the drawing 50° clockwise; the plan view is turned to match.
     "cypress-mountain": {
         # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
-        "facing": 315.0,
+        "facing": 300.0,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
