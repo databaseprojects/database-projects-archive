@@ -1418,7 +1418,7 @@
     var line = document.createElementNS(NS, "polyline");
     line.setAttribute("class", "sh-rule");
     line.setAttribute("points", x1.toFixed(1) + "," + y1.toFixed(1) + " " + x2.toFixed(1) + "," + y2.toFixed(1));
-    line.setAttribute("style", "stroke:rgba(0,0,0,0.4);stroke-width:0.65;stroke-linecap:butt;fill:none");
+    line.setAttribute("style", "stroke:rgba(0,0,0,0.3);stroke-width:0.65;stroke-linecap:butt;fill:none");
     parent.appendChild(line);
   }
 
