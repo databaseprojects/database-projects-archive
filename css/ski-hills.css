@@ -456,6 +456,13 @@
   vector-effect: non-scaling-stroke !important;
 }
 
+/* Existing bird's-eye sheets wrap the shade and contours in a blurred
+   edge mask. The CSS mask property overrides that presentation attribute. */
+g[mask^="url(#sh-contour-fade-"] {
+  mask: none !important;
+  -webkit-mask: none !important;
+}
+
 .sh-hill polyline.sh-contour-shade,
 .sh-lb polyline.sh-contour-shade,
 .sh-hill path.sh-contour-shade,

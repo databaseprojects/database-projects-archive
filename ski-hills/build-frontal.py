@@ -3802,8 +3802,6 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     front = min(item[0] for item in contours)
     back = max(item[0] for item in contours)
     span_d = max(back - front, 1)
-    fade_id = "sh-fade-" + slug
-    mask_id = "sh-contour-fade-" + slug
     contour_xml = []
     for yr, line in sorted(contours, key=lambda item: -item[0]):
         # Farther up the hill is paler. The near face is a little darker.
@@ -3819,23 +3817,10 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             f'fill="none" stroke="#1a1a1a" stroke-opacity="{opacity:.3f}" '
             f'stroke-width="{CONTOUR_W}"/>'
         )
-    # Soft rectangular fade. The blur eats the hard edge of the wider field.
-    defs = (
-        "<defs>\n"
-        f'<filter id="{fade_id}" x="-25%" y="-25%" width="150%" height="150%">\n'
-        '<feGaussianBlur stdDeviation="42"/>\n'
-        "</filter>\n"
-        f'<mask id="{mask_id}" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">\n'
-        '<rect x="0" y="0" width="1000" height="1000" fill="#000"/>\n'
-        f'<rect x="8" y="8" width="984" height="984" fill="#fff" filter="url(#{fade_id})"/>\n'
-        "</mask>\n"
-        "</defs>\n"
-    )
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">\n'
         '<g class="sh-frontal-art">\n'
-        f"{defs}\n"
-        f'<g mask="url(#{mask_id})">\n'
+        "<g>\n"
         + (
             f'<image class="sh-frontal-shade" x="0" y="0" width="1000" height="1000" '
             f'href="data:image/png;base64,{shade_b64}"/>\n'
