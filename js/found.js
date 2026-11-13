@@ -32,8 +32,6 @@ var FP_TIME = {
   NO_BACK: 900,
   HINT: 1600,
   LB_CLOSE: 340,
-  /* Long enough that a double click cancels the single click. */
-  FLIP_HOLD: 500,
   DRAG_CLICK_GAP: 40,
   TILE_LEAVE: 600,
   RESIZE: 150,
@@ -64,7 +62,6 @@ var FP_TIME = {
   var SC_MIN = 0.94;
   var SC_MAX = 1.06;
   var zTop = 30;
-  var pending = null;
   var itemDrag = null;
   var zLock = null;
   var draggingSlider = false;
@@ -2772,17 +2769,6 @@ var FP_TIME = {
     pre.src = hi;
   }
 
-  function flipTile(tile) {
-    var back = tile.getAttribute("data-back") || "";
-    var front = tile.getAttribute("data-front") || "";
-    if (!back) return false;
-    var side = tile.getAttribute("data-fp-side") || "a";
-    var next = side === "a" ? "b" : "a";
-    tile.setAttribute("data-fp-side", next);
-    showFace(tile, next === "b" ? back : front);
-    return true;
-  }
-
   function flashNoBack() {
     var n = document.getElementById("fp-noback");
     if (!n) {
@@ -2961,7 +2947,17 @@ var FP_TIME = {
     }
     big.addEventListener("load", onOpenLoad);
     big.src = lo;
-    lb.appendChild(big);
+    var frame = document.createElement("div");
+    frame.className = "fp-lb-frame";
+    frame.appendChild(big);
+    if (hasBack(tile)) {
+      var cue = document.createElement("div");
+      cue.className = "fp-flip-cue";
+      cue.textContent = "click to flip";
+      cue.setAttribute("aria-hidden", "true");
+      frame.appendChild(cue);
+    }
+    lb.appendChild(frame);
     var sv = tile.getAttribute("data-sv");
     var svPos = svLatLon(sv);
     if (svPos) mountStreetMap(lb, svPos.lat, svPos.lon);
@@ -2977,11 +2973,14 @@ var FP_TIME = {
     }
     showHint(lb, back ? "click to flip" : "esc to close");
     lb.addEventListener("click", function (e) {
+      /* The second click of a double-click that opened the gallery. */
+      if (e.detail > 1) return;
       if (e.target === lb) closeLb();
     });
     big.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
+      if (e.detail > 1) return;
       if (!lb._back) {
         flashNoBack();
         return;
@@ -3032,13 +3031,6 @@ var FP_TIME = {
       };
       pre.src = hiSrc(url, 2000) || url;
     });
-  }
-
-  function clearPending() {
-    if (pending) {
-      clearTimeout(pending.t);
-      pending = null;
-    }
   }
 
   function lockScroll() {
@@ -3154,27 +3146,7 @@ var FP_TIME = {
       tile.style.setProperty("--fp-z", String(zTop));
       if (isTable()) persist(tile);
     }
-    if (e.detail > 1) {
-      clearPending();
-      return;
-    }
-    clearPending();
-    pending = {
-      tile: tile,
-      t: setTimeout(function () {
-        pending = null;
-        openLb(tile);
-      }, FP_TIME.FLIP_HOLD)
-    };
-  });
-
-  document.addEventListener("dblclick", function (e) {
-    if (document.getElementById("fp-lb")) return;
-    var tile = e.target.closest && e.target.closest(".fp-grid .fp-tile");
-    if (!tile) return;
-    e.preventDefault();
-    clearPending();
-    if (hasBack(tile)) flipTile(tile);
+    openLb(tile);
   });
 
   window.addEventListener("keydown", function (e) {
@@ -3237,7 +3209,6 @@ var FP_TIME = {
     if (!itemDrag.moved) {
       if (Math.abs(dx) < DRAG_THRESH && Math.abs(dy) < DRAG_THRESH) return;
       itemDrag.moved = true;
-      clearPending();
       if (isTable() || isAg()) {
         straighten(itemDrag.tile);
         var spun = agBodyFor(itemDrag.tile);
