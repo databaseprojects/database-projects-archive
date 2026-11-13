@@ -233,6 +233,17 @@ var FP_TIME = {
     img.style.maxHeight = "none";
   }
 
+  /* Front and back are the same print. The face that opened sets the box;
+     the other face fills that box instead of sizing from its own scan. */
+  function fillOpenBox(from, img) {
+    if (!from || !img) return;
+    img.style.width = from.style.width;
+    img.style.height = from.style.height;
+    img.style.maxWidth = "none";
+    img.style.maxHeight = "none";
+    img.style.objectFit = "fill";
+  }
+
   function hasBack(tile) {
     return !!(tile.getAttribute("data-back") || "").trim();
   }
@@ -2704,8 +2715,10 @@ var FP_TIME = {
     var img = imgOf(tile);
     if (!img || !url) return;
     var hi = hiSrc(url, Math.max(800, Math.ceil((tile.offsetWidth || 400) * (window.devicePixelRatio || 1)))) || url;
+    var fillTile = url === (tile.getAttribute("data-back") || "");
     if ((img.getAttribute("src") || "") === hi) {
       img.style.opacity = "";
+      img.style.objectFit = fillTile ? "fill" : "";
       return;
     }
     tile._faceGen = (tile._faceGen || 0) + 1;
@@ -2727,7 +2740,7 @@ var FP_TIME = {
       next.style.width = "100%";
       next.style.height = "100%";
       next.style.margin = "0";
-      next.style.objectFit = "contain";
+      next.style.objectFit = fillTile ? "fill" : "contain";
       next.style.opacity = "0";
       next.style.pointerEvents = "none";
       next.src = hi;
@@ -2746,7 +2759,7 @@ var FP_TIME = {
         next.style.width = "";
         next.style.height = "";
         next.style.margin = "";
-        next.style.objectFit = "";
+        next.style.objectFit = fillTile ? "fill" : "";
         next.style.opacity = "";
         next.style.pointerEvents = "";
         if (current.parentNode) current.parentNode.removeChild(current);
@@ -2990,7 +3003,7 @@ var FP_TIME = {
         cover.style.opacity = "0";
         cover.style.pointerEvents = "none";
         cover.style.margin = "0";
-        lockGalleryBox(cover, pre.naturalWidth, pre.naturalHeight, false);
+        fillOpenBox(big, cover);
         cover.src = src;
         lb.appendChild(cover);
         void cover.offsetWidth;
@@ -3001,7 +3014,7 @@ var FP_TIME = {
         showHint(lb, next === "b" ? "back" : "front");
         setTimeout(function () {
           if (lb._closing) return;
-          lockGalleryBox(big, pre.naturalWidth, pre.naturalHeight, false);
+          fillOpenBox(big, big);
           big.style.opacity = "";
           big.src = src;
           requestAnimationFrame(function () {
