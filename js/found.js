@@ -32,7 +32,8 @@ var FP_TIME = {
   NO_BACK: 900,
   HINT: 1600,
   LB_CLOSE: 340,
-  FLIP_HOLD: 280,
+  /* Long enough that a double click cancels the single click. */
+  FLIP_HOLD: 500,
   DRAG_CLICK_GAP: 40,
   TILE_LEAVE: 600,
   RESIZE: 150,
@@ -3140,12 +3141,16 @@ var FP_TIME = {
       tile.style.setProperty("--fp-z", String(zTop));
       if (isTable()) persist(tile);
     }
+    if (e.detail > 1) {
+      clearPending();
+      return;
+    }
     clearPending();
     pending = {
       tile: tile,
       t: setTimeout(function () {
         pending = null;
-        if (hasBack(tile)) flipTile(tile);
+        openLb(tile);
       }, FP_TIME.FLIP_HOLD)
     };
   });
@@ -3156,7 +3161,7 @@ var FP_TIME = {
     if (!tile) return;
     e.preventDefault();
     clearPending();
-    openLb(tile);
+    if (hasBack(tile)) flipTile(tile);
   });
 
   window.addEventListener("keydown", function (e) {
