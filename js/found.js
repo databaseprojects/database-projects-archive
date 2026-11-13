@@ -3626,6 +3626,7 @@ var FP_TIME = {
   }
 
   var picked = [];
+  var photoTags = [];
   var tableHome = null;
   var TAG_EASE = "cubic-bezier(.22,.8,.25,1)";
   var TAG_MS = 380;
@@ -4128,11 +4129,37 @@ var FP_TIME = {
     }
   }
 
+  /* Tags that share a photo with every picked tag. The picked tags stay. */
+  function coTags() {
+    var keep = {};
+    var i;
+    var j;
+    var tags;
+    var ok;
+    for (i = 0; i < photoTags.length; i++) {
+      tags = photoTags[i];
+      ok = true;
+      for (j = 0; j < picked.length; j++) {
+        if (tags.indexOf(picked[j]) < 0) {
+          ok = false;
+          break;
+        }
+      }
+      if (!ok) continue;
+      for (j = 0; j < tags.length; j++) keep[tags[j]] = true;
+    }
+    for (i = 0; i < picked.length; i++) keep[picked[i]] = true;
+    return keep;
+  }
+
   function paintTags() {
     var on = {};
+    var keep = picked.length ? coTags() : null;
     picked.forEach(function (name) { on[name] = true; });
     document.querySelectorAll(".fp-tag[data-fp-filter]").forEach(function (btn) {
-      var hit = !!on[btn.getAttribute("data-fp-filter")];
+      var name = btn.getAttribute("data-fp-filter");
+      var hit = !!on[name];
+      btn.hidden = !!(keep && !keep[name]);
       btn.classList.toggle("active", hit);
       btn.setAttribute("aria-pressed", hit ? "true" : "false");
     });
@@ -4187,6 +4214,16 @@ var FP_TIME = {
     var bar = document.querySelector(".fp-tags");
     if (!bar) return;
     while (bar.firstChild) bar.removeChild(bar.firstChild);
+    var clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "fp-tag";
+    clear.setAttribute("data-fp-clear", "");
+    clear.setAttribute("aria-label", "Clear");
+    clear.setAttribute("aria-pressed", "false");
+    clear.title = "Clear";
+    clear.hidden = true;
+    clear.textContent = "\u00d7";
+    bar.appendChild(clear);
     var seen = {};
     var tags = [];
     (featured || []).forEach(function (tag) {
@@ -4212,14 +4249,18 @@ var FP_TIME = {
   function mount(data) {
     var photos = Array.isArray(data.photos) ? data.photos : [];
     var counts = {};
+    photoTags = [];
     photos.forEach(function (entry) {
       var tags = Array.isArray(entry.tags) ? entry.tags : [];
       var seen = {};
+      var list = [];
       tags.forEach(function (tag) {
         if (!tag || seen[tag]) return;
         seen[tag] = true;
+        list.push(tag);
         counts[tag] = (counts[tag] || 0) + 1;
       });
+      photoTags.push(list);
       allTiles().forEach(function (tile) {
         if (!entryMatches(entry, tile)) return;
         tile._fpTags = tags.slice();
