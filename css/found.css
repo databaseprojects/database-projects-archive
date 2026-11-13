@@ -665,6 +665,40 @@ html.fp-item-dragging * {
   opacity: 1;
 }
 
+.fp-lb-frame {
+  position: relative;
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.fp-lb-frame > img {
+  display: block;
+}
+
+.fp-flip-cue {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  z-index: 2;
+  margin-top: 8px;
+  transform: translateX(-50%);
+  color: rgba(243, 239, 228, 0.72);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fp-lb-frame:hover .fp-flip-cue {
+  opacity: 1;
+}
+
+.fp-lb-frame > img,
 .fp-lb > img {
   max-width: min(96vw, 1600px);
   max-height: 92vh;
@@ -681,11 +715,13 @@ html.fp-item-dragging * {
   pointer-events: auto;
 }
 
+.fp-lb.fp-lb-flip > .fp-lb-frame > img,
 .fp-lb.fp-lb-flip > img {
   transition: opacity 0.18s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .fp-lb-frame > img,
   .fp-lb > img {
     transition: opacity 0.32s ease;
   }
@@ -696,6 +732,7 @@ html.fp-item-dragging * {
   transition: opacity 0.28s ease;
 }
 
+.fp-lb.fp-lb-closing > .fp-lb-frame > img,
 .fp-lb.fp-lb-closing > img {
   transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
 }
