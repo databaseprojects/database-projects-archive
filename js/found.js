@@ -2648,6 +2648,12 @@ var FP_TIME = {
       armLazy();
       return;
     }
+    /* A tag filter is showing scan order. Leave that, and leave the
+       shuffle that clearing the filter returns to. */
+    if (document.documentElement.hasAttribute("data-fp-filter")) {
+      armLazy();
+      return;
+    }
     for (var i = items.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var tmp = items[i];
@@ -2658,6 +2664,7 @@ var FP_TIME = {
       items.forEach(function (tile) {
         g.appendChild(tile);
       });
+      shuffledTiles = items.slice();
     }, { step: 18, total: 420, dur: 420 });
     armLazy();
   }
@@ -3070,6 +3077,34 @@ var FP_TIME = {
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  /* The row order with no tag selected. A filter shows scan order, then
+     clearing it puts this sequence back. */
+  var shuffledTiles = null;
+
+  function layTiles(list) {
+    var g = grid();
+    if (!g || !list) return;
+    var i;
+    for (i = 0; i < list.length; i++) g.appendChild(list[i]);
+  }
+
+  function tilesInScanOrder() {
+    var items = Array.prototype.slice.call(grid().querySelectorAll(".fp-tile"));
+    items.sort(function (a, b) {
+      return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
+    });
+    return items;
+  }
+
+  /* on: index order, the order in the page. off: the shuffle from this load. */
+  window.fpGallery.useScanOrder = function (on) {
+    if (on) {
+      layTiles(tilesInScanOrder());
+      return;
+    }
+    if (shuffledTiles && shuffledTiles.length) layTiles(shuffledTiles);
+  };
+
   /* Row follows document order. Mix that once per page load, before any
      photograph is fetched, so the held grid opens already shuffled.
      data-order stays the scan identity that tiles() reads. */
@@ -3084,6 +3119,7 @@ var FP_TIME = {
       items[j] = held;
     }
     for (i = 0; i < items.length; i++) g.appendChild(items[i]);
+    shuffledTiles = items.slice();
   }
 
   try {
@@ -4069,6 +4105,9 @@ var FP_TIME = {
     } else if (!picked.length) {
       tableHome = null;
     }
+    /* Row reads document order. Matches line up in scan order; clearing
+       the filter puts the load shuffle back. */
+    if (window.fpGallery.useScanOrder) window.fpGallery.useScanOrder(picked.length > 0);
     plan.forEach(function (entry) {
       stopTagAnim(entry.tile);
       if (entry.show) {
