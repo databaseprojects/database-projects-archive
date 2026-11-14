@@ -469,10 +469,10 @@ html.fp-fold-hold .fp-grid[data-fp-layout="table"] .fp-tile {
 }
 
 .fp-grid[data-fp-layout="row"] .fp-tile:hover {
-  scale: var(--fp-hs, 1.12);
+  scale: var(--fp-hs, 1.03);
   translate: var(--fp-tx, 0px) var(--fp-ty, 0px);
   z-index: 20;
-  box-shadow: 0 calc(8px / var(--fp-hs, 1.12)) calc(24px / var(--fp-hs, 1.12)) rgba(0, 0, 0, 0.3);
+  box-shadow: 0 calc(8px / var(--fp-hs, 1.03)) calc(24px / var(--fp-hs, 1.03)) rgba(0, 0, 0, 0.3);
   transition: opacity 0.35s ease, scale 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), translate 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
 }
 
