@@ -813,3 +813,94 @@ body.fp-lb-lock {
   margin: 0;
   max-width: none;
 }
+
+.fp-clump-btn {
+  margin-left: 0.35em;
+}
+
+.fp-clump-panel {
+  margin: 0 0 1rem;
+  padding: 0.15em 0 0.85em;
+  border-bottom: 1px solid #000;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.fp-clump-panel[hidden] {
+  display: none;
+}
+
+.fp-clump-meta {
+  margin: 0 0 0.65em;
+  text-transform: uppercase;
+}
+
+.fp-clump-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.55rem;
+  margin: 0 0 0.75em;
+}
+
+.fp-clump-shot {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 0;
+  background: #fff;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.fp-clump-shot img {
+  display: block;
+  height: 140px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+}
+
+.fp-clump-shot.fp-clump-pick {
+  border-color: #111;
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+.fp-clump-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35em;
+  margin: 0 0 0.7em;
+}
+
+.fp-clump-actions .fp-tag {
+  margin: 0;
+}
+
+.fp-clump-note {
+  margin: 0;
+  max-width: 46em;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.fp-grid[data-fp-layout="row"] .fp-tile[data-fp-clump] {
+  outline: 1px solid rgba(0, 0, 0, 0.28);
+  outline-offset: 3px;
+}
+
+.fp-grid[data-fp-layout="row"] .fp-tile.fp-clump-live {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .fp-clump-shot img {
+    height: 96px;
+  }
+}
