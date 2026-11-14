@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <script>
-  window.FP_V = "20261114b";
+  window.FP_V = "20261114c";
   window.fpReadSaved = function () {
     var layout = "row";
     var cols = 6;
@@ -21,16 +21,6 @@
     if (!res.ok) throw new Error("tags");
     return res.json();
   }).catch(function () { return null; });
-  window.fpClumpsReady = fetch("clumps.json?v=" + window.FP_V).then(function (res) {
-    if (!res.ok) throw new Error("clumps");
-    return res.json();
-  }).then(function (data) {
-    window.fpConfirmedClumps = (data && data.clumps) || [];
-    return window.fpConfirmedClumps;
-  }).catch(function () {
-    window.fpConfirmedClumps = [];
-    return [];
-  });
   document.write('<link rel="stylesheet" href="../css/found.css?v=' + window.FP_V + '">');
   </script>
   <script>
