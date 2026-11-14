@@ -55,8 +55,9 @@ var FP_TIME = {
   var MAX = 20;
   var DEF = 6;
   var PRINT_MAX = 430;
-  var HOVER_BOOST = 1.04;
-  var HOVER_CAP = 6;
+  /* Row hover: large end of the size slider is 1.03, small end is 1.12. */
+  var HOVER_AT_LARGE = 1.03;
+  var HOVER_AT_SMALL = 1.12;
   var HYST = 0.72;
   var DRAG_THRESH = 5;
   var SC_MIN = 0.94;
@@ -2162,6 +2163,14 @@ var FP_TIME = {
     runGlides(list, { dur: opts.dur || 520, screen: true, id: "fp-flow", easing: opts.easing });
   }
 
+  function rowSpanWidth(g, n) {
+    var w = (g && g.clientWidth) || Math.min(document.documentElement.clientWidth || 900, 1200);
+    var gap = g ? gapPx(g) : 16;
+    var colW = n > 0 ? (w - gap * Math.max(0, n - 1)) / n : w;
+    if (!(colW > 1)) colW = w;
+    return Math.min(PRINT_MAX, colW);
+  }
+
   function hoverScale() {
     var g = grid();
     if (!g) return 1;
@@ -2169,14 +2178,17 @@ var FP_TIME = {
       g.style.setProperty("--fp-hs", "1");
       return 1;
     }
-    var n = cols();
-    var w = g.clientWidth;
-    var first = g.querySelector(".fp-tile");
-    var cur = first ? first.offsetWidth : 0;
-    if (!cur) return 1;
-    var gap = n > 1 ? Math.max(0, (w - cur * n) / (n - 1)) : 0;
-    var w3 = (w - gap * 2) / 3;
-    var s = Math.max(1.06, Math.min(HOVER_CAP, (Math.min(w3, PRINT_MAX) * HOVER_BOOST) / cur));
+    /* Linear in the column width the row draws, capped at the print maximum.
+       The large end of this screen's slider is 1.03 and the small end is 1.12. */
+    var ends = sliderEnds();
+    var largeW = rowSpanWidth(g, ends.min);
+    var smallW = rowSpanWidth(g, ends.max);
+    var cur = rowSpanWidth(g, cols());
+    var span = largeW - smallW;
+    var t = span > 0.5 ? (largeW - cur) / span : 0;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var s = HOVER_AT_LARGE + t * (HOVER_AT_SMALL - HOVER_AT_LARGE);
     g.style.setProperty("--fp-hs", s.toFixed(3));
     return s;
   }
@@ -2675,7 +2687,7 @@ var FP_TIME = {
     if (e.relatedTarget && tile.contains(e.relatedTarget)) return;
     var g = grid();
     if (!g) return;
-    var s = parseFloat(g.style.getPropertyValue("--fp-hs")) || hoverScale() || 1.2;
+    var s = parseFloat(g.style.getPropertyValue("--fp-hs")) || hoverScale() || HOVER_AT_LARGE;
     var r = tile.getBoundingClientRect();
     var cs = getComputedStyle(tile);
     var cur = parseFloat(cs.scale);
