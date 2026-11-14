@@ -3070,7 +3070,24 @@ var FP_TIME = {
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  /* Row follows document order. Mix that once per page load, before any
+     photograph is fetched, so the held grid opens already shuffled.
+     data-order stays the scan identity that tiles() reads. */
+  function shuffleRowOrder(g) {
+    if (!g) return;
+    var items = Array.prototype.slice.call(g.querySelectorAll(".fp-tile"));
+    var i;
+    for (i = items.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var held = items[i];
+      items[i] = items[j];
+      items[j] = held;
+    }
+    for (i = 0; i < items.length; i++) g.appendChild(items[i]);
+  }
+
   try {
+    shuffleRowOrder(grid());
     tiles().forEach(function (tile) {
       syncAspect(tile);
       if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
