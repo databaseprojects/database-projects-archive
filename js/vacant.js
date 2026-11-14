@@ -5,8 +5,9 @@
   var MIN = 5;
   var MAX = 20;
   var DEF = 6;
-  var HOVER_BOOST = 1.15;
-  var HOVER_CAP = 8;
+  /* Hover: large end of the size slider is 1.03, small end is 1.12. */
+  var HOVER_AT_LARGE = 1.03;
+  var HOVER_AT_SMALL = 1.12;
   var HYST = 0.72;
   var dragging = false;
   var zLock = null;
@@ -105,19 +106,36 @@
     if (!dragging && +s.value !== v) s.value = v;
   }
 
+  function photoWidth(n) {
+    var g = grid();
+    var w = (g && g.clientWidth) || Math.min(document.documentElement.clientWidth || 900, 1200);
+    var gap = 16;
+    if (g) {
+      var raw = getComputedStyle(g).columnGap || getComputedStyle(g).gap || "16px";
+      var parsed = parseFloat(raw);
+      if (parsed > 0) gap = parsed;
+    }
+    if (!(n > 0)) n = cols();
+    var colW = (w - gap * Math.max(0, n - 1)) / n;
+    return colW > 1 ? colW : w;
+  }
+
   function hoverScale() {
     var g = grid();
-    if (!g) return;
-    var n = cols();
-    var w = g.clientWidth;
-    var first = g.querySelector(".vsf-tile");
-    var cur = first ? first.offsetWidth : 0;
-    if (!cur) return;
-    var gap = n > 1 ? Math.max(0, (w - cur * n) / (n - 1)) : 0;
-    var w5 = (w - gap * 4) / 5;
-    var grown = Math.min(HOVER_CAP, (w5 * HOVER_BOOST) / cur);
-    var s = Math.max(1.04, 1 + Math.max(0, grown - 1) * 0.5);
+    if (!g) return 1;
+    /* Linear in the width the size slider gives the photograph, from the
+       large end of this screen's slider to the small end. */
+    var ends = sliderEnds();
+    var largeW = photoWidth(ends.min);
+    var smallW = photoWidth(ends.max);
+    var cur = photoWidth(cols());
+    var span = largeW - smallW;
+    var t = span > 0.5 ? (largeW - cur) / span : 0;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    var s = HOVER_AT_LARGE + t * (HOVER_AT_SMALL - HOVER_AT_LARGE);
     g.style.setProperty("--vsf-hs", s.toFixed(3));
+    return s;
   }
 
   function flow(mutate, opts) {
@@ -431,7 +449,7 @@
     if (e.relatedTarget && tile.contains(e.relatedTarget)) return;
     var g = grid();
     if (!g) return;
-    var s = parseFloat(g.style.getPropertyValue("--vsf-hs")) || 1.15;
+    var s = parseFloat(g.style.getPropertyValue("--vsf-hs")) || hoverScale() || HOVER_AT_LARGE;
     var r = tile.getBoundingClientRect();
     var cs = getComputedStyle(tile);
     var cur = parseFloat(cs.scale);
