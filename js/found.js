@@ -2648,14 +2648,9 @@ var FP_TIME = {
       armLazy();
       return;
     }
-    for (var i = items.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = items[i];
-      items[i] = items[j];
-      items[j] = tmp;
-    }
+    var flat = mixUnits(clumpUnits(items));
     flow(function () {
-      items.forEach(function (tile) {
+      flat.forEach(function (tile) {
         g.appendChild(tile);
       });
     }, { step: 18, total: 420, dur: 420 });
@@ -3070,38 +3065,162 @@ var FP_TIME = {
     return Math.abs(v - current) < HYST ? current : clampSlider(v);
   }
 
+  /* A confirmed clump is one shuffle unit. Members stay in scan order.
+     With no clumps this is the same Fisher-Yates as shuffling each print. */
+  function clumpUnits(items) {
+    var groups = {};
+    var i;
+    for (i = 0; i < items.length; i++) {
+      var id = items[i].getAttribute("data-fp-clump");
+      if (!id) continue;
+      if (!groups[id]) groups[id] = [];
+      groups[id].push(items[i]);
+    }
+    Object.keys(groups).forEach(function (id) {
+      groups[id].sort(function (a, b) {
+        return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
+      });
+    });
+    var seen = {};
+    var units = [];
+    for (i = 0; i < items.length; i++) {
+      var tile = items[i];
+      var cid = tile.getAttribute("data-fp-clump");
+      if (!cid) {
+        units.push([tile]);
+        continue;
+      }
+      if (seen[cid]) continue;
+      seen[cid] = true;
+      units.push(groups[cid]);
+    }
+    return units;
+  }
+
+  function mixUnits(units) {
+    var i;
+    for (i = units.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var held = units[i];
+      units[i] = units[j];
+      units[j] = held;
+    }
+    var flat = [];
+    for (i = 0; i < units.length; i++) {
+      var unit = units[i];
+      var k;
+      for (k = 0; k < unit.length; k++) flat.push(unit[k]);
+    }
+    return flat;
+  }
+
+  function tileFile(tile) {
+    var url = tile.getAttribute("data-front") || "";
+    var name = url.split("/").pop().split("?")[0];
+    return name.replace(/\.(jpe?g|png|webp)$/i, "");
+  }
+
+  function readStoredConfirmed() {
+    try {
+      var raw = localStorage.getItem("fpClumpConfirmed");
+      if (raw == null || raw === "") return null;
+      var data = JSON.parse(raw);
+      if (data && Array.isArray(data.clumps)) return data.clumps;
+    } catch (e) {}
+    return null;
+  }
+
+  function applyConfirmed(g, clumps) {
+    if (!g) return;
+    var tiles = Array.prototype.slice.call(g.querySelectorAll(".fp-tile"));
+    var by = {};
+    var i;
+    for (i = 0; i < tiles.length; i++) {
+      tiles[i].removeAttribute("data-fp-clump");
+      by[tileFile(tiles[i])] = tiles[i];
+    }
+    (clumps || []).forEach(function (clump) {
+      if (!clump || !clump.files || clump.files.length < 2) return;
+      var id = clump.id || clump.files[0];
+      clump.files.forEach(function (file) {
+        var tile = by[file];
+        if (tile) tile.setAttribute("data-fp-clump", id);
+      });
+    });
+  }
+
+  function gatherClumps(g) {
+    if (!g) return;
+    var items = Array.prototype.slice.call(g.querySelectorAll(".fp-tile"));
+    var flat = [];
+    clumpUnits(items).forEach(function (unit) {
+      unit.forEach(function (tile) { flat.push(tile); });
+    });
+    flat.forEach(function (tile) { g.appendChild(tile); });
+  }
+
+  window.fpClumpSync = function (clumps) {
+    var g = grid();
+    applyConfirmed(g, clumps);
+    gatherClumps(g);
+  };
+
   /* Row follows document order. Mix that once per page load, before any
      photograph is fetched, so the held grid opens already shuffled.
-     data-order stays the scan identity that tiles() reads. */
+     Confirmed clumps travel as one unit. data-order stays the scan identity. */
   function shuffleRowOrder(g) {
     if (!g) return;
     var items = Array.prototype.slice.call(g.querySelectorAll(".fp-tile"));
+    var flat = mixUnits(clumpUnits(items));
     var i;
-    for (i = items.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var held = items[i];
-      items[i] = items[j];
-      items[j] = held;
-    }
-    for (i = 0; i < items.length; i++) g.appendChild(items[i]);
+    for (i = 0; i < flat.length; i++) g.appendChild(flat[i]);
   }
 
-  try {
-    shuffleRowOrder(grid());
-    tiles().forEach(function (tile) {
-      syncAspect(tile);
-      if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
-    });
-    setCount();
-    var startCols = phoneSlider() ? 3 : colsForThisScreen(storedCols());
-    if (!phoneSlider() && layoutMode() === "table" && savedCols() == null) startCols = clampSlider(layoutSliderDefault("table"));
-    setCols(startCols, false);
-    setLayout(layoutMode(), false);
-    armLazy();
-    settleArrival();
-  } finally {
-    document.documentElement.style.visibility = "";
+  function boot() {
+    try {
+      var g = grid();
+      var stored = readStoredConfirmed();
+      applyConfirmed(g, stored || window.fpConfirmedClumps || []);
+      shuffleRowOrder(g);
+      tiles().forEach(function (tile) {
+        syncAspect(tile);
+        if (!tile.getAttribute("data-fp-side")) tile.setAttribute("data-fp-side", "a");
+      });
+      setCount();
+      var startCols = phoneSlider() ? 3 : colsForThisScreen(storedCols());
+      if (!phoneSlider() && layoutMode() === "table" && savedCols() == null) startCols = clampSlider(layoutSliderDefault("table"));
+      setCols(startCols, false);
+      setLayout(layoutMode(), false);
+      armLazy();
+      settleArrival();
+    } finally {
+      document.documentElement.style.visibility = "";
+    }
   }
+
+  /* Clumps ride in with the tags fetch. The grid stays held until this
+     shuffle, so photographs are not requested before the units are mixed. */
+  function bootWhenReady() {
+    if (readStoredConfirmed()) {
+      boot();
+      return;
+    }
+    var ready = window.fpClumpsReady;
+    if (!ready || !ready.then) {
+      boot();
+      return;
+    }
+    var started = false;
+    var go = function () {
+      if (started) return;
+      started = true;
+      boot();
+    };
+    ready.then(go, go);
+    setTimeout(go, 2000);
+  }
+
+  bootWhenReady();
 
   document.addEventListener("click", function (e) {
     if (draggingSlider || (itemDrag && itemDrag.moved)) return;
@@ -4350,4 +4469,416 @@ var FP_TIME = {
     window.clearTimeout(hideTimer);
     finishClose();
   });
+})();
+
+/* Clump review. Candidates are adjacent scans. Confirm writes this browser's
+   copy, and Export is the clumps.json file the site reads for everyone. */
+(function () {
+  var REVIEW_KEY = "fpClumpReview";
+  var open = false;
+  var groups = [];
+  var stamp = "";
+  var cursor = 0;
+  var picked = 0;
+  var scan = [];
+  var scanAt = {};
+  var byFile = {};
+  var loaded = false;
+
+  function fileOf(tile) {
+    var url = tile.getAttribute("data-front") || "";
+    var name = url.split("/").pop().split("?")[0];
+    return name.replace(/\.(jpe?g|png|webp)$/i, "");
+  }
+
+  function stripSrc(url) {
+    return String(url || "").replace("w_800,h_800", "w_320,h_320");
+  }
+
+  function indexTiles() {
+    scan = [];
+    scanAt = {};
+    byFile = {};
+    var tiles = Array.prototype.slice.call(document.querySelectorAll(".fp-grid .fp-tile"));
+    tiles.sort(function (a, b) {
+      return (+a.getAttribute("data-order") || 0) - (+b.getAttribute("data-order") || 0);
+    });
+    tiles.forEach(function (tile) {
+      var file = fileOf(tile);
+      if (!file || byFile[file]) return;
+      byFile[file] = tile;
+      scanAt[file] = scan.length;
+      scan.push(file);
+    });
+  }
+
+  function sortFiles(files) {
+    files.sort(function (a, b) { return (scanAt[a] || 0) - (scanAt[b] || 0); });
+  }
+
+  function storedConfirmed() {
+    try {
+      var raw = localStorage.getItem("fpClumpConfirmed");
+      if (raw) {
+        var data = JSON.parse(raw);
+        if (data && Array.isArray(data.clumps)) return data.clumps;
+      }
+    } catch (e) {}
+    return window.fpConfirmedClumps || [];
+  }
+
+  function merge(candidates, confirmed) {
+    var list = (candidates || []).map(function (c) {
+      return { id: c.id, files: (c.files || []).slice(), confirmed: false };
+    });
+    (confirmed || []).forEach(function (c) {
+      if (!c || !c.files || c.files.length < 2) return;
+      var hit = null;
+      list.forEach(function (g) { if (g.id === c.id) hit = g; });
+      var set = {};
+      c.files.forEach(function (f) { set[f] = true; });
+      if (hit) {
+        hit.files = c.files.slice();
+        hit.confirmed = true;
+        return;
+      }
+      list = list.filter(function (g) {
+        var overlap = false;
+        g.files.forEach(function (f) { if (set[f]) overlap = true; });
+        return !overlap;
+      });
+      list.push({ id: c.id, files: c.files.slice(), confirmed: true });
+    });
+    list.forEach(function (g) { sortFiles(g.files); });
+    return list;
+  }
+
+  function confirmedList() {
+    var out = [];
+    groups.forEach(function (g) {
+      if (g.confirmed && g.files.length > 1) out.push({ id: g.id, files: g.files.slice() });
+    });
+    return out;
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(REVIEW_KEY, JSON.stringify({ stamp: stamp, groups: groups }));
+      localStorage.setItem("fpClumpConfirmed", JSON.stringify({ clumps: confirmedList() }));
+    } catch (e) {}
+    if (window.fpClumpSync) window.fpClumpSync(confirmedList());
+    render();
+  }
+
+  function freshId(base) {
+    var used = {};
+    groups.forEach(function (g) { used[g.id] = true; });
+    var id = (base || "c") + "b";
+    var n = 2;
+    while (used[id]) {
+      n += 1;
+      id = (base || "c") + String(n);
+    }
+    return id;
+  }
+
+  var shuffleBtn = document.querySelector(".fp-shuffle");
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "fp-tag fp-clump-btn";
+  btn.id = "fp-clump";
+  btn.textContent = "Clump";
+  btn.title = "Review photo clumps";
+  btn.setAttribute("aria-pressed", "false");
+  if (shuffleBtn && shuffleBtn.parentNode) shuffleBtn.parentNode.insertBefore(btn, shuffleBtn.nextSibling);
+
+  var panel = document.createElement("div");
+  panel.className = "fp-clump-panel";
+  panel.id = "fp-clump-panel";
+  panel.hidden = true;
+  var meta = document.createElement("p");
+  meta.className = "fp-clump-meta";
+  var strip = document.createElement("div");
+  strip.className = "fp-clump-strip";
+  var actions = document.createElement("div");
+  actions.className = "fp-clump-actions";
+  var note = document.createElement("p");
+  note.className = "fp-clump-note";
+  note.textContent = "Confirm keeps this set together on the page, including when the order is shuffled. Add left and Add right pull in the next scan. Remove drops the selected photo. Split breaks the set in front of the selected photo. Export downloads clumps.json. Replace found-photographs/clumps.json with that file and it becomes the copy everyone sees.";
+  var actionNames = [
+    ["prev", "Prev"],
+    ["next", "Next"],
+    ["confirm", "Confirm"],
+    ["split", "Split"],
+    ["remove", "Remove"],
+    ["add-left", "Add left"],
+    ["add-right", "Add right"],
+    ["export", "Export"]
+  ];
+  actionNames.forEach(function (pair) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "fp-tag";
+    b.setAttribute("data-fp-clump-act", pair[0]);
+    b.textContent = pair[1];
+    actions.appendChild(b);
+  });
+  panel.appendChild(meta);
+  panel.appendChild(strip);
+  panel.appendChild(actions);
+  panel.appendChild(note);
+  var bar = document.querySelector(".fp-bar");
+  if (bar && bar.parentNode) bar.parentNode.insertBefore(panel, bar.nextSibling);
+
+  function clearLive() {
+    Array.prototype.forEach.call(document.querySelectorAll(".fp-tile.fp-clump-live"), function (tile) {
+      tile.classList.remove("fp-clump-live");
+    });
+  }
+
+  function markLive(scroll) {
+    clearLive();
+    if (!open) return;
+    var group = groups[cursor];
+    if (!group) return;
+    var set = {};
+    group.files.forEach(function (file) { set[file] = true; });
+    var first = null;
+    Array.prototype.forEach.call(document.querySelectorAll(".fp-grid .fp-tile"), function (tile) {
+      if (!set[fileOf(tile)]) return;
+      tile.classList.add("fp-clump-live");
+      if (!first) first = tile;
+    });
+    if (scroll && first && first.scrollIntoView) first.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  function render() {
+    var group = groups[cursor];
+    while (strip.firstChild) strip.removeChild(strip.firstChild);
+    if (!group) {
+      meta.textContent = groups.length ? "No clump" : "No candidate clumps";
+    } else {
+      if (picked < 0) picked = 0;
+      if (picked >= group.files.length) picked = group.files.length - 1;
+      meta.textContent = (group.confirmed ? "Confirmed " : "Candidate ") + (cursor + 1) + " of " + groups.length + " · " + group.files.length + " photos";
+      group.files.forEach(function (file, i) {
+        var shot = document.createElement("button");
+        shot.type = "button";
+        shot.className = "fp-clump-shot" + (i === picked ? " fp-clump-pick" : "");
+        shot.setAttribute("data-i", String(i));
+        shot.title = file;
+        var tile = byFile[file];
+        if (tile) {
+          var img = document.createElement("img");
+          img.alt = "";
+          img.draggable = false;
+          img.setAttribute("referrerpolicy", "no-referrer");
+          img.src = stripSrc(tile.getAttribute("data-front") || "");
+          shot.appendChild(img);
+        } else {
+          shot.textContent = file;
+        }
+        strip.appendChild(shot);
+      });
+    }
+    var confirm = actions.querySelector("[data-fp-clump-act='confirm']");
+    if (confirm) {
+      var on = !!(group && group.confirmed);
+      confirm.classList.toggle("active", on);
+      confirm.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    markLive(false);
+  }
+
+  function load() {
+    if (loaded) {
+      render();
+      return;
+    }
+    indexTiles();
+    var version = window.FP_V || "";
+    var candidates = fetch("clump-candidates.json?v=" + version).then(function (res) {
+      if (!res.ok) throw new Error("candidates");
+      return res.json();
+    }).then(function (data) {
+      return (data && data.clumps) || [];
+    }).catch(function () { return []; });
+    var ready = window.fpClumpsReady && window.fpClumpsReady.then ? window.fpClumpsReady : Promise.resolve(window.fpConfirmedClumps || []);
+    Promise.all([candidates, ready]).then(function (parts) {
+      var list = parts[0] || [];
+      stamp = list.map(function (c) { return c.id; }).join(",");
+      var stored = null;
+      try { stored = JSON.parse(localStorage.getItem(REVIEW_KEY) || "null"); } catch (e) {}
+      if (stored && stored.stamp === stamp && Array.isArray(stored.groups) && stored.groups.length) {
+        groups = stored.groups;
+        groups.forEach(function (g) { sortFiles(g.files); });
+      } else {
+        groups = merge(list, storedConfirmed());
+      }
+      loaded = true;
+      cursor = 0;
+      picked = 0;
+      render();
+    });
+  }
+
+  function toggle() {
+    open = !open;
+    btn.classList.toggle("active", open);
+    btn.setAttribute("aria-pressed", open ? "true" : "false");
+    panel.hidden = !open;
+    if (!open) {
+      clearLive();
+      return;
+    }
+    load();
+  }
+
+  function neighbour(group, dir) {
+    if (!group.files.length) return null;
+    var edge = dir < 0 ? group.files[0] : group.files[group.files.length - 1];
+    var at = scanAt[edge];
+    if (at == null) return null;
+    var file = scan[at + dir];
+    if (!file || group.files.indexOf(file) >= 0) return null;
+    return file;
+  }
+
+  function dropElsewhere(file, keepId) {
+    groups.forEach(function (g) {
+      if (g.id === keepId) return;
+      var at = g.files.indexOf(file);
+      if (at >= 0) g.files.splice(at, 1);
+    });
+    groups = groups.filter(function (g) { return g.files.length >= 2 || g.id === keepId; });
+  }
+
+  function onAct(name) {
+    var group = groups[cursor];
+    if (name === "prev" || name === "next") {
+      if (!groups.length) return;
+      cursor = (cursor + (name === "next" ? 1 : groups.length - 1)) % groups.length;
+      picked = 0;
+      render();
+      markLive(true);
+      return;
+    }
+    if (name === "export") {
+      var payload = {
+        note: "Confirmed groups. Replace found-photographs/clumps.json with this file.",
+        clumps: confirmedList()
+      };
+      var blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "clumps.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      return;
+    }
+    if (!group) return;
+    if (name === "confirm") {
+      group.confirmed = !group.confirmed;
+      save();
+      return;
+    }
+    if (name === "remove") {
+      var id = group.id;
+      group.files.splice(picked, 1);
+      if (group.files.length < 2) {
+        groups = groups.filter(function (g) { return g.id !== id; });
+        if (cursor >= groups.length) cursor = Math.max(0, groups.length - 1);
+        picked = 0;
+      } else if (picked >= group.files.length) {
+        picked = group.files.length - 1;
+      }
+      save();
+      return;
+    }
+    if (name === "split") {
+      if (picked < 1) return;
+      var id = group.id;
+      var keepConfirmed = group.confirmed;
+      var rest = group.files.splice(picked);
+      var made = null;
+      if (rest.length >= 2) {
+        made = { id: freshId(id), files: rest, confirmed: keepConfirmed };
+        groups.splice(cursor + 1, 0, made);
+      }
+      if (group.files.length < 2) {
+        groups = groups.filter(function (g) { return g.id !== id; });
+        if (made) cursor = groups.indexOf(made);
+        else if (cursor >= groups.length) cursor = Math.max(0, groups.length - 1);
+      }
+      picked = 0;
+      save();
+      return;
+    }
+    if (name === "add-left" || name === "add-right") {
+      var file = neighbour(group, name === "add-left" ? -1 : 1);
+      if (!file) return;
+      var id = group.id;
+      dropElsewhere(file, id);
+      group = null;
+      groups.forEach(function (g, i) {
+        if (g.id === id) {
+          group = g;
+          cursor = i;
+        }
+      });
+      if (!group) return;
+      group.files.push(file);
+      sortFiles(group.files);
+      picked = group.files.indexOf(file);
+      save();
+    }
+  }
+
+  function selectTile(tile) {
+    var file = fileOf(tile);
+    var i;
+    for (i = 0; i < groups.length; i++) {
+      var at = groups[i].files.indexOf(file);
+      if (at >= 0) {
+        cursor = i;
+        picked = at;
+        render();
+        return;
+      }
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    if (!e.target || !e.target.closest) return;
+    if (e.target.closest("#fp-clump")) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggle();
+      return;
+    }
+    var act = e.target.closest("[data-fp-clump-act]");
+    if (act && panel.contains(act)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onAct(act.getAttribute("data-fp-clump-act"));
+      return;
+    }
+    var shot = e.target.closest(".fp-clump-shot");
+    if (shot && panel.contains(shot)) {
+      e.preventDefault();
+      e.stopPropagation();
+      picked = +shot.getAttribute("data-i") || 0;
+      render();
+      return;
+    }
+    if (!open) return;
+    var tile = e.target.closest(".fp-grid .fp-tile");
+    if (!tile) return;
+    e.preventDefault();
+    e.stopPropagation();
+    selectTile(tile);
+  }, true);
 })();

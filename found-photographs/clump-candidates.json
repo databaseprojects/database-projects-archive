@@ -1,0 +1,325 @@
+{
+  "note": "Candidate groups of adjacent scans that look like one set. Nothing here is confirmed. Open Found Photographs, press Clump, and export clumps.json when a group is right.",
+  "clumps": [
+    {
+      "id": "c01",
+      "files": [
+        "FastFoto_2026_08_0019_a",
+        "FastFoto_2026_08_0020_a"
+      ],
+      "score": 0.656
+    },
+    {
+      "id": "c02",
+      "files": [
+        "FastFoto_2026_08_0024_a",
+        "FastFoto_2026_08_0025_a"
+      ],
+      "score": 0.687
+    },
+    {
+      "id": "c03",
+      "files": [
+        "FastFoto_2026_08_0037_a",
+        "FastFoto_2026_08_0038_a"
+      ],
+      "score": 0.875
+    },
+    {
+      "id": "c04",
+      "files": [
+        "FastFoto_2026_08_0044_a",
+        "FastFoto_2026_08_0045_a",
+        "FastFoto_2026_08_0046_a",
+        "FastFoto_2026_08_0047_a"
+      ],
+      "score": 0.735
+    },
+    {
+      "id": "c05",
+      "files": [
+        "FastFoto_2026_08_0060_a",
+        "FastFoto_2026_08_0061_a"
+      ],
+      "score": 0.677
+    },
+    {
+      "id": "c06",
+      "files": [
+        "FastFoto_2026_08_0064_a",
+        "FastFoto_2026_08_0065_a",
+        "FastFoto_2026_08_0066_a"
+      ],
+      "score": 0.755
+    },
+    {
+      "id": "c07",
+      "files": [
+        "FastFoto_2026_08_0067_a",
+        "FastFoto_2026_08_0068_a"
+      ],
+      "score": 0.72
+    },
+    {
+      "id": "c08",
+      "files": [
+        "FastFoto_2026_08_0071_a",
+        "FastFoto_2026_08_0072_a",
+        "FastFoto_2026_08_0073_a"
+      ],
+      "score": 0.924
+    },
+    {
+      "id": "c09",
+      "files": [
+        "FastFoto_2026_08_0096_a",
+        "FastFoto_2026_08_0097_a"
+      ],
+      "score": 0.82
+    },
+    {
+      "id": "c10",
+      "files": [
+        "FastFoto_2026_08_0104_a",
+        "FastFoto_2026_08_0106_a"
+      ],
+      "score": 0.732
+    },
+    {
+      "id": "c11",
+      "files": [
+        "FastFoto_2026_08_0109_a",
+        "FastFoto_2026_08_0110_a"
+      ],
+      "score": 0.699
+    },
+    {
+      "id": "c12",
+      "files": [
+        "FastFoto_2026_07_0042_a",
+        "FastFoto_2026_07_0043_a",
+        "FastFoto_2026_07_0044_a",
+        "FastFoto_2026_07_0045_a",
+        "FastFoto_2026_07_0046_a",
+        "FastFoto_2026_07_0047_a",
+        "FastFoto_2026_07_0048_a",
+        "FastFoto_2026_07_0049_a",
+        "FastFoto_2026_07_0050_a",
+        "FastFoto_2026_07_0051_a",
+        "FastFoto_2026_07_0052_a"
+      ],
+      "score": 0.755
+    },
+    {
+      "id": "c13",
+      "files": [
+        "FastFoto_2026_07_0053_a",
+        "FastFoto_2026_07_0054_a"
+      ],
+      "score": 0.791
+    },
+    {
+      "id": "c14",
+      "files": [
+        "FastFoto_2026_07_0066_a",
+        "FastFoto_2026_07_0067_a"
+      ],
+      "score": 0.696
+    },
+    {
+      "id": "c15",
+      "files": [
+        "FastFoto_2026_07_0080_a",
+        "FastFoto_2026_07_0081_a",
+        "FastFoto_2026_07_0082_a"
+      ],
+      "score": 0.718
+    },
+    {
+      "id": "c16",
+      "files": [
+        "FastFoto_2026_07_0083_a",
+        "FastFoto_2026_07_0084_a"
+      ],
+      "score": 0.868
+    },
+    {
+      "id": "c17",
+      "files": [
+        "FastFoto_2026_07_0085_a",
+        "FastFoto_2026_07_0086_a",
+        "FastFoto_2026_07_0087_a",
+        "FastFoto_2026_07_0088_a",
+        "FastFoto_2026_07_0089_a"
+      ],
+      "score": 0.775
+    },
+    {
+      "id": "c18",
+      "files": [
+        "FastFoto_2026_07_0098_a",
+        "FastFoto_2026_07_0099_a"
+      ],
+      "score": 0.927
+    },
+    {
+      "id": "c19",
+      "files": [
+        "FastFoto_2026_07_0102_b",
+        "FastFoto_2026_07_0103_a"
+      ],
+      "score": 0.739
+    },
+    {
+      "id": "c20",
+      "files": [
+        "FastFoto_2026_07_0104_b",
+        "FastFoto_2026_07_0105_b"
+      ],
+      "score": 0.812
+    },
+    {
+      "id": "c21",
+      "files": [
+        "FastFoto_2026_07_0110_a",
+        "FastFoto_2026_07_0111_a"
+      ],
+      "score": 0.716
+    },
+    {
+      "id": "c22",
+      "files": [
+        "FastFoto_2026_07_0115_a",
+        "FastFoto_2026_07_0116_a"
+      ],
+      "score": 0.802
+    },
+    {
+      "id": "c23",
+      "files": [
+        "FastFoto_2026_07_0118_a",
+        "FastFoto_2026_07_0119_a"
+      ],
+      "score": 0.669
+    },
+    {
+      "id": "c24",
+      "files": [
+        "FastFoto_2026_07_0124_b",
+        "FastFoto_2026_07_0125_b"
+      ],
+      "score": 0.741
+    },
+    {
+      "id": "c25",
+      "files": [
+        "FastFoto_2026_07_0126_b",
+        "FastFoto_2026_07_0127_b",
+        "FastFoto_2026_07_0128_b"
+      ],
+      "score": 0.902
+    },
+    {
+      "id": "c26",
+      "files": [
+        "FastFoto_2026_07_0129_a",
+        "FastFoto_2026_07_0130_a"
+      ],
+      "score": 0.647
+    },
+    {
+      "id": "c27",
+      "files": [
+        "FastFoto_2026_07_0133_a",
+        "FastFoto_2026_07_0134_a",
+        "FastFoto_2026_07_0135_a",
+        "FastFoto_2026_07_0136_a",
+        "FastFoto_2026_07_0137_a"
+      ],
+      "score": 0.843
+    },
+    {
+      "id": "c28",
+      "files": [
+        "FastFoto_2026_07_0139_a",
+        "FastFoto_2026_07_0140_a"
+      ],
+      "score": 0.727
+    },
+    {
+      "id": "c29",
+      "files": [
+        "FastFoto_2026_07_0170_a",
+        "FastFoto_2026_07_0171_a"
+      ],
+      "score": 0.794
+    },
+    {
+      "id": "c30",
+      "files": [
+        "FastFoto_2026_07_0186_a",
+        "FastFoto_2026_07_0187_a"
+      ],
+      "score": 0.658
+    },
+    {
+      "id": "c31",
+      "files": [
+        "FastFoto_2026_07_0233_a",
+        "FastFoto_2026_07_0234_a"
+      ],
+      "score": 0.817
+    },
+    {
+      "id": "c32",
+      "files": [
+        "FastFoto_2026_07_0242_a",
+        "FastFoto_2026_07_0243_a"
+      ],
+      "score": 0.745
+    },
+    {
+      "id": "c33",
+      "files": [
+        "FastFoto_2026_07_0248_a",
+        "FastFoto_2026_07_0249_a"
+      ],
+      "score": 0.749
+    },
+    {
+      "id": "c34",
+      "files": [
+        "FastFoto_2026_07_0252_a",
+        "FastFoto_2026_07_0253_a",
+        "FastFoto_2026_07_0254_a",
+        "FastFoto_2026_07_0255_a",
+        "FastFoto_2026_07_0256_a"
+      ],
+      "score": 0.772
+    },
+    {
+      "id": "c35",
+      "files": [
+        "FastFoto_2026_07_0258_a",
+        "FastFoto_2026_07_0259_a"
+      ],
+      "score": 0.697
+    },
+    {
+      "id": "c36",
+      "files": [
+        "FastFoto_2026_07_0268_a",
+        "FastFoto_2026_07_0269_a"
+      ],
+      "score": 0.707
+    },
+    {
+      "id": "c37",
+      "files": [
+        "FastFoto_2026_08_0081_a",
+        "FastFoto_2026_08_0082_a"
+      ],
+      "score": 0.694
+    }
+  ]
+}
