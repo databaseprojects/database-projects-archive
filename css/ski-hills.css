@@ -1401,13 +1401,14 @@ html.sh-prints-off .sh-cart-panel {
 }
 
 
-/* Tree wash green ~30% darker (#3a6b42 -> #284b2e). Overlay SVGs still bake
-   #3a6b42; this wins over the fill attribute. Band opacities are untouched. */
+/* Tree-cover green. Overlay SVGs still bake #3a6b42 or #315b38; this wins
+   over the fill attribute on every band. */
 .sh-frontal-tree-wash,
 .sh-plan-tree-wash,
+.sh-plan-tree-wash path,
 .sh-frontal-trees [fill="#3a6b42"],
 svg [fill="#3a6b42"] {
-  fill: #284b2e !important;
+  fill: #4f8a5a !important;
 }
 
 /* Soften every tree-cover step by one multiplier. Band fill-opacities stay
@@ -1417,6 +1418,52 @@ svg [fill="#3a6b42"] {
 .sh-frontal-trees {
   --sh-tree-soften: 0.7;
   opacity: var(--sh-tree-soften);
+}
+
+/* Tree-cover opacity steps, lowest density to densest. Replaces the
+   fill-opacity baked into contour JSON and bird's-eye wash sheets, including
+   copies served from the asset host. One band 0.10; two 0.08/0.10; three
+   0.03/0.08/0.12; four 0.03/0.06/0.09/0.12. */
+.sh-frontal-trees:not(:has(> .sh-frontal-tree-band:nth-child(2))) > .sh-frontal-tree-band > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:not(:has(> .sh-plan-tree-band:nth-child(2))) > .sh-plan-tree-band > path,
+.sh-plan-tree-wash:not(:has(> .sh-plan-tree-band)) > path {
+  fill-opacity: 0.10;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(2)):not(:has(> .sh-frontal-tree-band:nth-child(3))) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(2)):not(:has(> .sh-plan-tree-band:nth-child(3))) > .sh-plan-tree-band:nth-child(1) > path {
+  fill-opacity: 0.08;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(2)):not(:has(> .sh-frontal-tree-band:nth-child(3))) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(2)):not(:has(> .sh-plan-tree-band:nth-child(3))) > .sh-plan-tree-band:nth-child(2) > path {
+  fill-opacity: 0.10;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(1) > path {
+  fill-opacity: 0.03;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(2) > path {
+  fill-opacity: 0.08;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(3) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(3) > path {
+  fill-opacity: 0.12;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(1) > path {
+  fill-opacity: 0.03;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(2) > path {
+  fill-opacity: 0.06;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(3) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(3) > path {
+  fill-opacity: 0.09;
+}
+.sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(4) > .sh-frontal-tree-wash,
+.sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(4) > path {
+  fill-opacity: 0.12;
 }
 
 /* Print border: 0.25 in (6.35 mm) white margin on every map view (plan and bird's-eye),
