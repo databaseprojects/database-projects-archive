@@ -862,6 +862,20 @@
     return "translate(" + dx + " " + dy + ") scale(" + s + ") scale(.1)";
   }
 
+  // Lowest density to densest. Applied when the bands are painted so the
+  // steps stay these values wherever the contour JSON was served from.
+  var TREE_STEP = {
+    1: ["0.12"],
+    2: ["0.08", "0.12"],
+    3: ["0.05", "0.08", "0.12"],
+    4: ["0.05", "0.07", "0.09", "0.12"]
+  };
+
+  function treeStepOpacity(count, index, fallback) {
+    var row = TREE_STEP[count];
+    return row && row[index] != null ? row[index] : fallback;
+  }
+
   function appendTreeWash(parent, shift, treeWash, treeBands) {
     var bands = treeBands && treeBands.length ? treeBands : null;
     var flat = !bands && typeof treeWash === "string" && treeWash.charAt(0) === "M";
@@ -872,14 +886,14 @@
     var dx = shift.dx || 0;
     var dy = shift.dy || 0;
     var base = "translate(" + dx + " " + dy + ") scale(" + scaleTo + ")";
-    var list = bands || [{ d: treeWash, opacity: 0.10 }];
-    list.forEach(function (band) {
+    var list = bands || [{ d: treeWash, opacity: 0.12 }];
+    list.forEach(function (band, index) {
       if (!band || !band.d) return;
       var path = document.createElementNS(NS, "path");
       path.setAttribute("d", band.d);
       path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
-      path.setAttribute("fill", "#284b2e");
-      path.setAttribute("fill-opacity", bands ? String(band.opacity) : "0.10");
+      path.setAttribute("fill", "#4f8a5a");
+      path.setAttribute("fill-opacity", bands ? treeStepOpacity(list.length, index, String(band.opacity)) : "0.12");
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
       if (bands) {
