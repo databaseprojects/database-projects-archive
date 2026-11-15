@@ -1,7 +1,6 @@
 /* Bike Routes. Click a city map to zoom it open, the same way Vacant does. */
 (function () {
   var count = document.querySelector(".br-count");
-  var print = document.getElementById("br-print");
   var row = document.getElementById("br-row");
   var tip = null;
   var cards = document.querySelectorAll(".br-city");
@@ -39,11 +38,6 @@
       showTip(node.getAttribute("data-name") || "", e.clientX, e.clientY);
     });
     root.addEventListener("pointerleave", function () { showTip("", 0, 0); });
-  }
-
-  function mount(svg) {
-    print.appendChild(svg);
-    bindRouteTip(print);
   }
 
   function setPressed(buttons, attr, value) {
@@ -176,16 +170,10 @@
   }
 
   function loadCitySvg(art, done) {
-    var svg = art.querySelector ? art.querySelector("svg") : null;
-    if (svg) {
-      var copy = svg.cloneNode(true);
-      copy.removeAttribute("id");
-      done(copy);
-      return;
-    }
-    var img = art.tagName === "IMG" ? art : null;
-    if (!img) { done(null); return; }
-    fetch(img.getAttribute("src") || "").then(function (res) {
+    var img = art && art.tagName === "IMG" ? art : null;
+    var url = img && img.getAttribute("data-full");
+    if (!url) { done(null); return; }
+    fetch(url).then(function (res) {
       if (!res.ok) throw new Error("svg");
       return res.text();
     }).then(function (text) {
@@ -430,19 +418,32 @@
     }
   });
 
-  if (print) {
-    fetch("city.svg?v=20261022f").then(function (res) {
-      if (!res.ok) throw new Error("svg");
-      return res.text();
-    }).then(function (text) {
-      var doc = new DOMParser().parseFromString(text, "image/svg+xml");
-      var svg = doc.documentElement;
-      if (!svg || svg.tagName.toLowerCase() !== "svg") throw new Error("svg");
-      mount(document.importNode(svg, true));
-    }).catch(function () {
-      if (count && !count.textContent) count.textContent = "The drawing did not load.";
-    });
+  function showPreview(img) {
+    var src = img.getAttribute("data-src");
+    if (!src || img.getAttribute("src") === src) return;
+    img.decoding = "async";
+    img.fetchPriority = "low";
+    img.src = src;
   }
+
+  function armPreviews() {
+    var imgs = document.querySelectorAll("img.br-city-art[data-src]");
+    if (!imgs.length) return;
+    if (!("IntersectionObserver" in window)) {
+      imgs.forEach(showPreview);
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        showPreview(entry.target);
+        io.unobserve(entry.target);
+      });
+    }, { rootMargin: "240px 0px", threshold: 0 });
+    imgs.forEach(function (img) { io.observe(img); });
+  }
+
+  armPreviews();
 
   fetch("routes.json?v=20261017d").then(function (res) {
     if (!res.ok) throw new Error("routes");
