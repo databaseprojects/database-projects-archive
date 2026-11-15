@@ -397,16 +397,18 @@
   stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1));
 }
 
-.sh-hill polyline.sh-contour,
-.sh-hill path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.15);
-  stroke-width: var(--sh-contour, 0.17px);
+.sh-hill polyline.sh-contour:not(.sh-contour-shade),
+.sh-hill path.sh-contour:not(.sh-contour-shade) {
+  stroke: rgba(0, 0, 0, 0.08);
+  /* 0.5pt at the open view. Fallback is the old 0.17px card width
+     scaled by 0.5pt / 0.7058px = 0.1204pt, before syncStroke measures. */
+  stroke-width: var(--sh-contour, 0.1204pt);
 }
 
-.sh-lb polyline.sh-contour,
-.sh-lb path.sh-contour {
-  stroke: rgba(0, 0, 0, 0.15);
-  stroke-width: 0.7058;
+.sh-lb polyline.sh-contour:not(.sh-contour-shade),
+.sh-lb path.sh-contour:not(.sh-contour-shade) {
+  stroke: rgba(0, 0, 0, 0.08);
+  stroke-width: 0.5pt;
 }
 
 .sh-hill path.sh-contour,
@@ -420,9 +422,9 @@
 }
 
 /* Bird's-eye lines use the plan view widths. The sheets bake wider strokes
-   in viewBox units, so override them with the same screen-pixel widths the
+   in viewBox units, so override them with the same screen widths the
    plan view draws: runs and lifts at --sh-run (1.3166px, Whistler 1.0269px),
-   contours at 0.7058px. Contour colour is unchanged. */
+   contours at 0.5pt. */
 .sh-lb .sh-frontal-run,
 .sh-lb .sh-frontal-lift {
   stroke-width: var(--sh-run, 1.3166px) !important;
@@ -434,21 +436,24 @@
   stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1)) !important;
 }
 
-/* Bird's-eye contours match the plan view contours: black at 0.15
-   (the same as .sh-contour), 0.7058px in the lightbox, and the plan card's
-   --sh-contour width on cards. The sheets bake stroke, stroke-opacity and
-   stroke-width on each element, so these have to win. */
+/* Bird's-eye contours match the plan view contours: black at 0.08
+   (the same as .sh-contour), 0.5pt in the lightbox, and the plan card's
+   --sh-contour width on cards. 0.5pt is a CSS absolute length
+   (1pt = 1/72in = 96/72px = 2/3px). With non-scaling-stroke that paints
+   a 0.5pt line, including over the baked scale(.1). The sheets bake
+   stroke, stroke-opacity and stroke-width on each element, so these
+   have to win. */
 .sh-lb .sh-frontal-contour {
   opacity: 1;
-  stroke-width: 0.7058px !important;
+  stroke-width: 0.5pt !important;
   vector-effect: non-scaling-stroke !important;
 }
 
 .sh-frontal-contour {
   opacity: 1;
   stroke: #000 !important;
-  stroke-opacity: 0.15 !important;
-  stroke-width: var(--sh-contour, 0.17px) !important;
+  stroke-opacity: 0.08 !important;
+  stroke-width: var(--sh-contour, 0.1204pt) !important;
   fill: none;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -469,6 +474,12 @@ g[mask^="url(#sh-contour-fade-"] {
 .sh-lb path.sh-contour-shade {
   fill: none;
   pointer-events: none;
+  stroke-width: var(--sh-shade, 0.17px);
+}
+
+.sh-lb polyline.sh-contour-shade,
+.sh-lb path.sh-contour-shade {
+  stroke-width: 0.7058;
 }
 
 .sh-hill polyline.sh-contour-shade[data-depth="1"],
