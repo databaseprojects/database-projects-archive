@@ -1,8 +1,9 @@
 """Shared ski-hill layout constants.
 
-Print white margin (Billy 2026-11-10): **0.25 in (6.35 mm)** on every
-side of the 8 × 8 in print. The website frame border is the same 0.25 in.
-When site and print share one map frame (``.sh-print``), use this print margin.
+Print white margin: **4 mm** on a 10×10 in trim (254 mm). The 8×8 sheet
+is no longer a store size. 4 mm / 254 mm = 1.5748% (rounded). The website
+frame uses this same share as padding on ``.sh-print``. The page shows
+that margin only: no bleed and no trim lines.
 
 Artwork (contours, runs, lifts, tree wash) is authored in the full
 0 … FRAME viewBox. The print margin is applied as CSS padding on ``.sh-print``
@@ -22,17 +23,20 @@ CSS print margin keeps the white rim on every view.
 from __future__ import annotations
 
 # --- Print white margin (shared by every hill view) ---------------------------
-PRINT_MARGIN_MM = 6.35  # 0.25 in
-PRINT_SIDE_IN = 8.0
+# 4 mm on a 10×10 trim. One rounded share: CSS --sh-print-border and
+# SH_LAYOUT.PRINT_MARGIN_PCT must use PRINT_MARGIN_PCT and nothing else.
+PRINT_MARGIN_MM = 4.0
+PRINT_TRIM_MM = 254.0  # 10 in × 25.4. 8×8 dropped.
 MM_PER_IN = 25.4
 
-PRINT_MARGIN_FRAC = PRINT_MARGIN_MM / (PRINT_SIDE_IN * MM_PER_IN)
-PRINT_MARGIN_PCT = PRINT_MARGIN_FRAC * 100.0  # CSS --sh-print-border
+# 4 / 254 * 100 = 1.5748031496… → 1.5748
+PRINT_MARGIN_PCT = round(PRINT_MARGIN_MM / PRINT_TRIM_MM * 100.0, 4)
+PRINT_MARGIN_FRAC = PRINT_MARGIN_PCT / 100.0
 PRINT_MARGIN_SVG = PRINT_MARGIN_FRAC * 1000.0  # same fraction on a 1000-unit frame
 
-# Website frame border, in inches. Same 0.25 in as the print margin.
-# The shared .sh-print frame is painted by PRINT_MARGIN_MM, not this constant.
-WEBSITE_BORDER_IN = 0.25
+# On-screen frame is PRINT_MARGIN_PCT of the sheet, not a separate inch border.
+# No bleed and no trim lines. Painted by --sh-print-border, not this inch value.
+WEBSITE_BORDER_IN = PRINT_MARGIN_MM / MM_PER_IN
 
 # --- Plan view frame ---------------------------------------------------------
 FRAME = 1000.0
@@ -53,8 +57,9 @@ def css_print_border() -> str:
 
 def assert_print_margin_contract() -> None:
     """Sanity checks so a bad edit fails loudly in rebuilds."""
-    assert PRINT_MARGIN_MM == 6.35
-    assert WEBSITE_BORDER_IN == 0.25
+    assert PRINT_MARGIN_MM == 4.0
+    assert PRINT_TRIM_MM == 254.0
+    assert PRINT_MARGIN_PCT == 1.5748
+    assert abs(PRINT_MARGIN_PCT - round(4.0 / 254.0 * 100.0, 4)) < 1e-9
     assert abs(PRINT_MARGIN_MM - (WEBSITE_BORDER_IN * MM_PER_IN)) < 1e-9
-    assert abs(PRINT_MARGIN_PCT - (6.35 / (8.0 * 25.4) * 100.0)) < 1e-9
     assert abs(PLAN_ART_SIZE - 904.0) < 1e-9
