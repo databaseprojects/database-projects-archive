@@ -1411,15 +1411,6 @@ svg [fill="#3a6b42"] {
   fill: #4f8a5a !important;
 }
 
-/* Soften every tree-cover step by one multiplier. Band fill-opacities stay
-   baked; group opacity scales them once, on the outermost container of each
-   view. Nested bands are not restated, so the factor is not compounded. */
-.sh-plan-tree-wash,
-.sh-frontal-trees {
-  --sh-tree-soften: 0.7;
-  opacity: var(--sh-tree-soften);
-}
-
 /* Tree-cover opacity steps, lowest density to densest. Replaces the
    fill-opacity baked into contour JSON and bird's-eye wash sheets, including
    copies served from the asset host. One band 0.12; two 0.08/0.12; three
