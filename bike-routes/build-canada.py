@@ -31,7 +31,11 @@ ENDPOINTS = (
 )
 UA = "databaseprojects-bike-routes/1.0 (city maps; contact via github.com/databaseprojects)"
 CREDIT = "© OpenStreetMap contributors"
-PRINT_VERSION = "20261022f"
+PRINT_VERSION = "20261115br"
+BLANK_PREVIEW = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000' "
+    "viewBox='0 0 1000 1000'%3E%3Crect width='1000' height='1000' fill='%23fff'/%3E%3C/svg%3E"
+)
 ROAD_PAD = 0.005
 INDEX_START = "<!-- br-cities:start -->"
 INDEX_END = "<!-- br-cities:end -->"
@@ -510,6 +514,24 @@ def city_card(slug, name, art):
     )
 
 
+def city_art(slug, name, full, eager):
+    """Card preview. The full drawing is fetched only when the city is opened."""
+    alt = xml(name) + " cycle routes"
+    preview = "previews/%s.webp?v=%s" % (xml(slug), PRINT_VERSION)
+    full_url = "%s?v=%s" % (full, PRINT_VERSION)
+    if eager:
+        return (
+            '<img class="br-city-art" src="%s" data-full="%s" alt="%s" '
+            'width="1000" height="1000" fetchpriority="high">'
+            % (preview, full_url, alt)
+        )
+    return (
+        '<img class="br-city-art" src="%s" data-src="%s" data-full="%s" alt="%s" '
+        'width="1000" height="1000" decoding="async">'
+        % (BLANK_PREVIEW, preview, full_url, alt)
+    )
+
+
 def write_index_html(cities):
     """One row of city maps. Vancouver stays first. No text-link list."""
     page = ROOT / "index.html"
@@ -519,21 +541,12 @@ def write_index_html(cities):
     if start < 0 or end < 0:
         raise SystemExit("index markers missing")
     cards = [
-        city_card(
-            "vancouver",
-            "Vancouver",
-            '<div class="br-city-art" id="br-print"></div>',
-        )
+        city_card("vancouver", "Vancouver", city_art("vancouver", "Vancouver", "city.svg", True))
     ]
     for city in cities:
         slug = city["slug"]
         name = city["name"]
-        art = '<img class="br-city-art" src="prints/%s.svg?v=%s" alt="%s cycle routes">' % (
-            xml(slug),
-            PRINT_VERSION,
-            xml(name),
-        )
-        cards.append(city_card(slug, name, art))
+        cards.append(city_card(slug, name, city_art(slug, name, "prints/%s.svg" % slug, False)))
     body = '<div class="br-row" id="br-row">\n' + "\n".join(cards) + "\n</div>"
     page.write_text(text[:start] + INDEX_START + "\n" + body + "\n" + text[end:])
 
