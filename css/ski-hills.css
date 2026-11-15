@@ -1401,14 +1401,14 @@ html.sh-prints-off .sh-cart-panel {
 }
 
 
-/* Tree-cover green. Overlay SVGs still bake #3a6b42 or #315b38; this wins
+/* Tree-cover green #336641. Overlay SVGs still bake #3a6b42 or #315b38; this wins
    over the fill attribute on every band. */
 .sh-frontal-tree-wash,
 .sh-plan-tree-wash,
 .sh-plan-tree-wash path,
 .sh-frontal-trees [fill="#3a6b42"],
 svg [fill="#3a6b42"] {
-  fill: #4f8a5a !important;
+  fill: #336641 !important;
 }
 
 /* Tree-cover opacity steps, lowest density to densest. Replaces the
