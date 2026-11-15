@@ -1413,48 +1413,48 @@ svg [fill="#3a6b42"] {
 
 /* Tree-cover opacity steps, lowest density to densest. Replaces the
    fill-opacity baked into contour JSON and bird's-eye wash sheets, including
-   copies served from the asset host. One band 0.12; two 0.08/0.12; three
-   0.05/0.08/0.12; four 0.05/0.07/0.09/0.12. */
+   copies served from the asset host. One band 0.08; two 0.05/0.08; three
+   0.03/0.05/0.08; four 0.03/0.04/0.06/0.08. */
 .sh-frontal-trees:not(:has(> .sh-frontal-tree-band:nth-child(2))) > .sh-frontal-tree-band > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:not(:has(> .sh-plan-tree-band:nth-child(2))) > .sh-plan-tree-band > path,
 .sh-plan-tree-wash:not(:has(> .sh-plan-tree-band)) > path {
-  fill-opacity: 0.12;
+  fill-opacity: 0.08;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(2)):not(:has(> .sh-frontal-tree-band:nth-child(3))) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(2)):not(:has(> .sh-plan-tree-band:nth-child(3))) > .sh-plan-tree-band:nth-child(1) > path {
-  fill-opacity: 0.08;
+  fill-opacity: 0.05;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(2)):not(:has(> .sh-frontal-tree-band:nth-child(3))) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(2)):not(:has(> .sh-plan-tree-band:nth-child(3))) > .sh-plan-tree-band:nth-child(2) > path {
-  fill-opacity: 0.12;
+  fill-opacity: 0.08;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(1) > path {
-  fill-opacity: 0.05;
+  fill-opacity: 0.03;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(2) > path {
-  fill-opacity: 0.08;
+  fill-opacity: 0.05;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(3)):not(:has(> .sh-frontal-tree-band:nth-child(4))) > .sh-frontal-tree-band:nth-child(3) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(3)):not(:has(> .sh-plan-tree-band:nth-child(4))) > .sh-plan-tree-band:nth-child(3) > path {
-  fill-opacity: 0.12;
+  fill-opacity: 0.08;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(1) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(1) > path {
-  fill-opacity: 0.05;
+  fill-opacity: 0.03;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(2) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(2) > path {
-  fill-opacity: 0.07;
+  fill-opacity: 0.04;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(3) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(3) > path {
-  fill-opacity: 0.09;
+  fill-opacity: 0.06;
 }
 .sh-frontal-trees:has(> .sh-frontal-tree-band:nth-child(4)) > .sh-frontal-tree-band:nth-child(4) > .sh-frontal-tree-wash,
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(4) > path {
-  fill-opacity: 0.12;
+  fill-opacity: 0.08;
 }
 
 /* Print border: 0.25 in (6.35 mm) white margin on every map view (plan and bird's-eye),
