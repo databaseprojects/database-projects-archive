@@ -892,7 +892,7 @@
       var path = document.createElementNS(NS, "path");
       path.setAttribute("d", band.d);
       path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
-      path.setAttribute("fill", "#4f8a5a");
+      path.setAttribute("fill", "#336641");
       path.setAttribute("fill-opacity", bands ? treeStepOpacity(list.length, index, String(band.opacity)) : "0.12");
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
