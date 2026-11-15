@@ -1197,16 +1197,23 @@
     var scale = w / gw;
     g.style.setProperty("--sh-stroke", (1.3166 * scale).toFixed(3) + "px");
     var cols = parseInt(g.getAttribute("data-columns") || "6", 10);
-    var contour = 0.7058 * scale;
+    // Shade offsets keep the previous contour weight (0.7058px at the open view).
+    var shade = 0.7058 * scale;
+    // Visible contours are 0.5pt. CSS pt is 1/72 in; non-scaling-stroke paints
+    // that length (0.5 × 96/72 = 2/3 px). Cards keep the same scale as before.
+    var contour = 0.5 * scale;
     // Largest four sizes are 5–8 columns. From 9 columns down, thicken
     // gently to 1.5x the scaled width at 20 columns.
     if (cols >= 9) {
       var t = (cols - 8) / 12;
       if (t < 0) t = 0;
       if (t > 1) t = 1;
-      contour *= 1 + 0.5 * Math.sqrt(t);
+      var thicken = 1 + 0.5 * Math.sqrt(t);
+      shade *= thicken;
+      contour *= thicken;
     }
-    g.style.setProperty("--sh-contour", contour.toFixed(3) + "px");
+    g.style.setProperty("--sh-shade", shade.toFixed(3) + "px");
+    g.style.setProperty("--sh-contour", contour.toFixed(4) + "pt");
     g.style.setProperty("--sh-key", (1.6 * scale).toFixed(3) + "px");
   }
 
