@@ -6,9 +6,23 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <title>Ski Hills — databaseprojects</title>
   <link rel="stylesheet" href="../css/site.css?v=20261011a">
-  <link rel="stylesheet" href="../css/ski-hills.css?v=20261115tc">
+  <link rel="stylesheet" href="../css/ski-hills.css?v=20261115td">
 </head>
 <body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute" focusable="false">
+    <filter id="sh-tree-inward" color-interpolation-filters="sRGB" x="-40%" y="-40%" width="180%" height="180%">
+      <feComponentTransfer in="SourceAlpha" result="cover"><feFuncA type="linear" slope="80"/></feComponentTransfer>
+      <feGaussianBlur in="cover" stdDeviation="2" result="blur"/>
+      <feComposite in="blur" in2="cover" operator="in" result="inner"/>
+      <feComposite in="SourceGraphic" in2="inner" operator="in"/>
+    </filter>
+    <filter id="sh-tree-inward-be" color-interpolation-filters="sRGB" x="-40%" y="-40%" width="180%" height="180%">
+      <feComponentTransfer in="SourceAlpha" result="cover"><feFuncA type="linear" slope="80"/></feComponentTransfer>
+      <feGaussianBlur in="cover" stdDeviation="20" result="blur"/>
+      <feComposite in="blur" in2="cover" operator="in" result="inner"/>
+      <feComposite in="SourceGraphic" in2="inner" operator="in"/>
+    </filter>
+  </svg>
   <div class="sheet">
     <nav class="bk-nav" aria-label="Index"><a href="../">Home</a><a href="../vacant/">Vacant</a><a href="../broken/" hidden>Broken</a><a href="../found-photographs/">Found Photographs</a><a href="../restricted-area/" hidden>Restricted Area</a><a href="../dogs-waiting-out-front/" hidden>Dogs Waiting Out Front</a><a href="../front-entrance-statues/" hidden>Front Entrance Statues</a><a href="../car-colours/">Car Colours</a><a href="../convenient-store-colors/">Convenience Store Colours</a><a href="../ski-hills/" class="active" aria-current="page">Ski Hills</a><a href="../bike-routes/">Bike Routes</a><a href="../rivers/">Rivers</a><!-- hidden: <a href="../keyword-scraping/">Keyword Scraping</a> --><a href="../info/">INFO</a></nav>
 
@@ -198,6 +212,6 @@
   </div>
   <script src="../js/shared.js?v=20261017g"></script>
   <script src="../js/prints.js?v=20261017c"></script>
-  <script src="../js/ski-hills.js?v=20261115tc"></script>
+  <script src="../js/ski-hills.js?v=20261115td"></script>
 </body>
 </html>
