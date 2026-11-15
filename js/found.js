@@ -69,6 +69,11 @@ var FP_TIME = {
   var zVal = null;
   var pendingCols = null;
   var lazyIo = null;
+  /* How far ahead of the viewport an off-screen tile may start loading. */
+  var LAZY_LEAD = 200;
+  /* Same limit box as the w_800 file, stepped down. w_200 is the file a
+     2x phone actually picks (tiles are about 80–120 CSS pixels). */
+  var THUMB_WIDTHS = [200, 400, 800];
 
   function grid() {
     return document.querySelector(".fp-grid");
@@ -459,13 +464,58 @@ var FP_TIME = {
     setTimeout(finish, FP_TIME.IMAGE_GIVE_UP);
   }
 
-  /* One viewport beyond the screen, matching the observer margin. */
-  function photoInReach(tile) {
+  function viewSize() {
+    return {
+      vh: window.innerHeight || document.documentElement.clientHeight || 800,
+      vw: window.innerWidth || document.documentElement.clientWidth || 800
+    };
+  }
+
+  function tileOnScreen(tile) {
     var r = tile.getBoundingClientRect();
     if (!(r.width > 0 || r.height > 0)) return false;
-    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
-    var vw = window.innerWidth || document.documentElement.clientWidth || 800;
-    return r.bottom >= -vh && r.top <= vh + vh && r.right >= -vw && r.left <= vw + vw;
+    var v = viewSize();
+    return r.bottom > 0 && r.top < v.vh && r.right > 0 && r.left < v.vw;
+  }
+
+  function thumbCssPx(tile) {
+    var w = tile ? parseFloat(tile.style.getPropertyValue("--fp-tile-w")) : NaN;
+    if (!(w > 0)) w = tileWidth();
+    return w;
+  }
+
+  /* Same limit box as the w_800 file (c_limit, so nothing is cropped).
+     f_auto and q_auto stay their own segments. The width and height live in
+     one segment with the commas encoded, because a raw comma would split srcset. */
+  function cloudinarySized(url, w) {
+    var mark = url.match(/\/image\/upload\/([^/]+)\/(.+)$/);
+    if (!mark || !/w_\d+/.test(mark[1])) return "";
+    var origin = url.slice(0, url.indexOf("/image/upload/"));
+    return origin + "/image/upload/f_auto/q_auto/c_limit%2Cw_" + w + "%2Ch_" + w + "/" + mark[2];
+  }
+
+  function commaThumb(url) {
+    var m = url.match(/^(.*)\/image\/upload\/.*?c_limit(?:%2C|,)w_(\d+)(?:%2C|,)h_\d+\/(.+)$/);
+    if (!m) return url;
+    return m[1] + "/image/upload/f_auto,q_auto,c_limit,w_" + m[2] + ",h_" + m[2] + "/" + m[3];
+  }
+
+  function thumbPick(cssPx) {
+    var need = cssPx * (window.devicePixelRatio || 1);
+    var i;
+    for (i = 0; i < THUMB_WIDTHS.length; i++) {
+      if (THUMB_WIDTHS[i] >= need) return THUMB_WIDTHS[i];
+    }
+    return THUMB_WIDTHS[THUMB_WIDTHS.length - 1];
+  }
+
+  function syncThumbSizes() {
+    tiles().forEach(function (tile) {
+      var img = imgOf(tile);
+      if (!img || !img.getAttribute("srcset")) return;
+      var text = Math.max(1, Math.round(thumbCssPx(tile))) + "px";
+      if (img.getAttribute("sizes") !== text) img.setAttribute("sizes", text);
+    });
   }
 
   function assignPhoto(tile) {
@@ -473,16 +523,33 @@ var FP_TIME = {
     if (!img || img.getAttribute("src")) return;
     var url = tile.getAttribute("data-front") || "";
     if (!url) return;
+    var css = thumbCssPx(tile);
+    var chosen = thumbPick(css);
+    var src = cloudinarySized(url, chosen) || url;
+    var parts = [];
+    var i;
+    for (i = 0; i < THUMB_WIDTHS.length; i++) {
+      var sized = cloudinarySized(url, THUMB_WIDTHS[i]);
+      if (sized) parts.push(sized + " " + THUMB_WIDTHS[i] + "w");
+    }
     img.decoding = "async";
-    img.src = url;
+    if (parts.length > 1) {
+      img.setAttribute("sizes", Math.max(1, Math.round(css)) + "px");
+      img.setAttribute("srcset", parts.join(", "));
+    }
+    /* On screen, fetch with the opening. Off screen, native lazy. The
+       observer only hands a tile over once it is inside the short lead. */
+    img.setAttribute("loading", tileOnScreen(tile) ? "eager" : "lazy");
+    img.src = src;
   }
 
   function armLazy() {
+    syncThumbSizes();
     var pending = [];
     tiles().forEach(function (tile) {
       var img = imgOf(tile);
       if (!img || img.getAttribute("src")) return;
-      if (photoInReach(tile)) assignPhoto(tile);
+      if (tileOnScreen(tile)) assignPhoto(tile);
       else pending.push(tile);
     });
     if (!pending.length) return;
@@ -497,7 +564,7 @@ var FP_TIME = {
           assignPhoto(entry.target);
           lazyIo.unobserve(entry.target);
         });
-      }, { root: null, rootMargin: "100% 0px", threshold: 0 });
+      }, { root: null, rootMargin: LAZY_LEAD + "px 0px", threshold: 0 });
     }
     pending.forEach(function (tile) { lazyIo.observe(tile); });
   }
@@ -2215,6 +2282,7 @@ var FP_TIME = {
       if (isTable()) applyScatter(g, false);
       else if (isAg()) applyAntigravity(g, captureAgSeeds(g), { resume: true });
       else applyRowWidths(g);
+      syncThumbSizes();
     };
     if (animate && g.getAttribute("data-columns") !== String(n)) flow(apply, { step: 26, total: 620, dur: 520 });
     else apply();
@@ -2717,11 +2785,18 @@ var FP_TIME = {
   function sharpen(tile, px) {
     var img = imgOf(tile);
     if (!img) return;
-    var src = img.getAttribute("src") || "";
+    var shown = img.currentSrc || img.getAttribute("src") || "";
+    var have = shown.match(/w_(\d+)/);
+    var slot = (px || 0) * (window.devicePixelRatio || 1);
+    /* The resting file already covers this tile. Hover stays on it. */
+    if (have && slot > 0 && +have[1] >= slot / 1.12) return;
+    var src = commaThumb(img.getAttribute("src") || "");
     var next = hiSrc(src, Math.max(800, px || 800));
     if (!next || next === src) return;
     var pre = new Image();
     pre.onload = function () {
+      img.removeAttribute("srcset");
+      img.removeAttribute("sizes");
       img.src = next;
     };
     pre.src = next;
@@ -3484,6 +3559,7 @@ var FP_TIME = {
       if (isTable()) applyScatter(grid(), false);
       else if (isAg()) applyAntigravity(grid(), captureAgSeeds(grid()), { resume: true });
       else applyRowWidths(grid());
+      syncThumbSizes();
     }, FP_TIME.RESIZE);
   });
 
