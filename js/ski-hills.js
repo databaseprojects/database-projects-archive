@@ -1008,6 +1008,8 @@
       card._treeBands = data.treeBands && data.treeBands.length ? data.treeBands : null;
       card._treeWash = data.treeWash || (card._treeBands ? "bands" : "");
       paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash, card._treeBands);
+      var cardSvg = card.querySelector("svg");
+      if (cardSvg && card._hill) cardSvg.classList.toggle("sh-trees-on", !!card._hill._treesOn);
       var lb = document.getElementById("sh-lb");
       if (lb && lb._card === card && lb._shift && lb._svg) {
         if (stackWanted(card._hill)) applyStack(card._hill);
@@ -1114,6 +1116,8 @@
     card._treeWash = "bands";
     var hill = card._hill;
     paintContours(card.querySelector("svg"), card._contourLines, card._shift || { dx: 0, dy: 0, clip: SQUARE }, false, card._treeWash, card._treeBands);
+    var cardSvg = card.querySelector("svg");
+    if (cardSvg && hill) cardSvg.classList.toggle("sh-trees-on", !!hill._treesOn);
     var lb = document.getElementById("sh-lb");
     if (lb && lb._card === card && lb._shift && lb._svg && !(hill && stackWanted(hill))) {
       paintContours(lb._svg, card._contourLines, lb._shift, false, card._treeWash, card._treeBands);
@@ -1692,6 +1696,8 @@
     document.documentElement.classList.add("sh-lb-open");
     if (lb._svg && card._hill && card._hill._treesOn) lb._svg.classList.add("sh-trees-on");
     if (lb._svg && card._hill && card._hill._bowlOn) lb._svg.classList.add("sh-bowl-on");
+    var cardSvg = card.querySelector("svg");
+    if (cardSvg && card._hill) cardSvg.classList.toggle("sh-trees-on", !!card._hill._treesOn);
     if (card._hill && card._hill._treesOn) ensureTreeWash(card._hill);
     if (card._hill && card._hill.stacked && card._hill._stackOn) applyStack(card._hill);
     refreshMockArt(card);
@@ -4117,6 +4123,7 @@
         hill._treesOn = !!treesBox.checked;
         var lb = document.getElementById("sh-lb");
         if (lb && lb._svg) lb._svg.classList.toggle("sh-trees-on", !!hill._treesOn);
+        var cardSvg = hill.el && hill.el.querySelector("svg"); if (cardSvg) cardSvg.classList.toggle("sh-trees-on", !!hill._treesOn);
         if (hill._treesOn) ensureTreeWash(hill);
         else syncTreesLoading(hill);
         refreshMockArt(hill.el);
