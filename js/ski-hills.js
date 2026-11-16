@@ -825,7 +825,8 @@
     "mount-washington-alpine-resort": ["front", "back"],
     "lake-louise-ski-area": ["front", "back"],
     "mt-spokane": ["front", "back"],
-    "bear-valley": ["front", "back"]
+    "bear-valley": ["front", "back"],
+    "snowbird": ["front", "back"]
   };
 
   function sideViews(hill) {
@@ -871,7 +872,7 @@
     "sasquatch-mountain-resort": "20261116b1",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116b1",
-    "snowbird": "20261116b1",
+    "snowbird": "20261116sbd",
     "stevens-pass": "20261116b1",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116b1"

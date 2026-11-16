@@ -1099,9 +1099,15 @@ CAMERAS = {
     "jay-peak-resort": {"facing": 242.0, "post_scale": 0.95},
     "mad-river-glen": {"facing": 254.2, "post_scale": 0.95},
     "blue-mountain-ski-resort": {"facing": 228.1, "post_scale": 0.95},
-    # Zoomed out x1.12 from the published sheet (2026-10-30): the published
-    # scale divided by 1.12.
-    "snowbird": {"facing": 339.6, "frame_scale": 0.931},
+    # Snowbird only. The published bird's-eye is the back, facing 339.6,
+    # frame_scale 0.931 (zoomed out x1.12). Front is that same camera turned
+    # 180° (339.6+180 = 159.6), re-rendered from the DEM with the default
+    # 1 px horizon. The back file stays the published sheet. Same Front /
+    # Back toggle as Bear Valley. Edit these numbers.
+    "snowbird": {
+        "views": {"front": 159.6, "back": 339.6},
+        "frame_scale": 0.931,
+    },
     "snowbasin-resort": {"facing": 236.5, "frame_scale": 0.866},
     "alta-ski-area": {"facing": 149.2, "frame_scale": 0.908},
     # Sugarloaf keeps its published scale and facing.
