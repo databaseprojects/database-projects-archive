@@ -768,6 +768,10 @@ PLAN_TURN_DEG = {
     # 116.9° counter-clockwise from north-up. -146.9 is another 30°
     # counter-clockwise. Negative is counter-clockwise in this frame.
     "stevens-pass": -146.9,
+    # Steamboat. Was -93.0, the negated bird's-eye facing, which is 93°
+    # counter-clockwise from north-up. -128.0 is another 35°
+    # counter-clockwise. Negative is counter-clockwise in this frame.
+    "steamboat-ski-resort": -128.0,
 }
 
 
