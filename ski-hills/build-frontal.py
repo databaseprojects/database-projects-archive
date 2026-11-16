@@ -158,11 +158,12 @@ FLOATING_HORIZON = {
     "harper-mountain": 1.0,
     # Top of the sheet and the top-right corner. The ski slopes below stay drawn.
     "red-mountain-resort": 3.0,
-    # Sunshine, whole sheet, 1 px. Facing 146.9 put packed near faces at the
-    # bottom and the far ridges at the top; at 3.5 px, and only on the left
-    # half, back contours drew through those ridges (3,700 crossings).
-    # Gaps are rejoined by CONTOUR_CLEAR_JOIN only where nothing is crossed.
-    "banff-sunshine-village": 1.0,
+    # Sunshine, whole sheet. The 1 px pass with no min-run left a wide
+    # empty band below nearer crests (and 603 crossings at 30 m). 3.5 px
+    # and a 28-sample hide (Fernie CONTOUR_TIGHT-style) sit the clip on
+    # the ridge; the Stevens Pass no-cross tests keep crossings at 0.
+    # Gaps are still rejoined by CONTOUR_CLEAR_JOIN only where nothing is crossed.
+    "banff-sunshine-village": 3.5,
     # Whole sheet. Short grazes are given back by HORIZON_MIN_RUN.
     # The upper-left flank is exempt: see BACHELOR_FLANK.
     "mt-bachelor": 3.5,
@@ -230,6 +231,11 @@ FLOATING_HORIZON = {
     # explicitly because the no-cross tests below make this hill
     # hand-tuned. Facing and framing are unchanged.
     "keystone": 1.0,
+    # Beaver Creek. The default 1 px / 4-sample pass (PR #507) still left
+    # farther contours across nearer ridges. Same tolerance, kept
+    # explicitly because the no-cross tests below make this hill
+    # hand-tuned. Facing 185.87 and frame_scale 1.0 are unchanged.
+    "beaver-creek": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -289,6 +295,11 @@ HORIZON_MIN_RUN = {
     # Keystone. A dip shorter than 4 samples is drawn back, same as the
     # default, except where that piece would cross a nearer contour.
     "keystone": 4,
+    # Beaver Creek. A dip shorter than 4 samples is drawn back, same as
+    # the default, except where that piece would cross a nearer contour.
+    "beaver-creek": 4,
+    # ridge clip (Stevens Pass no-cross tests), tol 3.5 min_run 28, job 20261116sun
+    "banff-sunshine-village": 28,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -523,13 +534,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -888,8 +899,9 @@ CAMERAS = {
     # which turns the drawing 35° counter-clockwise. The plan view is
     # turned to match. Facing is locked so a wider DEM_PAD cannot nudge
     # orient(). Edit this number.
+    # job 20261116bs30: facing 275.5 -> 305.5
     "big-sky-resort": {
-        "facing": 275.5,
+        "facing": 305.5,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
@@ -1250,6 +1262,17 @@ CAMERAS = {
     # 1.0. run_width and lift_width are the published 2.2 / 1.7.
     "keystone": {
         "facing": 128.97,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
+    # Beaver Creek. Automatic facing is 185.87, the published calculated
+    # camera that matches the plan at 174.11° (the negated facing, 360 −
+    # 185.87 = 174.13). Locked so a later input refresh cannot drift the
+    # bird's-eye. The plan is turned 10° counter-clockwise to 164.11° in
+    # this job; facing and frame_scale stay put. run_width and lift_width
+    # are the published 2.2 / 1.7.
+    "beaver-creek": {
+        "facing": 185.87,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
