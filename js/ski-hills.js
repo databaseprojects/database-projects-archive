@@ -951,7 +951,8 @@
     "loveland-basin-ski-area": "20261116lov",
     "stowe-mountain-resort": "20261116sto",
     "revelstoke-mountain-resort": "20261116rev",
-    "fernie-alpine-resort": "20261116fer"
+    "fernie-alpine-resort": "20261116fer",
+    "sugarloaf": "20261116sgl"
   };
 
   function assetV(slug) {
@@ -1365,7 +1366,8 @@
       hill.slug === "arapahoe-basin" ||
       hill.slug === "stowe-mountain-resort" ||
       hill.slug === "revelstoke-mountain-resort" ||
-      hill.slug === "fernie-alpine-resort"
+      hill.slug === "fernie-alpine-resort" ||
+      hill.slug === "sugarloaf"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
