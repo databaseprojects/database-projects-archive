@@ -1071,6 +1071,8 @@ CAMERAS = {
     # Colorado half turns. Each automatic facing (in brackets) plus 180°,
     # which turns the bird's-eye drawing 180°. The plan is turned to match.
     "crested-butte-mountain-resort": {"facing": 154.3},  # (334.3)
+    # Plan fit is the run box in hill-index, [349.8, 123.1, 885.8, 433.8].
+    # The long lift on the left is clipped. This facing is unchanged.
     "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
     "monarch-mountain": {"facing": 234.3},  # (54.3)
     "arapahoe-basin": {"facing": 148.3},  # (328.3)

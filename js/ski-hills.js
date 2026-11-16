@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116rlz";
+  var ASSET_V = "20261116wcf";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -4352,7 +4352,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116rlz").then(function (res) {
+  fetch("hill-index.json?v=20261116wcf").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
