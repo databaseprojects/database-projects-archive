@@ -880,7 +880,8 @@
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
     "steamboat-ski-resort": "20261116stc",
-    "palisades-tahoe-olympic-valley": "20261116pal"
+    "palisades-tahoe-olympic-valley": "20261116pal",
+    "killington-resort": "20261116kil"
   };
 
   function assetV(slug) {
@@ -1245,7 +1246,8 @@
       hill.slug === "brighton-resort" ||
       hill.slug === "snowbird" ||
       hill.slug === "steamboat-ski-resort" ||
-      hill.slug === "palisades-tahoe-olympic-valley"
+      hill.slug === "palisades-tahoe-olympic-valley" ||
+      hill.slug === "killington-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
