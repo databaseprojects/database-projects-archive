@@ -883,7 +883,9 @@
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
     "keystone": "20261116kyp",
-    "beaver-creek": "20261116bvc"
+    "beaver-creek": "20261116bvc",
+    "banff-sunshine-village": "20261116sun",
+    "big-sky-resort": "20261116bs30"
   };
 
   function assetV(slug) {
@@ -1251,7 +1253,9 @@
       hill.slug === "palisades-tahoe-olympic-valley" ||
       hill.slug === "killington-resort" ||
       hill.slug === "keystone" ||
-      hill.slug === "beaver-creek"
+      hill.slug === "beaver-creek" ||
+      hill.slug === "banff-sunshine-village" ||
+      hill.slug === "big-sky-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
