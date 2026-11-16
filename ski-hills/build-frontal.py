@@ -899,8 +899,9 @@ CAMERAS = {
     # which turns the drawing 35° counter-clockwise. The plan view is
     # turned to match. Facing is locked so a wider DEM_PAD cannot nudge
     # orient(). Edit this number.
+    # job 20261116bs30: facing 275.5 -> 305.5
     "big-sky-resort": {
-        "facing": 275.5,
+        "facing": 305.5,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
