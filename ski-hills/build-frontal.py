@@ -1120,14 +1120,15 @@ CAMERAS = {
     # ZBUF_TOL stops the foreground and summit contours that draw through
     # those ridges.
     "sunlight-mountain-resort": {"frame_scale": 0.95, "ridge_fade": 0.10},
-    # Vail only. Automatic facing was 147.8 and orient() kept it. 102.8 is
-    # 45° less, which turns the bird's-eye drawing 45° clockwise. The plan
-    # view is turned to match. Facing is locked so a wider DEM_PAD cannot
-    # nudge orient(). Run and lift widths stay the published 2.2 / 1.7 so a
-    # denser contour count cannot thin them. The lightbox still draws runs
-    # at the per-hill 1.2px.
+    # Vail only. Facing 109.8 is the previous 102.8 turned 7° counter-clockwise
+    # (102.8+7 = 109.8). The plan is the previous sheet (turned to match
+    # facing 102.8, i.e. PLAN_TURN −102.8) turned another 15° clockwise to
+    # −87.8 and recentred above the banner. Facing is locked so a wider
+    # DEM_PAD cannot nudge orient(). Run and lift widths stay the published
+    # 2.2 / 1.7 so a denser contour count cannot thin them. The lightbox
+    # still draws runs at the per-hill 1.2px.
     "vail": {
-        "facing": 102.8,
+        "facing": 109.8,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
@@ -1655,9 +1656,10 @@ DEM_PAD = {
     # reach past the default 1.0 crop, so contours and the tree wash need
     # the wider pad used after a turn (Sundance / Bear Mountain).
     "big-sky-resort": 2.6,
-    # Vail (facing 102.8, 45° CW). The turned sheet's corners reach past
-    # the default 1.0 crop, so contours and the tree wash need the wider
-    # pad used after a turn (Big Sky / Sundance / Bear Mountain).
+    # Vail (facing 109.8, plan 15° CW from the previous sheet). The turned
+    # sheet's corners reach past the default 1.0 crop, so contours and the
+    # tree wash need the wider pad used after a turn (Big Sky / Sundance /
+    # Bear Mountain). 2.6 is unchanged.
     "vail": 2.6,
     # Ski Apache, zoomed to frame_scale 0.91. The top-right corner of the
     # wider sheet sat past the default 1.0 crop (contours stopped about

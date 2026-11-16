@@ -1906,8 +1906,11 @@ def generate_overlay(slug):
         # Ski Apache's stored turn is not its bird's-eye facing, so it
         # uses the solved frame. Snowbird's plan is the previous drawing
         # turned 50° counter-clockwise and refit, which is also not a
-        # single north-up angle. Other turned plans use PLAN_TURN_DEG.
-        if slug in ("ski-apache", "snowbird"):
+        # single north-up angle. Vail's plan is the published 102.8-matched
+        # sheet turned another 15° clockwise and refit into the area above
+        # the banner, which is also not a 48/904 PLAN_TURN_DEG frame.
+        # Other turned plans use PLAN_TURN_DEG.
+        if slug in ("ski-apache", "snowbird", "vail"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
