@@ -885,7 +885,8 @@
     "keystone": "20261116kyp",
     "beaver-creek": "20261116bvc",
     "banff-sunshine-village": "20261116sun",
-    "big-sky-resort": "20261116bs30"
+    "big-sky-resort": "20261116bs30",
+    "winter-park-resort": "20261116wpz"
   };
 
   function assetV(slug) {
@@ -1255,7 +1256,8 @@
       hill.slug === "keystone" ||
       hill.slug === "beaver-creek" ||
       hill.slug === "banff-sunshine-village" ||
-      hill.slug === "big-sky-resort"
+      hill.slug === "big-sky-resort" ||
+      hill.slug === "winter-park-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4371,7 +4373,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116bvc").then(function (res) {
+  fetch("hill-index.json?v=20261116wpz").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
