@@ -140,7 +140,7 @@
     mt: "20261116bsp",
     nh: "20261105g50",
     nj: "20261105g50",
-    nm: "20261105g50",
+    nm: "20261116sip",
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116sdn",
+      index: R2_BASE + "contours/usa-index.json?v=20261116sip",
       label: US_STATE_NAMES[id]
     };
   });
@@ -861,7 +861,7 @@
     "wolf-creek-ski-area": "20261116b1",
     "alpental": "20261116b1",
     "pajarito-mountain": "20261116b1",
-    "sipapu-ski-and-summer-resort": "20261116b1",
+    "sipapu-ski-and-summer-resort": "20261116sip",
     "mount-rose-ski-tahoe": "20261116b1",
     "red-lodge-mountain": "20261116b1",
     "mountain-high": "20261116b1",
@@ -1229,7 +1229,7 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    var washFileV = hill && hill.slug === "sun-peaks-resort" ? washV : ASSET_V;
+    var washFileV = hill && (hill.slug === "sun-peaks-resort" || hill.slug === "sipapu-ski-and-summer-resort") ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
@@ -4344,7 +4344,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116sdn").then(function (res) {
+  fetch("hill-index.json?v=20261116sip").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

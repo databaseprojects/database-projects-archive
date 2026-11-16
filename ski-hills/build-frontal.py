@@ -1268,6 +1268,19 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Sipapu only. Zoomed out x1.10 from the published sheet (2026-11-16):
+    # frame_scale 1/1.10 = 0.909 is about 0.91 of the current scale (1.0)
+    # and pulls the bird's-eye back 10% around the centre. Facing stays the
+    # automatic 223.6, locked so a wider DEM_PAD cannot flip orient(). The
+    # plan view is turned separately 160° clockwise and is not this facing.
+    # The default 1 px horizon pass stays (not hand-tuned). Published stroke
+    # widths stay 2.2 and 1.7.
+    "sipapu-ski-and-summer-resort": {
+        "facing": 223.6,
+        "frame_scale": 0.909,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
 }
 
 
@@ -1560,6 +1573,11 @@ DEM_PAD = {
     # the default 1.0 crop, so contours and the tree wash need the wider
     # pad used after a turn (Big Sky / Sundance / Bear Mountain).
     "vail": 2.6,
+    # Sipapu (facing 223.6, bird's-eye zoomed out x1.10, plan turned 160°
+    # clockwise). The wider sheet and the turned plan corners reach past
+    # the default 1.0 crop, so contours and the tree wash need the wider
+    # pad used after a zoom and a large turn (Sundance / Vail / Bear Valley).
+    "sipapu-ski-and-summer-resort": 2.6,
 }
 
 
