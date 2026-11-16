@@ -995,6 +995,16 @@ CAMERAS = {
     "stevens-pass": {
         "facing": 116.9,
     },
+    # Alpental only. The automatic render faced 71.1 (the 251.1 guess,
+    # flipped by orient()). 251.1 is 180° further and turns that bird's-eye
+    # drawing upside down. The plan stays as it is. Facing is locked so a
+    # wider DEM_PAD cannot flip orient(). The default 1 px horizon stays.
+    # Published strokes stay 2.2 / 1.7 so a denser contour count cannot thin them.
+    "alpental": {
+        "facing": 251.1,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
     # Pomerelle only. The automatic render faced 32.5; turned 180°.
     "pomerelle-mountain-resort": {
         "facing": 212.5,
@@ -1265,6 +1275,18 @@ CAMERAS = {
         "facing": 248.9,
         # Published sheet uses the site defaults (2.2 / 1.7). Lock them so a
         # dense contour count cannot thin the strokes on this rebuild.
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
+    # Taos Ski Valley only. Automatic facing is 195.7 (orient() kept the
+    # fall line). Locked so a later DEM_PAD cannot flip it. frame_scale
+    # 1/1.10 pulls the published sheet back 10% around the centre. The
+    # 1.0 DEM crop already reaches those edges, so the pad stays 1.0.
+    # The plan view is turned separately, 120° clockwise. Published
+    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    "taos-ski-valley": {
+        "facing": 195.7,
+        "frame_scale": 0.909,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
@@ -1562,6 +1584,11 @@ DEM_PAD = {
     # The turned corners reach past the default 1.0 crop, so contours and
     # the tree wash need the wider pad used after a large turn.
     "sundance-resort": 2.6,
+    # Alpental (facing 251.1, 180° from the automatic 71.1). The bottom-right
+    # corner of the turned sheet was past the default 1.0 crop, so contours
+    # stopped about 180 px short of that corner. 2.6 reaches the frame
+    # (same pad as Sundance / Caledonia / 49° North after a half turn).
+    "alpental": 2.6,
     # Big Sky Resort (facing 275.5, 35° CCW). The turned sheet's corners
     # reach past the default 1.0 crop, so contours and the tree wash need
     # the wider pad used after a turn (Sundance / Bear Mountain).
