@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Keep tree-band opacities on one table: ski-hills/tree-opacity.json.
 
+The table's optional "multipliers" object is a per-slug factor applied to the
+standard row for that band count. A changed file for such a slug also passes
+when its bake is the merge-base bake times the factor, or the merge-base bake
+unchanged (already applied). CSS stays on the standard rows; the page applies
+the factor in js/ski-hills.js.
+
   python3 ski-hills/check-tree-opacity.py --write
       Rewrite the fill-opacity block in css/ski-hills.css and TREE_STEP in
       js/ski-hills.js from the table.
@@ -69,8 +75,24 @@ def load_table(path=TABLE_PATH):
         fail(f"could not read {path}: {exc}")
     if not isinstance(raw, dict) or not raw:
         fail(f"{path} must be an object of band-count to opacity list")
+    multipliers = {}
+    if "multipliers" in raw:
+        extra = raw["multipliers"]
+        if not isinstance(extra, dict):
+            fail(f"{path} multipliers must be an object of slug to factor")
+        for slug, factor in extra.items():
+            if not isinstance(slug, str) or not slug or "/" in slug or slug.endswith((".svg", ".json")):
+                fail(f"{path} multipliers key {slug!r} is not a slug")
+            if isinstance(factor, bool) or not isinstance(factor, (int, float)):
+                fail(f"{path} multiplier for {slug} is not a number")
+            number = float(factor)
+            if not 0.0 < number <= 10.0:
+                fail(f"{path} multiplier for {slug} is outside 0..10")
+            multipliers[slug] = number
     table = {}
     for key, values in raw.items():
+        if key == "multipliers":
+            continue
         try:
             count = int(key)
         except (TypeError, ValueError):
@@ -86,11 +108,20 @@ def load_table(path=TABLE_PATH):
                 fail(f"{path} key {key!r} opacity {number} is outside 0..1")
             steps.append(number)
         table[count] = tuple(steps)
-    return dict(sorted(table.items()))
+    if not table:
+        fail(f"{path} must list at least one band-count row")
+    return dict(sorted(table.items())), dict(sorted(multipliers.items()))
 
 
 def fmt_opacity(value):
-    return f"{value:.2f}"
+    """Two decimals for the standard table; three when a multiplier needs them."""
+    number = float(value)
+    text = f"{number:.3f}".rstrip("0")
+    if text.endswith("."):
+        text += "0"
+    if "." in text and len(text.split(".", 1)[1]) < 2:
+        text = f"{number:.2f}"
+    return text
 
 
 def fmt_steps(values):
@@ -165,13 +196,20 @@ def css_region(table):
     ))
 
 
-def js_region(table):
+def js_region(table, multipliers=None):
     lines = [JS_START, "  var TREE_STEP = {"]
     counts = list(table)
     for position, count in enumerate(counts):
         comma = "," if position < len(counts) - 1 else ""
         quoted = ", ".join(f'"{fmt_opacity(value)}"' for value in table[count])
         lines.append(f"    {count}: [{quoted}]{comma}")
+    lines.append("  };")
+    lines.append("  var TREE_STEP_MULTIPLIER = {")
+    items = list((multipliers or {}).items())
+    for position, (slug, factor) in enumerate(items):
+        comma = "," if position < len(items) - 1 else ""
+        # Keep a plain number (1.2, not 1.20) so the block is stable.
+        lines.append(f'    "{slug}": {factor:g}{comma}')
     lines.append("  };")
     lines.append(JS_END)
     return "\n".join(lines)
@@ -208,9 +246,9 @@ def write_css(table):
         print(f"unchanged {CSS_PATH.relative_to(REPO)}")
 
 
-def write_js(table):
+def write_js(table, multipliers=None):
     text = JS_PATH.read_text()
-    region = js_region(table)
+    region = js_region(table, multipliers)
     if JS_START in text:
         current = extract_region(text, JS_START, JS_END)
         if current is None:
@@ -228,7 +266,7 @@ def write_js(table):
         print(f"unchanged {JS_PATH.relative_to(REPO)}")
 
 
-def check_generated(table):
+def check_generated(table, multipliers=None):
     errors = []
     css = extract_region(CSS_PATH.read_text(), CSS_START, CSS_END)
     if css is None:
@@ -238,7 +276,7 @@ def check_generated(table):
     js = extract_region(JS_PATH.read_text(), JS_START, JS_END)
     if js is None:
         errors.append("js/ski-hills.js is missing the tree-opacity TREE_STEP block")
-    elif js != js_region(table):
+    elif js != js_region(table, multipliers):
         errors.append("js/ski-hills.js TREE_STEP does not match ski-hills/tree-opacity.json")
     return errors
 
@@ -294,15 +332,61 @@ def check_builder():
     return errors
 
 
-def steps_match(found, table):
-    if not found or any(value is None for value in found):
+def steps_match(found, expected):
+    if not found or not expected or len(found) != len(expected):
         return False
-    expected = table.get(len(found))
-    if expected is None:
+    if any(value is None for value in found):
         return False
-    # The bake and the table are both two-decimal literals. Same text parses
-    # to the same float; a different step such as 0.10 does not match 0.08.
+    # Same text parses to the same float; a different step such as 0.10
+    # does not match 0.08. Multiplied values are rounded to three decimals.
     return all(abs(got - want) <= 1e-9 for got, want in zip(found, expected))
+
+
+def scale_steps(values, multiplier):
+    return tuple(round(float(value) * float(multiplier), 3) for value in values)
+
+
+def slug_of(path):
+    name = path.name
+    for suffix in (".wash.svg", ".wash.json", ".svg", ".json"):
+        if name.endswith(suffix):
+            name = name[: -len(suffix)]
+            break
+    if name.endswith("-front"):
+        name = name[:-6]
+    elif name.endswith("-back"):
+        name = name[:-5]
+    return name
+
+
+def git_file_bytes(rel, ref):
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{rel}"],
+        cwd=REPO,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout
+
+
+def baked_steps_from_bytes(path, data):
+    if path.suffix == ".svg":
+        return svg_steps(data)
+    return json_steps(data)
+
+
+def allowed_steps(found, path, table, multipliers, base_found):
+    """Accept the canonical row, or a per-slug multiplier applied to it or to the base bake."""
+    row = table.get(len(found))
+    factor = multipliers.get(slug_of(path), 1.0)
+    options = []
+    if row is not None:
+        options.append(scale_steps(row, factor) if factor != 1.0 else tuple(row))
+    if base_found and factor != 1.0 and not any(value is None for value in base_found):
+        options.append(scale_steps(base_found, factor))
+        options.append(tuple(base_found))
+    return any(steps_match(found, option) for option in options)
 
 
 def svg_steps(data):
@@ -344,20 +428,25 @@ def baked_steps(path):
 
 
 def git_changed(base):
-    """Paths added or changed on HEAD since the merge base with base."""
-    result = subprocess.run(
-        ["git", "diff", "--name-status", "--diff-filter=ACMR", f"{base}...HEAD"],
-        cwd=REPO,
-        text=True,
-        capture_output=True,
-    )
-    if result.returncode != 0:
-        fail(f"git diff {base}...HEAD failed: {result.stderr.strip()}")
+    """Paths added or changed on HEAD or in the working tree since base.
+
+    The job runner checks before it commits, so the working-tree diff against
+    base has to count. After the commit, base...HEAD is the pull-request diff.
+    """
     changed = set()
-    for line in result.stdout.splitlines():
-        parts = line.split("\t")
-        if len(parts) >= 2:
-            changed.add(parts[-1].strip())
+    commands = (
+        ["git", "diff", "--name-status", "--diff-filter=ACMR", f"{base}...HEAD"],
+        ["git", "diff", "--name-status", "--diff-filter=ACMR", base, "--"],
+        ["git", "diff", "--name-status", "--cached", "--diff-filter=ACMR", base, "--"],
+    )
+    for command in commands:
+        result = subprocess.run(command, cwd=REPO, text=True, capture_output=True)
+        if result.returncode != 0:
+            fail(f"{' '.join(command)} failed: {result.stderr.strip()}")
+        for line in result.stdout.splitlines():
+            parts = line.split("\t")
+            if len(parts) >= 2:
+                changed.add(parts[-1].strip())
     return changed
 
 
@@ -373,15 +462,22 @@ def default_base():
     return "origin/main"
 
 
-def describe(found, table):
+def describe(found, path, table, multipliers, base_found):
     baked = "/".join("?" if value is None else fmt_opacity(value) for value in found)
-    expected = table.get(len(found))
-    if expected is None:
+    row = table.get(len(found))
+    factor = multipliers.get(slug_of(path), 1.0)
+    if row is None:
         return f"baked {baked}; no table row for {len(found)} bands"
-    return f"baked {baked}; table for {len(found)} bands is {fmt_steps(expected)}"
+    wanted = scale_steps(row, factor) if factor != 1.0 else row
+    detail = f"baked {baked}; table for {len(found)} bands is {fmt_steps(wanted)}"
+    if factor != 1.0:
+        detail += f" ({fmt_steps(row)} x {factor:g} for {slug_of(path)})"
+        if base_found and not any(value is None for value in base_found):
+            detail += f"; merge-base bake {fmt_steps(base_found)}"
+    return detail
 
 
-def scan(table, changed):
+def scan(table, multipliers, changed, base_ref):
     warnings = []
     errors = []
     checked = 0
@@ -391,11 +487,13 @@ def scan(table, changed):
         if not found:
             continue
         checked += 1
-        if steps_match(found, table):
+        rel = path.relative_to(REPO).as_posix()
+        raw_base = git_file_bytes(rel, base_ref) if rel in changed or slug_of(path) in multipliers else None
+        base_found = baked_steps_from_bytes(path, raw_base) if raw_base is not None else None
+        if allowed_steps(found, path, table, multipliers, base_found):
             matching += 1
             continue
-        rel = path.relative_to(REPO).as_posix()
-        detail = describe(found, table)
+        detail = describe(found, path, table, multipliers, base_found)
         if rel in changed:
             errors.append((rel, detail))
         else:
@@ -416,15 +514,15 @@ def main():
         help="Git ref used as the merge base when deciding which tree files this change touches.",
     )
     args = parser.parse_args()
-    table = load_table()
+    table, multipliers = load_table()
     if args.write:
         write_css(table)
-        write_js(table)
+        write_js(table, multipliers)
 
-    problems = check_generated(table) + check_builder()
+    problems = check_generated(table, multipliers) + check_builder()
     base = args.base or default_base()
     changed = git_changed(base)
-    checked, matching, warnings, errors = scan(table, changed)
+    checked, matching, warnings, errors = scan(table, multipliers, changed, base)
 
     print(f"base: {base}")
     print(f"tree files with bands: {checked}")

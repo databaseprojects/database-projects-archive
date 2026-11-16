@@ -944,7 +944,8 @@
     "winter-park-resort": "20261116wpz",
     "deer-valley-resort": "20261116dvp",
     "jackson-hole-mountain-resort": "20261116jh",
-    "copper-mountain": "20261116cu"
+    "copper-mountain": "20261116cu",
+    "heavenly-mountain-resort": "20261116hvy"
   };
 
   function assetV(slug) {
@@ -983,14 +984,56 @@
     3: ["0.03", "0.07", "0.11"],
     4: ["0.03", "0.05", "0.08", "0.11"]
   };
+  var TREE_STEP_MULTIPLIER = {
+    "heavenly-mountain-resort": 1.2
+  };
   // tree-opacity:end
 
-  function treeStepOpacity(count, index, fallback) {
+
+  function formatTreeOpacity(value) {
+    var n = Math.round(Number(value) * 1000) / 1000;
+    var t = String(n);
+    if (t.indexOf(".") < 0) t += ".0";
+    if (t.split(".")[1].length < 2) t = n.toFixed(2);
+    return t;
+  }
+
+  function treeSlugFromContext(svg, hill) {
+    if (hill && hill.slug) return hill.slug;
+    if (svg && svg.closest) {
+      var card = svg.closest(".sh-hill");
+      if (card && card.id) return card.id;
+    }
+    var lb = document.getElementById("sh-lb");
+    if (lb && lb._card && (!svg || lb._svg === svg)) return lb._card.id;
+    return "";
+  }
+
+  function treeStepOpacity(count, index, fallback, slug) {
     var row = TREE_STEP[count];
-    return row && row[index] != null ? row[index] : fallback;
+    var value = row && row[index] != null ? row[index] : fallback;
+    var m = (slug && TREE_STEP_MULTIPLIER && TREE_STEP_MULTIPLIER[slug]) || 1;
+    if (m !== 1 && value != null && value !== "") {
+      var n = parseFloat(value);
+      if (!isNaN(n)) return formatTreeOpacity(n * m);
+    }
+    return value;
+  }
+
+  function applyFrontalTreeMultiplier(root, slug) {
+    if (!root || !slug || !TREE_STEP_MULTIPLIER || TREE_STEP_MULTIPLIER[slug] == null) return;
+    var bands = root.querySelectorAll ? root.querySelectorAll(".sh-frontal-tree-band") : [];
+    var count = bands.length;
+    for (var i = 0; i < count; i++) {
+      var wash = bands[i].querySelector(".sh-frontal-tree-wash") || bands[i].querySelector("path");
+      if (!wash) continue;
+      var fallback = wash.getAttribute("fill-opacity");
+      wash.style.fillOpacity = treeStepOpacity(count, i, fallback, slug);
+    }
   }
 
   function appendTreeWash(parent, shift, treeWash, treeBands) {
+    var slug = treeSlugFromContext(parent && parent.ownerSVGElement, null);
     var bands = treeBands && treeBands.length ? treeBands : null;
     var flat = !bands && typeof treeWash === "string" && treeWash.charAt(0) === "M";
     if (!bands && !flat) return;
@@ -1007,7 +1050,7 @@
       path.setAttribute("d", band.d);
       path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
       path.setAttribute("fill", "#336641");
-      path.setAttribute("fill-opacity", bands ? treeStepOpacity(list.length, index, String(band.opacity)) : "0.12");
+      path.setAttribute("fill-opacity", bands ? treeStepOpacity(list.length, index, String(band.opacity), slug) : "0.12");
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
       if (bands) {
@@ -1200,6 +1243,7 @@
     var node = doc.querySelector(".sh-frontal-trees");
     if (!node) return;
     var imported = document.importNode(node, true);
+    if (hill) applyFrontalTreeMultiplier(imported, hill.slug);
     var mask = host.querySelector('g[mask*="sh-contour-fade-"]');
     if (mask) host.insertBefore(imported, mask);
     else host.appendChild(imported);
@@ -1300,7 +1344,8 @@
       hill.slug === "winter-park-resort" ||
       hill.slug === "deer-valley-resort" ||
       hill.slug === "jackson-hole-mountain-resort" ||
-      hill.slug === "copper-mountain"
+      hill.slug === "copper-mountain" ||
+      hill.slug === "heavenly-mountain-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -3166,6 +3211,7 @@
     });
     var trees = g.querySelector(".sh-frontal-trees");
     if (trees) clipFrontalTrees(svg, trees);
+    if (trees && hill) applyFrontalTreeMultiplier(g, hill.slug);
     var cap = svg.querySelector(".sh-caption");
     if (cap) {
       svg.insertBefore(g, cap);

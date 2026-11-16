@@ -594,20 +594,50 @@ def load_band_opacity(path=None):
     """Opacities by how many density bands a hill uses. Source: tree-opacity.json."""
     src = Path(path) if path else Path(__file__).resolve().parent / "tree-opacity.json"
     raw = json.loads(src.read_text())
-    return {int(key): tuple(float(value) for value in values) for key, values in raw.items()}
+    return {
+        int(key): tuple(float(value) for value in values)
+        for key, values in raw.items()
+        if str(key).isdigit()
+    }
+
+
+def load_opacity_multipliers(path=None):
+    """Per-slug factors from tree-opacity.json multipliers."""
+    src = Path(path) if path else Path(__file__).resolve().parent / "tree-opacity.json"
+    raw = json.loads(src.read_text())
+    extra = raw.get("multipliers") or {}
+    return {str(slug): float(factor) for slug, factor in extra.items()}
+
+
+def fmt_band_opacity(value):
+    text = f"{float(value):.3f}".rstrip("0")
+    if text.endswith("."):
+        text += "0"
+    if "." in text and len(text.split(".", 1)[1]) < 2:
+        text = f"{float(value):.2f}"
+    return text
 
 
 # Same table as css/ski-hills.css and js/ski-hills.js TREE_STEP.
 BAND_OPACITY_BY_COUNT = load_band_opacity()
+OPACITY_MULTIPLIERS = load_opacity_multipliers()
 
 
-def band_paths(labels, affine, simplify_tol=0.65):
+def opacities_for(slug, count):
+    ops = BAND_OPACITY_BY_COUNT.get(count, ())
+    factor = OPACITY_MULTIPLIERS.get(slug, 1.0)
+    if factor == 1.0:
+        return ops
+    return tuple(round(op * factor, 3) for op in ops)
+
+
+def band_paths(labels, affine, simplify_tol=0.65, slug=""):
     found = []
     for i, (_lo, _hi, name) in enumerate(TREE_BANDS, start=1):
         d = paths_from_mask((labels == i).astype(np.uint8), affine, simplify_tol)
         if d:
             found.append((name, d))
-    ops = BAND_OPACITY_BY_COUNT.get(len(found), ())
+    ops = opacities_for(slug, len(found))
     return [{"opacity": op, "name": name, "d": d} for op, (name, d) in zip(ops, found)]
 
 
@@ -1065,7 +1095,7 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unm
         mask[corridor == 1] = 0
 
     labels = band_labels(mask, conc_bilin)
-    bands = band_paths(labels, [1.0 / S, 0.0, 0.0, 1.0 / S, x0, y0])
+    bands = band_paths(labels, [1.0 / S, 0.0, 0.0, 1.0 / S, x0, y0], slug=slug)
     joined = " ".join(b["d"] for b in bands)
     return joined, int(mask.sum()), W * H, bands
 
@@ -1470,7 +1500,7 @@ def frontal_wash_markup(bands):
         parts.append(
             f'<g class="sh-frontal-tree-band sh-frontal-tree-band-{b["name"]}">'
             f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="#315b38" '
-            f'fill-opacity="{b["opacity"]:.2f}" fill-rule="evenodd" stroke="none"/>'
+            f'fill-opacity="{fmt_band_opacity(b["opacity"])}" fill-rule="evenodd" stroke="none"/>'
             f"</g>"
         )
     parts.append("</g>\n")
@@ -1757,6 +1787,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
         labels,
         [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED],
         simplify_tol=1.2,
+        slug=slug,
     )
     wash_el = frontal_wash_markup(bands)
 
