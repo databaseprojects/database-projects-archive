@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116sdn";
+  var ASSET_V = "20261116rlz";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -863,7 +863,7 @@
     "pajarito-mountain": "20261116b1",
     "sipapu-ski-and-summer-resort": "20261116b1",
     "mount-rose-ski-tahoe": "20261116b1",
-    "red-lodge-mountain": "20261116b1",
+    "red-lodge-mountain": "20261116rlz",
     "mountain-high": "20261116b1",
     "ski-apache": "20261116b1",
     "snow-valley-mountain-resort": "20261116b1",
@@ -4352,7 +4352,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116tsv").then(function (res) {
+  fetch("hill-index.json?v=20261116rlz").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
