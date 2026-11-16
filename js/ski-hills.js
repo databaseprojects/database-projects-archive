@@ -879,7 +879,7 @@
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116pct",
     "mammoth-mountain": "20261116pct",
-    "steamboat-ski-resort": "20261116stb"
+    "steamboat-ski-resort": "20261116stc"
   };
 
   function assetV(slug) {
@@ -1242,7 +1242,8 @@
       hill.slug === "snowbasin-resort" ||
       hill.slug === "nipika" ||
       hill.slug === "brighton-resort" ||
-      hill.slug === "snowbird"
+      hill.slug === "snowbird" ||
+      hill.slug === "steamboat-ski-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
