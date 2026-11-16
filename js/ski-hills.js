@@ -859,7 +859,7 @@
     "taos-ski-valley": "20261116b1",
     "snowbasin-resort": "20261116b1",
     "wolf-creek-ski-area": "20261116b1",
-    "alpental": "20261116b1",
+    "alpental": "20261116alp",
     "pajarito-mountain": "20261116b1",
     "sipapu-ski-and-summer-resort": "20261116b1",
     "mount-rose-ski-tahoe": "20261116b1",
@@ -1229,7 +1229,7 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    var washFileV = hill && hill.slug === "sun-peaks-resort" ? washV : ASSET_V;
+    var washFileV = hill && (hill.slug === "sun-peaks-resort" || hill.slug === "alpental") ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
