@@ -120,8 +120,9 @@ ZBUF_N = 2000
 # Each hill has its own tolerance, in pixels. The skyline test leaves
 # both faces of the jagged peaks, so those contours cross. Screen y grows
 # downward. A farther sample more than this far below the highest nearer
-# sample in its column is hidden. Runs and lifts skip it, and every other
-# hill skips it, including the Tignes depth grid.
+# sample in its column is hidden. Runs and lifts skip it.
+# A hill with no entry here, and no other hand-tuned horizon entry, uses
+# DEFAULT_FLOATING_HORIZON. See floating_horizon_for().
 FLOATING_HORIZON = {
     "aletsch-arena": 3.0,  # Aletsch Arena, 3.0 px, PR #210
     "jasna-low-tatras": 5.0,  # Jasná Low Tatras, 5.0 px, PR #211; short dips stay drawn
@@ -192,8 +193,9 @@ FLOATING_HORIZON = {
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
-# stays hidden, which is the steep face. Other hills hide each sample
-# on its own.
+# stays hidden, which is the steep face. A hill with no entry here, and no
+# other hand-tuned horizon entry, uses DEFAULT_HORIZON_MIN_RUN. A hill that
+# sets a tolerance but not a min run still hides each sample on its own.
 HORIZON_MIN_RUN = {
     "jasna-low-tatras": 80,
     # Fernie, below the top band. Short crest grazes stay one stroke.
@@ -277,7 +279,7 @@ def horizon_key(slug):
     for suffix in ("-front", "-back"):
         if slug.endswith(suffix):
             base = slug[: -len(suffix)]
-            if base in FLOATING_HORIZON or base in HORIZON_MIN_RUN or base in HORIZON_REGION:
+            if hand_tuned_horizon(base):
                 return base
     return slug
 
@@ -453,6 +455,47 @@ CONTOUR_KEEP = {
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
 CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area"}
+# Default bird's-eye contour pass for a hill with no hand-tuned horizon
+# entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
+# Alta use to hide a back face behind a nearer ridge. A dip shorter than
+# 4 samples stays drawn, the same gap-joining those 1 px sheets use, so
+# the hide does not break a facing contour into dashes. The 12 px
+# CONTOUR_HOLD (MIN_RUN) still joins anything shorter after that.
+# Runs and lifts do not use this pass.
+DEFAULT_FLOATING_HORIZON = 1.0
+DEFAULT_HORIZON_MIN_RUN = 4
+
+
+def hand_tuned_horizon(slug):
+    """True when this hill already sets its own hide-behind-ridges pass.
+
+    Those entries stay exactly as written. The default 1 px pass fills in
+    only a hill that has none of them.
+    """
+    key = slug
+    return (
+        key in FLOATING_HORIZON
+        or key in HORIZON_MIN_RUN
+        or key in HORIZON_REGION
+        or key in CONTOUR_HOLD
+        or key in CONTOUR_NO_CROSS
+        or key in CONTOUR_TIGHT
+        or key in CONTOUR_CLEAR_JOIN
+        or key in CONTOUR_DRAW
+        or key in CONTOUR_KEEP
+    )
+
+
+def floating_horizon_for(slug):
+    """Tolerance and min-run for this sheet's contour floating horizon.
+
+    A hand-tuned hill keeps its own numbers, including a missing min-run.
+    Every other bird's-eye uses 1.0 px and the 4-sample gap join.
+    """
+    key = horizon_key(slug)
+    if hand_tuned_horizon(key):
+        return FLOATING_HORIZON.get(key), HORIZON_MIN_RUN.get(key)
+    return DEFAULT_FLOATING_HORIZON, DEFAULT_HORIZON_MIN_RUN
 # A stricter floating horizon inside one screen band, applied before the
 # sheet-wide pass. y grows downward. Fernie's top third and Revelstoke's
 # top-left ridge were drawing the far slope through the crest. The later
@@ -3371,14 +3414,22 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
             run_depth.add(px, py, yr)
 
     _hkey = horizon_key(slug)
+    _float_tol, _float_min_run = floating_horizon_for(slug)
+    print(
+        "horizon",
+        "key", _hkey,
+        "tol", _float_tol,
+        "min_run", _float_min_run,
+        "tuned", hand_tuned_horizon(_hkey),
+    )
     zbuf_tol = ZBUF_TOL.get(horizon_key(slug))
     zbuf = None
     if zbuf_tol:
         zbuf = dem_zbuffer(arr, gt, paper, project_xy, metres, rot)
     contours, stroke_lines = project_contours(
         arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid,
-        float_tol=FLOATING_HORIZON.get(_hkey),
-        float_min_run=HORIZON_MIN_RUN.get(_hkey),
+        float_tol=_float_tol,
+        float_min_run=_float_min_run,
         float_hide=(lambda px, py, key=_hkey: horizon_hides(key, px, py))
         if _hkey in HORIZON_REGION or _hkey == "mt-bachelor"
         else None,
