@@ -1904,8 +1904,10 @@ def generate_overlay(slug):
     if not FRONTAL_ONLY and contour_path.exists():
         geom_raw = json.loads(geom_path.read_text())
         # Ski Apache's stored turn is not its bird's-eye facing, so it
-        # uses the solved frame. Other turned plans use PLAN_TURN_DEG.
-        if slug == "ski-apache":
+        # uses the solved frame. Snowbird's plan is the previous drawing
+        # turned 50° counter-clockwise and refit, which is also not a
+        # single north-up angle. Other turned plans use PLAN_TURN_DEG.
+        if slug in ("ski-apache", "snowbird"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
