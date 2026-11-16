@@ -900,7 +900,7 @@
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
-    "big-white-ski-resort": "20261116be",
+    "big-white-ski-resort": "20261116bw",
     "apex-mountain-resort": "20261116be",
     "sundance-resort": "20261116sky",
     "mt-baldy": "20261116fh",
@@ -985,6 +985,7 @@
     4: ["0.03", "0.05", "0.08", "0.11"]
   };
   var TREE_STEP_MULTIPLIER = {
+    "big-white-ski-resort": 1.2,
     "heavenly-mountain-resort": 1.2
   };
   // tree-opacity:end
@@ -1345,7 +1346,8 @@
       hill.slug === "deer-valley-resort" ||
       hill.slug === "jackson-hole-mountain-resort" ||
       hill.slug === "copper-mountain" ||
-      hill.slug === "heavenly-mountain-resort"
+      hill.slug === "heavenly-mountain-resort" ||
+      hill.slug === "big-white-ski-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
