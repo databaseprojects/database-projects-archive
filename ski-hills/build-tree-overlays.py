@@ -14,6 +14,11 @@ Permanent default for Bird's-eye view (`generate_birdseye_tree_wash` / `setup_fr
     (`full_gx0..full_gx1, full_gy0..full_gy1`) ALWAYS span the entire DEM terrain sheet
     out to the full 1000x1000 bird's-eye frame (with a hard edge (placed outside `#sh-contour-fade-<slug>`)), matching the full-frame coverage of the contour lines
     rather than stopping at the ski runs' bounding box.
+  - Each mesh quad is clipped to the visible side of the skyline. On any edge where
+    the 40 m / 2.6 px hiding test flips, the edge is split by bisection and only the
+    visible polygon is drawn. Quads are never dropped whole because one corner is
+    hidden. That clip is the only path for every hill: no whole-quad fallback and
+    no per-hill opt-out.
 
 Usage:
   python3 build-tree-overlays.py --all             # Every catalog hill still missing a hard-edge wash
@@ -42,7 +47,7 @@ from rasterio.features import rasterize, shapes
 from rasterio.transform import from_origin
 from rasterio.warp import Resampling, reproject, transform_bounds
 from rasterio.windows import from_bounds
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import binary_closing, gaussian_filter
 from shapely.affinity import affine_transform
 from shapely.geometry import LineString, MultiPolygon, Polygon, shape
 
@@ -460,9 +465,84 @@ TREE_BANDS = (
 )
 
 
-# Kicking Horse. The forest behind the summit ridge stopped about 10 px
-# short of the skyline, so the step is a third as long.
+# Kicking Horse keeps a third-length ground step so the canopy mesh on
+# that face stays dense. Skyline clipping does not depend on it, and it
+# is not an opt-out of the clip.
 TREE_STEP_DIV = {"kicking-horse-resort": 3}
+
+
+# Same window the visibility grid uses. A corner outside it is hidden.
+_FRAME_LO = -60.0
+_FRAME_HI = 1060.0
+_CLIP_SPLITS = 16
+
+
+def _point_visible(px, py, yr, covered):
+    """Inside the frame and not hidden by the 40 m / 2.6 px skyline test."""
+    if px < _FRAME_LO or px > _FRAME_HI or py < _FRAME_LO or py > _FRAME_HI:
+        return False
+    return not covered(px, py, yr)
+
+
+def _split_edge(a, b, covered):
+    """Point where visibility flips along the edge from a to b.
+
+    a and b are (px, py, yr, visible). Sixteen bisections land well under
+    a pixel on an edge that is already shorter than the 32 px quad limit.
+    """
+    ax, ay, ayr, avis = a
+    bx, by, byr, _bvis = b
+    lo = 0.0
+    hi = 1.0
+    for _ in range(_CLIP_SPLITS):
+        mid = (lo + hi) * 0.5
+        px = ax + (bx - ax) * mid
+        py = ay + (by - ay) * mid
+        yr = ayr + (byr - ayr) * mid
+        if _point_visible(px, py, yr, covered) == avis:
+            lo = mid
+        else:
+            hi = mid
+    t = (lo + hi) * 0.5
+    return (ax + (bx - ax) * t, ay + (by - ay) * t)
+
+
+def clip_quad_rings(corners, covered):
+    """Visible polygon(s) of one mesh quad. The only bird's-eye wash path.
+
+    corners is four (px, py, yr, visible) values in ring order. visible is
+    the corner result of _point_visible (in frame, and not covered by the
+    40 m / 2.6 px test). An edge whose visibility flips is split by
+    bisection. A fully hidden quad returns nothing. Two opposite visible
+    corners stay two polygons so the hidden middle is not filled in.
+    """
+    vis = (bool(corners[0][3]), bool(corners[1][3]), bool(corners[2][3]), bool(corners[3][3]))
+    nvis = vis[0] + vis[1] + vis[2] + vis[3]
+    if nvis == 0:
+        return []
+    if nvis == 4:
+        return [[(c[0], c[1]) for c in corners]]
+    if nvis == 2 and vis[0] == vis[2]:
+        rings = []
+        for i in (0, 2):
+            if not vis[i]:
+                continue
+            a = corners[i]
+            nxt = corners[(i + 1) % 4]
+            prv = corners[(i + 3) % 4]
+            rings.append([(a[0], a[1]), _split_edge(a, nxt, covered), _split_edge(a, prv, covered)])
+        return rings
+    ring = []
+    for i in range(4):
+        a = corners[i]
+        b = corners[(i + 1) % 4]
+        if vis[i]:
+            ring.append((a[0], a[1]))
+        if vis[i] != vis[(i + 1) % 4]:
+            ring.append(_split_edge(a, b, covered))
+    if len(ring) >= 3:
+        return [ring]
+    return []
 
 
 def remap_canopy(raw):
@@ -482,13 +562,13 @@ def band_labels(tree_mask, norm):
     return labels
 
 
-def paths_from_mask(mask, affine):
+def paths_from_mask(mask, affine, simplify_tol=0.65):
     subpaths = []
     for geom_d, val in shapes(mask, mask=(mask == 1)):
         if val != 1:
             continue
         poly = affine_transform(shape(geom_d), affine)
-        poly = poly.simplify(0.65, preserve_topology=True)
+        poly = poly.simplify(simplify_tol, preserve_topology=True)
         if poly.is_empty:
             continue
         polys = [poly] if isinstance(poly, Polygon) else list(poly.geoms) if isinstance(poly, MultiPolygon) else []
@@ -521,10 +601,10 @@ def load_band_opacity(path=None):
 BAND_OPACITY_BY_COUNT = load_band_opacity()
 
 
-def band_paths(labels, affine):
+def band_paths(labels, affine, simplify_tol=0.65):
     found = []
     for i, (_lo, _hi, name) in enumerate(TREE_BANDS, start=1):
-        d = paths_from_mask((labels == i).astype(np.uint8), affine)
+        d = paths_from_mask((labels == i).astype(np.uint8), affine, simplify_tol)
         if d:
             found.append((name, d))
     ops = BAND_OPACITY_BY_COUNT.get(len(found), ())
@@ -1266,9 +1346,8 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     # so the floor cannot be coarser than that screen limit.
     step_x = max(step_x, min(2.0, (24.0 / px_per_m) if px_per_m > 0 else 2.0))
     step_y = max(step_y, min(2.0, (24.0 / py_per_m) if py_per_m > 0 else 2.0))
-    # Per hill, a finer ground step. A quad is drawn only when all four
-    # corners are visible, so the far trees behind a crest stop one quad
-    # short of the skyline. A finer step shrinks that gap to a few pixels.
+    # Per hill, a finer ground step. The skyline is clipped per edge, so
+    # this only changes mesh density. It is not a substitute for the clip.
     div = TREE_STEP_DIV.get(slug, 1)
     step_x /= div
     step_y /= div
@@ -1332,8 +1411,16 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     PY = (p00_y + SY * dpy_dsy).astype(np.float32)
 
     in_frame = valid & (PX >= -60.0) & (PX <= 1060.0) & (PY >= -60.0) & (PY <= 1060.0)
-    # Only need occlusion test on vertices that participate in at least one tree-bearing quad
-    quad_has_tree = (TREE[:-1, :-1] + TREE[:-1, 1:] + TREE[1:, 1:] + TREE[1:, :-1]) > 0.20
+    # A quad with trees on only the visible side of a ridge still has to be
+    # tested. Gating on the four-corner average dropped that square, and the
+    # wash stopped a cell below the skyline.
+    tree_corner = TREE > 0.05
+    quad_has_tree = (
+        tree_corner[:-1, :-1]
+        | tree_corner[:-1, 1:]
+        | tree_corner[1:, 1:]
+        | tree_corner[1:, :-1]
+    )
     need_vis = np.zeros_like(in_frame, dtype=bool)
     need_vis[:-1, :-1] |= quad_has_tree
     need_vis[:-1, 1:] |= quad_has_tree
@@ -1375,16 +1462,53 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
         c1 = CONC[j + 1]
         v0 = VIS[j]
         v1 = VIS[j + 1]
+        yr0 = float(ys[j])
+        yr1 = float(ys[j + 1])
         for i in range(nx - 1):
-            if not (v0[i] and v0[i + 1] and v1[i + 1] and v1[i]):
+            # Visibility is the 40 m / 2.6 px test. A quad with any visible
+            # corner is clipped to that side. Nothing here drops the quad
+            # because one corner is hidden.
+            vis00 = bool(v0[i])
+            vis10 = bool(v0[i + 1])
+            vis11 = bool(v1[i + 1])
+            vis01 = bool(v1[i])
+            if not (vis00 or vis10 or vis11 or vis01):
                 continue
-            tm = 0.25 * (float(t0[i]) + float(t0[i + 1]) + float(t1[i + 1]) + float(t1[i]))
+            # Density of the part that is drawn. Hidden corners are not in
+            # the polygon; averaging them in thins the sliver at the skyline
+            # until the 0.50 mask eats it and the trees fall short of the ridge.
+            tv = []
+            cv = []
+            if vis00:
+                tv.append(float(t0[i]))
+                cv.append(float(c0[i]))
+            if vis10:
+                tv.append(float(t0[i + 1]))
+                cv.append(float(c0[i + 1]))
+            if vis11:
+                tv.append(float(t1[i + 1]))
+                cv.append(float(c1[i + 1]))
+            if vis01:
+                tv.append(float(t1[i]))
+                cv.append(float(c1[i]))
+            tm = sum(tv) / len(tv)
             if tm <= 0.05:
                 continue
             x00, y00 = float(px0[i]), float(py0[i])
             x10, y10 = float(px0[i + 1]), float(py0[i + 1])
             x11, y11 = float(px1[i + 1]), float(py1[i + 1])
             x01, y01 = float(px1[i]), float(py1[i])
+            if (
+                not math.isfinite(x00)
+                or not math.isfinite(y00)
+                or not math.isfinite(x10)
+                or not math.isfinite(y10)
+                or not math.isfinite(x11)
+                or not math.isfinite(y11)
+                or not math.isfinite(x01)
+                or not math.isfinite(y01)
+            ):
+                continue
             if (
                 abs(x10 - x00) > max_edge
                 or abs(y10 - y00) > max_edge
@@ -1396,20 +1520,34 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
                 or abs(y00 - y01) > max_edge
             ):
                 continue
+            corners = (
+                (x00, y00, yr0, vis00),
+                (x10, y10, yr0, vis10),
+                (x11, y11, yr1, vis11),
+                (x01, y01, yr1, vis01),
+            )
+            rings = clip_quad_rings(corners, covered)
+            if not rings:
+                continue
             val = int(round(tm * 255.0))
-            quad = [
-                ((x00 + BLEED) * S, (y00 + BLEED) * S),
-                ((x10 + BLEED) * S, (y10 + BLEED) * S),
-                ((x11 + BLEED) * S, (y11 + BLEED) * S),
-                ((x01 + BLEED) * S, (y01 + BLEED) * S),
-            ]
-            draw.polygon(quad, fill=val)
-            cm = 0.25 * (float(c0[i]) + float(c0[i + 1]) + float(c1[i + 1]) + float(c1[i]))
-            draw_c.polygon(quad, fill=int(round(max(0.0, min(1.0, cm)) * 255.0)))
+            cm = sum(cv) / len(cv)
+            fill_c = int(round(max(0.0, min(1.0, cm)) * 255.0))
+            for ring in rings:
+                quad = [((x + BLEED) * S, (y + BLEED) * S) for x, y in ring]
+                draw.polygon(quad, fill=val)
+                draw_c.polygon(quad, fill=fill_c)
 
     raw_arr = np.array(canvas, dtype=np.float32) / 255.0
     smooth_arr = gaussian_filter(raw_arr, sigma=1.6)
     tree_mask = (smooth_arr >= 0.50).astype(np.uint8)
+    # One sheet pixel. Clipping removes the dropped-quad castle wall; this
+    # only knocks the corners off a 10 m clearing that is still boxy.
+    # S canvas pixels is one sheet pixel. Corridors are punched after, so
+    # the close cannot fill a run or a lift.
+    close_px = max(1, int(round(S)))
+    tree_mask = binary_closing(
+        tree_mask, structure=np.ones((close_px * 2 + 1, close_px * 2 + 1), dtype=bool)
+    ).astype(np.uint8)
 
     svg_text = src_svg_path.read_text()
     poly_tags = re.findall(r'<polyline[^>]*class="sh-frontal-(?:run|lift)"[^>]*/>', svg_text)
@@ -1436,7 +1574,13 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     conc_u8 = np.array(conc_canvas, dtype=np.float32) / 255.0
     # The corridor already cleared tree_mask, so every band loses the same runs and lifts.
     labels = band_labels(tree_mask, conc_u8)
-    bands = band_paths(labels, [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED])
+    # 1.2 px, just past the 1 px close, so a leftover mesh step becomes a
+    # diagonal instead of a castle wall. Plan washes stay at 0.65.
+    bands = band_paths(
+        labels,
+        [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED],
+        simplify_tol=1.2,
+    )
     wash_el = frontal_wash_markup(bands)
 
     svg_clean = strip_frontal_trees(svg_text)
