@@ -1234,7 +1234,8 @@ CAMERAS = {
     # The long lift on the left is clipped. This facing is unchanged.
     "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
     "monarch-mountain": {"facing": 234.3},  # (54.3)
-    "arapahoe-basin": {"facing": 148.3},  # (328.3)
+    # job 20261116abs: facing 148.3 -> 178.3
+    "arapahoe-basin": {"facing": 178.3},  # (328.3)
     # Winter Park. frame_scale 0.855 is the earlier 0.95 times 0.9.
     # The automatic camera and ridge settings stay. Plan fit is the
     # run box in hill-index, [48.0, 48.0, 527.2, 692.3] (scale 1.4279,

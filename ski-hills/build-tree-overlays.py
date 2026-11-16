@@ -918,14 +918,27 @@ def ski_apache_plan_frame(hill, geom_data):
         for line in feat.get("lines") or []:
             if line:
                 geom_lines.append(line)
-    if len(stored) != len(geom_lines) or [len(a) for a in stored] != [len(b) for b in geom_lines]:
-        raise RuntimeError("ski-apache geom does not match the stored plan lines")
+    if len(stored) != len(geom_lines):
+        raise RuntimeError("plan frame line count does not match the geom")
+    # A stored line can drop a repeated vertex (Arapahoe Basin's Gentry).
+    # Fit the similarity on the lines that still match point for point.
+    # Hills whose lines already match are unchanged.
+    paired = [
+        (line, pix)
+        for line, pix in zip(geom_lines, stored)
+        if len(line) == len(pix) and len(line) >= 2
+    ]
+    if len(paired) < 8 or len(paired) < int(0.9 * len(stored)):
+        raise RuntimeError(
+            "plan frame geom does not match the stored plan lines (%d/%d)"
+            % (len(paired), len(stored))
+        )
     lats = [p[1] for line in geom_lines for p in line]
     mid = sum(lats) / len(lats)
     cos = math.cos(mid * math.pi / 180.0)
     src = []
     dst = []
-    for line, pix in zip(geom_lines, stored):
+    for line, pix in paired:
         for (lon, lat), (px, py) in zip(line, pix):
             src.append((lon * 111320.0 * cos, -lat * 110540.0))
             dst.append((px, py))
@@ -1955,7 +1968,9 @@ def generate_overlay(slug):
         # Loveland Basin's plan is the baked 107.66° sheet turned
         # another 20° counter-clockwise to 87.66° and refit to the
         # 48 pad. The turn lives in usa/co.json. Use the solved frame.
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area"):
+        # Arapahoe Basin's plan is the published sheet turned 30°
+        # counter-clockwise and recentred, baked into usa/co.json.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
