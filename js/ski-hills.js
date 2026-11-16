@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116pcm";
+  var ASSET_V = "20261116mmh";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -877,7 +877,8 @@
     "brighton-resort": "20261116sky",
     "park-city-mountain-resort": "20261116pcm",
     "breckenridge": "20261116brk",
-    "lake-louise-ski-area": "20261116llr"
+    "lake-louise-ski-area": "20261116llr",
+    "mammoth-mountain": "20261116mmh"
   };
 
   function assetV(slug) {
@@ -4356,7 +4357,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116pcm").then(function (res) {
+  fetch("hill-index.json?v=20261116mmh").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
