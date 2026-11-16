@@ -137,7 +137,7 @@
     md: "20261105g50",
     me: "20261105g50",
     mi: "20261105g50",
-    mt: "20261116bsk",
+    mt: "20261116bsp",
     nh: "20261105g50",
     nj: "20261105g50",
     nm: "20261105g50",
@@ -746,7 +746,7 @@
         if (art) art.insertBefore(svg, art.firstChild);
         else hill.el.insertBefore(svg, hill.el.firstChild);
       }
-      hill.el._shift = fitArt(svg, SQUARE, hill._bounds);
+      hill.el._shift = fitArt(svg, SQUARE, hill._bounds, hill);
       writeMapCredit(svg, hill, SQUARE);
       hill._drawn = true;
       loadContour(hill.el);
@@ -789,14 +789,20 @@
     }).join(" ");
   }
 
-  function fitArt(svg, limitY, box) {
+  function fitArt(svg, limitY, box, hill) {
     if (!box) box = boundsOf(svg);
     var pad = SH_LAYOUT.FIT_ART_PAD;
     var limit = limitY == null ? DRAW : limitY;
+    // Big Sky only. Centre the stored plan above the banner. Do not enlarge
+    // it past that scale, and do not let it cross into the caption band.
+    // Other hills keep the fit they already have.
+    var holdScale = hill && hill.slug === "big-sky-resort";
+    if (holdScale && limit > DRAW) limit = DRAW;
     if (!box) return { s: 1, dx: 0, dy: 0, clip: limit };
     var bw = Math.max(box.maxX - box.minX, 1);
     var bh = Math.max(box.maxY - box.minY, 1);
     var s = Math.min((SQUARE - pad * 2) / bw, (limit - pad * 2) / bh);
+    if (holdScale && s > 1) s = 1;
     var dx = SQUARE / 2 - ((box.minX + box.maxX) / 2) * s;
     var dy = pad + (limit - pad * 2) / 2 - ((box.minY + box.maxY) / 2) * s;
     var shift = { s: s, dx: dx, dy: dy, clip: limit };
@@ -835,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116bsk";
+  var ASSET_V = "20261116bsp";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -1682,7 +1688,7 @@
     loadContour(card);
     var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
-    var shift = fitArt(big, DRAW, card._hill && card._hill._bounds);
+    var shift = fitArt(big, DRAW, card._hill && card._hill._bounds, card._hill);
     writeCaption(big, card._hill);
     writeMapCredit(big, card._hill, DRAW);
     lb._shift = shift;
@@ -2859,7 +2865,7 @@
     var card = hill && hill.el;
     var svg = drawingSvg(hill);
     svg.setAttribute("class", "sh-card sh-print");
-    var shift = fitArt(svg, DRAW, hill && hill._bounds);
+    var shift = fitArt(svg, DRAW, hill && hill._bounds, hill);
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
     var art = raised ? frontalArt(hill) : "";
