@@ -1258,10 +1258,15 @@ CAMERAS = {
     },
     # Sundance Resort only. Automatic facing was 38.9 (orient() flipped
     # default 218.9 so the summit sat away from the viewer). 138.9 is 100°
-    # counter-clockwise from 38.9. Facing is locked so a wider DEM_PAD cannot
-    # nudge orient() after the turn.
+    # counter-clockwise from 38.9. 248.9 is another 110° counter-clockwise
+    # (138.9+110). The plan view is turned to match. Facing is locked so a
+    # wider DEM_PAD cannot nudge orient() after the turn.
     "sundance-resort": {
-        "facing": 138.9,
+        "facing": 248.9,
+        # Published sheet uses the site defaults (2.2 / 1.7). Lock them so a
+        # dense contour count cannot thin the strokes on this rebuild.
+        "run_width": 2.2,
+        "lift_width": 1.7,
     },
 }
 
@@ -1543,10 +1548,9 @@ DEM_PAD = {
     # stop on a straight edge. 1.8 reaches that edge (same pad as the 150°
     # turn, Fernie / Marmot / Lost Trail pattern).
     "sun-peaks-resort": 1.8,
-    # Sundance Resort (facing 138.9, 100° CCW). Top-left and bottom-right
-    # corners were past the default 1.0 crop, so contours and the tree wash
-    # stopped short there. 2.6 reaches the frame (Bear Mountain / Attitash /
-    # Bear Valley pattern after a large turn).
+    # Sundance Resort (facing 248.9, another 110° CCW on the 138.9 sheet).
+    # The turned corners reach past the default 1.0 crop, so contours and
+    # the tree wash need the wider pad used after a large turn.
     "sundance-resort": 2.6,
     # Big Sky Resort (facing 275.5, 35° CCW). The turned sheet's corners
     # reach past the default 1.0 crop, so contours and the tree wash need
