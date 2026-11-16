@@ -1952,7 +1952,10 @@ def generate_overlay(slug):
         # Other turned plans use PLAN_TURN_DEG.
         # Beaver Creek's 164.11° plan turn is baked into usa/co.json
         # (and was then scaled 0.95 about the centre). Use the solved frame.
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek"):
+        # Loveland Basin's plan is the baked 107.66° sheet turned
+        # another 20° counter-clockwise to 87.66° and refit to the
+        # 48 pad. The turn lives in usa/co.json. Use the solved frame.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)

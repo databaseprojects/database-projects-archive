@@ -1566,6 +1566,8 @@ CAMERAS = {
     # frame_scale stays 1.0. US sheet, rebuilt with --edge-margin 70.
     # job 20261116tel: facing 160.08 -> 150.08
     "telluride-ski-area": {"facing": 150.08},
+    # job 20261116lov: facing 252.34 -> 272.34 (20° counter-clockwise)
+    "loveland-basin-ski-area": {"facing": 272.34},
 }
 
 
@@ -1874,6 +1876,8 @@ DEM_PAD = {
     # wider sheet sat past the default 1.0 crop (contours stopped about
     # 50 px short of that corner). 1.8 reaches it (Sun Peaks / Fernie).
     "ski-apache": 1.8,
+    # job 20261116lov
+    "loveland-basin-ski-area": 2.6,
 }
 
 
