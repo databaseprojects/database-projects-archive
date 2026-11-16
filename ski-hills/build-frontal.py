@@ -753,10 +753,14 @@ CAMERAS = {
     # Nipika only. Automatic bird's-eye facing was 47.7. 67.7 is 20° further,
     # which turns that drawing 20° counter-clockwise (Nov 5). Plan is turned
     # separately 50° clockwise (facing 310.0) and is not locked to this.
+    # Run and lift weights stay the published 2.2 / 1.7 when the wider DEM
+    # adds contours.
     "nipika": {
         "facing": 67.7,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
+        "run_width": 2.2,
+        "lift_width": 1.7,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
@@ -1447,7 +1451,11 @@ DEM_PAD = {
     # and contours; 2.6/4.0 still sparse there. 5.0 reaches the frame
     # edge (same pattern as Caledonia after its flip).
     "harper-mountain": 5.0,
-    "nipika": 2.2,
+    # Nipika (facing 67.7). The near edge of the 2.2 crop cuts a white wedge
+    # across the bottom of the sheet: no contours and no trees, while the
+    # right side still reaches the frame. 5.0 brings genuine DEM past that
+    # edge (Harper / Le Massif pattern). Facing stays locked.
+    "nipika": 5.0,
     # Hallis Lake turned 165°; corners need the wider 2.6 crop.
     "hallis-lake-ski-trails": 2.6,
     # Whitewater (facing 43.5). The bottom-left corner

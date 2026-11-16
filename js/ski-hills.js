@@ -847,7 +847,7 @@
     "mt-bachelor": "20261110bach",
     "big-white-ski-resort": "20261116be",
     "apex-mountain-resort": "20261116be",
-    "sundance-resort": "20261116sdn",
+    "sundance-resort": "20261116sky",
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
@@ -857,7 +857,7 @@
     "sun-peaks-resort": "20261116spk",
     "silverton-mountain": "20261116b1",
     "taos-ski-valley": "20261116tsv",
-    "snowbasin-resort": "20261116b1",
+    "snowbasin-resort": "20261116sky",
     "wolf-creek-ski-area": "20261116b1",
     "alpental": "20261116alp",
     "pajarito-mountain": "20261116b1",
@@ -870,11 +870,11 @@
     "mount-cain-alpine-park": "20261116b1",
     "sasquatch-mountain-resort": "20261116b1",
     "sierra-at-tahoe-ski-resort": "20261116b1",
-    "nipika": "20261116b1",
+    "nipika": "20261116sky",
     "snowbird": "20261116b1",
     "stevens-pass": "20261116b1",
     "mad-river-glen": "20261116b1",
-    "brighton-resort": "20261116b1"
+    "brighton-resort": "20261116sky"
   };
 
   function assetV(slug) {
@@ -1229,7 +1229,15 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    var washFileV = hill && (hill.slug === "sun-peaks-resort" || hill.slug === "alpental" || hill.slug === "taos-ski-valley") ? washV : ASSET_V;
+    var washFileV = hill && (
+      hill.slug === "sun-peaks-resort" ||
+      hill.slug === "alpental" ||
+      hill.slug === "taos-ski-valley" ||
+      hill.slug === "sundance-resort" ||
+      hill.slug === "snowbasin-resort" ||
+      hill.slug === "nipika" ||
+      hill.slug === "brighton-resort"
+    ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
