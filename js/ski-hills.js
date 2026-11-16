@@ -99,7 +99,7 @@
     mt: "Montana",
     wy: "Wyoming",
     ut: "Utah",
-    co: "20261116bvz",
+    co: "Colorado",
     az: "Arizona",
     nm: "New Mexico",
     sd: "South Dakota",
@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116bvc",
+    co: "20261116bvz",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
