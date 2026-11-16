@@ -242,6 +242,8 @@ FLOATING_HORIZON = {
     "copper-mountain": 1.0,
     # ridge clip (Stevens Pass no-cross tests), job 20261116bw
     "big-white-ski-resort": 1.0,
+    # ridge clip (Stevens Pass no-cross tests), job 20261116asp
+    "aspen-snowmass": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -312,6 +314,8 @@ HORIZON_MIN_RUN = {
     "copper-mountain": 4,
     # ridge clip (Stevens Pass no-cross tests), job 20261116bw
     "big-white-ski-resort": 4,
+    # ridge clip (Stevens Pass no-cross tests), job 20261116asp
+    "aspen-snowmass": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -362,6 +366,14 @@ HORIZON_REGION = {
     # the skyline test (Red Mountain top-third pattern).
     "bogus-basin-mountain-recreation-area": {
         "y": ((-400.0, 500.0),),
+    },
+
+    # Aspen Snowmass, light touch. Top and bottom thirds only, from the
+    # crossing-location report (merged top-left/ridge/right and
+    # bottom-left/centre/right). The mid-sheet stays on the ordinary
+    # skyline test so nearer slopes are not cropped.
+    "aspen-snowmass": {
+        "y": ((-400.0, 1000.0 / 3.0), (2000.0 / 3.0, 1400.0)),
     },
 }
 
@@ -546,13 +558,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
