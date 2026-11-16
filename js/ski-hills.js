@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116kyp",
+    co: "20261116bvc",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116kyp",
+      index: R2_BASE + "contours/usa-index.json?v=20261116bvc",
       label: US_STATE_NAMES[id]
     };
   });
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116kyp";
+  var ASSET_V = "20261116bvc";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -882,7 +882,8 @@
     "steamboat-ski-resort": "20261116stz",
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
-    "keystone": "20261116kyp"
+    "keystone": "20261116kyp",
+    "beaver-creek": "20261116bvc"
   };
 
   function assetV(slug) {
@@ -1249,7 +1250,8 @@
       hill.slug === "steamboat-ski-resort" ||
       hill.slug === "palisades-tahoe-olympic-valley" ||
       hill.slug === "killington-resort" ||
-      hill.slug === "keystone"
+      hill.slug === "keystone" ||
+      hill.slug === "beaver-creek"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4365,7 +4367,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116kyp").then(function (res) {
+  fetch("hill-index.json?v=20261116bvc").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
