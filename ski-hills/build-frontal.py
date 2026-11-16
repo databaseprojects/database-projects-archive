@@ -753,10 +753,14 @@ CAMERAS = {
     # Nipika only. Automatic bird's-eye facing was 47.7. 67.7 is 20° further,
     # which turns that drawing 20° counter-clockwise (Nov 5). Plan is turned
     # separately 50° clockwise (facing 310.0) and is not locked to this.
+    # Run and lift weights stay the published 2.2 / 1.7 when the wider DEM
+    # adds contours.
     "nipika": {
         "facing": 67.7,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
+        "run_width": 2.2,
+        "lift_width": 1.7,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
@@ -994,6 +998,16 @@ CAMERAS = {
     # bird's-eye drawing 70° counter-clockwise. The plan is turned to match.
     "stevens-pass": {
         "facing": 116.9,
+    },
+    # Alpental only. The automatic render faced 71.1 (the 251.1 guess,
+    # flipped by orient()). 251.1 is 180° further and turns that bird's-eye
+    # drawing upside down. The plan stays as it is. Facing is locked so a
+    # wider DEM_PAD cannot flip orient(). The default 1 px horizon stays.
+    # Published strokes stay 2.2 / 1.7 so a denser contour count cannot thin them.
+    "alpental": {
+        "facing": 251.1,
+        "run_width": 2.2,
+        "lift_width": 1.7,
     },
     # Pomerelle only. The automatic render faced 32.5; turned 180°.
     "pomerelle-mountain-resort": {
@@ -1268,6 +1282,18 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Taos Ski Valley only. Automatic facing is 195.7 (orient() kept the
+    # fall line). Locked so a later DEM_PAD cannot flip it. frame_scale
+    # 1/1.10 pulls the published sheet back 10% around the centre. The
+    # 1.0 DEM crop already reaches those edges, so the pad stays 1.0.
+    # The plan view is turned separately, 120° clockwise. Published
+    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    "taos-ski-valley": {
+        "facing": 195.7,
+        "frame_scale": 0.909,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
     # Ski Apache. Zoomed out to 0.91 of the published sheet (about 10%).
     # Facing stays locked at the automatic 232.78 so a wider DEM_PAD cannot
     # nudge orient(). Plan zoom is separate (hill-index bounds × 1/0.91
@@ -1423,7 +1449,11 @@ DEM_PAD = {
     # and contours; 2.6/4.0 still sparse there. 5.0 reaches the frame
     # edge (same pattern as Caledonia after its flip).
     "harper-mountain": 5.0,
-    "nipika": 2.2,
+    # Nipika (facing 67.7). The near edge of the 2.2 crop cuts a white wedge
+    # across the bottom of the sheet: no contours and no trees, while the
+    # right side still reaches the frame. 5.0 brings genuine DEM past that
+    # edge (Harper / Le Massif pattern). Facing stays locked.
+    "nipika": 5.0,
     # Hallis Lake turned 165°; corners need the wider 2.6 crop.
     "hallis-lake-ski-trails": 2.6,
     # Whitewater (facing 43.5). The bottom-left corner
@@ -1560,6 +1590,11 @@ DEM_PAD = {
     # The turned corners reach past the default 1.0 crop, so contours and
     # the tree wash need the wider pad used after a large turn.
     "sundance-resort": 2.6,
+    # Alpental (facing 251.1, 180° from the automatic 71.1). The bottom-right
+    # corner of the turned sheet was past the default 1.0 crop, so contours
+    # stopped about 180 px short of that corner. 2.6 reaches the frame
+    # (same pad as Sundance / Caledonia / 49° North after a half turn).
+    "alpental": 2.6,
     # Big Sky Resort (facing 275.5, 35° CCW). The turned sheet's corners
     # reach past the default 1.0 crop, so contours and the tree wash need
     # the wider pad used after a turn (Sundance / Bear Mountain).
