@@ -1462,10 +1462,15 @@ CAMERAS = {
     # Steamboat Ski Resort only. Automatic facing was 93.0 (orient() kept
     # the fall line; it measures 92.996). 128.0 is 35° further clockwise,
     # which turns the bird's-eye drawing 35° counter-clockwise on screen.
-    # The plan view is turned the same way, from -93.0 to -128.0. Published
-    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    # The plan view is turned the same way, from -93.0 to -128.0, and is
+    # not changed here. Zoomed out ~12% from the published sheet
+    # (2026-11-16): frame_scale 0.88 pulls the bird's-eye back around the
+    # sheet centre. Facing stays locked at 128.0 so a wider DEM_PAD cannot
+    # flip it. Published strokes stay 2.2 / 1.7. The default 1 px horizon
+    # pass stays on.
     "steamboat-ski-resort": {
         "facing": 128.0,
+        "frame_scale": 0.88,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
