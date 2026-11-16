@@ -150,9 +150,9 @@ FLOATING_HORIZON = {
     # Whistler Cross Country Connection. Bottom third only: back contours
     # were drawing through the near ridges there (Nov 5).
     "whistler-cross-country-connection": 3.0,
-    # Revelstoke. Top-right corner only: back contours clipped through
-    # ridges there after the 121.8 turn (Nov 5).
-    "revelstoke-mountain-resort": 3.0,
+    # Revelstoke. Top half and the bottom-left corner (HORIZON_REGION
+    # boxes). 1.0 px, job 20261116rev.
+    "revelstoke-mountain-resort": 1.0,
     # Harper. Top-right corner only: back contours clipped through
     # ridges there after the locked facing (Nov 5). 1.0 px like Baker.
     "harper-mountain": 1.0,
@@ -332,6 +332,8 @@ HORIZON_MIN_RUN = {
     "sun-peaks-resort": 4,
     # ridge clip (Stevens Pass no-cross tests), job 20261116sto
     "stowe-mountain-resort": 4,
+    # ridge clip (Stevens Pass no-cross tests), job 20261116rev
+    "revelstoke-mountain-resort": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -348,10 +350,16 @@ HORIZON_REGION = {
     "whistler-cross-country-connection": {
         "y": ((2000.0 / 3.0, 1400.0),),
     },
-    # Revelstoke. Top-right corner only.
+    # Revelstoke. Top half, full width, and the bottom-left corner.
+    # 1 px / 4-sample clip, job 20261116rev. Elsewhere the skyline test stays.
     "revelstoke-mountain-resort": {
-        "x": ((1000.0 * 2.0 / 3.0, 1400.0),),
-        "y": ((-400.0, 1000.0 / 3.0),),
+        "boxes": (
+            {"y": ((-400.0, 500.0),)},
+            {
+                "x": ((-400.0, 1000.0 / 3.0),),
+                "y": ((2000.0 / 3.0, 1400.0),),
+            },
+        ),
     },
     # Harper. Top-right corner only, same band as Revelstoke.
     "harper-mountain": {
@@ -417,6 +425,9 @@ HORIZON_REGION = {
 # horizon still hides across the whole sheet, which is how these hills
 # were drawn before the clip.
 HORIZON_NOCROSS_ONLY = {"sun-peaks-resort", "stowe-mountain-resort"}
+# Hide and no-cross tests both stay inside HORIZON_REGION. Unlike
+# HORIZON_NOCROSS_ONLY, the floating horizon does not run sheet-wide.
+HORIZON_NOCROSS_IN_REGION = {"revelstoke-mountain-resort"}
 
 
 def horizon_key(slug):
@@ -443,20 +454,32 @@ def bachelor_flank(px, py):
     return band["x"][0] <= px <= band["x"][1] and band["y"][0] <= py <= band["y"][1]
 
 
-def horizon_hides(slug, px, py):
-    """True when this screen point is inside the hill's floating-horizon band."""
-    if horizon_key(slug) == "mt-bachelor" and bachelor_flank(px, py):
-        return False
-    region = HORIZON_REGION.get(horizon_key(slug))
-    if not region:
-        return True
-    xs = region.get("x")
-    ys = region.get("y")
+def _in_horizon_box(px, py, box):
+    """True when (px, py) is inside this x/y band. A missing axis is open."""
+    xs = box.get("x")
+    ys = box.get("y")
     if xs and not any(lo <= px <= hi for lo, hi in xs):
         return False
     if ys and not any(lo <= py <= hi for lo, hi in ys):
         return False
     return True
+
+
+def horizon_hides(slug, px, py):
+    """True when this screen point is inside the hill's floating-horizon band.
+
+    A region is one x/y band, or a union of bands under "boxes". Each box
+    uses the same x/y test. A sample outside every box stays drawn.
+    """
+    if horizon_key(slug) == "mt-bachelor" and bachelor_flank(px, py):
+        return False
+    region = HORIZON_REGION.get(horizon_key(slug))
+    if not region:
+        return True
+    boxes = region.get("boxes")
+    if boxes:
+        return any(_in_horizon_box(px, py, box) for box in boxes)
+    return _in_horizon_box(px, py, region)
 # Path length, in px. Samples sit about 5 px apart, so a 3 px hold never
 # contains a whole skyline flicker. 12 px is the short gap or speck we
 # refuse to toggle; a longer hidden run still ends in one place.
@@ -599,13 +622,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0, "sun-peaks-resort": 0, "stowe-mountain-resort": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0, "sun-peaks-resort": 0, "stowe-mountain-resort": 0, "revelstoke-mountain-resort": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -3185,7 +3208,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     if float_tol is None and not tight:
         return before, len(before)
     _nocross_limit = None
-    if _hill in HORIZON_NOCROSS_ONLY:
+    if _hill in HORIZON_NOCROSS_ONLY or _hill in HORIZON_NOCROSS_IN_REGION:
         def _nocross_limit(px, py, key=_hill):
             return horizon_hides(key, px, py)
     if float_tol is not None:
