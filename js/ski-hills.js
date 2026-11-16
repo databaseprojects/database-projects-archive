@@ -853,9 +853,28 @@
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261116fh",
     "silver-mountain-resort": "20261116fh",
-    "silver-mountain-resort": "20261116fh",
     "vail": "20261116v45",
-    "sun-peaks-resort": "20261116spk"
+    "sun-peaks-resort": "20261116spk",
+    "silverton-mountain": "20261116b1",
+    "taos-ski-valley": "20261116b1",
+    "snowbasin-resort": "20261116b1",
+    "wolf-creek-ski-area": "20261116b1",
+    "alpental": "20261116b1",
+    "pajarito-mountain": "20261116b1",
+    "sipapu-ski-and-summer-resort": "20261116b1",
+    "mount-rose-ski-tahoe": "20261116b1",
+    "red-lodge-mountain": "20261116b1",
+    "mountain-high": "20261116b1",
+    "ski-apache": "20261116b1",
+    "snow-valley-mountain-resort": "20261116b1",
+    "mount-cain-alpine-park": "20261116b1",
+    "sasquatch-mountain-resort": "20261116b1",
+    "sierra-at-tahoe-ski-resort": "20261116b1",
+    "nipika": "20261116b1",
+    "snowbird": "20261116b1",
+    "stevens-pass": "20261116b1",
+    "mad-river-glen": "20261116b1",
+    "brighton-resort": "20261116b1"
   };
 
   function assetV(slug) {
