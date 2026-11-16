@@ -1068,6 +1068,17 @@ CAMERAS = {
     # ZBUF_TOL stops the foreground and summit contours that draw through
     # those ridges.
     "sunlight-mountain-resort": {"frame_scale": 0.95, "ridge_fade": 0.10},
+    # Vail only. Automatic facing was 147.8 and orient() kept it. 102.8 is
+    # 45° less, which turns the bird's-eye drawing 45° clockwise. The plan
+    # view is turned to match. Facing is locked so a wider DEM_PAD cannot
+    # nudge orient(). Run and lift widths stay the published 2.2 / 1.7 so a
+    # denser contour count cannot thin them. The lightbox still draws runs
+    # at the per-hill 1.2px.
+    "vail": {
+        "facing": 102.8,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
     # New England batch (US sheets, --edge-margin 70). post_scale 0.95 pulls
     # the sheet back 5% after the margin fit. Killington is pulled back a
     # further 6% (0.95 / 1.06) with no pan. Gunstock is locked to the plan's north-up
@@ -1534,6 +1545,10 @@ DEM_PAD = {
     # reach past the default 1.0 crop, so contours and the tree wash need
     # the wider pad used after a turn (Sundance / Bear Mountain).
     "big-sky-resort": 2.6,
+    # Vail (facing 102.8, 45° CW). The turned sheet's corners reach past
+    # the default 1.0 crop, so contours and the tree wash need the wider
+    # pad used after a turn (Big Sky / Sundance / Bear Mountain).
+    "vail": 2.6,
 }
 
 
