@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116lov",
+    co: "20261116abs",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116lov",
+      index: R2_BASE + "contours/usa-index.json?v=20261116abs",
       label: US_STATE_NAMES[id]
     };
   });
@@ -906,7 +906,7 @@
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
-    "arapahoe-basin": "20261116fh",
+    "arapahoe-basin": "20261116abs",
     "silver-mountain-resort": "20261116fh",
     "vail": "20261116v17",
     "sun-peaks-resort": "20261116spc",
@@ -1358,7 +1358,8 @@
       hill.slug === "big-white-ski-resort" ||
       hill.slug === "aspen-snowmass" ||
       hill.slug === "telluride-ski-area" ||
-      hill.slug === "loveland-basin-ski-area"
+      hill.slug === "loveland-basin-ski-area" ||
+      hill.slug === "arapahoe-basin"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4477,7 +4478,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116lov").then(function (res) {
+  fetch("hill-index.json?v=20261116abs").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
