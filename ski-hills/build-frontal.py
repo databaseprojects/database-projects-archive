@@ -747,12 +747,19 @@ CAMERAS = {
     },
     # Big Sky Resort only. The automatic render faced 60.5 (the 240.5
     # guess, flipped by orient()). 240.5 is 180° further and turns that
-    # bird's-eye drawing upside down. Edit this number.
+    # bird's-eye drawing upside down. 275.5 is 35° further (240.5+35),
+    # which turns the drawing 35° counter-clockwise. The plan view is
+    # turned to match. Facing is locked so a wider DEM_PAD cannot nudge
+    # orient(). Edit this number.
     "big-sky-resort": {
-        "facing": 240.5,
+        "facing": 275.5,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
+        # Published sheet uses the site defaults (2.2 / 1.7). Lock them so a
+        # dense contour count cannot thin the strokes on this rebuild.
+        "run_width": 2.2,
+        "lift_width": 1.7,
     },
     # Kirkwood only. The automatic render faced 30.8 (the 210.8
     # guess, flipped by orient()). 210.8 is 180° further and turns that
@@ -1480,6 +1487,10 @@ DEM_PAD = {
     # stopped short there. 2.6 reaches the frame (Bear Mountain / Attitash /
     # Bear Valley pattern after a large turn).
     "sundance-resort": 2.6,
+    # Big Sky Resort (facing 275.5, 35° CCW). The turned sheet's corners
+    # reach past the default 1.0 crop, so contours and the tree wash need
+    # the wider pad used after a turn (Sundance / Bear Mountain).
+    "big-sky-resort": 2.6,
 }
 
 
@@ -3553,10 +3564,13 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     lift_stroke = LIFT_W if lift_width is None else lift_width
     # A spread-out sheet steps down from the site-wide defaults. A hill
     # that sets its own run or lift width keeps that width.
+    # A camera that sets its own width keeps it. Equality with the default
+    # is only a proxy for "not set", so an explicit 2.2 / 1.7 still thins.
+    cam_set = CAMERAS.get(slug) or {}
     if stroke_lines >= CONTOUR_THIN_CUTOFF:
-        if run_width == 2.2:
+        if "run_width" not in cam_set and run_width == 2.2:
             run_stroke = RUN_W_THIN
-        if lift_width is None or lift_width == LIFT_W:
+        if "lift_width" not in cam_set and (lift_width is None or lift_width == LIFT_W):
             lift_stroke = LIFT_W_THIN
     print(
         "strokes",
