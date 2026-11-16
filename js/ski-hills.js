@@ -856,25 +856,25 @@
     "silver-mountain-resort": "20261116fh",
     "vail": "20261116v45",
     "sun-peaks-resort": "20261116spk",
-    "silverton-mountain": "20261116b1",
-    "taos-ski-valley": "20261116tsv",
+    "silverton-mountain": "20261116w1",
+    "taos-ski-valley": "20261116w1",
     "snowbasin-resort": "20261116sky",
-    "wolf-creek-ski-area": "20261116b1",
-    "alpental": "20261116alp",
-    "pajarito-mountain": "20261116b1",
-    "sipapu-ski-and-summer-resort": "20261116b1",
-    "mount-rose-ski-tahoe": "20261116b1",
-    "red-lodge-mountain": "20261116rlz",
-    "mountain-high": "20261116b1",
-    "ski-apache": "20261116apa",
-    "snow-valley-mountain-resort": "20261116b1",
-    "mount-cain-alpine-park": "20261116b1",
-    "sasquatch-mountain-resort": "20261116sq",
-    "sierra-at-tahoe-ski-resort": "20261116b1",
+    "wolf-creek-ski-area": "20261116w1",
+    "alpental": "20261116w1",
+    "pajarito-mountain": "20261116w1",
+    "sipapu-ski-and-summer-resort": "20261116w1",
+    "mount-rose-ski-tahoe": "20261116w1",
+    "red-lodge-mountain": "20261116w1",
+    "mountain-high": "20261116w1",
+    "ski-apache": "20261116w1",
+    "snow-valley-mountain-resort": "20261116w1",
+    "mount-cain-alpine-park": "20261116w1",
+    "sasquatch-mountain-resort": "20261116w1",
+    "sierra-at-tahoe-ski-resort": "20261116w1",
     "nipika": "20261116sky",
-    "snowbird": "20261116sbd",
-    "stevens-pass": "20261116b1",
-    "mad-river-glen": "20261116b1",
+    "snowbird": "20261116w1",
+    "stevens-pass": "20261116w1",
+    "mad-river-glen": "20261116w1",
     "brighton-resort": "20261116sky"
   };
 
@@ -1237,7 +1237,22 @@
       hill.slug === "sundance-resort" ||
       hill.slug === "snowbasin-resort" ||
       hill.slug === "nipika" ||
-      hill.slug === "brighton-resort"
+      hill.slug === "brighton-resort" ||
+      hill.slug === "silverton-mountain" ||
+      hill.slug === "wolf-creek-ski-area" ||
+      hill.slug === "pajarito-mountain" ||
+      hill.slug === "sipapu-ski-and-summer-resort" ||
+      hill.slug === "mount-rose-ski-tahoe" ||
+      hill.slug === "red-lodge-mountain" ||
+      hill.slug === "mountain-high" ||
+      hill.slug === "ski-apache" ||
+      hill.slug === "snow-valley-mountain-resort" ||
+      hill.slug === "mount-cain-alpine-park" ||
+      hill.slug === "sasquatch-mountain-resort" ||
+      hill.slug === "sierra-at-tahoe-ski-resort" ||
+      hill.slug === "snowbird" ||
+      hill.slug === "stevens-pass" ||
+      hill.slug === "mad-river-glen"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");

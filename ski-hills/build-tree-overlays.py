@@ -468,7 +468,16 @@ TREE_BANDS = (
 # Kicking Horse keeps a third-length ground step so the canopy mesh on
 # that face stays dense. Skyline clipping does not depend on it, and it
 # is not an opt-out of the clip.
-TREE_STEP_DIV = {"kicking-horse-resort": 3}
+# Pajarito, Mountain High, and Sierra-at-Tahoe still formed a mesh-column
+# stair on the skyline after the quad clip, because their 10 m step is
+# wider than the 1.2 px simplify. A third-length step lets that simplify
+# turn the leftover step into a diagonal.
+TREE_STEP_DIV = {
+    "kicking-horse-resort": 3,
+    "pajarito-mountain": 3,
+    "mountain-high": 3,
+    "sierra-at-tahoe-ski-resort": 3,
+}
 
 
 # Same window the visibility grid uses. A corner outside it is hidden.
