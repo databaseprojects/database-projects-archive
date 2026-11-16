@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116v17",
+    co: "20261116stb",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116v17",
+      index: R2_BASE + "contours/usa-index.json?v=20261116stb",
       label: US_STATE_NAMES[id]
     };
   });
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116pct";
+  var ASSET_V = "20261116stb";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -878,7 +878,8 @@
     "park-city-mountain-resort": "20261116pct",
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116pct",
-    "mammoth-mountain": "20261116pct"
+    "mammoth-mountain": "20261116pct",
+    "steamboat-ski-resort": "20261116stb"
   };
 
   function assetV(slug) {
@@ -4357,7 +4358,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116pct").then(function (res) {
+  fetch("hill-index.json?v=20261116stb").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
