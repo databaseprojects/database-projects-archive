@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261116sdn",
+    ut: "20261116sb5",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116apa",
+      index: R2_BASE + "contours/usa-index.json?v=20261116sb5",
       label: US_STATE_NAMES[id]
     };
   });
@@ -825,8 +825,7 @@
     "mount-washington-alpine-resort": ["front", "back"],
     "lake-louise-ski-area": ["front", "back"],
     "mt-spokane": ["front", "back"],
-    "bear-valley": ["front", "back"],
-    "snowbird": ["front", "back"]
+    "bear-valley": ["front", "back"]
   };
 
   function sideViews(hill) {
@@ -872,7 +871,7 @@
     "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
-    "snowbird": "20261116sbd",
+    "snowbird": "20261116sb5",
     "stevens-pass": "20261116b1",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky"
@@ -1237,7 +1236,8 @@
       hill.slug === "sundance-resort" ||
       hill.slug === "snowbasin-resort" ||
       hill.slug === "nipika" ||
-      hill.slug === "brighton-resort"
+      hill.slug === "brighton-resort" ||
+      hill.slug === "snowbird"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4353,7 +4353,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116apa").then(function (res) {
+  fetch("hill-index.json?v=20261116sb5").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
