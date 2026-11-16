@@ -198,6 +198,11 @@ FLOATING_HORIZON = {
     # farther contours across nearer ridges. Same tolerance, kept explicitly
     # because the no-cross tests below make this hill hand-tuned.
     "stevens-pass": 1.0,
+    # Park City. The default 1 px / 4-sample pass (PR #507) still left
+    # farther contours across nearer ridges, mostly in the top third.
+    # Same tolerance, kept explicitly because the no-cross tests below
+    # make this hill hand-tuned. Facing and framing are unchanged.
+    "park-city-mountain-resort": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -235,6 +240,9 @@ HORIZON_MIN_RUN = {
     # Stevens Pass. A dip shorter than 4 samples is drawn back, same as the
     # default, except where that piece would cross a nearer contour.
     "stevens-pass": 4,
+    # Park City. A dip shorter than 4 samples is drawn back, same as the
+    # default, except where that piece would cross a nearer contour.
+    "park-city-mountain-resort": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -469,13 +477,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -1150,6 +1158,15 @@ CAMERAS = {
     "snowbird": {
         "facing": 179.6,
         "frame_scale": 0.931 / 1.10,
+    },
+    # Park City. Automatic facing is 215.1. Locked so a later input
+    # refresh cannot drift the bird's-eye. frame_scale stays the default
+    # 1.0. run_width and lift_width are the published 2.2 / 1.7; without
+    # an explicit camera width the 1400-contour cutoff would thin them.
+    "park-city-mountain-resort": {
+        "facing": 215.1,
+        "run_width": 2.2,
+        "lift_width": 1.7,
     },
     "snowbasin-resort": {"facing": 236.5, "frame_scale": 0.866},
     "alta-ski-area": {"facing": 149.2, "frame_scale": 0.908},
