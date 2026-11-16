@@ -909,7 +909,7 @@
     "arapahoe-basin": "20261116fh",
     "silver-mountain-resort": "20261116fh",
     "vail": "20261116v17",
-    "sun-peaks-resort": "20261116spk",
+    "sun-peaks-resort": "20261116spc",
     "silverton-mountain": "20261116b1",
     "taos-ski-valley": "20261116t65",
     "snowbasin-resort": "20261116sky",
