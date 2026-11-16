@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261110sdc",
+    ut: "20261116sdn",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/usa-index.json?v=20261116sdn",
       label: US_STATE_NAMES[id]
     };
   });
@@ -841,13 +841,13 @@
   }
 
 
-  var ASSET_V = "20261116v45";
+  var ASSET_V = "20261116sdn";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
     "big-white-ski-resort": "20261116be",
     "apex-mountain-resort": "20261116be",
-    "sundance-resort": "20261116fh",
+    "sundance-resort": "20261116sdn",
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
@@ -4344,7 +4344,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116spk").then(function (res) {
+  fetch("hill-index.json?v=20261116sdn").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
