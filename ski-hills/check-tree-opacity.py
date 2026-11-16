@@ -428,16 +428,18 @@ def baked_steps(path):
 
 
 def git_changed(base):
-    """Paths added or changed on HEAD or in the working tree since base.
+    """Paths this branch or the working tree changed since base.
 
-    The job runner checks before it commits, so the working-tree diff against
-    base has to count. After the commit, base...HEAD is the pull-request diff.
+    Committed changes are base...HEAD. Uncommitted changes are diffed
+    against HEAD, which is what the job runner still has in the tree
+    before it commits. A two-dot diff against base would also list files
+    that landed on base after this branch was cut.
     """
     changed = set()
     commands = (
         ["git", "diff", "--name-status", "--diff-filter=ACMR", f"{base}...HEAD"],
-        ["git", "diff", "--name-status", "--diff-filter=ACMR", base, "--"],
-        ["git", "diff", "--name-status", "--cached", "--diff-filter=ACMR", base, "--"],
+        ["git", "diff", "--name-status", "--diff-filter=ACMR", "HEAD", "--"],
+        ["git", "diff", "--name-status", "--cached", "--diff-filter=ACMR"],
     )
     for command in commands:
         result = subprocess.run(command, cwd=REPO, text=True, capture_output=True)
