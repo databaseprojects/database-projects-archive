@@ -846,7 +846,13 @@
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
     "big-white-ski-resort": "20261116be",
-    "apex-mountain-resort": "20261116be"
+    "apex-mountain-resort": "20261116be",
+    "sundance-resort": "20261116fh",
+    "mt-baldy": "20261116fh",
+    "courmayeur": "20261116fh",
+    "skigebiet-diedamskopf": "20261116fh",
+    "arapahoe-basin": "20261116fh",
+    "silver-mountain-resort": "20261116fh"
   };
 
   function frontalUrl(hill) {
