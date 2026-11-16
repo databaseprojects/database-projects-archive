@@ -1278,6 +1278,18 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Taos Ski Valley only. Automatic facing is 195.7 (orient() kept the
+    # fall line). Locked so a later DEM_PAD cannot flip it. frame_scale
+    # 1/1.10 pulls the published sheet back 10% around the centre. The
+    # 1.0 DEM crop already reaches those edges, so the pad stays 1.0.
+    # The plan view is turned separately, 120° clockwise. Published
+    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    "taos-ski-valley": {
+        "facing": 195.7,
+        "frame_scale": 0.909,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
 }
 
 
