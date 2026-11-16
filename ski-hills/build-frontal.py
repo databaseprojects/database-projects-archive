@@ -1141,13 +1141,13 @@ CAMERAS = {
     "jay-peak-resort": {"facing": 242.0, "post_scale": 0.95},
     "mad-river-glen": {"facing": 254.2, "post_scale": 0.95},
     "blue-mountain-ski-resort": {"facing": 228.1, "post_scale": 0.95},
-    # Snowbird only. One bird's-eye. The front sheet (159.6) turned 50°
-    # counter-clockwise (159.6+50 = 209.6) and zoomed out 10% from 0.931
-    # (0.931/1.10). Re-rendered from the DEM with the default 1 px horizon.
-    # The plan is turned 50° counter-clockwise separately. The back view
-    # is gone. Facing is locked so a wider DEM_PAD cannot flip orient().
+    # Snowbird only. One bird's-eye. Facing 179.6 is the previous 209.6
+    # turned 30° clockwise (209.6-30 = 179.6). frame_scale stays 0.931/1.10.
+    # Re-rendered from the DEM with the default 1 px horizon. The plan is
+    # unchanged (still the earlier 50° counter-clockwise turn). The back
+    # view is gone. Facing is locked so a wider DEM_PAD cannot flip orient().
     "snowbird": {
-        "facing": 209.6,
+        "facing": 179.6,
         "frame_scale": 0.931 / 1.10,
     },
     "snowbasin-resort": {"facing": 236.5, "frame_scale": 0.866},
@@ -1541,9 +1541,10 @@ DEM_PAD = {
     # North Star Hill (facing 294.2). Plan 35° CW + bird's-eye 25° CW; 1.8
     # still left the bottom-right corner bare. 2.6 reaches every corner.
     "unnamed-hill-21": 2.6,
-    # Snowbird, facing 209.6, frame_scale 0.931/1.10. The 50° turn and
-    # the extra 10% pull-back reach past the 1.8 crop at the corners.
-    # 2.6 is the pad used after a large turn (Sundance / Caledonia).
+    # Snowbird, facing 179.6, frame_scale 0.931/1.10. The earlier 50° plan
+    # turn, this 30° clockwise bird's-eye turn, and the extra 10% pull-back
+    # reach past the 1.8 crop at the corners. 2.6 is the pad used after a
+    # large turn (Sundance / Caledonia).
     "snowbird": 2.6,
     "snowbasin-resort": 1.8,
     "alta-ski-area": 1.8,
