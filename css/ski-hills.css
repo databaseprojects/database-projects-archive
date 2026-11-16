@@ -371,10 +371,19 @@
   --sh-run: 1.0269px;
 }
 
-/* Bird's-eye only. These hills bake a thinner run_width and lift_width than
-   the 2.2 / 1.7 defaults. The screen stroke is 1.3166px times that ratio.
-   Plan view, cards and Whistler stay on --sh-run. */
-.sh-lb[data-sh-hill="silver-star-mountain-resort"],
+/* These hills bake a thinner run_width and lift_width than the 2.2 / 1.7
+   defaults. The screen stroke is 1.3166px times that ratio. Silver Star's
+   plan uses that same 1.0269px run stroke. Sunshine and the other hills
+   keep the 1.3166px plan. */
+/* Silver Star plan matches its bird's-eye runs: 1.0269px is 22% under
+   1.3166px. Bird's-eye lifts stay on the baked 1.33/1.7 width. */
+.sh-lb[data-sh-hill="silver-star-mountain-resort"] {
+  --sh-run: 1.0269px;
+  /* 1.716/2.2 and 1.33/1.7 */
+  --sh-be-run: 1.0269px;
+  --sh-be-lift: 1.0300px;
+}
+
 .sh-lb[data-sh-hill="banff-sunshine-village"] {
   /* 1.716/2.2 and 1.33/1.7 */
   --sh-be-run: 1.0269px;
