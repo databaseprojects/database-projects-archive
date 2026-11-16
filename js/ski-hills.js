@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261105g50",
+    co: "20261116v45",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116bsp";
+  var ASSET_V = "20261116v45";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -852,7 +852,8 @@
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261116fh",
-    "silver-mountain-resort": "20261116fh"
+    "silver-mountain-resort": "20261116fh",
+    "vail": "20261116v45"
   };
 
   function frontalUrl(hill) {
