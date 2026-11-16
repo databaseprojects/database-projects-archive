@@ -676,8 +676,13 @@ def fit_art_shift(hill, limit_y=880):
     return {"s": s, "dx": dx, "dy": dy, "clip": limit_y, "bounds": (min_x, min_y, max_x, max_y)}
 
 
-def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path):
-    """Generate Plan-view treeWash path d in unshifted Plan-view coordinates."""
+def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unmap=None):
+    """Generate Plan-view treeWash path d in unshifted Plan-view coordinates.
+
+    pixel_unmap(px, py) maps the hill's stored plan pixels back to the
+    north-up frame the geom was projected in. A plan rotation passes it so
+    the wash is sampled in the turned frame, including newly exposed corners.
+    """
     pts_runs = [p for r in geom_data["runs"] for line in r["lines"] for p in line]
     lats = [p[1] for p in pts_runs]
     mid = sum(lats) / len(lats)
@@ -739,6 +744,8 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path):
     ix = np.arange(W, dtype=np.float64) / S + x0
     iy = np.arange(H, dtype=np.float64) / S + y0
     px_grid, py_grid = np.meshgrid(ix, iy)
+    if pixel_unmap is not None:
+        px_grid, py_grid = pixel_unmap(px_grid, py_grid)
 
     x_m = minx + (px_grid - PAD) / SIZE * span
     y_m = maxy - (py_grid - PAD) / SIZE * span
