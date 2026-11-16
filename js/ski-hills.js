@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261116dv80",
+    ut: "20261116sb40",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116cu45",
+      index: R2_BASE + "contours/usa-index.json?v=20261116sb40",
       label: US_STATE_NAMES[id]
     };
   });
@@ -926,7 +926,7 @@
     "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
-    "snowbird": "20261116sb6",
+    "snowbird": "20261116sb40",
     "stevens-pass": "20261116stx",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
@@ -4466,7 +4466,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116cu45").then(function (res) {
+  fetch("hill-index.json?v=20261116sb40").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
