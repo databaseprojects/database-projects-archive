@@ -863,7 +863,7 @@
     "pajarito-mountain": "20261116b1",
     "sipapu-ski-and-summer-resort": "20261116b1",
     "mount-rose-ski-tahoe": "20261116b1",
-    "red-lodge-mountain": "20261116b1",
+    "red-lodge-mountain": "20261116rlz",
     "mountain-high": "20261116b1",
     "ski-apache": "20261116apa",
     "snow-valley-mountain-resort": "20261116b1",

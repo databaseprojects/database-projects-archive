@@ -1071,6 +1071,8 @@ CAMERAS = {
     # Colorado half turns. Each automatic facing (in brackets) plus 180°,
     # which turns the bird's-eye drawing 180°. The plan is turned to match.
     "crested-butte-mountain-resort": {"facing": 154.3},  # (334.3)
+    # Plan fit is the run box in hill-index, [349.8, 123.1, 885.8, 433.8].
+    # The long lift on the left is clipped. This facing is unchanged.
     "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
     "monarch-mountain": {"facing": 234.3},  # (54.3)
     "arapahoe-basin": {"facing": 148.3},  # (328.3)
@@ -1293,6 +1295,16 @@ CAMERAS = {
         "frame_scale": 0.909,
         "run_width": 2.2,
         "lift_width": 1.7,
+    },
+    # Red Lodge Mountain only. Zoomed out x1.10 from the published sheet
+    # (2026-11-16): frame_scale 1/1.10 pulls the bird's-eye back 10% around
+    # the sheet centre. 214.6033365795 is the published automatic facing
+    # (it prints as 214.6; orient kept it). Locked so a wider DEM_PAD cannot
+    # flip it. The plan is that same turn, zoomed by the hill-index bounds,
+    # and is not re-rotated. The default 1 px horizon pass stays.
+    "red-lodge-mountain": {
+        "facing": 214.6033365795,
+        "frame_scale": 0.909,
     },
     # Ski Apache. Zoomed out to 0.91 of the published sheet (about 10%).
     # Facing stays locked at the automatic 232.78 so a wider DEM_PAD cannot
