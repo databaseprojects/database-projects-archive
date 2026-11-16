@@ -948,7 +948,8 @@
     "heavenly-mountain-resort": "20261116hvy",
     "aspen-snowmass": "20261116asp",
     "telluride-ski-area": "20261116tel",
-    "loveland-basin-ski-area": "20261116lov"
+    "loveland-basin-ski-area": "20261116lov",
+    "stowe-mountain-resort": "20261116sto"
   };
 
   function assetV(slug) {
@@ -1359,7 +1360,8 @@
       hill.slug === "aspen-snowmass" ||
       hill.slug === "telluride-ski-area" ||
       hill.slug === "loveland-basin-ski-area" ||
-      hill.slug === "arapahoe-basin"
+      hill.slug === "arapahoe-basin" ||
+      hill.slug === "stowe-mountain-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
