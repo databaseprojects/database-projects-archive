@@ -225,6 +225,11 @@ FLOATING_HORIZON = {
     # explicitly because the no-cross tests below make this hill
     # hand-tuned. Facing 250.5 and post_scale 0.8962 are unchanged.
     "killington-resort": 1.0,
+    # Keystone. The default 1 px / 4-sample pass (PR #507) still left
+    # farther contours across nearer ridges. Same tolerance, kept
+    # explicitly because the no-cross tests below make this hill
+    # hand-tuned. Facing and framing are unchanged.
+    "keystone": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -281,6 +286,9 @@ HORIZON_MIN_RUN = {
     # Killington. A dip shorter than 4 samples is drawn back, same as
     # the default, except where that piece would cross a nearer contour.
     "killington-resort": 4,
+    # Keystone. A dip shorter than 4 samples is drawn back, same as the
+    # default, except where that piece would cross a nearer contour.
+    "keystone": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -515,13 +523,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -1233,6 +1241,15 @@ CAMERAS = {
     # 2.2 / 1.7.
     "palisades-tahoe-olympic-valley": {
         "facing": 217.5,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
+    # Keystone. Automatic facing is 128.97, the published calculated
+    # camera that matches the plan at -128.97. Locked so a later input
+    # refresh cannot drift the bird's-eye. frame_scale stays the default
+    # 1.0. run_width and lift_width are the published 2.2 / 1.7.
+    "keystone": {
+        "facing": 128.97,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
