@@ -9,8 +9,10 @@ that stair.
   python3 ski-hills/check-tree-stairs.py --base origin/main
       Scan ski-hills/frontal/*.wash.svg and any frontal sheet that still has
       a tree-wash or tree-band path. A file this diff adds or changes fails
-      when it still has a stair run. The same pattern in a file the diff does
-      not touch is a warning. Stdlib only.
+      when it still has a stair run, unless the tree path geometry is the
+      same as the merge base (for example an opacity-only edit). The same
+      pattern in a file the diff does not touch, or whose geometry is
+      unchanged, is a warning. Stdlib only.
 
   python3 ski-hills/check-tree-stairs.py --measure PATH [PATH ...]
       Print stair counts and, when the matching sheet is present, how much of
@@ -271,6 +273,29 @@ def iter_sheets():
             yield path
 
 
+def git_file_bytes(rel, ref):
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{rel}"],
+        cwd=REPO,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout
+
+
+def tree_geometry(data):
+    """Path data only, so a fill-opacity edit is not a stair-geometry change."""
+    return tuple(tree_paths(data))
+
+
+def geometry_unchanged(path, rel, base):
+    raw = git_file_bytes(rel, base)
+    if raw is None:
+        return False
+    return tree_geometry(path.read_bytes()) == tree_geometry(raw)
+
+
 def git_changed(base):
     result = subprocess.run(
         ["git", "diff", "--name-status", "--diff-filter=ACMR", f"{base}...HEAD"],
@@ -510,7 +535,7 @@ def main():
             continue
         rel = path.relative_to(REPO).as_posix()
         detail = fmt_stats(rel, stats)
-        if rel in changed:
+        if rel in changed and not geometry_unchanged(path, rel, base):
             errors.append(detail)
         else:
             warnings.append(detail)
@@ -521,8 +546,9 @@ def main():
     print(f"stair failures: {len(errors)}")
     if warnings:
         print(
-            f"::warning::{len(warnings)} unchanged tree sheets still have "
-            "mesh-column stair runs. They are not in this diff."
+            f"::warning::{len(warnings)} tree sheets still have "
+            "mesh-column stair runs. They are not in this diff, or their "
+            "tree path geometry is unchanged (for example an opacity-only edit)."
         )
         for detail in warnings:
             print(f"warning: {detail}")
