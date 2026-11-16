@@ -1181,9 +1181,12 @@ CAMERAS = {
     "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
     "monarch-mountain": {"facing": 234.3},  # (54.3)
     "arapahoe-basin": {"facing": 148.3},  # (328.3)
-    # Winter Park and Sunlight only. 0.95 pulls the sheet back 5% around
-    # the centre. The automatic camera stays.
-    "winter-park-resort": {"frame_scale": 0.95},
+    # Winter Park. frame_scale 0.855 is the earlier 0.95 times 0.9.
+    # The automatic camera and ridge settings stay. Plan fit is the
+    # run box in hill-index, [48.0, 48.0, 527.2, 692.3] (scale 1.4279,
+    # was 1.0177). The long lift to the bottom is clipped.
+    # job 20261116wpz: frame_scale 0.95 -> 0.855
+    "winter-park-resort": {"frame_scale": 0.855},
     # Sunlight. frame_scale stays 0.95 and the automatic camera stays.
     # Runs that pass behind a ridge stay on the line at 10% opacity.
     # ZBUF_TOL stops the foreground and summit contours that draw through
