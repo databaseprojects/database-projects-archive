@@ -758,6 +758,99 @@ def fit_art_shift(hill, limit_y=880):
     return {"s": s, "dx": dx, "dy": dy, "clip": limit_y, "bounds": (min_x, min_y, max_x, max_y)}
 
 
+# Plan pixels turned off north-up, then refit into the 48/904 pad.
+# The angle is the published bird's-eye facing, negated, so downhill stays
+# at the bottom. Red Lodge's plan was already at -214.6; the zoom only
+# widens the hill-index bounds and must not turn it again.
+PLAN_TURN_DEG = {
+    "red-lodge-mountain": -214.6,
+}
+
+
+def _geom_run_points(geom_data):
+    return [p for r in geom_data.get("runs") or [] for line in r.get("lines") or [] for p in line]
+
+
+def plan_turn_frames(geom_data, deg):
+    """North-up pad frame and the turned pad frame for one plan rotation."""
+    pts = _geom_run_points(geom_data)
+    lats = [p[1] for p in pts]
+    mid = sum(lats) / len(lats)
+    cos = math.cos(mid * math.pi / 180.0)
+    east = np.array([p[0] * 111320.0 * cos for p in pts], dtype=np.float64)
+    north = np.array([p[1] * 110540.0 for p in pts], dtype=np.float64)
+    span = max(float(east.max() - east.min()), float(north.max() - north.min()), 1.0)
+    # Screen metres: y grows south, the same way the north-up plan does.
+    sx = east
+    sy = -north
+    th = math.radians(deg)
+    c, s = math.cos(th), math.sin(th)
+    origin = np.array([float(sx.mean()), float(sy.mean())])
+    dx = sx - origin[0]
+    dy = sy - origin[1]
+    rx = origin[0] + c * dx - s * dy
+    ry = origin[1] + s * dx + c * dy
+    rspan = max(float(rx.max() - rx.min()), float(ry.max() - ry.min()), 1.0)
+    return {
+        "cos": cos,
+        "minx": float(east.min()),
+        "maxx": float(east.max()),
+        "miny": float(north.min()),
+        "maxy": float(north.max()),
+        "span": span,
+        "c": c,
+        "s": s,
+        "origin": origin,
+        "rminx": float(rx.min()),
+        "rminy": float(ry.min()),
+        "rspan": rspan,
+    }
+
+
+def turned_px(fr, lon, lat):
+    """Lon/lat to the turned plan pixels the page stores."""
+    east = lon * 111320.0 * fr["cos"]
+    north = lat * 110540.0
+    sx, sy = east, -north
+    ox, oy = fr["origin"]
+    dx, dy = sx - ox, sy - oy
+    rx = ox + fr["c"] * dx - fr["s"] * dy
+    ry = oy + fr["s"] * dx + fr["c"] * dy
+    px = PLAN_ART_PAD + (rx - fr["rminx"]) / fr["rspan"] * PLAN_ART_SIZE
+    py = PLAN_ART_PAD + (ry - fr["rminy"]) / fr["rspan"] * PLAN_ART_SIZE
+    return px, py
+
+
+def plan_pixel_unmap(slug, geom_data):
+    """Map a turned plan's stored pixels back to the north-up sample frame.
+
+    generate_plan_tree_wash samples WorldCover in that north-up frame.
+    A hill with no PLAN_TURN_DEG entry is already north-up.
+    """
+    deg = PLAN_TURN_DEG.get(slug)
+    if deg is None or not geom_data or not _geom_run_points(geom_data):
+        return None
+    fr = plan_turn_frames(geom_data, deg)
+    pad = PLAN_ART_PAD
+    size = PLAN_ART_SIZE
+
+    def unmap(px, py):
+        rx = fr["rminx"] + (px - pad) / size * fr["rspan"]
+        ry = fr["rminy"] + (py - pad) / size * fr["rspan"]
+        ox, oy = fr["origin"]
+        dx = rx - ox
+        dy = ry - oy
+        sx = ox + fr["c"] * dx + fr["s"] * dy
+        sy = oy - fr["s"] * dx + fr["c"] * dy
+        east = sx
+        north = -sy
+        nup_x = pad + (east - fr["minx"]) / fr["span"] * size
+        nup_y = pad + (fr["maxy"] - north) / fr["span"] * size
+        return nup_x, nup_y
+
+    return unmap
+
+
 def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unmap=None):
     """Generate Plan-view treeWash path d in unshifted Plan-view coordinates.
 
@@ -1735,7 +1828,9 @@ def generate_overlay(slug):
     tree_wash_len = 0
     if not FRONTAL_ONLY and contour_path.exists():
         geom_raw = json.loads(geom_path.read_text())
-        tree_wash_d, _, _, bands = generate_plan_tree_wash(slug, hill, geom_raw, wc_path, conc_path)
+        tree_wash_d, _, _, bands = generate_plan_tree_wash(
+            slug, hill, geom_raw, wc_path, conc_path, pixel_unmap=plan_pixel_unmap(slug, geom_raw)
+        )
         tree_wash_len = _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands)
     elif dst_c_slug.exists():
         tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", "") or "")
