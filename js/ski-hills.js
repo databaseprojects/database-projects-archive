@@ -943,7 +943,8 @@
     "big-sky-resort": "20261116bs30",
     "winter-park-resort": "20261116wpz",
     "deer-valley-resort": "20261116dvp",
-    "jackson-hole-mountain-resort": "20261116jh"
+    "jackson-hole-mountain-resort": "20261116jh",
+    "copper-mountain": "20261116cu"
   };
 
   function assetV(slug) {
@@ -1298,7 +1299,8 @@
       hill.slug === "big-sky-resort" ||
       hill.slug === "winter-park-resort" ||
       hill.slug === "deer-valley-resort" ||
-      hill.slug === "jackson-hole-mountain-resort"
+      hill.slug === "jackson-hole-mountain-resort" ||
+      hill.slug === "copper-mountain"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
