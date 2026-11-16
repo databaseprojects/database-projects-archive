@@ -140,7 +140,7 @@
     mt: "20261116bsp",
     nh: "20261105g50",
     nj: "20261105g50",
-    nm: "20261105g50",
+    nm: "20261116tsv",
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116sdn",
+      index: R2_BASE + "contours/usa-index.json?v=20261116apa",
       label: US_STATE_NAMES[id]
     };
   });
@@ -842,13 +842,13 @@
   }
 
 
-  var ASSET_V = "20261116sdn";
+  var ASSET_V = "20261116apa";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
     "big-white-ski-resort": "20261116be",
     "apex-mountain-resort": "20261116be",
-    "sundance-resort": "20261116sdn",
+    "sundance-resort": "20261116sky",
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
@@ -857,25 +857,25 @@
     "vail": "20261116v45",
     "sun-peaks-resort": "20261116spk",
     "silverton-mountain": "20261116b1",
-    "taos-ski-valley": "20261116b1",
-    "snowbasin-resort": "20261116b1",
+    "taos-ski-valley": "20261116tsv",
+    "snowbasin-resort": "20261116sky",
     "wolf-creek-ski-area": "20261116b1",
     "alpental": "20261116alp",
     "pajarito-mountain": "20261116b1",
     "sipapu-ski-and-summer-resort": "20261116b1",
     "mount-rose-ski-tahoe": "20261116b1",
-    "red-lodge-mountain": "20261116b1",
+    "red-lodge-mountain": "20261116rlz",
     "mountain-high": "20261116b1",
-    "ski-apache": "20261116b1",
+    "ski-apache": "20261116apa",
     "snow-valley-mountain-resort": "20261116b1",
     "mount-cain-alpine-park": "20261116b1",
-    "sasquatch-mountain-resort": "20261116b1",
+    "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
-    "nipika": "20261116b1",
+    "nipika": "20261116sky",
     "snowbird": "20261116sbd",
     "stevens-pass": "20261116b1",
     "mad-river-glen": "20261116b1",
-    "brighton-resort": "20261116b1"
+    "brighton-resort": "20261116sky"
   };
 
   function assetV(slug) {
@@ -1230,7 +1230,15 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    var washFileV = hill && (hill.slug === "sun-peaks-resort" || hill.slug === "alpental") ? washV : ASSET_V;
+    var washFileV = hill && (
+      hill.slug === "sun-peaks-resort" ||
+      hill.slug === "alpental" ||
+      hill.slug === "taos-ski-valley" ||
+      hill.slug === "sundance-resort" ||
+      hill.slug === "snowbasin-resort" ||
+      hill.slug === "nipika" ||
+      hill.slug === "brighton-resort"
+    ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
@@ -4345,7 +4353,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116sdn").then(function (res) {
+  fetch("hill-index.json?v=20261116apa").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

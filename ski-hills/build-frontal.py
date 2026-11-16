@@ -190,6 +190,10 @@ FLOATING_HORIZON = {
     # stops those crossings. CONTOUR_CLEAR_JOIN puts a graze back when it
     # crosses nothing.
     "sun-valley-bald-mountain": 2.0,
+    # Sasquatch. The sheet stays on the 1 px default from PR #507 so the
+    # rest of the hill does not move. The top-left ridge is tighter: see
+    # CONTOUR_TIGHT.
+    "sasquatch-mountain-resort": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -220,6 +224,10 @@ HORIZON_MIN_RUN = {
     # Bogus Basin top half. A 4+ sample stretch behind the ridge hides
     # (same as Baker / Harper corners).
     "bogus-basin-mountain-recreation-area": 4,
+    # Sasquatch. Same 4-sample join as the default, so a short graze on
+    # the rest of the sheet stays one stroke. The top-left ridge uses
+    # the shorter dip in CONTOUR_TIGHT.
+    "sasquatch-mountain-resort": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -539,6 +547,16 @@ CONTOUR_TIGHT = {
         "x": (1000.0 * 2.0 / 3.0, 1400.0),
         "y": (-400.0, 1000.0 / 3.0),
     },
+    # Sasquatch. Top-left quadrant only. The 1 px / 4-sample pass left the
+    # clip a little off that ridge: hidden pieces stopped short of the crest
+    # or ran past it. 0.4 px and a 2-sample dip sit the hide on the ridge.
+    # The rest of the sheet stays at 1.0 px / 4 samples.
+    "sasquatch-mountain-resort": {
+        "tol": 0.4,
+        "min_run": 2,
+        "x": (-400.0, 500.0),
+        "y": (-400.0, 500.0),
+    },
 }
 # Runs only, and only where a hill asks. Tol is pixels below a nearer
 # skyline. A marked stretch shorter than min_run samples stays solid.
@@ -753,10 +771,14 @@ CAMERAS = {
     # Nipika only. Automatic bird's-eye facing was 47.7. 67.7 is 20° further,
     # which turns that drawing 20° counter-clockwise (Nov 5). Plan is turned
     # separately 50° clockwise (facing 310.0) and is not locked to this.
+    # Run and lift weights stay the published 2.2 / 1.7 when the wider DEM
+    # adds contours.
     "nipika": {
         "facing": 67.7,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
+        "run_width": 2.2,
+        "lift_width": 1.7,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
     },
     # Caledonia Nordic only. The automatic render faced 7.6 (the 187.6
@@ -1067,6 +1089,8 @@ CAMERAS = {
     # Colorado half turns. Each automatic facing (in brackets) plus 180°,
     # which turns the bird's-eye drawing 180°. The plan is turned to match.
     "crested-butte-mountain-resort": {"facing": 154.3},  # (334.3)
+    # Plan fit is the run box in hill-index, [349.8, 123.1, 885.8, 433.8].
+    # The long lift on the left is clipped. This facing is unchanged.
     "wolf-creek-ski-area": {"facing": 218.3},  # (38.3)
     "monarch-mountain": {"facing": 234.3},  # (54.3)
     "arapahoe-basin": {"facing": 148.3},  # (328.3)
@@ -1284,6 +1308,36 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Taos Ski Valley only. Automatic facing is 195.7 (orient() kept the
+    # fall line). Locked so a later DEM_PAD cannot flip it. frame_scale
+    # 1/1.10 pulls the published sheet back 10% around the centre. The
+    # 1.0 DEM crop already reaches those edges, so the pad stays 1.0.
+    # The plan view is turned separately, 120° clockwise. Published
+    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    "taos-ski-valley": {
+        "facing": 195.7,
+        "frame_scale": 0.909,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
+    # Red Lodge Mountain only. Zoomed out x1.10 from the published sheet
+    # (2026-11-16): frame_scale 1/1.10 pulls the bird's-eye back 10% around
+    # the sheet centre. 214.6033365795 is the published automatic facing
+    # (it prints as 214.6; orient kept it). Locked so a wider DEM_PAD cannot
+    # flip it. The plan is that same turn, zoomed by the hill-index bounds,
+    # and is not re-rotated. The default 1 px horizon pass stays.
+    "red-lodge-mountain": {
+        "facing": 214.6033365795,
+        "frame_scale": 0.909,
+    },
+    # Ski Apache. Zoomed out to 0.91 of the published sheet (about 10%).
+    # Facing stays locked at the automatic 232.78 so a wider DEM_PAD cannot
+    # nudge orient(). Plan zoom is separate (hill-index bounds × 1/0.91
+    # around the same centre). No horizon entry: the default 1 px pass stays.
+    "ski-apache": {
+        "facing": 232.78,
+        "frame_scale": 0.91,
+    },
 }
 
 
@@ -1431,7 +1485,11 @@ DEM_PAD = {
     # and contours; 2.6/4.0 still sparse there. 5.0 reaches the frame
     # edge (same pattern as Caledonia after its flip).
     "harper-mountain": 5.0,
-    "nipika": 2.2,
+    # Nipika (facing 67.7). The near edge of the 2.2 crop cuts a white wedge
+    # across the bottom of the sheet: no contours and no trees, while the
+    # right side still reaches the frame. 5.0 brings genuine DEM past that
+    # edge (Harper / Le Massif pattern). Facing stays locked.
+    "nipika": 5.0,
     # Hallis Lake turned 165°; corners need the wider 2.6 crop.
     "hallis-lake-ski-trails": 2.6,
     # Whitewater (facing 43.5). The bottom-left corner
@@ -1581,6 +1639,10 @@ DEM_PAD = {
     # the default 1.0 crop, so contours and the tree wash need the wider
     # pad used after a turn (Big Sky / Sundance / Bear Mountain).
     "vail": 2.6,
+    # Ski Apache, zoomed to frame_scale 0.91. The top-right corner of the
+    # wider sheet sat past the default 1.0 crop (contours stopped about
+    # 50 px short of that corner). 1.8 reaches it (Sun Peaks / Fernie).
+    "ski-apache": 1.8,
 }
 
 
