@@ -194,6 +194,10 @@ FLOATING_HORIZON = {
     # rest of the hill does not move. The top-left ridge is tighter: see
     # CONTOUR_TIGHT.
     "sasquatch-mountain-resort": 1.0,
+    # Stevens Pass. The default 1 px / 4-sample pass (PR #507) still left
+    # farther contours across nearer ridges. Same tolerance, kept explicitly
+    # because the no-cross tests below make this hill hand-tuned.
+    "stevens-pass": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -228,6 +232,9 @@ HORIZON_MIN_RUN = {
     # the rest of the sheet stays one stroke. The top-left ridge uses
     # the shorter dip in CONTOUR_TIGHT.
     "sasquatch-mountain-resort": 4,
+    # Stevens Pass. A dip shorter than 4 samples is drawn back, same as the
+    # default, except where that piece would cross a nearer contour.
+    "stevens-pass": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -462,7 +469,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass"}
+# Base hold for the no-cross test. 0 means the raw hidden samples, so the
+# ordinary 12 px hold is tested, not only a longer hold. Per hill only.
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0}
+# The 4-sample dip join draws a short hidden run back even when that piece
+# crosses a nearer contour. These hills skip that release. Per hill only.
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -491,6 +504,8 @@ def hand_tuned_horizon(slug):
         or key in CONTOUR_CLEAR_JOIN
         or key in CONTOUR_DRAW
         or key in CONTOUR_KEEP
+        or key in CONTOUR_NO_CROSS_BASE
+        or key in HORIZON_RELEASE_NO_CROSS
     )
 
 
@@ -1013,7 +1028,10 @@ CAMERAS = {
     # 45° counter-clockwise. Edit this number.
     # Stevens Pass only. The automatic render faced 46.9 (the 226.9 guess,
     # flipped by orient()). 116.9 is 70° further clockwise, which turns the
-    # bird's-eye drawing 70° counter-clockwise. The plan is turned to match.
+    # bird's-eye drawing 70° counter-clockwise. Facing stays 116.9.
+    # The plan was the same turn (PLAN_TURN_DEG -116.9). It is now another
+    # 30° counter-clockwise, -146.9, and the run box is recentred above
+    # the banner. Bird's-eye framing is unchanged.
     "stevens-pass": {
         "facing": 116.9,
     },
@@ -2160,18 +2178,98 @@ def _horizon_runs(marked):
     return runs
 
 
-def _release_short_horizon_runs(chunks, marked, min_run):
-    """Put a dip back if it stayed below the crest for fewer than min_run samples."""
+def _drawn_segment_index(chunks, cell=24.0):
+    """Grid of segments the horizon has left drawn. Hide flags are current."""
+    segs = []
+    grid = {}
+    for ci, chunk in enumerate(chunks):
+        for i in range(len(chunk) - 1):
+            a = chunk[i]
+            b = chunk[i + 1]
+            if a[3] or b[3]:
+                continue
+            sid = len(segs)
+            segs.append((ci, min(a[2], b[2]), a[:2], b[:2]))
+            x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+            y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+            for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+                for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                    grid.setdefault((gx, gy), []).append(sid)
+    return segs, grid, cell
+
+
+def _dip_crosses_nearer(chunks, ci, start, end, segs, grid, cell, gap=15.0):
+    """True when drawing this hidden dip would cross a nearer contour."""
+    chunk = chunks[ci]
+    lo = max(0, start - 1)
+    hi = min(len(chunk) - 1, end + 1)
+    pts = [chunk[k][:2] for k in range(lo, hi + 1)]
+    if len(pts) < 2:
+        return False
+    dip_near = min(chunk[k][2] for k in range(start, end + 1))
+    seen = set()
+    for a, b in zip(pts, pts[1:]):
+        x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+        y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+        for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+            for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                for sid in grid.get((gx, gy), ()):
+                    if sid in seen:
+                        continue
+                    seen.add(sid)
+                    oc, onear, c, d = segs[sid]
+                    if oc == ci or onear + gap > dip_near:
+                        continue
+                    if _seg_cross(a, b, c, d):
+                        return True
+    return False
+
+
+def _release_short_horizon_runs(chunks, marked, min_run, no_cross=False):
+    """Put a dip back if it stayed below the crest for fewer than min_run samples.
+
+    no_cross keeps the dip hidden when drawing it would cross a nearer
+    contour. That is the same test as CONTOUR_NO_CROSS, for this join.
+    """
+    released = []
+    skipped = 0
+    segs = grid = cell = None
+    pending = []
     for ci, start, end in _horizon_runs(marked):
         if end - start + 1 >= min_run:
             continue
+        pending.append((end - start, ci, start, end))
+    # Shortest first. An accepted dip then blocks a later one.
+    pending.sort()
+    if no_cross:
+        segs, grid, cell = _drawn_segment_index(chunks)
+    for _length, ci, start, end in pending:
+        if no_cross and _dip_crosses_nearer(chunks, ci, start, end, segs, grid, cell):
+            skipped += 1
+            continue
+        released.append((ci, start, end))
         chunk = chunks[ci]
         for pi in range(start, end + 1):
             px, py, yr, _hide = chunk[pi]
             chunk[pi] = (px, py, yr, False)
+        if no_cross:
+            for pi in range(max(0, start - 1), min(len(chunk) - 1, end + 1)):
+                a = chunk[pi]
+                b = chunk[pi + 1]
+                if a[3] or b[3]:
+                    continue
+                sid = len(segs)
+                segs.append((ci, min(a[2], b[2]), a[:2], b[:2]))
+                x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+                y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+                for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+                    for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                        grid.setdefault((gx, gy), []).append(sid)
+    if no_cross:
+        print("release_nocross", "skipped", skipped, "released", len(released))
 
 
-def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None):
+def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None, release_no_cross=False):
     """Hide the far face where a nearer contour already crests that column.
 
     Samples walk from the camera outward. Each column keeps the highest
@@ -2228,16 +2326,17 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None):
                 if cy < horizon[c]:
                     horizon[c] = cy
     if use_run:
-        _release_short_horizon_runs(chunks, marked, min_run)
+        _release_short_horizon_runs(chunks, marked, min_run, release_no_cross)
 
 
-def _join_blocked(chunks, hold, keep_visible):
-    """Per-chunk flags where a long hold may not bridge across a contour.
+def _join_blocked(chunks, hold, keep_visible, base_hold=None):
+    """Per-chunk flags where a hold may not bridge across a contour.
 
-    The base pass uses MIN_RUN. A gap the longer hold fills is only kept
-    filled when the bridged piece crosses no contour drawn by the base
-    pass. A gap that would cross one is a back face showing through a
-    ridge, so it stays hidden.
+    The base pass uses MIN_RUN, unless base_hold is set. base_hold 0 keeps
+    the raw hidden samples, so the ordinary 12 px hold is tested too.
+    A gap the hold fills stays filled only when the bridged piece crosses
+    no contour drawn by the base pass. A gap that would cross one is a
+    back face showing through a ridge, so it stays hidden.
     """
     from shapely.geometry import LineString
     from shapely.strtree import STRtree
@@ -2247,7 +2346,10 @@ def _join_blocked(chunks, hold, keep_visible):
     owner = []
     for ci, chunk in enumerate(chunks):
         raw = [hide for (_px, _py, _yr, hide) in chunk]
-        base = solid_flags(raw, chunk, MIN_RUN)
+        if base_hold == 0:
+            base = list(raw)
+        else:
+            base = solid_flags(raw, chunk, MIN_RUN if base_hold is None else base_hold)
         base_flags.append(base)
         run = []
         for (px, py, _yr, _h), flag in zip(chunk, base):
@@ -2321,14 +2423,14 @@ def _join_blocked(chunks, hold, keep_visible):
     return out
 
 
-def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cross=False):
+def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cross=False, cross_base=None):
     """Visible runs after the short-gap hold. One entry per drawn stroke."""
     hold = MIN_RUN if min_run is None else min_run
     draw_at = hold if min_draw is None else min_draw
     drawn = []
     seen = set()
     kept = 0
-    pre = _join_blocked(chunks, hold, keep_visible) if no_cross else None
+    pre = _join_blocked(chunks, hold, keep_visible, cross_base) if no_cross else None
     for ci, chunk in enumerate(chunks):
         if pre is not None:
             flags = pre[ci]
@@ -2550,6 +2652,108 @@ def dem_zbuffer(arr, gt, paper, project_xy, metres, rot):
     return zbuf
 
 
+def _split_farther_crossings(chunks, gap=15.0):
+    """Break a drawn segment that crosses a nearer contour.
+
+    One hidden midpoint drops that segment and leaves the samples on
+    either side drawn, so the neighbouring pieces stay. The 12 px hold
+    may try to close the gap; CONTOUR_NO_CROSS with a raw base refuses
+    the close when the piece still crosses.
+    """
+    cell = 24.0
+    indexed = []
+    grid = {}
+    for ci, chunk in enumerate(chunks):
+        for i in range(len(chunk) - 1):
+            a = chunk[i]
+            b = chunk[i + 1]
+            if a[3] or b[3]:
+                continue
+            sid = len(indexed)
+            indexed.append((ci, i, min(a[2], b[2]), a[:2], b[:2]))
+            x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+            y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+            for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+                for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                    grid.setdefault((gx, gy), []).append(sid)
+    hit = set()
+    for sid, (ci, i, near, a, b) in enumerate(indexed):
+        seen = set()
+        x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+        y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+        for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+            for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                for oid in grid.get((gx, gy), ()):
+                    if oid in seen or oid == sid:
+                        continue
+                    seen.add(oid)
+                    oc, _oi, onear, c, d = indexed[oid]
+                    if oc == ci or onear + gap > near:
+                        continue
+                    if _seg_cross(a, b, c, d):
+                        hit.add((ci, i))
+                        break
+    for ci, i in sorted(hit, reverse=True):
+        chunk = chunks[ci]
+        a = chunk[i]
+        b = chunk[i + 1]
+        mid = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0, (a[2] + b[2]) / 2.0, True)
+        chunk.insert(i + 1, mid)
+    return len(hit)
+
+
+def count_ridge_crossings(chunks, flags, depth_gap=30.0):
+    """Farther drawn segments that cross a nearer drawn contour.
+
+    Returns the farther-segment count and the crossing-pair count.
+    A same-slope kink is not counted: the farther segment has to sit at
+    least depth_gap metres behind the nearer one.
+    """
+    cell = 24.0
+    segs = []
+    grid = {}
+    for ci, (chunk, flag) in enumerate(zip(chunks, flags)):
+        for i in range(len(chunk) - 1):
+            if flag[i] or flag[i + 1]:
+                continue
+            a = chunk[i]
+            b = chunk[i + 1]
+            sid = len(segs)
+            segs.append((ci, min(a[2], b[2]), max(a[2], b[2]), a[:2], b[:2]))
+            x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+            y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+            for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+                for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                    grid.setdefault((gx, gy), []).append(sid)
+    pairs = 0
+    farther = set()
+    seen = set()
+    for sid, (ci, near, far, a, b) in enumerate(segs):
+        hit = set()
+        x0, x1 = (a[0], b[0]) if a[0] <= b[0] else (b[0], a[0])
+        y0, y1 = (a[1], b[1]) if a[1] <= b[1] else (b[1], a[1])
+        for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+            for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                for oid in grid.get((gx, gy), ()):
+                    if oid in hit or oid == sid:
+                        continue
+                    hit.add(oid)
+                    oc, onear, ofar, c, d = segs[oid]
+                    if oc == ci:
+                        continue
+                    pair = (sid, oid) if sid < oid else (oid, sid)
+                    if pair in seen or not _seg_cross(a, b, c, d):
+                        continue
+                    seen.add(pair)
+                    if far >= ofar and near >= onear + depth_gap:
+                        pairs += 1
+                        farther.add(sid)
+                    elif ofar >= far and onear >= near + depth_gap:
+                        pairs += 1
+                        farther.add(oid)
+    return len(farther), pairs
+
+
 def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None, clear_join=None, zbuf=None, zbuf_tol=None):
     """Contours across the whole DEM. Nearer ground hides the back.
 
@@ -2667,11 +2871,25 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
     if float_tol is None and not tight:
         return before, len(before)
     if float_tol is not None:
-        apply_floating_horizon(chunks, col_of, float_tol, float_min_run, float_hide)
+        apply_floating_horizon(
+            chunks, col_of, float_tol, float_min_run, float_hide,
+            release_no_cross=_hill in HORIZON_RELEASE_NO_CROSS,
+        )
     if clear_join is not None:
         print("clearjoin", "max_gap", clear_join, "joined",
               join_clear_gaps(chunks, contour_hold or MIN_RUN, clear_join, contour_keep))
-    drawn, kept = contour_lines(chunks, contour_hold, contour_draw, contour_keep, _hill in CONTOUR_NO_CROSS)
+    if _hill in CONTOUR_NO_CROSS_BASE:
+        print("segment_nocross", "split", _split_farther_crossings(chunks))
+    _cross_base = CONTOUR_NO_CROSS_BASE.get(_hill)
+    drawn, kept = contour_lines(
+        chunks, contour_hold, contour_draw, contour_keep,
+        _hill in CONTOUR_NO_CROSS, _cross_base,
+    )
+    if _hill in HORIZON_RELEASE_NO_CROSS:
+        hold = contour_hold or MIN_RUN
+        final_flags = _join_blocked(chunks, hold, contour_keep, _cross_base)
+        segs, pairs = count_ridge_crossings(chunks, final_flags)
+        print("ridgecross", _hill, "segments", segs, "pairs", pairs)
     before_bag = {}
     for _yr, line in before:
         for px, py in line:

@@ -140,12 +140,12 @@
     mt: "20261116bsp",
     nh: "20261105g50",
     nj: "20261105g50",
-    nm: "20261116tsv",
+    nm: "20261116t65",
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
     vt: "20261105g50",
-    wa: "20261105g50",
+    wa: "20261116stx",
     wi: "20261110wcp",
     wv: "20261105g50",
     wy: "20261105g50",
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116apa";
+  var ASSET_V = "20261116stx";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -856,7 +856,7 @@
     "vail": "20261116v45",
     "sun-peaks-resort": "20261116spk",
     "silverton-mountain": "20261116b1",
-    "taos-ski-valley": "20261116tsv",
+    "taos-ski-valley": "20261116t65",
     "snowbasin-resort": "20261116sky",
     "wolf-creek-ski-area": "20261116b1",
     "alpental": "20261116alp",
@@ -872,7 +872,7 @@
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
     "snowbird": "20261116sb5",
-    "stevens-pass": "20261116b1",
+    "stevens-pass": "20261116stx",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky"
   };

@@ -764,6 +764,10 @@ def fit_art_shift(hill, limit_y=880):
 # widens the hill-index bounds and must not turn it again.
 PLAN_TURN_DEG = {
     "red-lodge-mountain": -214.6,
+    # Stevens Pass. Was -116.9, the negated bird's-eye facing, which is
+    # 116.9° counter-clockwise from north-up. -146.9 is another 30°
+    # counter-clockwise. Negative is counter-clockwise in this frame.
+    "stevens-pass": -146.9,
 }
 
 
