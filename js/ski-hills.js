@@ -140,7 +140,7 @@
     mt: "20261116bsp",
     nh: "20261105g50",
     nj: "20261105g50",
-    nm: "20261116tsv",
+    nm: "20261116t65",
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116apa",
+      index: R2_BASE + "contours/usa-index.json?v=20261116t65",
       label: US_STATE_NAMES[id]
     };
   });
@@ -857,7 +857,7 @@
     "vail": "20261116v45",
     "sun-peaks-resort": "20261116spk",
     "silverton-mountain": "20261116b1",
-    "taos-ski-valley": "20261116tsv",
+    "taos-ski-valley": "20261116t65",
     "snowbasin-resort": "20261116sky",
     "wolf-creek-ski-area": "20261116b1",
     "alpental": "20261116alp",
@@ -4353,7 +4353,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116apa").then(function (res) {
+  fetch("hill-index.json?v=20261116t65").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
