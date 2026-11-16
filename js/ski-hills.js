@@ -145,7 +145,7 @@
     or: "20261105g50",
     pa: "20261105g50",
     vt: "20261105g50",
-    wa: "20261105g50",
+    wa: "20261116stx",
     wi: "20261110wcp",
     wv: "20261105g50",
     wy: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116apa",
+      index: R2_BASE + "contours/usa-index.json?v=20261116stx",
       label: US_STATE_NAMES[id]
     };
   });
@@ -842,7 +842,7 @@
   }
 
 
-  var ASSET_V = "20261116apa";
+  var ASSET_V = "20261116stx";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -873,7 +873,7 @@
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
     "snowbird": "20261116sbd",
-    "stevens-pass": "20261116b1",
+    "stevens-pass": "20261116stx",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky"
   };
@@ -4353,7 +4353,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116apa").then(function (res) {
+  fetch("hill-index.json?v=20261116stx").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
