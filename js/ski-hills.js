@@ -23,9 +23,9 @@
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261105cmt",
+      file: "alberta.json?v=20261116ll30",
       names: "alberta-names.json?v=20261105cmt",
-      index: R2_BASE + "contours/alberta-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/alberta-index.json?v=20261116ll30",
       label: "Alberta"
     },
     qc: {
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116stb";
+  var ASSET_V = "20261116ll30";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -877,7 +877,7 @@
     "brighton-resort": "20261116sky",
     "park-city-mountain-resort": "20261116pct",
     "breckenridge": "20261116brk",
-    "lake-louise-ski-area": "20261116pct",
+    "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
     "steamboat-ski-resort": "20261116stc",
     "palisades-tahoe-olympic-valley": "20261116pal"
@@ -4361,7 +4361,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116stb").then(function (res) {
+  fetch("hill-index.json?v=20261116ll30").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
