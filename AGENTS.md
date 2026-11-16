@@ -43,3 +43,7 @@ When Billy points at a ridge (or asks for a ridge pass), find the clipping with 
 ### Ready-made agent machines
 
 Cursor agent computers should come with the mapping tools used in ridge-clipping and ski hill re-renders pre-installed: GDAL and its Python bindings, rasterio, and the other elevation, forest-map and canopy data tools that `ski-hills/build-frontal.py` and the related scripts need. Put that install in the repo's Cursor environment setup (for example a `.cursor` environment Dockerfile or install step). An agent on a fresh machine can then start at once, with that roughly two-minute install already done.
+
+## Prints and exports (standing rule from Billy)
+
+Prints and exports always follow the live hill. Every ski-hill print or export (any hill, size or view) must take rotation angle, scale and placement from the current live databaseprojects.ca capture of that hill, as explicit parameters for every element drawn: main art, fill strip, caption, trees and contours. Never use baked or older cached geometry (for example the 2026-11-09 band-contours files) whose projection doesn't match the live view. If a source doesn't match, rebuild it from the live view or stop and flag it. This applies automatically to every print or export request; no per-task spec is needed. (Billy, 2026-11-15)
