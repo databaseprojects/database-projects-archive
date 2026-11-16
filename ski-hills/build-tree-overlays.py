@@ -678,6 +678,78 @@ def fit_art_shift(hill, limit_y=880):
     return {"s": s, "dx": dx, "dy": dy, "clip": limit_y, "bounds": (min_x, min_y, max_x, max_y)}
 
 
+def ski_apache_plan_frame(hill, geom_data):
+    """Stored Ski Apache pixels are the north-up plan turned about -127.22°.
+
+    The turn is baked into usa/nm.json. Solving the similarity from the geom
+    (same lines, same order) recovers it to about 0.1 px, which is the
+    stored rounding. to_px maps lon/lat into that stored frame. unmap maps
+    stored pixels back to the north-up frame generate_plan_tree_wash samples.
+    """
+    stored = []
+    for run in hill.get("runs") or []:
+        text = run["p"] if isinstance(run, dict) else run
+        pts = []
+        for pair in str(text).split():
+            if "," not in pair:
+                continue
+            x, y = pair.split(",", 1)
+            pts.append((float(x), float(y)))
+        if pts:
+            stored.append(pts)
+    geom_lines = []
+    for feat in geom_data.get("runs") or []:
+        for line in feat.get("lines") or []:
+            if line:
+                geom_lines.append(line)
+    if len(stored) != len(geom_lines) or [len(a) for a in stored] != [len(b) for b in geom_lines]:
+        raise RuntimeError("ski-apache geom does not match the stored plan lines")
+    lats = [p[1] for line in geom_lines for p in line]
+    mid = sum(lats) / len(lats)
+    cos = math.cos(mid * math.pi / 180.0)
+    src = []
+    dst = []
+    for line, pix in zip(geom_lines, stored):
+        for (lon, lat), (px, py) in zip(line, pix):
+            src.append((lon * 111320.0 * cos, -lat * 110540.0))
+            dst.append((px, py))
+    S = np.asarray(src, dtype=np.float64)
+    D = np.asarray(dst, dtype=np.float64)
+    sc = S.mean(axis=0)
+    dc = D.mean(axis=0)
+    M, _, _, _ = np.linalg.lstsq(S - sc, D - dc, rcond=None)
+    err = np.linalg.norm((S - sc) @ M + dc - D, axis=1)
+    if float(np.median(err)) > 0.5:
+        raise RuntimeError("ski-apache plan frame did not fit (median %.2f px)" % float(np.median(err)))
+    pts = [p for line in geom_lines for p in line]
+    xs = [p[0] * 111320.0 * cos for p in pts]
+    ys = [p[1] * 110540.0 for p in pts]
+    minx, maxx = min(xs), max(xs)
+    miny, maxy = min(ys), max(ys)
+    span = max(maxx - minx, maxy - miny, 1.0)
+    Minv = np.linalg.inv(M)
+
+    def to_px(lon, lat):
+        x = lon * 111320.0 * cos
+        y_south = -lat * 110540.0
+        px = (x - sc[0]) * M[0, 0] + (y_south - sc[1]) * M[1, 0] + dc[0]
+        py = (x - sc[0]) * M[0, 1] + (y_south - sc[1]) * M[1, 1] + dc[1]
+        return px, py
+
+    def unmap(px, py):
+        dpx = px - dc[0]
+        dpy = py - dc[1]
+        x = dpx * Minv[0, 0] + dpy * Minv[1, 0] + sc[0]
+        y_south = dpx * Minv[0, 1] + dpy * Minv[1, 1] + sc[1]
+        y_north = -y_south
+        return (
+            PLAN_ART_PAD + (x - minx) / span * PLAN_ART_SIZE,
+            PLAN_ART_PAD + (maxy - y_north) / span * PLAN_ART_SIZE,
+        )
+
+    return to_px, unmap
+
+
 def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unmap=None):
     """Generate Plan-view treeWash path d in unshifted Plan-view coordinates.
 
@@ -1591,7 +1663,13 @@ def generate_overlay(slug):
     tree_wash_len = 0
     if not FRONTAL_ONLY and contour_path.exists():
         geom_raw = json.loads(geom_path.read_text())
-        tree_wash_d, _, _, bands = generate_plan_tree_wash(slug, hill, geom_raw, wc_path, conc_path)
+        # Ski Apache's stored plan is turned. Sample trees in that frame.
+        unmap = None
+        if slug == "ski-apache":
+            _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
+        tree_wash_d, _, _, bands = generate_plan_tree_wash(
+            slug, hill, geom_raw, wc_path, conc_path, pixel_unmap=unmap
+        )
         tree_wash_len = _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands)
     elif dst_c_slug.exists():
         tree_wash_len = len(json.loads(dst_c_slug.read_text()).get("treeWash", "") or "")

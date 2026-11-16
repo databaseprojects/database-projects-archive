@@ -1268,6 +1268,14 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Ski Apache. Zoomed out to 0.91 of the published sheet (about 10%).
+    # Facing stays locked at the automatic 232.78 so a wider DEM_PAD cannot
+    # nudge orient(). Plan zoom is separate (hill-index bounds × 1/0.91
+    # around the same centre). No horizon entry: the default 1 px pass stays.
+    "ski-apache": {
+        "facing": 232.78,
+        "frame_scale": 0.91,
+    },
 }
 
 
@@ -1560,6 +1568,10 @@ DEM_PAD = {
     # the default 1.0 crop, so contours and the tree wash need the wider
     # pad used after a turn (Big Sky / Sundance / Bear Mountain).
     "vail": 2.6,
+    # Ski Apache, zoomed to frame_scale 0.91. The top-right corner of the
+    # wider sheet sat past the default 1.0 crop (contours stopped about
+    # 50 px short of that corner). 1.8 reaches it (Sun Peaks / Fernie).
+    "ski-apache": 1.8,
 }
 
 

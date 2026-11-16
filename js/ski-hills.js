@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116sdn",
+      index: R2_BASE + "contours/usa-index.json?v=20261116apa",
       label: US_STATE_NAMES[id]
     };
   });
@@ -841,7 +841,7 @@
   }
 
 
-  var ASSET_V = "20261116sdn";
+  var ASSET_V = "20261116apa";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
   var FRONTAL_V = {
     "mt-bachelor": "20261110bach",
@@ -865,7 +865,7 @@
     "mount-rose-ski-tahoe": "20261116b1",
     "red-lodge-mountain": "20261116b1",
     "mountain-high": "20261116b1",
-    "ski-apache": "20261116b1",
+    "ski-apache": "20261116apa",
     "snow-valley-mountain-resort": "20261116b1",
     "mount-cain-alpine-park": "20261116b1",
     "sasquatch-mountain-resort": "20261116b1",
@@ -4344,7 +4344,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116sdn").then(function (res) {
+  fetch("hill-index.json?v=20261116apa").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
