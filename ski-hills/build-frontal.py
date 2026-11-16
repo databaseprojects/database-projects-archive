@@ -770,11 +770,11 @@ CAMERAS = {
     # Lake Louise only. Front faces the main run mass (west of centre) from
     # the WSW. Back faces the Larch / Paradise / Ptarmigan / Saddleback bowls
     # (east of centre) from the ENE. Same Front / Back toggle as Washington.
-    # The pair was 82.9 / 262.9. 47.9 and 227.9 are 35° less, which turns
-    # each drawing 35° clockwise. Back 247.9 is 20° more, which turns
-    # the back drawing 20° counter-clockwise; front stays 47.9. They stay 180° apart. Edit these numbers.
+    # Front was 47.9. 17.9 is 30° less, which turns the front drawing 30°
+    # clockwise. Back stays 247.9. The plan is turned the same 30° clockwise,
+    # from -47.9 to -17.9. Edit these numbers.
     "lake-louise-ski-area": {
-        "views": {"front": 47.9, "back": 247.9},
+        "views": {"front": 17.9, "back": 247.9},
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},

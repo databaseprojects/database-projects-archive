@@ -772,6 +772,11 @@ PLAN_TURN_DEG = {
     # counter-clockwise from north-up. -128.0 is another 35°
     # counter-clockwise. Negative is counter-clockwise in this frame.
     "steamboat-ski-resort": -128.0,
+    # Lake Louise. Was -47.9, the negated bird's-eye front facing, which is
+    # 47.9° counter-clockwise from north-up. -17.9 is 30° clockwise
+    # (clockwise increases the plan angle). Negative is counter-clockwise
+    # in this frame.
+    "lake-louise-ski-area": -17.9,
 }
 
 
