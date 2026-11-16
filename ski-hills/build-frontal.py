@@ -1516,6 +1516,8 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # job 20261116cu45: facing 197.3 -> 242.3
+    "copper-mountain": {"facing": 242.3},
 }
 
 
