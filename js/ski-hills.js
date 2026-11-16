@@ -882,7 +882,7 @@
     "steamboat-ski-resort": "20261116stz",
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
-    "keystone": "20261116kyp",
+    "keystone": "20261116ky12",
     "beaver-creek": "20261116bvc",
     "banff-sunshine-village": "20261116sun",
     "big-sky-resort": "20261116bs30",

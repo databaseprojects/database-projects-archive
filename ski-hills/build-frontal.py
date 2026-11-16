@@ -1263,10 +1263,13 @@ CAMERAS = {
     # camera that matches the plan at -128.97. Locked so a later input
     # refresh cannot drift the bird's-eye. frame_scale stays the default
     # 1.0. run_width and lift_width are the published 2.2 / 1.7.
+    # job 20261116ky12: frame_scale 1.0 -> 0.95
+    # job 20261116ky12: frame_scale 0.95 -> 0.95
     "keystone": {
         "facing": 128.97,
         "run_width": 2.2,
         "lift_width": 1.7,
+        "frame_scale": 0.95,
     },
     # Beaver Creek. Automatic facing is 185.87, the published calculated
     # camera that matches the plan at 174.11° (the negated facing, 360 −
