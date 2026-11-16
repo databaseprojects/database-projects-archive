@@ -988,7 +988,8 @@
   };
   var TREE_STEP_MULTIPLIER = {
     "big-white-ski-resort": 1.2,
-    "heavenly-mountain-resort": 1.2
+    "heavenly-mountain-resort": 1.2,
+    "silver-star-mountain-resort": 1.15
   };
   // tree-opacity:end
 
@@ -1053,7 +1054,11 @@
       path.setAttribute("d", band.d);
       path.setAttribute("transform", compactPath(band.d) ? base + " scale(.1)" : base);
       path.setAttribute("fill", "#336641");
-      path.setAttribute("fill-opacity", bands ? treeStepOpacity(list.length, index, String(band.opacity), slug) : "0.12");
+      var opacity = bands ? treeStepOpacity(list.length, index, String(band.opacity), slug) : "0.12";
+      path.setAttribute("fill-opacity", opacity);
+      // Stylesheet fill-opacity overrides the attribute. Inline style is what
+      // makes this hill's factor show on the plan, as it does on the bird's-eye.
+      if (bands && slug === "silver-star-mountain-resort") path.style.fillOpacity = opacity;
       path.setAttribute("fill-rule", "evenodd");
       path.setAttribute("stroke", "none");
       if (bands) {
