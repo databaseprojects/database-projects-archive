@@ -12,8 +12,9 @@ Steps (each timed in the summary):
   3. optional "before" crossing report on the unedited sheet
   4. edits: built-in (ridge clip, facing, frame_scale, DEM_PAD, plan turn
      angle) plus any --edit command
-  5. build-frontal.py <slug> with RIDGE_CROSSING_REPORT=1 (report only; the
-     render is the same with or without it)
+  5. build-frontal.py <slug> with the region's normal --edge-margin (US 70,
+     Canada and Europe 0) and SH_EDGE_MARGIN, plus RIDGE_CROSSING_REPORT=1
+     (report only; the render is the same with or without it)
   6. trees guard: the job fails if the sheet lost its wash flag / inline
      trees group, or the .wash.svg lost its tree bands (PR #528 bug)
   7. build-tree-overlays.py --frontal-only <slug> (skyline quad clip)
@@ -21,7 +22,9 @@ Steps (each timed in the summary):
      count, run at the same time; stair/opacity checks only see this slug's
      sheets because the worktree is sparse
   9. token update: FRONTAL_V[slug], washFileV list and ski-hills/index.html
-     ?v=, touching only this slug's entries
+     ?v=, touching only this slug's entries. Plan jobs also bump the region's
+     FILE_VERSION map (never a state/catalogue label). The job fails if any
+     catalogue label looks like a cache token.
  10. commit, PR, token-aware rebase on the fresh tip right before the
      squash merge (CI is left running; its result is checked at the end)
  11. Pages publish (flock /workspace/.pages-publish.lock, current remote tip,
@@ -154,6 +157,12 @@ def free_gb(path: Path) -> float:
 
 # ----------------------------------------------------------------- worktree
 
+def fetch_origin(repo: Path, *refs: str) -> None:
+    """Explicit refspec fetch of the current remote tip. Never a bare branch name."""
+    specs = [f"refs/heads/{ref}:refs/remotes/origin/{ref}" for ref in refs]
+    run(["git", "-C", str(repo), "fetch", "-q", "origin", *specs])
+
+
 def slug_patterns(slug: str) -> list[str]:
     pats = ["/*"]
     pats += [f"!{p}" for p in SPARSE_EXCLUDE]
@@ -204,6 +213,158 @@ def _dict_block(src: str, name: str) -> tuple[int, int]:
         return m.start(), m.end() + src[m.end():line_end].rindex("}")
     end = src.index("\n}", m.end()) + 1
     return m.start(), end
+
+
+
+TOKEN_VALUE_RE = re.compile(r"^20\d{6}[a-z0-9]*$")
+# US bird's-eye sheets are fitted with a 70 px edge margin. Canada and
+# Europe use the default inside fit (0). build-tree-overlays.py reads
+# SH_EDGE_MARGIN and it must match the --edge-margin passed to build-frontal.py.
+REGION_EDGE_MARGIN = {"us": 70.0, "ca": 0.0, "eu": 0.0}
+VERSION_MAPS = {"US_FILE_VERSION", "EU_FILE_VERSION"}
+LABEL_MAPS = ("US_STATE_NAMES", "EU_COUNTRY_NAMES")
+
+
+def js_var_object(src: str, name: str) -> tuple[int, int]:
+    """Inclusive start and exclusive end of the `{...}` in `var NAME = { ... }`."""
+    m = re.search(rf"var {re.escape(name)} = \{{", src)
+    if not m:
+        raise SystemExit(f"var {name} = {{ not found in ski-hills.js")
+    i = src.find("{", m.start())
+    depth = 0
+    for j, ch in enumerate(src[i:], i):
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return i, j + 1
+    raise SystemExit(f"unclosed var {name} in ski-hills.js")
+
+
+def set_js_version_entry(src: str, map_name: str, key: str, token: str) -> str:
+    """Set one key inside a JS version map. Refuses to write a label map."""
+    if map_name not in VERSION_MAPS:
+        raise SystemExit(f"refusing to write non-version map {map_name}")
+    a, b = js_var_object(src, map_name)
+    body = src[a:b]
+    pat = re.compile(rf"({re.escape(key)}:\s*\")[^\"]*(\")")
+    new_body, n = pat.subn(rf"\g<1>{token}\2", body, count=1)
+    if n != 1:
+        raise SystemExit(f"{map_name}.{key} not found once (n={n})")
+    return src[:a] + new_body + src[b:]
+
+
+def assert_catalogue_labels_ok(src: str) -> None:
+    """Fail if a catalogue/state/country label looks like a cache token."""
+    bad = []
+    for name in LABEL_MAPS:
+        a, b = js_var_object(src, name)
+        for key, val in re.findall(r'([A-Za-z0-9_-]+):\s*"([^"]*)"', src[a:b]):
+            if TOKEN_VALUE_RE.match(val):
+                bad.append(f"{name}.{key}={val}")
+    for m in re.finditer(r'label:\s*"([^"]*)"', src):
+        if TOKEN_VALUE_RE.match(m.group(1)):
+            line = src.count("\n", 0, m.start()) + 1
+            bad.append(f"label at line {line}={m.group(1)}")
+    if bad:
+        raise SystemExit(
+            "catalogue label looks like a cache token (refusing to publish): "
+            + ", ".join(bad)
+        )
+
+
+def hill_catalog(wt: Path, slug: str) -> tuple[str, str]:
+    """('us','ut'), ('eu','fr') or ('ca','ab') from hill-index.json."""
+    data = json.loads((wt / "ski-hills" / "hill-index.json").read_text())
+    hills = data["hills"] if isinstance(data, dict) else data
+    for h in hills:
+        if h.get("slug") != slug:
+            continue
+        prov = h.get("province") or ""
+        region = h.get("region") or ""
+        catalog = h.get("catalog") or ""
+        if prov == "us" or catalog.startswith("us-"):
+            return "us", region or catalog.split("-", 1)[-1]
+        if prov == "eu" or catalog.startswith("eu-"):
+            return "eu", region or catalog.split("-", 1)[-1]
+        return "ca", prov or catalog
+    raise SystemExit(f"{slug} not found in hill-index.json")
+
+
+def edge_margin_for(wt: Path, slug: str) -> float:
+    group, _ = hill_catalog(wt, slug)
+    return REGION_EDGE_MARGIN.get(group, 0.0)
+
+
+def with_edge_margin(env: dict, wt: Path, slug: str) -> tuple[list[str], dict]:
+    """build-frontal.py argv prefix flags and env with SH_EDGE_MARGIN set."""
+    margin = edge_margin_for(wt, slug)
+    env = dict(env, SH_EDGE_MARGIN=str(margin))
+    flags: list[str] = []
+    if margin > 0:
+        flags = ["--edge-margin", ("%d" % margin) if margin == int(margin) else str(margin)]
+    return flags, env
+
+
+def bump_query_once(src: str, needle: str, token: str, what: str) -> str:
+    """Replace the cache token after a versioned file path. Never touches labels."""
+    if "label" in needle:
+        raise SystemExit(f"refusing query bump that mentions label: {what}")
+    pat = re.compile(rf"({re.escape(needle)}\?v=)[^\"&\s]+")
+    new, n = pat.subn(rf"\g<1>{token}", src, count=1)
+    if n != 1:
+        raise SystemExit(f"{what} ({needle}?v=) not found once (n={n})")
+    return new
+
+
+def bump_plan_catalog_versions(src: str, wt: Path, slug: str, token: str) -> str:
+    """Update only FILE_VERSION maps and file ?v= strings for this slug's region."""
+    group, region = hill_catalog(wt, slug)
+    if group == "us":
+        src = set_js_version_entry(src, "US_FILE_VERSION", region, token)
+        src = bump_query_once(src, "contours/usa-index.json", token, "usa-index.json")
+        src = bump_query_once(src, "hill-index.json", token, "hill-index.json")
+    elif group == "eu":
+        src = set_js_version_entry(src, "EU_FILE_VERSION", region, token)
+        src = bump_query_once(src, "contours/europe-index.json", token, "europe-index.json")
+        src = bump_query_once(src, "hill-index.json", token, "hill-index.json")
+    else:
+        # Canadian catalog object: bump file: and index: ?v= inside that block only.
+        m = re.search(rf"\n    {re.escape(region)}: \{{", src)
+        if not m:
+            raise SystemExit(f"catalogs.{region} block not found")
+        start = src.find("{", m.start())
+        depth = 0
+        end = None
+        for j, ch in enumerate(src[start:], start):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    end = j + 1
+                    break
+        if end is None:
+            raise SystemExit(f"unclosed catalogs.{region} block")
+        block = src[start:end]
+        def bump_field(block: str, field: str) -> str:
+            pat = re.compile(rf'({field}:\s*(?:R2_BASE \+ )?"[^"]+\?v=)[^"]+(")')
+            new, n = pat.subn(rf"\g<1>{token}\2", block, count=1)
+            if n != 1:
+                raise SystemExit(f"catalogs.{region}.{field} ?v= not found once (n={n})")
+            return new
+        new_block = bump_field(block, "file")
+        new_block = bump_field(new_block, "index")
+        if "label:" in new_block:
+            # The label line must be unchanged.
+            old_label = re.search(r'label:\s*"[^"]*"', block).group(0)
+            new_label = re.search(r'label:\s*"[^"]*"', new_block).group(0)
+            if old_label != new_label:
+                raise SystemExit(f"catalogs.{region} label changed during token bump")
+        src = src[:start] + new_block + src[end:]
+        src = bump_query_once(src, "hill-index.json", token, "hill-index.json")
+    return src
 
 
 def set_member(src: str, name: str, slug: str) -> str:
@@ -342,8 +503,20 @@ def apply_builtin_edits(wt: Path, args, env: dict, notes: list[str]) -> None:
         notes.append(f"PLAN_TURN_DEG {old} -> {new}")
 
 
-def update_tokens(wt: Path, slug: str, token: str) -> None:
-    """FRONTAL_V[slug], washFileV special list and index.html ?v= only."""
+def is_plan_catalog_job(args) -> bool:
+    """True when this job changes plan/catalog files that need a FILE_VERSION bump."""
+    return bool(
+        getattr(args, "skip_frontal", False)
+        or getattr(args, "plan_cw", 0)
+        or getattr(args, "plan_ccw", 0)
+        or getattr(args, "plan_trees", False)
+    )
+
+
+def update_tokens(wt: Path, slug: str, token: str, plan_catalog: bool = False) -> None:
+    """FRONTAL_V[slug], washFileV list, index.html ?v=, and (for plan jobs) the
+    region's FILE_VERSION map / file ?v= only. Never writes a label map.
+    """
     js = wt / "js" / "ski-hills.js"
     s = js.read_text()
     m = re.search(r"var FRONTAL_V = \{\n(.*?)\n  \};", s, re.S)
@@ -364,6 +537,9 @@ def update_tokens(wt: Path, slug: str, token: str) -> None:
         indent = re.search(r"\n(\s*)hill\.slug === ", m2.group(1)).group(1)
         new_list = m2.group(1) + f' ||\n{indent}hill.slug === "{slug}"'
         s = s[: m2.start(1)] + new_list + s[m2.end(1):]
+    if plan_catalog:
+        s = bump_plan_catalog_versions(s, wt, slug, token)
+    assert_catalogue_labels_ok(s)
     js.write_text(s)
     idx = wt / "ski-hills" / "index.html"
     h = idx.read_text()
@@ -517,7 +693,7 @@ def publish_pages(pages_wt: Path, merge_sha: str, files: list[str], msg: str) ->
         fcntl.flock(lockf, fcntl.LOCK_EX)
         say(f"pages lock acquired after {time.perf_counter() - t:.1f}s")
         for attempt in range(6):
-            git(pages_wt, "fetch", "-q", "origin", PAGES_BRANCH, "main")
+            fetch_origin(pages_wt, PAGES_BRANCH, "main")
             git(pages_wt, "checkout", "-q", "--detach", "-f", f"origin/{PAGES_BRANCH}")
             git(pages_wt, "checkout", merge_sha, "--", *files)
             if not gitout(pages_wt, "status", "--porcelain"):
@@ -589,7 +765,7 @@ def main():
         raise SystemExit(f"only {free_gb(WORK_ROOT):.1f} GB free; need {MIN_FREE_GB} GB for a job")
 
     with Step("worktree"):
-        run(["git", "-C", str(REPO_MAIN), "fetch", "-q", "origin", "main", PAGES_BRANCH])
+        fetch_origin(REPO_MAIN, "main", PAGES_BRANCH)
         if args.resume and wt.exists():
             say("reusing", wt)
         else:
@@ -608,7 +784,8 @@ def main():
     if do_baseline and not args.dry_run:
         with Step("baseline-crossings"):
             benv = dict(env, RIDGE_CROSSING_REPORT="1", RIDGE_CROSSING_REPORT_DIR=str(jobdir / "before"))
-            run([PY, "ski-hills/build-frontal.py", slug], cwd=wt, env=benv, capture=True)
+            flags, benv = with_edge_margin(benv, wt, slug)
+            run([PY, "ski-hills/build-frontal.py", *flags, slug], cwd=wt, env=benv, capture=True)
             git(wt, "checkout", "-q", "HEAD", "--", "ski-hills/frontal", "ski-hills/contours", check=False)
             summary["crossings_before"] = read_crossings(jobdir / "before", slug)
             say("crossings before", summary["crossings_before"])
@@ -622,13 +799,15 @@ def main():
 
     with Step("render"):
         renv = dict(env, RIDGE_CROSSING_REPORT="1", RIDGE_CROSSING_REPORT_DIR=str(jobdir / "after"))
-        r = run([PY, "ski-hills/build-frontal.py", slug], cwd=wt, env=renv, capture=True)
+        flags, renv = with_edge_margin(renv, wt, slug)
+        r = run([PY, "ski-hills/build-frontal.py", *flags, slug], cwd=wt, env=renv, capture=True)
         (jobdir / "render.log").write_text(r.stdout)
         guard_trees(wt, slug, "render")
 
     with Step("trees"):
         targs = [PY, "ski-hills/build-tree-overlays.py", slug] + ([] if args.plan_trees else ["--frontal-only"])
-        r = run(targs, cwd=wt, env=env, capture=True)
+        _flags, tenv = with_edge_margin(env, wt, slug)
+        r = run(targs, cwd=wt, env=tenv, capture=True)
         (jobdir / "trees.log").write_text(r.stdout)
         guard_trees(wt, slug, "trees")
     if args.stop_after == "build":
@@ -670,7 +849,7 @@ def main():
         return finish(summary, t_job)
 
     with Step("tokens+commit"):
-        update_tokens(wt, slug, token)
+        update_tokens(wt, slug, token, plan_catalog=is_plan_catalog_job(args))
         stage_job_files(wt)
         title = args.title or f"{slug}: bird's-eye job {token}"
         git(wt, "commit", "-q", "-m", title)
@@ -704,7 +883,7 @@ def main():
             raise SystemExit(f"PR #{prnum} did not merge")
         merge_sha = info["mergeCommit"]["oid"]
         summary["merge_sha"] = merge_sha
-        run(["git", "-C", str(REPO_MAIN), "fetch", "-q", "origin", "main"])
+        fetch_origin(REPO_MAIN, "main")
         changed = gitout(wt, "diff", "--name-only", f"{merge_sha}^", merge_sha).splitlines()
         summary["changed_files"] = changed
 
@@ -737,7 +916,7 @@ def main():
 
 
 def token_aware_rebase(wt: Path, args, env, notes, old_head: str) -> None:
-    git(wt, "fetch", "-q", "origin", "main")
+    fetch_origin(wt, "main")
     if gitout(wt, "merge-base", "HEAD", "origin/main") == gitout(wt, "rev-parse", "origin/main"):
         return
     r = git(wt, "rebase", "-q", "origin/main", check=False)
@@ -758,7 +937,7 @@ def token_aware_rebase(wt: Path, args, env, notes, old_head: str) -> None:
     if other:
         git(wt, "checkout", old_head, "--", *other)
     apply_builtin_edits(wt, args, env, [])
-    update_tokens(wt, slug, token)
+    update_tokens(wt, slug, token, plan_catalog=is_plan_catalog_job(args))
     stage_job_files(wt)
     git(wt, "commit", "-q", "-m", gitout(wt, "log", "-1", "--format=%B", old_head))
 
