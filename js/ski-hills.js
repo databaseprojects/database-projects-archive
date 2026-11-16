@@ -837,7 +837,11 @@
 
   var ASSET_V = "20261110svr";
   // Mt. Bachelor frontal only. Upper-left contours were restored.
-  var FRONTAL_V = { "mt-bachelor": "20261110bach" };
+  var FRONTAL_V = {
+    "mt-bachelor": "20261110bach",
+    "big-white-ski-resort": "20261116be",
+    "apex-mountain-resort": "20261116be"
+  };
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
