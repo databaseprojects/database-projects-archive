@@ -747,6 +747,7 @@
         else hill.el.insertBefore(svg, hill.el.firstChild);
       }
       hill.el._shift = fitArt(svg, SQUARE, hill._bounds, hill);
+      ensurePlanFrame(svg, hill.el._shift);
       writeMapCredit(svg, hill, SQUARE);
       hill._drawn = true;
       loadContour(hill.el);
@@ -813,6 +814,60 @@
   }
 
   var clipSerial = 0;
+
+  // Plan art (runs, lifts, contours, trees) is clipped to the plan frame
+  // so a cropped plan cannot draw over the banner. Grid cards use the
+  // full square (no banner). The lightbox and print mock use DRAW, the
+  // top of the banner. Caption, credit and bird's-eye art stay outside
+  // this group. Same clip every cropped plan uses, including Wolf Creek.
+  function planClipHeight(shift) {
+    return !shift || shift.clip == null ? SQUARE : shift.clip;
+  }
+
+  function ensurePlanFrame(svg, shift) {
+    if (!svg) return null;
+    var defs = svg.querySelector("defs");
+    if (!defs) {
+      defs = document.createElementNS(NS, "defs");
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    var clip = svg.querySelector("clipPath.sh-frame");
+    var id;
+    if (!clip) {
+      id = "sh-frame-" + (++clipSerial);
+      clip = document.createElementNS(NS, "clipPath");
+      clip.setAttribute("id", id);
+      clip.setAttribute("class", "sh-frame");
+      clip.appendChild(document.createElementNS(NS, "rect"));
+      defs.appendChild(clip);
+    } else {
+      id = clip.getAttribute("id");
+      if (clip.parentNode !== defs) defs.appendChild(clip);
+    }
+    var rect = clip.querySelector("rect");
+    var frame = planClipHeight(shift);
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", String(SQUARE));
+    rect.setAttribute("height", String(frame));
+    var g = svg.querySelector("g.sh-plan-art");
+    if (!g) {
+      g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "sh-plan-art");
+      svg.insertBefore(g, defs.nextSibling);
+    }
+    g.setAttribute("clip-path", "url(#" + id + ")");
+    Array.prototype.forEach.call(Array.prototype.slice.call(svg.childNodes), function (node) {
+      if (node === g || node === defs || !node.getAttribute) return;
+      var cls = node.getAttribute("class") || "";
+      if (/\bsh-run\b/.test(cls) || /\bsh-lift\b/.test(cls) ||
+          /\bsh-contours\b/.test(cls) || /\bsh-plan-tree-wash\b/.test(cls) ||
+          /\bsh-plan-tree-fade\b/.test(cls)) {
+        g.appendChild(node);
+      }
+    });
+    return g;
+  }
 
   function stackWanted(hill) {
     return !!(hill && hill.stacked && hill._stackOn);
@@ -968,31 +1023,12 @@
     if (!svg) return;
     var old = svg.querySelector(".sh-contours");
     if (old) old.parentNode.removeChild(old);
-    var oldClip = svg.querySelector("clipPath.sh-frame");
-    if (oldClip && oldClip.parentNode) oldClip.parentNode.removeChild(oldClip);
     Array.prototype.forEach.call(svg.querySelectorAll(".sh-plan-tree-fade"), function (node) {
       if (node.parentNode) node.parentNode.removeChild(node);
     });
-    var defs = svg.querySelector("defs");
-    if (!defs) {
-      defs = document.createElementNS(NS, "defs");
-      svg.insertBefore(defs, svg.firstChild);
-    }
-    var id = "sh-frame-" + (++clipSerial);
-    var clip = document.createElementNS(NS, "clipPath");
-    clip.setAttribute("id", id);
-    clip.setAttribute("class", "sh-frame");
-    var rect = document.createElementNS(NS, "rect");
-    var frame = shift.clip == null ? SQUARE : shift.clip;
-    rect.setAttribute("x", "0");
-    rect.setAttribute("y", "0");
-    rect.setAttribute("width", String(SQUARE));
-    rect.setAttribute("height", String(frame));
-    clip.appendChild(rect);
-    defs.appendChild(clip);
+    var frameG = ensurePlanFrame(svg, shift);
     var g = document.createElementNS(NS, "g");
     g.setAttribute("class", "sh-contours");
-    g.setAttribute("clip-path", "url(#" + id + ")");
     appendTreeWash(g, shift, treeWash, treeBands);
     var scale = 1;
     if (stack) {
@@ -1041,7 +1077,8 @@
       line.setAttribute("points", mapped);
       g.appendChild(line);
     });
-    svg.insertBefore(g, svg.firstChild);
+    if (frameG) frameG.insertBefore(g, frameG.firstChild);
+    else svg.insertBefore(g, svg.firstChild);
   }
 
   var contourIndex = {};
@@ -1753,6 +1790,7 @@
     var big = drawingSvg(card._hill);
     big.removeAttribute("aria-hidden");
     var shift = fitArt(big, DRAW, card._hill && card._hill._bounds, card._hill);
+    ensurePlanFrame(big, shift);
     writeCaption(big, card._hill);
     writeMapCredit(big, card._hill, DRAW);
     lb._shift = shift;
@@ -2930,6 +2968,7 @@
     var svg = drawingSvg(hill);
     svg.setAttribute("class", "sh-card sh-print");
     var shift = fitArt(svg, DRAW, hill && hill._bounds, hill);
+    ensurePlanFrame(svg, shift);
     writeCaption(svg, hill);
     var raised = stackWanted(hill);
     var art = raised ? frontalArt(hill) : "";
