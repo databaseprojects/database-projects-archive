@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116cu45",
+    co: "20261116tel",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -946,7 +946,8 @@
     "jackson-hole-mountain-resort": "20261116jh",
     "copper-mountain": "20261116cu45",
     "heavenly-mountain-resort": "20261116hvy",
-    "aspen-snowmass": "20261116asp"
+    "aspen-snowmass": "20261116asp",
+    "telluride-ski-area": "20261116tel"
   };
 
   function assetV(slug) {
@@ -1349,7 +1350,8 @@
       hill.slug === "copper-mountain" ||
       hill.slug === "heavenly-mountain-resort" ||
       hill.slug === "big-white-ski-resort" ||
-      hill.slug === "aspen-snowmass"
+      hill.slug === "aspen-snowmass" ||
+      hill.slug === "telluride-ski-area"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
