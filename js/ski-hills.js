@@ -868,7 +868,7 @@
     "ski-apache": "20261116apa",
     "snow-valley-mountain-resort": "20261116b1",
     "mount-cain-alpine-park": "20261116b1",
-    "sasquatch-mountain-resort": "20261116b1",
+    "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
     "snowbird": "20261116b1",

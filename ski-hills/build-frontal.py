@@ -190,6 +190,10 @@ FLOATING_HORIZON = {
     # stops those crossings. CONTOUR_CLEAR_JOIN puts a graze back when it
     # crosses nothing.
     "sun-valley-bald-mountain": 2.0,
+    # Sasquatch. The sheet stays on the 1 px default from PR #507 so the
+    # rest of the hill does not move. The top-left ridge is tighter: see
+    # CONTOUR_TIGHT.
+    "sasquatch-mountain-resort": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -220,6 +224,10 @@ HORIZON_MIN_RUN = {
     # Bogus Basin top half. A 4+ sample stretch behind the ridge hides
     # (same as Baker / Harper corners).
     "bogus-basin-mountain-recreation-area": 4,
+    # Sasquatch. Same 4-sample join as the default, so a short graze on
+    # the rest of the sheet stays one stroke. The top-left ridge uses
+    # the shorter dip in CONTOUR_TIGHT.
+    "sasquatch-mountain-resort": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -538,6 +546,16 @@ CONTOUR_TIGHT = {
         "min_run": 12,
         "x": (1000.0 * 2.0 / 3.0, 1400.0),
         "y": (-400.0, 1000.0 / 3.0),
+    },
+    # Sasquatch. Top-left quadrant only. The 1 px / 4-sample pass left the
+    # clip a little off that ridge: hidden pieces stopped short of the crest
+    # or ran past it. 0.4 px and a 2-sample dip sit the hide on the ridge.
+    # The rest of the sheet stays at 1.0 px / 4 samples.
+    "sasquatch-mountain-resort": {
+        "tol": 0.4,
+        "min_run": 2,
+        "x": (-400.0, 500.0),
+        "y": (-400.0, 500.0),
     },
 }
 # Runs only, and only where a hill asks. Tol is pixels below a nearer
