@@ -1068,6 +1068,17 @@ CAMERAS = {
     # ZBUF_TOL stops the foreground and summit contours that draw through
     # those ridges.
     "sunlight-mountain-resort": {"frame_scale": 0.95, "ridge_fade": 0.10},
+    # Vail only. Automatic facing was 147.8 and orient() kept it. 102.8 is
+    # 45° less, which turns the bird's-eye drawing 45° clockwise. The plan
+    # view is turned to match. Facing is locked so a wider DEM_PAD cannot
+    # nudge orient(). Run and lift widths stay the published 2.2 / 1.7 so a
+    # denser contour count cannot thin them. The lightbox still draws runs
+    # at the per-hill 1.2px.
+    "vail": {
+        "facing": 102.8,
+        "run_width": 2.2,
+        "lift_width": 1.7,
+    },
     # New England batch (US sheets, --edge-margin 70). post_scale 0.95 pulls
     # the sheet back 5% after the margin fit. Killington is pulled back a
     # further 6% (0.95 / 1.06) with no pan. Gunstock is locked to the plan's north-up
@@ -1138,8 +1149,10 @@ CAMERAS = {
     # ridge stay on the line at 10% opacity. Plan was at facing 329.55;
     # 14.55 is 45° further (329.55+45), which turns the drawing 45°
     # counter-clockwise; the plan view is turned to match (Nov 5).
+    # 264.55 is 110° clockwise from 14.55 (Nov 16); the plan view is turned
+    # 110° clockwise to match (14.55° → 264.55° CCW from north-up).
     "sun-peaks-resort": {
-        "facing": 14.55,
+        "facing": 264.55,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
@@ -1530,6 +1543,11 @@ DEM_PAD = {
     # were past the default 1.0 crop on the wider sheet; 2.6 reaches the
     # corner (Attitash / Stoneham / Bear Valley pattern).
     "sierra-at-tahoe-ski-resort": 2.6,
+    # Sun Peaks (facing 264.55, 110° CW). After the turn the fitted frame
+    # reaches past the default 1.0 DEM crop, so contours and trees would
+    # stop on a straight edge. 1.8 reaches that edge (same pad as the 150°
+    # turn, Fernie / Marmot / Lost Trail pattern).
+    "sun-peaks-resort": 1.8,
     # Sundance Resort (facing 248.9, another 110° CCW on the 138.9 sheet).
     # The turned corners reach past the default 1.0 crop, so contours and
     # the tree wash need the wider pad used after a large turn.
@@ -1538,6 +1556,10 @@ DEM_PAD = {
     # reach past the default 1.0 crop, so contours and the tree wash need
     # the wider pad used after a turn (Sundance / Bear Mountain).
     "big-sky-resort": 2.6,
+    # Vail (facing 102.8, 45° CW). The turned sheet's corners reach past
+    # the default 1.0 crop, so contours and the tree wash need the wider
+    # pad used after a turn (Big Sky / Sundance / Bear Mountain).
+    "vail": 2.6,
 }
 
 

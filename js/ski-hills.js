@@ -17,7 +17,7 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110spr",
+      file: "hills.json?v=20261116spk",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261105g50",
+    co: "20261116v45",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -852,8 +852,34 @@
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261116fh",
-    "silver-mountain-resort": "20261116fh"
+    "silver-mountain-resort": "20261116fh",
+    "vail": "20261116v45",
+    "sun-peaks-resort": "20261116spk",
+    "silverton-mountain": "20261116b1",
+    "taos-ski-valley": "20261116b1",
+    "snowbasin-resort": "20261116b1",
+    "wolf-creek-ski-area": "20261116b1",
+    "alpental": "20261116b1",
+    "pajarito-mountain": "20261116b1",
+    "sipapu-ski-and-summer-resort": "20261116b1",
+    "mount-rose-ski-tahoe": "20261116b1",
+    "red-lodge-mountain": "20261116b1",
+    "mountain-high": "20261116b1",
+    "ski-apache": "20261116b1",
+    "snow-valley-mountain-resort": "20261116b1",
+    "mount-cain-alpine-park": "20261116b1",
+    "sasquatch-mountain-resort": "20261116b1",
+    "sierra-at-tahoe-ski-resort": "20261116b1",
+    "nipika": "20261116b1",
+    "snowbird": "20261116b1",
+    "stevens-pass": "20261116b1",
+    "mad-river-glen": "20261116b1",
+    "brighton-resort": "20261116b1"
   };
+
+  function assetV(slug) {
+    return (slug && FRONTAL_V[slug]) || ASSET_V;
+  }
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -880,12 +906,14 @@
 
   // Lowest density to densest. Applied when the bands are painted so the
   // steps stay these values wherever the contour JSON was served from.
+  // tree-opacity:start
   var TREE_STEP = {
-    1: ["0.12"],
-    2: ["0.08", "0.12"],
+    1: ["0.08"],
+    2: ["0.05", "0.08"],
     3: ["0.03", "0.07", "0.11"],
     4: ["0.03", "0.05", "0.08", "0.11"]
   };
+  // tree-opacity:end
 
   function treeStepOpacity(count, index, fallback) {
     var row = TREE_STEP[count];
@@ -1015,7 +1043,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
+    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + assetV(card.id)).then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1176,7 +1204,7 @@
       else if (!card._washJsonLoading) {
         card._washJsonLoading = true;
         begin();
-        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
+        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + assetV(card.id)).then(function (res) {
           if (!res.ok) throw new Error("wash");
           return res.json();
         }).then(function (data) {
@@ -1201,7 +1229,8 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + ASSET_V)).then(function (res) {
+    var washFileV = hill && hill.slug === "sun-peaks-resort" ? washV : ASSET_V;
+    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
     }).then(function (frag) {
