@@ -206,6 +206,9 @@ FLOATING_HORIZON = {
     # Breckenridge. Same 1 px default, kept explicitly because the no-cross
     # tests below make this hill hand-tuned.
     "breckenridge": 1.0,
+    # Lake Louise. Same 1 px default, kept explicitly because the no-cross
+    # tests below make this hill hand-tuned. Front and back share this pass.
+    "lake-louise-ski-area": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -249,6 +252,9 @@ HORIZON_MIN_RUN = {
     # Breckenridge. Same 4-sample join, except where that piece would cross
     # a nearer contour (HORIZON_RELEASE_NO_CROSS).
     "breckenridge": 4,
+    # Lake Louise. Same 4-sample join on both views, except where that piece
+    # would cross a nearer contour (HORIZON_RELEASE_NO_CROSS).
+    "lake-louise-ski-area": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -483,13 +489,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -756,6 +762,9 @@ CAMERAS = {
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         # Runs that pass behind a ridge stay on the line at 10% opacity.
         "ridge_fade": 0.10,
+        # Published widths, locked so a denser contour count cannot thin them.
+        "run_width": 2.2,
+        "lift_width": 1.7,
     },
     # Fortress Mountain only. The automatic render faced 257.1 and orient()
     # kept it. 232.1 was 25° less. 207.1 is another 25° less, which turns

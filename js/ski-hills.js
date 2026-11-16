@@ -876,7 +876,8 @@
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
     "park-city-mountain-resort": "20261116pcm",
-    "breckenridge": "20261116brk"
+    "breckenridge": "20261116brk",
+    "lake-louise-ski-area": "20261116llr"
   };
 
   function assetV(slug) {
