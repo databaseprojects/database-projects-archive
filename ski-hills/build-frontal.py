@@ -246,6 +246,10 @@ FLOATING_HORIZON = {
     "aspen-snowmass": 1.0,
     # ridge clip (Stevens Pass no-cross tests), job 20261116tel
     "telluride-ski-area": 1.0,
+    # Sun Peaks. Same 1 px pass the sheet already uses. The no-cross tests
+    # are limited to the top half (HORIZON_NOCROSS_ONLY), so the bottom
+    # half keeps this pass exactly. Job 20261116spc.
+    "sun-peaks-resort": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
 # stays drawn, so a gentle slope does not break into dashes. A longer run
@@ -320,6 +324,10 @@ HORIZON_MIN_RUN = {
     "aspen-snowmass": 4,
     # ridge clip (Stevens Pass no-cross tests), job 20261116tel
     "telluride-ski-area": 4,
+    # Sun Peaks. Same 4-sample join the sheet already uses. A short dip in
+    # the top half stays hidden only when it would cross a nearer contour.
+    # Job 20261116spc.
+    "sun-peaks-resort": 4,
 }
 # Screen bands where the floating horizon may hide a sample. y grows
 # downward, x grows to the right. A sample outside the band stays drawn
@@ -386,7 +394,18 @@ HORIZON_REGION = {
     "telluride-ski-area": {
         "y": ((-400.0, 1000.0 / 3.0), (2000.0 / 3.0, 1400.0)),
     },
+    # Sun Peaks. Top half, full width. This box does not turn the horizon
+    # off below it: the 1 px pass still covers the sheet. It limits the
+    # no-cross tests (HORIZON_NOCROSS_ONLY) so only real crossings in this
+    # band are clipped. The bottom half stays as drawn. Job 20261116spc.
+    "sun-peaks-resort": {
+        "y": ((-400.0, 500.0),),
+    },
 }
+# Hills whose HORIZON_REGION limits the no-cross tests only. The floating
+# horizon still hides across the whole sheet, which is how these hills
+# were drawn before the clip.
+HORIZON_NOCROSS_ONLY = {"sun-peaks-resort"}
 
 
 def horizon_key(slug):
@@ -569,13 +588,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0, "sun-peaks-resort": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
@@ -2418,11 +2437,13 @@ def _dip_crosses_nearer(chunks, ci, start, end, segs, grid, cell, gap=15.0):
     return False
 
 
-def _release_short_horizon_runs(chunks, marked, min_run, no_cross=False):
+def _release_short_horizon_runs(chunks, marked, min_run, no_cross=False, limit_to=None):
     """Put a dip back if it stayed below the crest for fewer than min_run samples.
 
     no_cross keeps the dip hidden when drawing it would cross a nearer
     contour. That is the same test as CONTOUR_NO_CROSS, for this join.
+    limit_to(px, py), when set, applies that keep only to a dip that lies
+    entirely inside the band. A dip outside it is drawn back, as before.
     """
     released = []
     skipped = 0
@@ -2438,8 +2459,13 @@ def _release_short_horizon_runs(chunks, marked, min_run, no_cross=False):
         segs, grid, cell = _drawn_segment_index(chunks)
     for _length, ci, start, end in pending:
         if no_cross and _dip_crosses_nearer(chunks, ci, start, end, segs, grid, cell):
-            skipped += 1
-            continue
+            chunk = chunks[ci]
+            in_band = limit_to is None or all(
+                limit_to(chunk[pi][0], chunk[pi][1]) for pi in range(start, end + 1)
+            )
+            if in_band:
+                skipped += 1
+                continue
         released.append((ci, start, end))
         chunk = chunks[ci]
         for pi in range(start, end + 1):
@@ -2462,7 +2488,7 @@ def _release_short_horizon_runs(chunks, marked, min_run, no_cross=False):
         print("release_nocross", "skipped", skipped, "released", len(released))
 
 
-def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None, release_no_cross=False):
+def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None, release_no_cross=False, release_limit=None):
     """Hide the far face where a nearer contour already crests that column.
 
     Samples walk from the camera outward. Each column keeps the highest
@@ -2519,10 +2545,10 @@ def apply_floating_horizon(chunks, col_of, tol, min_run=None, hide_at=None, rele
                 if cy < horizon[c]:
                     horizon[c] = cy
     if use_run:
-        _release_short_horizon_runs(chunks, marked, min_run, release_no_cross)
+        _release_short_horizon_runs(chunks, marked, min_run, release_no_cross, release_limit)
 
 
-def _join_blocked(chunks, hold, keep_visible, base_hold=None):
+def _join_blocked(chunks, hold, keep_visible, base_hold=None, limit_to=None):
     """Per-chunk flags where a hold may not bridge across a contour.
 
     The base pass uses MIN_RUN, unless base_hold is set. base_hold 0 keeps
@@ -2530,6 +2556,8 @@ def _join_blocked(chunks, hold, keep_visible, base_hold=None):
     A gap the hold fills stays filled only when the bridged piece crosses
     no contour drawn by the base pass. A gap that would cross one is a
     back face showing through a ridge, so it stays hidden.
+    limit_to(px, py), when set, keeps that block inside the band. A sample
+    outside it uses the ordinary hold, so the rest of the sheet is unchanged.
     """
     from shapely.geometry import LineString
     from shapely.strtree import STRtree
@@ -2612,18 +2640,25 @@ def _join_blocked(chunks, hold, keep_visible, base_hold=None):
         else:
             for key in keys:
                 grid.setdefault(key, []).append((bridge, ci))
+    if limit_to is not None:
+        for ci, chunk in enumerate(chunks):
+            raw = [hide for (_px, _py, _yr, hide) in chunk]
+            plain = solid_flags(raw, chunk, hold, keep_visible)
+            for i, (px, py, _yr, _h) in enumerate(chunk):
+                if not limit_to(px, py):
+                    out[ci][i] = plain[i]
     print("join_blocked", blocked)
     return out
 
 
-def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cross=False, cross_base=None):
+def contour_lines(chunks, min_run=None, min_draw=None, keep_visible=None, no_cross=False, cross_base=None, limit_to=None):
     """Visible runs after the short-gap hold. One entry per drawn stroke."""
     hold = MIN_RUN if min_run is None else min_run
     draw_at = hold if min_draw is None else min_draw
     drawn = []
     seen = set()
     kept = 0
-    pre = _join_blocked(chunks, hold, keep_visible, cross_base) if no_cross else None
+    pre = _join_blocked(chunks, hold, keep_visible, cross_base, limit_to) if no_cross else None
     for ci, chunk in enumerate(chunks):
         if pre is not None:
             flags = pre[ci]
@@ -2845,7 +2880,7 @@ def dem_zbuffer(arr, gt, paper, project_xy, metres, rot):
     return zbuf
 
 
-def _split_farther_crossings(chunks, gap=15.0):
+def _split_farther_crossings(chunks, gap=15.0, limit_to=None):
     """Break a drawn segment that crosses a nearer contour.
 
     One hidden midpoint drops that segment and leaves the samples on
@@ -2884,6 +2919,10 @@ def _split_farther_crossings(chunks, gap=15.0):
                     if oc == ci or onear + gap > near:
                         continue
                     if _seg_cross(a, b, c, d):
+                        mx = (a[0] + b[0]) / 2.0
+                        my = (a[1] + b[1]) / 2.0
+                        if limit_to is not None and not limit_to(mx, my):
+                            continue
                         hit.add((ci, i))
                         break
     for ci, i in sorted(hit, reverse=True):
@@ -3129,24 +3168,29 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         )
     if float_tol is None and not tight:
         return before, len(before)
+    _nocross_limit = None
+    if _hill in HORIZON_NOCROSS_ONLY:
+        def _nocross_limit(px, py, key=_hill):
+            return horizon_hides(key, px, py)
     if float_tol is not None:
         apply_floating_horizon(
             chunks, col_of, float_tol, float_min_run, float_hide,
             release_no_cross=_hill in HORIZON_RELEASE_NO_CROSS,
+            release_limit=_nocross_limit,
         )
     if clear_join is not None:
         print("clearjoin", "max_gap", clear_join, "joined",
               join_clear_gaps(chunks, contour_hold or MIN_RUN, clear_join, contour_keep))
     if _hill in CONTOUR_NO_CROSS_BASE:
-        print("segment_nocross", "split", _split_farther_crossings(chunks))
+        print("segment_nocross", "split", _split_farther_crossings(chunks, limit_to=_nocross_limit))
     _cross_base = CONTOUR_NO_CROSS_BASE.get(_hill)
     drawn, kept = contour_lines(
         chunks, contour_hold, contour_draw, contour_keep,
-        _hill in CONTOUR_NO_CROSS, _cross_base,
+        _hill in CONTOUR_NO_CROSS, _cross_base, _nocross_limit,
     )
     if _hill in HORIZON_RELEASE_NO_CROSS:
         hold = contour_hold or MIN_RUN
-        final_flags = _join_blocked(chunks, hold, contour_keep, _cross_base)
+        final_flags = _join_blocked(chunks, hold, contour_keep, _cross_base, _nocross_limit)
         segs, pairs = count_ridge_crossings(chunks, final_flags)
         print("ridgecross", _hill, "segments", segs, "pairs", pairs)
     if os.environ.get("RIDGE_CROSSING_REPORT") == "1":
@@ -3154,7 +3198,7 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         if _hill in HORIZON_RELEASE_NO_CROSS:
             _rep_flags = final_flags
         elif _hill in CONTOUR_NO_CROSS:
-            _rep_flags = _join_blocked(chunks, _hold, contour_keep, _cross_base)
+            _rep_flags = _join_blocked(chunks, _hold, contour_keep, _cross_base, _nocross_limit)
         else:
             _rep_flags = [
                 solid_flags([h for (_px, _py, _yr, h) in c], c, _hold, contour_keep)
@@ -4088,7 +4132,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         float_tol=_float_tol,
         float_min_run=_float_min_run,
         float_hide=(lambda px, py, key=_hkey: horizon_hides(key, px, py))
-        if _hkey in HORIZON_REGION or _hkey == "mt-bachelor"
+        if (_hkey in HORIZON_REGION or _hkey == "mt-bachelor") and _hkey not in HORIZON_NOCROSS_ONLY
         else None,
         contour_hold=CONTOUR_HOLD.get(_hkey),
         contour_draw=CONTOUR_DRAW.get(_hkey),
