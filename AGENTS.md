@@ -31,3 +31,7 @@ When Billy says "zoom out" with a hill name and a percentage, zoom that hill's v
 - Plan: widen that hill's boundary box in the hill index by the same percentage around its centre, as in the Tremblant, Mount Rose, Boyne and Lutsen plan zoom-outs.
 - When Billy names one view, change only that view. When he names both or says the whole hill, do both. When it's unclear which view he means, ask before building.
 - Then render, check the corners and edges, make an old-versus-new preview, merge and publish (R2, Drive and Pages), and report the new scale or boundary values, the PR number, and confirmation that it's live.
+
+## Prints and exports (standing rule from Billy)
+
+Prints and exports always follow the live hill. Every ski-hill print or export (any hill, size or view) must take rotation angle, scale and placement from the current live databaseprojects.ca capture of that hill, as explicit parameters for every element drawn: main art, fill strip, caption, trees and contours. Never use baked or older cached geometry (for example the 2026-11-09 band-contours files) whose projection doesn't match the live view. If a source doesn't match, rebuild it from the live view or stop and flag it. This applies automatically to every print or export request; no per-task spec is needed. (Billy, 2026-11-15)
