@@ -17,7 +17,7 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261110spr",
+      file: "hills.json?v=20261116spk",
       names: "names.json?v=20261105cmt",
       index: R2_BASE + "contours/index.json?v=20261105cmt",
       label: "British Columbia"
@@ -853,8 +853,14 @@
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261116fh",
     "silver-mountain-resort": "20261116fh",
-    "vail": "20261116v45"
+    "silver-mountain-resort": "20261116fh",
+    "vail": "20261116v45",
+    "sun-peaks-resort": "20261116spk"
   };
+
+  function assetV(slug) {
+    return (slug && FRONTAL_V[slug]) || ASSET_V;
+  }
 
   function frontalUrl(hill) {
     var side = stackWanted(hill) ? sideName(hill) : "";
@@ -1016,7 +1022,7 @@
       return;
     }
     card._contourState = "loading";
-    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + ASSET_V).then(function (res) {
+    fetch(R2_BASE + "contours/" + card.id + ".json?v=" + assetV(card.id)).then(function (res) {
       if (!res.ok) throw new Error("contour");
       return res.json();
     }).then(function (data) {
@@ -1177,7 +1183,7 @@
       else if (!card._washJsonLoading) {
         card._washJsonLoading = true;
         begin();
-        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + ASSET_V).then(function (res) {
+        fetch(R2_BASE + "contours/" + card.id + ".wash.json?v=" + assetV(card.id)).then(function (res) {
           if (!res.ok) throw new Error("wash");
           return res.json();
         }).then(function (data) {
@@ -1202,7 +1208,8 @@
     hill._washSvgLoading[url] = true;
     begin();
     var washV = (hill && FRONTAL_V[hill.slug]) || ASSET_V;
-    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + ASSET_V)).then(function (res) {
+    var washFileV = hill && hill.slug === "sun-peaks-resort" ? washV : ASSET_V;
+    fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
       return res.text();
     }).then(function (frag) {
@@ -4316,7 +4323,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261105cmt").then(function (res) {
+  fetch("hill-index.json?v=20261116spk").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
