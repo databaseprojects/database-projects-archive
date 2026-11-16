@@ -1268,6 +1268,16 @@ CAMERAS = {
         "run_width": 2.2,
         "lift_width": 1.7,
     },
+    # Red Lodge Mountain only. Zoomed out x1.10 from the published sheet
+    # (2026-11-16): frame_scale 1/1.10 pulls the bird's-eye back 10% around
+    # the sheet centre. 214.6033365795 is the published automatic facing
+    # (it prints as 214.6; orient kept it). Locked so a wider DEM_PAD cannot
+    # flip it. The plan is that same turn, zoomed by the hill-index bounds,
+    # and is not re-rotated. The default 1 px horizon pass stays.
+    "red-lodge-mountain": {
+        "facing": 214.6033365795,
+        "frame_scale": 0.909,
+    },
 }
 
 
