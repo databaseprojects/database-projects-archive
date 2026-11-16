@@ -400,12 +400,39 @@
   --sh-be-lift: 1.0997px;
 }
 
+/* Lightbox runs only. Lifts stay on --sh-run. Plan reads --sh-plan-run;
+   bird's-eye runs read --sh-be-run. Cards and Whistler are untouched. */
+.sh-lb[data-sh-hill="park-city-mountain-resort"] {
+  /* Plan 0.8pt, bird's-eye 0.6pt. */
+  --sh-plan-run: 1.0667px;
+  --sh-be-run: 0.8px;
+}
+
+.sh-lb[data-sh-hill="les-trois-vallees"],
+.sh-lb[data-sh-hill="paradiski"] {
+  /* 0.6pt in both views. */
+  --sh-plan-run: 0.8px;
+  --sh-be-run: 0.8px;
+}
+
+.sh-lb[data-sh-hill="vail"] {
+  /* 0.9pt in both views. */
+  --sh-plan-run: 1.2px;
+  --sh-be-run: 1.2px;
+}
+
+.sh-lb[data-sh-hill="big-sky-resort"] {
+  /* 0.8pt in both views. */
+  --sh-plan-run: 1.0667px;
+  --sh-be-run: 1.0667px;
+}
+
 .sh-lb polyline {
   stroke-width: 1.3166;
 }
 
 .sh-lb polyline.sh-run {
-  stroke-width: var(--sh-run, 1.3166px);
+  stroke-width: var(--sh-plan-run, var(--sh-run, 1.3166px));
 }
 
 .sh-lb polyline.sh-lift {
@@ -419,7 +446,7 @@
 /* The frame drawing is smaller than the map. non-scaling-stroke would keep
    the same pixel width and look heavier. Scale the run stroke with the frame. */
 .sh-frame-art polyline.sh-run {
-  stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1));
+  stroke-width: calc(var(--sh-plan-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1));
 }
 
 .sh-frame-art polyline.sh-lift {
