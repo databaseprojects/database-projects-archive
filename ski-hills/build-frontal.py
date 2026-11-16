@@ -234,7 +234,7 @@ FLOATING_HORIZON = {
     # Beaver Creek. The default 1 px / 4-sample pass (PR #507) still left
     # farther contours across nearer ridges. Same tolerance, kept
     # explicitly because the no-cross tests below make this hill
-    # hand-tuned. Facing 185.87 and frame_scale 1.0 are unchanged.
+    # hand-tuned. Facing 185.87 is unchanged; frame_scale is 0.95.
     "beaver-creek": 1.0,
 }
 # Consecutive contour samples. A floating-horizon dip shorter than this
@@ -1271,16 +1271,17 @@ CAMERAS = {
         "lift_width": 1.7,
         "frame_scale": 0.95,
     },
-    # Beaver Creek. Automatic facing is 185.87, the published calculated
-    # camera that matches the plan at 174.11° (the negated facing, 360 −
-    # 185.87 = 174.13). Locked so a later input refresh cannot drift the
-    # bird's-eye. The plan is turned 10° counter-clockwise to 164.11° in
-    # this job; facing and frame_scale stay put. run_width and lift_width
-    # are the published 2.2 / 1.7.
+    # Beaver Creek. Facing 185.87 is locked. The plan stays at 164.11°.
+    # frame_scale 0.95 zooms the bird's-eye out 5%. The plan is scaled
+    # 0.95 about its centre; hill-index bounds stay at the previous card
+    # window so the zoom-out is visible. run_width and lift_width stay
+    # the published 2.2 / 1.7.
+    # job 20261116bvz: frame_scale 1.0 -> 0.95
     "beaver-creek": {
         "facing": 185.87,
         "run_width": 2.2,
         "lift_width": 1.7,
+        "frame_scale": 0.95,
     },
     "snowbasin-resort": {"facing": 236.5, "frame_scale": 0.866},
     "alta-ski-area": {"facing": 149.2, "frame_scale": 0.908},

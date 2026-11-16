@@ -99,7 +99,7 @@
     mt: "Montana",
     wy: "Wyoming",
     ut: "Utah",
-    co: "Colorado",
+    co: "20261116bvz",
     az: "Arizona",
     nm: "New Mexico",
     sd: "South Dakota",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116bvc",
+      index: R2_BASE + "contours/usa-index.json?v=20261116bvz",
       label: US_STATE_NAMES[id]
     };
   });
@@ -883,7 +883,7 @@
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
     "keystone": "20261116ky12",
-    "beaver-creek": "20261116bvc",
+    "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
     "big-sky-resort": "20261116bs30",
     "winter-park-resort": "20261116wpz"

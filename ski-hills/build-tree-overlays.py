@@ -1919,7 +1919,9 @@ def generate_overlay(slug):
         # sheet turned another 15° clockwise and refit into the area above
         # the banner, which is also not a 48/904 PLAN_TURN_DEG frame.
         # Other turned plans use PLAN_TURN_DEG.
-        if slug in ("ski-apache", "snowbird", "vail"):
+        # Beaver Creek's 164.11° plan turn is baked into usa/co.json
+        # (and was then scaled 0.95 about the centre). Use the solved frame.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
