@@ -39,6 +39,7 @@ import bisect
 import io
 import json
 import math
+import os
 import struct
 import sys
 from pathlib import Path
@@ -3397,6 +3398,63 @@ def in_back_bowl(slug, feat, is_lift=False):
     return lat < cfg["lat_max"] and lon > cfg["lon_min"]
 
 
+
+def _trees_group(text):
+    """The <g class="sh-frontal-trees"> group in a sheet, or ""."""
+    key = '<g class="sh-frontal-trees"'
+    i = text.find(key)
+    if i < 0:
+        return ""
+    depth = 0
+    j = i
+    n = len(text)
+    while j < n:
+        if text.startswith("</g>", j):
+            depth -= 1
+            j += 4
+            if depth == 0:
+                return text[i:j]
+            continue
+        if text.startswith("<g", j) and (j + 2 >= n or text[j + 2] in " \t>"):
+            depth += 1
+            j += 2
+            continue
+        j += 1
+    return ""
+
+
+def keep_published_trees(svg, dest):
+    """Carry the bird's-eye trees over when a sheet is re-rendered.
+
+    This script only draws contours, runs, lifts, and labels. The tree wash
+    comes from build-tree-overlays.py, either as <stem>.wash.svg (the sheet
+    then carries data-sh-wash="lazy", which is what tells the page to fetch
+    it) or, on older sheets, inline. A plain re-render (ridge clip, line
+    weights) used to drop both, so Trees showed nothing on Park City (#524)
+    and Lake Louise front (#527). Set FRONTAL_DROP_TREES=1 to skip this.
+    """
+    if os.environ.get("FRONTAL_DROP_TREES") == "1":
+        return svg
+    dest = Path(dest)
+    old = dest.read_text(errors="ignore") if dest.exists() else ""
+    wash = dest.with_name(dest.stem + ".wash.svg")
+    if 'data-sh-wash="' in svg or "sh-frontal-trees" in svg:
+        return svg
+    if wash.exists() or 'data-sh-wash="lazy"' in old[:400]:
+        if not wash.exists():
+            print("warning: sheet was lazy but", wash.name, "is missing", file=sys.stderr)
+        print("trees: kept lazy wash flag for", wash.name)
+        return svg.replace("<svg ", '<svg data-sh-wash="lazy" ', 1)
+    group = _trees_group(old)
+    if group:
+        # Same spot build-tree-overlays.py and the page use: under the contours.
+        at = svg.find("<g>\n", svg.find('<g class="sh-frontal-art">'))
+        if at >= 0:
+            print("trees: kept inline sh-frontal-trees group from", dest.name)
+            return svg[:at] + group + "\n" + svg[at:]
+        print("warning: no contour group to put the old trees under", file=sys.stderr)
+    return svg
+
 def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False, post_scale=1.0, pan_y=0.0):
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
@@ -4292,6 +4350,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     )
     dest = Path(out_path) if out_path else (ROOT / "frontal" / f"{slug}.svg")
     dest.parent.mkdir(parents=True, exist_ok=True)
+    svg = keep_published_trees(svg, dest)
     dest.write_text(svg)
     az = round(math.degrees(ang) % 360, 1)
     print(
