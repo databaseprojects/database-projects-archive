@@ -1,0 +1,36 @@
+# Fail a pull request when a frontal tree wash it adds or changes still
+# has mesh-column stair runs along the skyline. Unchanged legacy sheets
+# are warnings. The job runs only when a tree or frontal file, or a
+# tree/frontal builder, changes.
+
+name: Tree wash stairs
+
+on:
+  pull_request:
+    paths:
+      - "ski-hills/frontal/**"
+      - "ski-hills/build-tree-overlays.py"
+      - "ski-hills/build-frontal.py"
+      - "ski-hills/check-tree-stairs.py"
+      - "ski-hills/**/*tree*"
+      - ".github/workflows/tree-wash-stairs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout pull request head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: git fetch origin "${{ github.base_ref }}"
+
+      - name: Check skyline stairs
+        run: python3 ski-hills/check-tree-stairs.py --base "origin/${{ github.base_ref }}"
