@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
-The wash is four hard-edge density bands of the same green (#315b38), opacities
-0.03 / 0.05 / 0.08 / 0.11 (fewer bands: see BAND_OPACITY_BY_COUNT). Density is a summer Sentinel-2 canopy concentration
+The wash is four hard-edge density bands of the same green (#315b38). Opacity
+for each band count is read from tree-opacity.json (BAND_OPACITY_BY_COUNT). Density is a summer Sentinel-2 canopy concentration
 on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
 belongs to one band. Kimberley's published wash is left as it is.
 
@@ -449,13 +449,14 @@ def ensure_worldcover(slug, box):
     return wc_path
 
 
-# Exclusive canopy bands. The densest band is 0.13 (was 0.15; lowered 2026-10-30 because dense hills such as Sun Peaks read too dark).
-# Cuts are quarters of the v3 stipple stretch (raw 0.30..0.95 -> 0..1).
+# Exclusive canopy cuts, quarters of the v3 stipple stretch (raw 0.30..0.95 -> 0..1).
+# The name is the band index. Opacity is not stored here: band_paths reads
+# tree-opacity.json for however many of these bands a hill actually uses.
 TREE_BANDS = (
-    (0.00, 0.25, 0.08, "1"),
-    (0.25, 0.50, 0.10, "2"),
-    (0.50, 0.75, 0.12, "3"),
-    (0.75, 1.01, 0.13, "4"),
+    (0.00, 0.25, "1"),
+    (0.25, 0.50, "2"),
+    (0.50, 0.75, "3"),
+    (0.75, 1.01, "4"),
 )
 
 
@@ -509,19 +510,20 @@ def paths_from_mask(mask, affine):
     return " ".join(subpaths)
 
 
-# Opacities depend on how many density bands a hill actually uses (2026-11-15):
-# 1 band -> 0.08; 2 -> 0.05/0.08; 3 -> 0.03/0.07/0.11; 4 -> 0.03/0.05/0.08/0.11.
-BAND_OPACITY_BY_COUNT = {
-    1: (0.08,),
-    2: (0.05, 0.08),
-    3: (0.03, 0.07, 0.11),
-    4: (0.03, 0.05, 0.08, 0.11),
-}
+def load_band_opacity(path=None):
+    """Opacities by how many density bands a hill uses. Source: tree-opacity.json."""
+    src = Path(path) if path else Path(__file__).resolve().parent / "tree-opacity.json"
+    raw = json.loads(src.read_text())
+    return {int(key): tuple(float(value) for value in values) for key, values in raw.items()}
+
+
+# Same table as css/ski-hills.css and js/ski-hills.js TREE_STEP.
+BAND_OPACITY_BY_COUNT = load_band_opacity()
 
 
 def band_paths(labels, affine):
     found = []
-    for i, (_lo, _hi, _opacity, name) in enumerate(TREE_BANDS, start=1):
+    for i, (_lo, _hi, name) in enumerate(TREE_BANDS, start=1):
         d = paths_from_mask((labels == i).astype(np.uint8), affine)
         if d:
             found.append((name, d))

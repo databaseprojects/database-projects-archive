@@ -1484,6 +1484,7 @@ svg [fill="#3a6b42"] {
   fill: #336641 !important;
 }
 
+/* tree-opacity:start */
 /* Tree-cover opacity steps, lowest density to densest. Replaces the
    fill-opacity baked into contour JSON and bird's-eye wash sheets, including
    copies served from the asset host. One band 0.08; two 0.05/0.08; three
@@ -1529,6 +1530,7 @@ svg [fill="#3a6b42"] {
 .sh-plan-tree-wash:has(> .sh-plan-tree-band:nth-child(4)) > .sh-plan-tree-band:nth-child(4) > path {
   fill-opacity: 0.11;
 }
+/* tree-opacity:end */
 
 /* Inward feather. Blur each band, then keep only the part inside its own
    shape, so the edge softens inward and nothing paints past the boundary.
