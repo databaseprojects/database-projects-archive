@@ -1462,10 +1462,15 @@ CAMERAS = {
     # Steamboat Ski Resort only. Automatic facing was 93.0 (orient() kept
     # the fall line; it measures 92.996). 128.0 is 35° further clockwise,
     # which turns the bird's-eye drawing 35° counter-clockwise on screen.
-    # The plan view is turned the same way, from -93.0 to -128.0. Published
-    # strokes stay 2.2 / 1.7. The default 1 px horizon pass stays on.
+    # The plan view is turned the same way, from -93.0 to -128.0, and is
+    # not changed here. Zoomed out ~12% from the published sheet
+    # (2026-11-16): frame_scale 0.88 pulls the bird's-eye back around the
+    # sheet centre. Facing stays locked at 128.0 so a wider DEM_PAD cannot
+    # flip it. Published strokes stay 2.2 / 1.7. The default 1 px horizon
+    # pass stays on.
     "steamboat-ski-resort": {
         "facing": 128.0,
+        "frame_scale": 0.88,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
@@ -2817,12 +2822,15 @@ def _split_farther_crossings(chunks, gap=15.0):
     return len(hit)
 
 
-def count_ridge_crossings(chunks, flags, depth_gap=30.0):
+def count_ridge_crossings(chunks, flags, depth_gap=30.0, points=None):
     """Farther drawn segments that cross a nearer drawn contour.
 
     Returns the farther-segment count and the crossing-pair count.
     A same-slope kink is not counted: the farther segment has to sit at
     least depth_gap metres behind the nearer one.
+
+    points, when a list, also collects one (x, y) screen midpoint per
+    crossing pair (the farther segment's midpoint). Counts are unchanged.
     """
     cell = 24.0
     segs = []
@@ -2863,10 +2871,73 @@ def count_ridge_crossings(chunks, flags, depth_gap=30.0):
                     if far >= ofar and near >= onear + depth_gap:
                         pairs += 1
                         farther.add(sid)
+                        if points is not None:
+                            points.append(((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0))
                     elif ofar >= far and onear >= near + depth_gap:
                         pairs += 1
                         farther.add(oid)
+                        if points is not None:
+                            points.append(((c[0] + d[0]) / 2.0, (c[1] + d[1]) / 2.0))
     return len(farther), pairs
+
+
+# Opt-in crossing-location report (RIDGE_CROSSING_REPORT=1). Off by default;
+# it only reads the final contour flags and never changes what is drawn.
+# Screen bands are thirds of the 1000-unit sheet; y grows downward.
+CROSSING_BANDS = (
+    ("top-left", (-400.0, 1000.0 / 3.0), (-400.0, 1000.0 / 3.0)),
+    ("top-ridge", (1000.0 / 3.0, 2000.0 / 3.0), (-400.0, 1000.0 / 3.0)),
+    ("top-right", (2000.0 / 3.0, 1400.0), (-400.0, 1000.0 / 3.0)),
+    ("left-edge", (-400.0, 1000.0 / 3.0), (1000.0 / 3.0, 2000.0 / 3.0)),
+    ("centre", (1000.0 / 3.0, 2000.0 / 3.0), (1000.0 / 3.0, 2000.0 / 3.0)),
+    ("right-edge", (2000.0 / 3.0, 1400.0), (1000.0 / 3.0, 2000.0 / 3.0)),
+    ("bottom-left", (-400.0, 1000.0 / 3.0), (2000.0 / 3.0, 1400.0)),
+    ("bottom-centre", (1000.0 / 3.0, 2000.0 / 3.0), (2000.0 / 3.0, 1400.0)),
+    ("bottom-right", (2000.0 / 3.0, 1400.0), (2000.0 / 3.0, 1400.0)),
+)
+CURRENT_SHEET = [None]
+
+
+def crossing_band(x, y):
+    for name, (x0, x1), (y0, y1) in CROSSING_BANDS:
+        if x0 <= x < x1 and y0 <= y < y1:
+            return name
+    return "off-sheet"
+
+
+def write_crossing_report(hill, chunks, flags, depth_gap=30.0):
+    """Write crossing midpoints, bucketed into named screen bands, as JSON.
+
+    Output: $RIDGE_CROSSING_REPORT_DIR (default /tmp/ridge-crossings)/
+    <sheet>.json. Each band lists its count and an HORIZON_REGION-style
+    {"x": ..., "y": ...} box, so a light-touch job can limit the hide to
+    the bands that actually cross.
+    """
+    pts = []
+    segs, pairs = count_ridge_crossings(chunks, flags, depth_gap, points=pts)
+    bands = {}
+    for x, y in pts:
+        name = crossing_band(x, y)
+        row = bands.setdefault(name, {"count": 0, "points": []})
+        row["count"] += 1
+        row["points"].append([round(x, 1), round(y, 1)])
+    for name, (x0, x1), (y0, y1) in CROSSING_BANDS:
+        if name in bands:
+            bands[name]["horizon_region"] = {"x": [[x0, x1]], "y": [[y0, y1]]}
+    sheet = CURRENT_SHEET[0] or hill
+    out_dir = Path(os.environ.get("RIDGE_CROSSING_REPORT_DIR", "/tmp/ridge-crossings"))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "sheet": sheet,
+        "hill": hill,
+        "depth_gap_m": depth_gap,
+        "segments": segs,
+        "pairs": pairs,
+        "bands": dict(sorted(bands.items(), key=lambda kv: -kv[1]["count"])),
+    }
+    (out_dir / f"{sheet}.json").write_text(json.dumps(payload, indent=1))
+    summary = " ".join(f"{k}={v['count']}" for k, v in payload["bands"].items()) or "none"
+    print("ridgecross_report", sheet, "segments", segs, "pairs", pairs, summary, flush=True)
 
 
 def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of, depth_grid=None, float_tol=None, float_min_run=None, float_hide=None, contour_hold=None, tight=None, depth_hide=None, contour_draw=None, contour_keep=None, clear_join=None, zbuf=None, zbuf_tol=None):
@@ -3005,6 +3076,18 @@ def project_contours(arr, gt, paper, project_xy, metres, rot, horizon_at, col_of
         final_flags = _join_blocked(chunks, hold, contour_keep, _cross_base)
         segs, pairs = count_ridge_crossings(chunks, final_flags)
         print("ridgecross", _hill, "segments", segs, "pairs", pairs)
+    if os.environ.get("RIDGE_CROSSING_REPORT") == "1":
+        _hold = contour_hold or MIN_RUN
+        if _hill in HORIZON_RELEASE_NO_CROSS:
+            _rep_flags = final_flags
+        elif _hill in CONTOUR_NO_CROSS:
+            _rep_flags = _join_blocked(chunks, _hold, contour_keep, _cross_base)
+        else:
+            _rep_flags = [
+                solid_flags([h for (_px, _py, _yr, h) in c], c, _hold, contour_keep)
+                for c in chunks
+            ]
+        write_crossing_report(_hill, chunks, _rep_flags)
     before_bag = {}
     for _yr, line in before:
         for px, py in line:
@@ -3509,6 +3592,7 @@ def keep_published_trees(svg, dest):
     return svg
 
 def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="hill", elevation=73.0, z_scale=None, depth_scale=1.0, sun=None, run_width=2.2, full_ground=False, frame_scale=1.0, edge_margin=0.0, frame_runs=None, ridge_fade=None, lift_width=None, run_labels=False, post_scale=1.0, pan_y=0.0):
+    CURRENT_SHEET[0] = slug
     h, w = len(arr), len(arr[0])
     midlat = gt[3] + (h * gt[5]) / 2
     cos = math.cos(midlat * math.pi / 180)

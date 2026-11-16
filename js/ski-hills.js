@@ -879,7 +879,7 @@
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
-    "steamboat-ski-resort": "20261116stc",
+    "steamboat-ski-resort": "20261116stz",
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
     "keystone": "20261116kyp"
