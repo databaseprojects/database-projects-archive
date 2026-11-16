@@ -18,6 +18,12 @@ checks in this order and copies the first hit into ski-hills/build-inputs/
 It prints which source each file came from, and lists files fetched from
 original sources so they can be added to the cache.
 
+Files that come from the Worker (3) or an original source (4) are also
+written back to /workspace/ski-cache/<slug>/ so the next job for that hill
+is a local copy (SKI_CACHE_WRITEBACK=0 turns this off; it is skipped when
+the disk would drop below SKI_CACHE_MIN_FREE_GB, default 3). SKI_CACHE_ONLY=1
+fails instead of falling back to the original sources.
+
 Geom selection is the mkgeom.py path: stream OpenSkiMap runs.geojson and
 lifts.geojson with ijson, keep features whose skiAreas id is in
 hill-index.json, then run build-alberta.framed_parts() so doubled piste
@@ -35,6 +41,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import shutil
 import sys
 import time
@@ -267,6 +274,32 @@ def fetch_cloud(url: str, dest: Path) -> bool:
     return True
 
 
+def write_back(slug: str, name: str, src: Path) -> None:
+    """Save a file fetched from the Worker or an original source into the
+    machine cache, so the next job for this hill finds it locally.
+
+    Off with SKI_CACHE_WRITEBACK=0. Skipped (with a note) when the cache
+    disk has less than SKI_CACHE_MIN_FREE_GB (default 3) free afterwards.
+    """
+    if os.environ.get("SKI_CACHE_WRITEBACK", "1") == "0":
+        return
+    dest = cache_root() / slug / name
+    try:
+        if present(dest, 50) and dest.stat().st_size == src.stat().st_size:
+            return
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        min_free = float(os.environ.get("SKI_CACHE_MIN_FREE_GB", "3")) * 1e9
+        if shutil.disk_usage(dest.parent).free - src.stat().st_size < min_free:
+            print(f"cache write-back skipped for {slug}/{name}: low disk", flush=True)
+            return
+        tmp = dest.with_suffix(dest.suffix + ".part")
+        shutil.copy2(src, tmp)
+        tmp.replace(dest)
+        print(f"cached {slug}/{name} -> {dest}", flush=True)
+    except OSError as err:
+        print(f"cache write-back failed for {slug}/{name}: {err}", flush=True)
+
+
 def source_label(kind, slug, name):
     if kind == "build-inputs":
         return "ski-hills/build-inputs/"
@@ -372,12 +405,19 @@ def resolve_file(slug, name, kind, builders: OriginalBuilders):
         return dest, "ski-cache", False
     url = cloud_url(slug, name)
     if fetch_cloud(url, dest) and present(dest, 50 if kind == "geom" else 1000):
+        write_back(slug, name, dest)
         return dest, "cloudflare", False
     if dest.exists():
         dest.unlink()
+    if os.environ.get("SKI_CACHE_ONLY") == "1":
+        raise SystemExit(
+            f"{slug} {name}: not in ski-hills/build-inputs/, {cache_root() / slug}/ "
+            "or the Worker, and SKI_CACHE_ONLY=1 forbids the original-source fetch"
+        )
     getattr(builders, kind)(slug, dest)
     if not present(dest, 50 if kind == "geom" else 1000):
         raise SystemExit(f"failed to build {slug} {name} from the original source")
+    write_back(slug, name, dest)
     return dest, "original", True
 
 
