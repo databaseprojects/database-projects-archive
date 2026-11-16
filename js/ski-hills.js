@@ -887,12 +887,14 @@
 
   // Lowest density to densest. Applied when the bands are painted so the
   // steps stay these values wherever the contour JSON was served from.
+  // tree-opacity:start
   var TREE_STEP = {
-    1: ["0.12"],
-    2: ["0.08", "0.12"],
+    1: ["0.08"],
+    2: ["0.05", "0.08"],
     3: ["0.03", "0.07", "0.11"],
     4: ["0.03", "0.05", "0.08", "0.11"]
   };
+  // tree-opacity:end
 
   function treeStepOpacity(count, index, fallback) {
     var row = TREE_STEP[count];
