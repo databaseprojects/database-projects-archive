@@ -47,3 +47,7 @@ Cursor agent computers should come with the mapping tools used in ridge-clipping
 ## Prints and exports (standing rule from Billy)
 
 Prints and exports always follow the live hill. Every ski-hill print or export (any hill, size or view) must take rotation angle, scale and placement from the current live databaseprojects.ca capture of that hill, as explicit parameters for every element drawn: main art, fill strip, caption, trees and contours. Never use baked or older cached geometry (for example the 2026-11-09 band-contours files) whose projection doesn't match the live view. If a source doesn't match, rebuild it from the live view or stop and flag it. This applies automatically to every print or export request; no per-task spec is needed. (Billy, 2026-11-15)
+
+## Test prints go to Drive (standing rule from Billy)
+
+Whenever Billy asks for a ski-hill test print, upload the finished print file (the Gelato 300 dpi PNG) to his Google Drive folder "Ski Hill Maps – Test Prints" (folder id 1QwS52J6o-IINKWKwMSYDXXW7FrzlSQP3) automatically, without being asked, and report the Drive link. This applies to every test print by default; no per-task spec is needed. (Billy, 2026-11-15)
