@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261116tel",
+    co: "20261116lov",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116dv139",
+      index: R2_BASE + "contours/usa-index.json?v=20261116lov",
       label: US_STATE_NAMES[id]
     };
   });
@@ -947,7 +947,8 @@
     "copper-mountain": "20261116cu45",
     "heavenly-mountain-resort": "20261116hvy",
     "aspen-snowmass": "20261116asp",
-    "telluride-ski-area": "20261116tel"
+    "telluride-ski-area": "20261116tel",
+    "loveland-basin-ski-area": "20261116lov"
   };
 
   function assetV(slug) {
@@ -1356,7 +1357,8 @@
       hill.slug === "heavenly-mountain-resort" ||
       hill.slug === "big-white-ski-resort" ||
       hill.slug === "aspen-snowmass" ||
-      hill.slug === "telluride-ski-area"
+      hill.slug === "telluride-ski-area" ||
+      hill.slug === "loveland-basin-ski-area"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4475,7 +4477,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116dv139").then(function (res) {
+  fetch("hill-index.json?v=20261116lov").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
