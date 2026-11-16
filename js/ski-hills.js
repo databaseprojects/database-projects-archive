@@ -98,7 +98,7 @@
     id: "Idaho",
     mt: "Montana",
     wy: "Wyoming",
-    ut: "Utah",
+    ut: "20261116dvp",
     co: "Colorado",
     az: "Arizona",
     nm: "New Mexico",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261116bvz",
+      index: R2_BASE + "contours/usa-index.json?v=20261116dvp",
       label: US_STATE_NAMES[id]
     };
   });
@@ -941,7 +941,8 @@
     "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
     "big-sky-resort": "20261116bs30",
-    "winter-park-resort": "20261116wpz"
+    "winter-park-resort": "20261116wpz",
+    "deer-valley-resort": "20261116dvp"
   };
 
   function assetV(slug) {
@@ -1294,7 +1295,8 @@
       hill.slug === "beaver-creek" ||
       hill.slug === "banff-sunshine-village" ||
       hill.slug === "big-sky-resort" ||
-      hill.slug === "winter-park-resort"
+      hill.slug === "winter-park-resort" ||
+      hill.slug === "deer-valley-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4412,7 +4414,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261116wpz").then(function (res) {
+  fetch("hill-index.json?v=20261116dvp").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
