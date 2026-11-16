@@ -371,6 +371,35 @@
   --sh-run: 1.0269px;
 }
 
+/* Bird's-eye only. These hills bake a thinner run_width and lift_width than
+   the 2.2 / 1.7 defaults. The screen stroke is 1.3166px times that ratio.
+   Plan view, cards and Whistler stay on --sh-run. */
+.sh-lb[data-sh-hill="silver-star-mountain-resort"],
+.sh-lb[data-sh-hill="banff-sunshine-village"] {
+  /* 1.716/2.2 and 1.33/1.7 */
+  --sh-be-run: 1.0269px;
+  --sh-be-lift: 1.0300px;
+}
+
+.sh-lb[data-sh-hill="big-white-ski-resort"] {
+  /* 1.36/2.2 and 1.05/1.7 */
+  --sh-be-run: 0.8139px;
+  --sh-be-lift: 0.8132px;
+}
+
+.sh-lb[data-sh-hill="sun-peaks-resort"] {
+  /* 1.96/2.2 and 1.51/1.7 */
+  --sh-be-run: 1.1730px;
+  --sh-be-lift: 1.1695px;
+}
+
+.sh-lb[data-sh-hill="red-mountain-resort"],
+.sh-lb[data-sh-hill="panorama-mountain-resort"] {
+  /* 1.84/2.2 and 1.42/1.7 */
+  --sh-be-run: 1.1012px;
+  --sh-be-lift: 1.0997px;
+}
+
 .sh-lb polyline {
   stroke-width: 1.3166;
 }
@@ -421,19 +450,27 @@
   stroke-linecap: round;
 }
 
-/* Bird's-eye lines use the plan view widths. The sheets bake wider strokes
-   in viewBox units, so override them with the same screen widths the
-   plan view draws: runs and lifts at --sh-run (1.3166px, Whistler 1.0269px),
-   contours at 0.5pt. */
-.sh-lb .sh-frontal-run,
-.sh-lb .sh-frontal-lift {
-  stroke-width: var(--sh-run, 1.3166px) !important;
+/* Bird's-eye lines use the plan view widths unless the hill sets
+   --sh-be-run / --sh-be-lift. The sheets bake wider strokes in viewBox
+   units, so override them with screen widths: runs and lifts at --sh-run
+   (1.3166px, Whistler 1.0269px) when those variables are absent, contours
+   at 0.5pt. */
+.sh-lb .sh-frontal-run {
+  stroke-width: var(--sh-be-run, var(--sh-run, 1.3166px)) !important;
   vector-effect: non-scaling-stroke !important;
 }
 
-.sh-lb .sh-frame-art .sh-frontal-run,
+.sh-lb .sh-frontal-lift {
+  stroke-width: var(--sh-be-lift, var(--sh-run, 1.3166px)) !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+.sh-lb .sh-frame-art .sh-frontal-run {
+  stroke-width: calc(var(--sh-be-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1)) !important;
+}
+
 .sh-lb .sh-frame-art .sh-frontal-lift {
-  stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1)) !important;
+  stroke-width: calc(var(--sh-be-lift, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1)) !important;
 }
 
 /* Bird's-eye contours match the plan view contours: black at 0.08
