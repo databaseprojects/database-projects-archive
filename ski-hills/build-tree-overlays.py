@@ -1985,7 +1985,8 @@ def generate_overlay(slug):
         # Beaver Creek's 164.11° plan turn is baked into usa/co.json
         # (and was then scaled 0.95 about the centre). Use the solved frame.
         # Loveland Basin's plan is the baked 107.66° sheet turned
-        # another 20° counter-clockwise to 87.66° and refit to the
+        # 20° counter-clockwise to 87.66° (20261116lov) and then
+        # 30° clockwise to 117.66° (20261117lv30), refit to the
         # 48 pad. The turn lives in usa/co.json. Use the solved frame.
         # Arapahoe Basin's plan is the published sheet turned 30°
         # counter-clockwise and recentred, baked into usa/co.json.
