@@ -137,7 +137,7 @@
     md: "20261105g50",
     me: "20261105g50",
     mi: "20261105g50",
-    mt: "20261117bsp95",
+    mt: "20261117bsp146",
     nh: "20261105g50",
     nj: "20261105g50",
     nm: "20261116t65",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261117bsp95",
+      index: R2_BASE + "contours/usa-index.json?v=20261117bsp146",
       label: US_STATE_NAMES[id]
     };
   });
@@ -940,7 +940,7 @@
     "keystone": "20261116ky12",
     "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
-    "big-sky-resort": "20261117bsp95",
+    "big-sky-resort": "20261117bsp146",
     "winter-park-resort": "20261116wpz",
     "deer-valley-resort": "20261116dv139",
     "jackson-hole-mountain-resort": "20261116jh",
@@ -4489,7 +4489,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261117bsp95").then(function (res) {
+  fetch("hill-index.json?v=20261117bsp146").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
