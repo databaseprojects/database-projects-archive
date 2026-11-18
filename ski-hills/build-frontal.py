@@ -4425,9 +4425,9 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
         return parts
 
     colours = {
-        "novice": "#1b7a32",
-        "easy": "#1b7a32",
-        "intermediate": "#1a4f9c",
+        "novice": "#1e8a38",
+        "easy": "#1e8a38",
+        "intermediate": "#1d58ad",
         "advanced": "#111",
         "expert": "#111",
         "freeride": "#111",
