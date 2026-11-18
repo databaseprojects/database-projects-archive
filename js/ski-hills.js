@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261117vp45",
+    co: "20261117as140",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261117vp45",
+      index: R2_BASE + "contours/usa-index.json?v=20261117as140",
       label: US_STATE_NAMES[id]
     };
   });
@@ -952,7 +952,8 @@
     "stowe-mountain-resort": "20261116sto",
     "revelstoke-mountain-resort": "20261116rev",
     "fernie-alpine-resort": "20261116fer",
-    "sugarloaf": "20261116sgl"
+    "sugarloaf": "20261116sgl",
+    "aspen-mountain": "20261117as140"
   };
 
   function assetV(slug) {
@@ -1368,7 +1369,8 @@
       hill.slug === "revelstoke-mountain-resort" ||
       hill.slug === "fernie-alpine-resort" ||
       hill.slug === "sugarloaf" ||
-      hill.slug === "vail"
+      hill.slug === "vail" ||
+      hill.slug === "aspen-mountain"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4487,7 +4489,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261117vp45").then(function (res) {
+  fetch("hill-index.json?v=20261117as140").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

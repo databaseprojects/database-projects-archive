@@ -807,6 +807,8 @@ PLAN_TURN_DEG = {
     # (clockwise increases the plan angle). Negative is counter-clockwise
     # in this frame.
     "lake-louise-ski-area": -17.9,
+    # job 20261117as140: 0.0 -> 140.0
+    "aspen-mountain": 140.0,
 }
 
 
@@ -1970,7 +1972,9 @@ def generate_overlay(slug):
         # 48 pad. The turn lives in usa/co.json. Use the solved frame.
         # Arapahoe Basin's plan is the published sheet turned 30°
         # counter-clockwise and recentred, baked into usa/co.json.
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin"):
+        # Aspen Mountain's plan is the published sheet turned 140°
+        # clockwise and refit to the 48 pad, baked into usa/co.json.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "aspen-mountain"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
