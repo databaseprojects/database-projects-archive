@@ -1987,7 +1987,8 @@ def generate_overlay(slug):
         # Loveland Basin's plan is the baked 107.66° sheet turned
         # 20° counter-clockwise to 87.66° (20261116lov) and then
         # 30° clockwise to 117.66° (20261117lv30), refit to the
-        # 48 pad. The turn lives in usa/co.json. Use the solved frame.
+        # 48 pad, then scaled 0.94 about the frame centre
+        # (20261117lvz6). The turn lives in usa/co.json. Use the solved frame.
         # Arapahoe Basin's plan is the published sheet turned 30°
         # counter-clockwise and recentred, baked into usa/co.json.
         # Aspen Mountain's 140° clockwise plan is in PLAN_TURN_DEG and
