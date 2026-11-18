@@ -808,8 +808,16 @@ PLAN_TURN_DEG = {
     # in this frame.
     "lake-louise-ski-area": -17.9,
     # job 20261117as140: 0.0 -> 140.0
-    "aspen-mountain": 140.0,
+    "aspen-mountain": 152.0,
 }
+
+PLAN_TURN_SCALE = {
+    # Aspen Mountain: after the 152° clockwise turn is refit to the 48/904
+    # pad, the published plan is scaled 0.95 about the frame centre so the
+    # content is about 5% smaller. Unmap undoes this scale first.
+    "aspen-mountain": 0.95,
+}
+
 
 
 def _geom_run_points(geom_data):
@@ -879,7 +887,14 @@ def plan_pixel_unmap(slug, geom_data):
     pad = PLAN_ART_PAD
     size = PLAN_ART_SIZE
 
+    scale = PLAN_TURN_SCALE.get(slug, 1.0)
+    cx = pad + size / 2.0
+    cy = pad + size / 2.0
+
     def unmap(px, py):
+        if scale != 1.0:
+            px = cx + (px - cx) / scale
+            py = cy + (py - cy) / scale
         rx = fr["rminx"] + (px - pad) / size * fr["rspan"]
         ry = fr["rminy"] + (py - pad) / size * fr["rspan"]
         ox, oy = fr["origin"]
