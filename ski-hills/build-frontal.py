@@ -1353,8 +1353,9 @@ CAMERAS = {
     # unchanged (still the earlier 50° counter-clockwise turn). The back
     # view is gone. Facing is locked so a wider DEM_PAD cannot flip orient().
     # job 20261116sb40: facing 179.6 -> 219.6
+    # job 20261117sb45: facing 219.6 -> 174.6
     "snowbird": {
-        "facing": 219.6,
+        "facing": 174.6,
         "frame_scale": 0.931 / 1.10,
     },
     # Park City. Automatic facing is 215.1. Locked so a later input
