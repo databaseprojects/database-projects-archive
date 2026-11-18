@@ -1642,7 +1642,8 @@ CAMERAS = {
     # job 20261117lv30: facing 272.34 -> 242.34
     "loveland-basin-ski-area": {"facing": 242.34},
     # job 20261117ok180: facing 95.79 -> 275.79 (180°)
-    "okemo-mountain": {"facing": 275.79},
+    # job 20261117ok30: facing 275.79 -> 305.79
+    "okemo-mountain": {"facing": 305.79},
 }
 
 
