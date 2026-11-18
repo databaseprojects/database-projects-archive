@@ -1355,8 +1355,9 @@ CAMERAS = {
     # job 20261116sb40: facing 179.6 -> 219.6
     # job 20261117sb45: facing 219.6 -> 174.6
     # job 20261117sb15: facing 174.6 -> 189.6
+    # job 20261117sb45r: facing 189.6 -> 174.6
     "snowbird": {
-        "facing": 189.6,
+        "facing": 174.6,
         "frame_scale": 0.931 / 1.10,
     },
     # Park City. Automatic facing is 215.1. Locked so a later input
