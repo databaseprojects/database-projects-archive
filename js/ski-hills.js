@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261117as152",
+    co: "20261117abb",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261117bsp146",
+      index: R2_BASE + "contours/usa-index.json?v=20261117abb",
       label: US_STATE_NAMES[id]
     };
   });
@@ -739,6 +739,8 @@
     hill._drawPromise = ready.then(function () {
       if (!hill._geom || !hill.el || hill._drawn) return hill;
       var svg = drawingSvg(hill);
+      if (hill._bowlOn == null) hill._bowlOn = hill.slug === "arapahoe-basin";
+      if (hill._bowlOn) svg.classList.add("sh-bowl-on");
       var holder = hill.el.querySelector("svg");
       if (holder && holder.parentNode) holder.parentNode.replaceChild(svg, holder);
       else {
@@ -906,7 +908,7 @@
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
-    "arapahoe-basin": "20261116abs",
+    "arapahoe-basin": "20261117abb",
     "silver-mountain-resort": "20261116fh",
     "vail": "20261117vp90",
     "sun-peaks-resort": "20261116spc",
@@ -4321,7 +4323,7 @@
     }
     var bowl = null;
     if (hill.bowl) {
-      if (hill._bowlOn == null) hill._bowlOn = false;
+      if (hill._bowlOn == null) hill._bowlOn = hill.slug === "arapahoe-basin";
       bowl = document.createElement("label");
       bowl.className = "sh-tree-switch sh-bowl-switch";
       var bowlBox = document.createElement("input");
@@ -4489,7 +4491,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261117bsp146").then(function (res) {
+  fetch("hill-index.json?v=20261117abb").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
