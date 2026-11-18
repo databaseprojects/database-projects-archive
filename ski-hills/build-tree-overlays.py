@@ -809,6 +809,8 @@ PLAN_TURN_DEG = {
     "lake-louise-ski-area": -17.9,
     # job 20261117as140: 0.0 -> 140.0
     "aspen-mountain": 152.0,
+    # job 20261117ok180: -95.6 -> 84.4 (180° clockwise)
+    "okemo-mountain": 84.4,
 }
 
 PLAN_TURN_SCALE = {
