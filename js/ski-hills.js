@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261117abb2",
+    co: "20261117abb3",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261117abb2",
+      index: R2_BASE + "contours/usa-index.json?v=20261117abb3",
       label: US_STATE_NAMES[id]
     };
   });
@@ -909,7 +909,7 @@
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
-    "arapahoe-basin": "20261117abb2",
+    "arapahoe-basin": "20261117abb3",
     "silver-mountain-resort": "20261116fh",
     "vail": "20261117vp90",
     "sun-peaks-resort": "20261116spc",
@@ -3054,7 +3054,7 @@
     if (card && card._contourLines) paintContours(svg, card._contourLines, shift, raised && !art, card._treeWash, card._treeBands);
     if (raised && art) {
       mountFrontal(svg, art, hill);
-      setPlanHidden(svg, true);
+      setPlanHidden(svg, true, hill);
     }
     writeMapCredit(svg, hill, DRAW);
     return svg;
@@ -3200,14 +3200,24 @@
     stage.addEventListener("pointercancel", endDrag);
   }
 
-  function setPlanHidden(svg, hidden) {
+  function setPlanHidden(svg, hidden, hill) {
     if (!svg) return;
+    var arapahoe = hill && hill.slug === "arapahoe-basin";
     Array.prototype.forEach.call(svg.querySelectorAll(".sh-contours, .sh-run, .sh-lift"), function (node) {
       // The caption key uses the same run and lift classes as the plan drawing.
       // Hiding those would blank the coloured swatches in bird's eye view.
       if (node.closest && node.closest(".sh-caption")) return;
-      if (hidden) node.setAttribute("display", "none");
-      else node.removeAttribute("display");
+      if (hidden) {
+        node.setAttribute("display", "none");
+        // Arapahoe only: .sh-bowl-on .sh-bowl { display: inline } overrides the
+        // presentation attribute, so plan backside would show in bird's-eye.
+        if (arapahoe && node.classList && node.classList.contains("sh-bowl")) {
+          node.style.setProperty("display", "none", "important");
+        }
+      } else {
+        node.removeAttribute("display");
+        if (arapahoe && node.style) node.style.removeProperty("display");
+      }
     });
   }
 
@@ -3259,7 +3269,7 @@
 
   function paintPlan(svg, hill, lines, shift) {
     clearFrontal(svg);
-    setPlanHidden(svg, false);
+    setPlanHidden(svg, false, hill);
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
     if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
@@ -3268,7 +3278,7 @@
   function paintRaised(svg, hill, lines, shift) {
     if (lines && shift) paintContours(svg, lines, shift, false, hill && hill.el && hill.el._treeWash, hill && hill.el && hill.el._treeBands);
     mountFrontal(svg, frontalArt(hill), hill);
-    setPlanHidden(svg, true);
+    setPlanHidden(svg, true, hill);
     if (svg && hill) svg.classList.toggle("sh-trees-on", !!hill._treesOn);
     if (svg && hill) svg.classList.toggle("sh-bowl-on", !!hill._bowlOn);
   }
@@ -3317,7 +3327,7 @@
         if (on && art) paintRaised(lb._svg, hill, card._contourLines, lb._shift);
         else if (failed && card._contourLines) {
           clearFrontal(lb._svg);
-          setPlanHidden(lb._svg, false);
+          setPlanHidden(lb._svg, false, hill);
           paintContours(lb._svg, card._contourLines, lb._shift, true, card._treeWash, card._treeBands);
         } else if (!on) paintPlan(lb._svg, hill, card._contourLines, lb._shift);
       }
@@ -4495,7 +4505,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261117abb2").then(function (res) {
+  fetch("hill-index.json?v=20261117abb3").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
