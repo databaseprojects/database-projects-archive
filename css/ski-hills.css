@@ -601,17 +601,26 @@ g[mask^="url(#sh-contour-fade-"] {
 .sh-hill polyline.sh-easy,
 .sh-lb polyline.sh-easy,
 .sh-hill line.sh-easy,
-.sh-lb line.sh-easy { stroke: #1b7a32; }
+.sh-lb line.sh-easy { stroke: #1e8a38; }
 .sh-hill polyline.sh-intermediate,
 .sh-lb polyline.sh-intermediate,
 .sh-hill line.sh-intermediate,
-.sh-lb line.sh-intermediate { stroke: #1a4f9c; }
+.sh-lb line.sh-intermediate { stroke: #1d58ad; }
 .sh-hill polyline.sh-advanced,
 .sh-lb polyline.sh-advanced,
 .sh-hill line.sh-advanced,
 .sh-lb line.sh-advanced { stroke: #111; }
 .sh-hill polyline.sh-unrated,
 .sh-lb polyline.sh-unrated { stroke: #8a8a8a; }
+
+/* Bird's-eye sheets bake green #1b7a32 and blue #1a4f9c on each run
+   (stroke attribute and inline style). They are inlined into the DOM,
+   so this override lifts lightness to match the plan view without
+   rewriting the SVGs. !important wins over the inline style. */
+.sh-frontal-run[stroke="#1b7a32"],
+.sh-frontal-run[style*="stroke:#1b7a32"] { stroke: #1e8a38 !important; }
+.sh-frontal-run[stroke="#1a4f9c"],
+.sh-frontal-run[style*="stroke:#1a4f9c"] { stroke: #1d58ad !important; }
 
 .sh-hill .sh-lift,
 .sh-lb .sh-lift {
