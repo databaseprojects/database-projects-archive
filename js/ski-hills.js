@@ -732,6 +732,10 @@
     return hill._filePromise;
   }
 
+  function bowlForcedOn(hill) {
+    return !!(hill && (hill.slug === "arapahoe-basin" || hill.slug === "stevens-pass"));
+  }
+
   function ensureDrawn(hill) {
     if (!hill || hill._drawn) return Promise.resolve(hill);
     if (hill._drawPromise) return hill._drawPromise;
@@ -739,7 +743,7 @@
     hill._drawPromise = ready.then(function () {
       if (!hill._geom || !hill.el || hill._drawn) return hill;
       var svg = drawingSvg(hill);
-      if (hill.slug === "arapahoe-basin") hill._bowlOn = true;
+      if (bowlForcedOn(hill)) hill._bowlOn = true;
       else if (hill._bowlOn == null) hill._bowlOn = false;
       if (hill._bowlOn) svg.classList.add("sh-bowl-on");
       var holder = hill.el.querySelector("svg");
@@ -3247,21 +3251,22 @@
 
   function setPlanHidden(svg, hidden, hill) {
     if (!svg) return;
-    var arapahoe = hill && hill.slug === "arapahoe-basin";
+    var forcedBowl = bowlForcedOn(hill);
     Array.prototype.forEach.call(svg.querySelectorAll(".sh-contours, .sh-run, .sh-lift"), function (node) {
       // The caption key uses the same run and lift classes as the plan drawing.
       // Hiding those would blank the coloured swatches in bird's eye view.
       if (node.closest && node.closest(".sh-caption")) return;
       if (hidden) {
         node.setAttribute("display", "none");
-        // Arapahoe only: .sh-bowl-on .sh-bowl { display: inline } overrides the
-        // presentation attribute, so plan backside would show in bird's-eye.
-        if (arapahoe && node.classList && node.classList.contains("sh-bowl")) {
+        // Forced-on bowls (Arapahoe Back Side, Stevens Pass Mill Valley):
+        // .sh-bowl-on .sh-bowl { display: inline } overrides the presentation
+        // attribute, so the plan bowl layer would show in bird's-eye.
+        if (forcedBowl && node.classList && node.classList.contains("sh-bowl")) {
           node.style.setProperty("display", "none", "important");
         }
       } else {
         node.removeAttribute("display");
-        if (arapahoe && node.style) node.style.removeProperty("display");
+        if (forcedBowl && node.style) node.style.removeProperty("display");
       }
     });
   }
@@ -4379,8 +4384,9 @@
       });
     }
     var bowl = null;
-    if (hill.slug === "arapahoe-basin") {
-      // Back Side is always visible; no toggle in plan or bird's-eye.
+    if (bowlForcedOn(hill)) {
+      // Arapahoe Back Side and Stevens Pass Mill Valley are always visible;
+      // no toggle in plan, bird's-eye, or the grid card.
       hill._bowlOn = true;
     } else if (hill.bowl) {
       if (hill._bowlOn == null) hill._bowlOn = false;
