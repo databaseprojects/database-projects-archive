@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261116dv139",
+    ut: "20261118pdz5",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -964,7 +964,8 @@
     "okemo-mountain": "20261118okp",
     "marmot-basin": "20261118mb45",
     "whitefish-mountain-resort": "20261118wfr",
-    "timberline-lodge-ski-area": "20261118tbl"
+    "timberline-lodge-ski-area": "20261118tbl",
+    "powder-mountain-ski-resort": "20261118pdz5"
   };
 
   function assetV(slug) {
@@ -1423,6 +1424,7 @@
       hill.slug === "marmot-basin" ||
       hill.slug === "whitefish-mountain-resort" ||
       hill.slug === "timberline-lodge-ski-area" ||
+      hill.slug === "powder-mountain-ski-resort" ||
       hill.slug === "stevens-pass"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
