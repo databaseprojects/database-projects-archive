@@ -17,9 +17,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261116spk",
+      file: "hills.json?v=20261118ww135",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261105cmt",
+      index: R2_BASE + "contours/index.json?v=20261118ww135",
       label: "British Columbia"
     },
     ab: {
@@ -965,7 +965,8 @@
     "marmot-basin": "20261118mb45",
     "whitefish-mountain-resort": "20261118wfr",
     "timberline-lodge-ski-area": "20261118tbl",
-    "powder-mountain-ski-resort": "20261118pdz5"
+    "powder-mountain-ski-resort": "20261118pdz5",
+    "whitewater-ski-resort": "20261118ww135"
   };
 
   function assetV(slug) {
@@ -1425,7 +1426,8 @@
       hill.slug === "whitefish-mountain-resort" ||
       hill.slug === "timberline-lodge-ski-area" ||
       hill.slug === "powder-mountain-ski-resort" ||
-      hill.slug === "stevens-pass"
+      hill.slug === "stevens-pass" ||
+      hill.slug === "whitewater-ski-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4560,7 +4562,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118sp45").then(function (res) {
+  fetch("hill-index.json?v=20261118ww135").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
