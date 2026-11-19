@@ -1231,8 +1231,9 @@ CAMERAS = {
     # The plan was the same turn (PLAN_TURN_DEG -116.9). It is now another
     # 30° counter-clockwise, -146.9, and the run box is recentred above
     # the banner. Bird's-eye framing is unchanged.
+    # job 20261118sp45: facing 116.9 -> 161.9
     "stevens-pass": {
-        "facing": 116.9,
+        "facing": 161.9,
     },
     # Alpental only. The automatic render faced 71.1 (the 251.1 guess,
     # flipped by orient()). 251.1 is 180° further and turns that bird's-eye
