@@ -171,7 +171,7 @@ FLOATING_HORIZON = {
     "mt-bachelor": 3.5,
     # Whitewater at facing 43.5, bottom-left only (HORIZON_REGION). Back
     # slopes behind the near foreground ridge were stacking on its face.
-    "whitewater-ski-resort": 3.5,
+    "whitewater-ski-resort": 1.0,
     # Whistler. The 3 px pass from PR #306, kept. On its own it cut the
     # far ridges into dashes; HORIZON_MIN_RUN and CONTOUR_HOLD join them.
     "whistler-blackcomb": 3.0,
@@ -287,7 +287,7 @@ HORIZON_MIN_RUN = {
     # Bachelor. Medium grazes stay drawn so the elevation lines join.
     "mt-bachelor": 80,
     # Whitewater bottom-left. Only a 30+ sample stretch behind the ridge hides.
-    "whitewater-ski-resort": 30,
+    "whitewater-ski-resort": 4,
     # Mt Baker corners. A 4+ sample stretch behind the ridge hides.
     "mt-baker": 4,
     # Harper top-right. Only a 4+ sample stretch behind the ridge hides,
@@ -400,11 +400,7 @@ HORIZON_REGION = {
     "red-mountain-resort": {
         "y": ((-400.0, 1000.0 / 3.0),),
     },
-    # Whitewater at facing 43.5. Bottom-left corner only.
-    "whitewater-ski-resort": {
-        "x": ((-400.0, 300.0),),
-        "y": ((780.0, 1400.0),),
-    },
+
     # Mt Baker at facing 221.3. Left side, top and bottom corners only.
     # The middle of the sheet stays on the skyline test.
     "mt-baker": {
@@ -676,13 +672,13 @@ CONTOUR_KEEP = {
 # the bridged piece would cross a contour the 12 px pass draws, which is
 # a back face showing through a ridge. Whistler's 100 px hold joined
 # the top-right and centre-left ridges but drew back faces across them.
-CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort", "fernie-alpine-resort", "sugarloaf", "whitefish-mountain-resort", "timberline-lodge-ski-area", "powder-mountain-ski-resort", "purgatory-resort", "bridger-bowl"}
+CONTOUR_NO_CROSS = {"whistler-blackcomb", "alta-ski-area", "stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort", "fernie-alpine-resort", "sugarloaf", "whitefish-mountain-resort", "timberline-lodge-ski-area", "powder-mountain-ski-resort", "purgatory-resort", "bridger-bowl", "whitewater-ski-resort"}
 # Base hold for the no-cross test. 0 means the raw hidden samples, so the
 # ordinary 12 px hold is tested, not only a longer hold. Per hill only.
-CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0, "sun-peaks-resort": 0, "stowe-mountain-resort": 0, "revelstoke-mountain-resort": 0, "fernie-alpine-resort": 0, "sugarloaf": 0, "whitefish-mountain-resort": 0, "timberline-lodge-ski-area": 0, "powder-mountain-ski-resort": 0, "purgatory-resort": 0, "bridger-bowl": 0}
+CONTOUR_NO_CROSS_BASE = {"stevens-pass": 0, "park-city-mountain-resort": 0, "breckenridge": 0, "lake-louise-ski-area": 0, "mammoth-mountain": 0, "palisades-tahoe-olympic-valley": 0, "killington-resort": 0, "keystone": 0, "beaver-creek": 0, "banff-sunshine-village": 0, "jackson-hole-mountain-resort": 0, "copper-mountain": 0, "big-white-ski-resort": 0, "aspen-snowmass": 0, "telluride-ski-area": 0, "sun-peaks-resort": 0, "stowe-mountain-resort": 0, "revelstoke-mountain-resort": 0, "fernie-alpine-resort": 0, "sugarloaf": 0, "whitefish-mountain-resort": 0, "timberline-lodge-ski-area": 0, "powder-mountain-ski-resort": 0, "purgatory-resort": 0, "bridger-bowl": 0, "whitewater-ski-resort": 0}
 # The 4-sample dip join draws a short hidden run back even when that piece
 # crosses a nearer contour. These hills skip that release. Per hill only.
-HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort", "fernie-alpine-resort", "sugarloaf", "whitefish-mountain-resort", "timberline-lodge-ski-area", "powder-mountain-ski-resort", "purgatory-resort", "bridger-bowl"}
+HORIZON_RELEASE_NO_CROSS = {"stevens-pass", "park-city-mountain-resort", "breckenridge", "lake-louise-ski-area", "mammoth-mountain", "palisades-tahoe-olympic-valley", "killington-resort", "keystone", "beaver-creek", "banff-sunshine-village", "jackson-hole-mountain-resort", "copper-mountain", "big-white-ski-resort", "aspen-snowmass", "telluride-ski-area", "sun-peaks-resort", "stowe-mountain-resort", "revelstoke-mountain-resort", "fernie-alpine-resort", "sugarloaf", "whitefish-mountain-resort", "timberline-lodge-ski-area", "powder-mountain-ski-resort", "purgatory-resort", "bridger-bowl", "whitewater-ski-resort"}
 # Default bird's-eye contour pass for a hill with no hand-tuned horizon
 # entry. 1.0 px is the same tolerance Baker, Harper, Bogus, Sunshine and
 # Alta use to hide a back face behind a nearer ridge. A dip shorter than
