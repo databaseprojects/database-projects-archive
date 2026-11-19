@@ -1961,7 +1961,11 @@ DEM_PAD = {
 # Hills whose bird's-eye DEM skips MRDEM. Sugarloaf (Maine, facing 191):
 # MRDEM is blank south and east of the border, about a third of the crop,
 # which is the top and middle-left of the sheet, so no contours drew there.
-DEM_COPERNICUS = {"sugarloaf"}
+# Okemo Mountain (Vermont, facing 305.79): MRDEM is blank on the east
+# side of the crop (the front of the bird's-eye), about 43% of the
+# raster, including 39% of the trail points. raster_has_relief still
+# passed (57% valid). Copernicus covers the whole box.
+DEM_COPERNICUS = {"sugarloaf", "okemo-mountain"}
 
 
 def wide_box(runs, lifts):
