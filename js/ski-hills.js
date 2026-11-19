@@ -967,7 +967,8 @@
     "timberline-lodge-ski-area": "20261118tbl",
     "powder-mountain-ski-resort": "20261118pdz5",
     "whitewater-ski-resort": "20261118ww135",
-    "purgatory-resort": "20261118pg180"
+    "purgatory-resort": "20261118pg180",
+    "bridger-bowl": "20261118bbr"
   };
 
   function assetV(slug) {
@@ -1429,7 +1430,8 @@
       hill.slug === "powder-mountain-ski-resort" ||
       hill.slug === "stevens-pass" ||
       hill.slug === "whitewater-ski-resort" ||
-      hill.slug === "purgatory-resort"
+      hill.slug === "purgatory-resort" ||
+      hill.slug === "bridger-bowl"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
