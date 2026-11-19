@@ -4465,7 +4465,16 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     # they were emitted from; unnamed glades still block labels.
     obstacle_runs = []
     named_runs = []
+    drop_rings = {
+        "Shadows",
+        "Thick of It",
+        "Closets",
+        "Legend's Trees",
+        "Maverick's Terrain Park",
+    } if slug == "steamboat-ski-resort" else set()
     for run in runs:
+        if (run.get("name") or "").strip() in drop_rings:
+            continue
         colour = colours.get(run.get("difficulty") or "", "#8a8a8a")
         pieces = [] if run_labels else None
         run_parts.extend(
