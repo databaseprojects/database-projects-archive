@@ -959,7 +959,8 @@
     "aspen-mountain": "20261117as152",
     "okemo-mountain": "20261118okp",
     "marmot-basin": "20261118mb45",
-    "whitefish-mountain-resort": "20261118wfr"
+    "whitefish-mountain-resort": "20261118wfr",
+    "sugarbush-resort": "20261118sgb"
   };
 
   function assetV(slug) {
@@ -1416,7 +1417,8 @@
       hill.slug === "aspen-mountain" ||
       hill.slug === "okemo-mountain" ||
       hill.slug === "marmot-basin" ||
-      hill.slug === "whitefish-mountain-resort"
+      hill.slug === "whitefish-mountain-resort" ||
+      hill.slug === "sugarbush-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");

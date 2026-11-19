@@ -1969,7 +1969,12 @@ DEM_PAD = {
 # side of the crop (the front of the bird's-eye), about 43% of the
 # raster, including 39% of the trail points. raster_has_relief still
 # passed (57% valid). Copernicus covers the whole box.
-DEM_COPERNICUS = {"sugarloaf", "okemo-mountain"}
+# Sugarbush Resort (Vermont): MRDEM nodata in part of the crop still
+# passed raster_has_relief, so the top of the bird's-eye was missing
+# contours and trees. Skip MRDEM; Copernicus GLO-30 covers the box.
+# The GLO-30 clip is written to {slug}-dem-wide-glo30.tif so the
+# existing MRDEM {slug}-dem-wide.tif is left in place.
+DEM_COPERNICUS = {"sugarloaf", "okemo-mountain", "sugarbush-resort"}
 
 
 def wide_box(runs, lifts):
@@ -2047,9 +2052,32 @@ def copernicus_sources(box):
 
 
 def ensure_dem(box):
+    global DEM
+    minlon, minlat, maxlon, maxlat = box
+    slug = GEOM.name[: -len("-geom.json")] if GEOM is not None else None
+    # DEM_COPERNICUS hills write a sibling *-dem-wide-glo30.tif and point
+    # DEM at it. The existing MRDEM clip is left in place (no unlink).
+    if slug in DEM_COPERNICUS:
+        cop = DEM if DEM.name.endswith("-glo30.tif") else DEM.with_name(DEM.stem + "-glo30" + DEM.suffix)
+        if not raster_has_relief(cop):
+            urls = copernicus_sources(box)
+            if not urls:
+                raise SystemExit("no dem tiles")
+            gdal.Warp(
+                str(cop),
+                urls,
+                format="GTiff",
+                outputBounds=[minlon, minlat, maxlon, maxlat],
+                outputBoundsSRS="EPSG:4326",
+                dstSRS="EPSG:4326",
+                xRes=0.00035,
+                yRes=0.00035,
+                resampleAlg="bilinear",
+            )
+        DEM = cop
+        return
     if raster_has_relief(DEM):
         return
-    minlon, minlat, maxlon, maxlat = box
     # Europe sits east of 35°W. Canada and the United States still try MRDEM first.
     # MRDEM stops a little past the border. A hill in DEM_COPERNICUS goes
     # straight to Copernicus, which covers both sides.
