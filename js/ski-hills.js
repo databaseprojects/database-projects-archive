@@ -957,7 +957,7 @@
     "fernie-alpine-resort": "20261116fer",
     "sugarloaf": "20261116sgl",
     "aspen-mountain": "20261117as152",
-    "okemo-mountain": "20261117ok30"
+    "okemo-mountain": "20261118okf"
   };
 
   function assetV(slug) {
