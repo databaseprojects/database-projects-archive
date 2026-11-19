@@ -131,7 +131,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261118abz6",
+    co: "20261118stg",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -937,7 +937,7 @@
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
-    "steamboat-ski-resort": "20261116stz",
+    "steamboat-ski-resort": "20261118stg",
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
     "keystone": "20261116ky12",
