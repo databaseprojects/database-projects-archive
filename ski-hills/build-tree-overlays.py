@@ -810,7 +810,8 @@ PLAN_TURN_DEG = {
     # job 20261117as140: 0.0 -> 140.0
     "aspen-mountain": 152.0,
     # job 20261117ok180: -95.6 -> 84.4 (180° clockwise)
-    "okemo-mountain": 84.4,
+    # job 20261118okp: 84.4 -> 69.4, then scaled 0.94 about the frame centre
+    "okemo-mountain": 69.4,
     # job 20261118mb45: 0.0 -> 45.0
     "marmot-basin": 147.0,
 }
@@ -820,6 +821,11 @@ PLAN_TURN_SCALE = {
     # pad, the published plan is scaled 0.95 about the frame centre so the
     # content is about 5% smaller. Unmap undoes this scale first.
     "aspen-mountain": 0.95,
+    # Okemo Mountain: after the 15° counter-clockwise turn to 69.40°
+    # (20261118okp) is refit to the 48/904 pad, the plan is scaled 0.94
+    # about the frame centre, same method as Loveland lvz6 / Arapahoe abz6.
+    # Unmap undoes this scale first.
+    "okemo-mountain": 0.94,
 }
 
 
