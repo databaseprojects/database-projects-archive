@@ -818,7 +818,7 @@ PLAN_TURN_DEG = {
     # scaled 0.95 about the frame centre.
     "powder-mountain-ski-resort": 173.5,
     # job 20261118ww135: -43.5 -> -178.5 (published plan 135° CCW)
-    "whitewater-ski-resort": -113.5,
+    "whitewater-ski-resort": -125.5,
     # job 20261118pg180: -10.7 -> 169.3 (published plan 180° CW from -10.7)
     "purgatory-resort": 169.3,
 }

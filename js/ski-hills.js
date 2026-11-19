@@ -17,9 +17,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261118ww30cw",
+      file: "hills.json?v=20261118ww12ccw",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261118ww30cw",
+      index: R2_BASE + "contours/index.json?v=20261118ww12ccw",
       label: "British Columbia"
     },
     ab: {
@@ -966,7 +966,7 @@
     "whitefish-mountain-resort": "20261118wfr",
     "timberline-lodge-ski-area": "20261118tbl",
     "powder-mountain-ski-resort": "20261118pdz5",
-    "whitewater-ski-resort": "20261118ww30cw",
+    "whitewater-ski-resort": "20261118ww12ccw",
     "purgatory-resort": "20261118pg180",
     "bridger-bowl": "20261118bbr"
   };
@@ -4566,7 +4566,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118ww30cw").then(function (res) {
+  fetch("hill-index.json?v=20261118ww12ccw").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
