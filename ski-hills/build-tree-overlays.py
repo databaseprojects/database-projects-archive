@@ -814,6 +814,9 @@ PLAN_TURN_DEG = {
     "okemo-mountain": 69.4,
     # job 20261118mb45: 0.0 -> 45.0
     "marmot-basin": 147.0,
+    # job 20261118pdz5: plan angle unchanged at 173.5°, then
+    # scaled 0.95 about the frame centre.
+    "powder-mountain-ski-resort": 173.5,
 }
 
 PLAN_TURN_SCALE = {
@@ -826,6 +829,11 @@ PLAN_TURN_SCALE = {
     # about the frame centre, same method as Loveland lvz6 / Arapahoe abz6.
     # Unmap undoes this scale first.
     "okemo-mountain": 0.94,
+    # Powder Mountain Ski Resort: the published plan, already refit
+    # to the 48/904 pad, is scaled 0.95 about the frame centre
+    # (20261118pdz5), same method as Arapahoe abz6 / Okemo okp.
+    # Unmap undoes this scale first.
+    "powder-mountain-ski-resort": 0.95,
 }
 
 
@@ -2006,7 +2014,10 @@ def generate_overlay(slug):
         # Marmot Basin's plan is the published downhill-at-bottom
         # sheet turned 45° clockwise and refit to the 48 pad, baked
         # into alberta.json (20261118mb45). Use the solved frame.
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin"):
+        # Powder Mountain's plan is the published 48/904 sheet scaled
+        # 0.95 about the frame centre (20261118pdz5). Use the solved
+        # frame so tree unmap follows the baked pixels and zoom.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin", "powder-mountain-ski-resort"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
