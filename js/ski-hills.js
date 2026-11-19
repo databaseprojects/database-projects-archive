@@ -153,7 +153,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261116dv139",
+    ut: "20261118pdz5",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261118okp",
+      index: R2_BASE + "contours/usa-index.json?v=20261118pdz5",
       label: US_STATE_NAMES[id]
     };
   });
@@ -964,7 +964,8 @@
     "okemo-mountain": "20261118okp",
     "marmot-basin": "20261118mb45",
     "whitefish-mountain-resort": "20261118wfr",
-    "timberline-lodge-ski-area": "20261118tbl"
+    "timberline-lodge-ski-area": "20261118tbl",
+    "powder-mountain-ski-resort": "20261118pdz5"
   };
 
   function assetV(slug) {
@@ -1422,7 +1423,8 @@
       hill.slug === "okemo-mountain" ||
       hill.slug === "marmot-basin" ||
       hill.slug === "whitefish-mountain-resort" ||
-      hill.slug === "timberline-lodge-ski-area"
+      hill.slug === "timberline-lodge-ski-area" ||
+      hill.slug === "powder-mountain-ski-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4557,7 +4559,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118okp").then(function (res) {
+  fetch("hill-index.json?v=20261118pdz5").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
