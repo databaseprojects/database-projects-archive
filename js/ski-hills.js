@@ -144,7 +144,7 @@
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
-    vt: "20261117ok180",
+    vt: "20261118okp",
     wa: "20261116stx",
     wi: "20261110wcp",
     wv: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261118abz6",
+      index: R2_BASE + "contours/usa-index.json?v=20261118okp",
       label: US_STATE_NAMES[id]
     };
   });
@@ -957,7 +957,7 @@
     "fernie-alpine-resort": "20261116fer",
     "sugarloaf": "20261116sgl",
     "aspen-mountain": "20261117as152",
-    "okemo-mountain": "20261118okf",
+    "okemo-mountain": "20261118okp",
     "marmot-basin": "20261118mb45"
   };
 
@@ -4547,7 +4547,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118mb45").then(function (res) {
+  fetch("hill-index.json?v=20261118okp").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
