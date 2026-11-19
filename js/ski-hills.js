@@ -1252,6 +1252,43 @@
     wrap.appendChild(trees);
   }
 
+  // Bird's-eye contours are kept 220 units past the viewBox (build-frontal.py)
+  // so they can meet the card edge. WebKit does not clip that bleed to the
+  // SVG viewport, so topo lines painted past the top of the sheet. Clip the
+  // whole bird's-eye group to the same rect as the trees: full width, one
+  // unit short of the banner. Caption, credit and the banner plate stay
+  // outside this group. Does not change tree, run or lift geometry.
+  function clipFrontalSheet(svg, g) {
+    if (!svg || !g) return;
+    if (g.getAttribute("clip-path")) return;
+    var defs = null;
+    var child = svg.firstChild;
+    while (child) {
+      if (child.nodeType === 1 && child.localName === "defs" && child.parentNode === svg) {
+        defs = child;
+        break;
+      }
+      child = child.nextSibling;
+    }
+    if (!defs) {
+      defs = document.createElementNS(NS, "defs");
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    var id = "sh-frontal-clip-" + (++clipSerial);
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", id);
+    clip.setAttribute("class", "sh-frontal-clip-path");
+    clip.setAttribute("clipPathUnits", "userSpaceOnUse");
+    var rect = document.createElementNS(NS, "rect");
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", String(SQUARE));
+    rect.setAttribute("height", String(DRAW - 1));
+    clip.appendChild(rect);
+    defs.appendChild(clip);
+    g.setAttribute("clip-path", "url(#" + id + ")");
+  }
+
   function mountLiveTrees(hill, group) {
     var lb = document.getElementById("sh-lb");
     if (!group || !lb || !hill || lb._card !== hill.el || !lb._svg) return;
@@ -3229,7 +3266,7 @@
     if (old && old.parentNode) old.parentNode.removeChild(old);
     var plate = svg.querySelector(".sh-frontal-plate");
     if (plate && plate.parentNode) plate.parentNode.removeChild(plate);
-    Array.prototype.forEach.call(svg.querySelectorAll("clipPath.sh-tree-clip-path"), function (node) {
+    Array.prototype.forEach.call(svg.querySelectorAll("clipPath.sh-tree-clip-path, clipPath.sh-frontal-clip-path"), function (node) {
       if (node.parentNode) node.parentNode.removeChild(node);
     });
   }
@@ -3264,6 +3301,7 @@
       plate.setAttribute("fill", "#fff");
       cap.insertBefore(plate, cap.firstChild);
     } else svg.appendChild(g);
+    clipFrontalSheet(svg, g);
     if (hill && hill._treesOn) ensureTreeWash(hill);
     var credit = svg.querySelector(".sh-map-credit");
     if (credit) svg.appendChild(credit);
