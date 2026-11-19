@@ -934,7 +934,7 @@
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
     "snowbird": "20261117sb45r",
-    "stevens-pass": "20261118sp45",
+    "stevens-pass": "20261118sp35",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
     "park-city-mountain-resort": "20261116pct",
