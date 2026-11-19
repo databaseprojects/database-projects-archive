@@ -966,7 +966,7 @@
     "whitefish-mountain-resort": "20261118wfr",
     "timberline-lodge-ski-area": "20261118tbl",
     "powder-mountain-ski-resort": "20261118pdz5",
-    "whitewater-ski-resort": "20261118ww10z5",
+    "whitewater-ski-resort": "20261118wwrc",
     "purgatory-resort": "20261118pg180",
     "bridger-bowl": "20261118bbr"
   };
