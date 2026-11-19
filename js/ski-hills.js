@@ -145,7 +145,7 @@
     or: "20261105g50",
     pa: "20261105g50",
     vt: "20261118okp",
-    wa: "20261116stx",
+    wa: "20261118sp45",
     wi: "20261110wcp",
     wv: "20261105g50",
     wy: "20261105g50",
@@ -170,7 +170,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261118pdz5",
+      index: R2_BASE + "contours/usa-index.json?v=20261118sp45",
       label: US_STATE_NAMES[id]
     };
   });
@@ -934,7 +934,7 @@
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
     "snowbird": "20261117sb45r",
-    "stevens-pass": "20261116stx",
+    "stevens-pass": "20261118sp45",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
     "park-city-mountain-resort": "20261116pct",
@@ -1424,7 +1424,8 @@
       hill.slug === "marmot-basin" ||
       hill.slug === "whitefish-mountain-resort" ||
       hill.slug === "timberline-lodge-ski-area" ||
-      hill.slug === "powder-mountain-ski-resort"
+      hill.slug === "powder-mountain-ski-resort" ||
+      hill.slug === "stevens-pass"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4559,7 +4560,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118pdz5").then(function (res) {
+  fetch("hill-index.json?v=20261118sp45").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
