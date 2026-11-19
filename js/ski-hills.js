@@ -965,7 +965,8 @@
     "marmot-basin": "20261118mb45",
     "whitefish-mountain-resort": "20261118wfr",
     "timberline-lodge-ski-area": "20261118tbl",
-    "powder-mountain-ski-resort": "20261118pdz5"
+    "powder-mountain-ski-resort": "20261118pdz5",
+    "bridger-bowl": "20261118bbr"
   };
 
   function assetV(slug) {
@@ -1425,7 +1426,8 @@
       hill.slug === "whitefish-mountain-resort" ||
       hill.slug === "timberline-lodge-ski-area" ||
       hill.slug === "powder-mountain-ski-resort" ||
-      hill.slug === "stevens-pass"
+      hill.slug === "stevens-pass" ||
+      hill.slug === "bridger-bowl"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
