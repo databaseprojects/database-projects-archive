@@ -23,9 +23,9 @@
       label: "British Columbia"
     },
     ab: {
-      file: "alberta.json?v=20261116ll30",
+      file: "alberta.json?v=20261118mb45",
       names: "alberta-names.json?v=20261105cmt",
-      index: R2_BASE + "contours/alberta-index.json?v=20261116ll30",
+      index: R2_BASE + "contours/alberta-index.json?v=20261118mb45",
       label: "Alberta"
     },
     qc: {
@@ -957,7 +957,8 @@
     "fernie-alpine-resort": "20261116fer",
     "sugarloaf": "20261116sgl",
     "aspen-mountain": "20261117as152",
-    "okemo-mountain": "20261118okf"
+    "okemo-mountain": "20261118okf",
+    "marmot-basin": "20261118mb45"
   };
 
   function assetV(slug) {
@@ -1412,7 +1413,8 @@
       hill.slug === "sugarloaf" ||
       hill.slug === "vail" ||
       hill.slug === "aspen-mountain" ||
-      hill.slug === "okemo-mountain"
+      hill.slug === "okemo-mountain" ||
+      hill.slug === "marmot-basin"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4545,7 +4547,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118abz6").then(function (res) {
+  fetch("hill-index.json?v=20261118mb45").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

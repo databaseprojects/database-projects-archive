@@ -811,6 +811,8 @@ PLAN_TURN_DEG = {
     "aspen-mountain": 152.0,
     # job 20261117ok180: -95.6 -> 84.4 (180° clockwise)
     "okemo-mountain": 84.4,
+    # job 20261118mb45: 0.0 -> 45.0
+    "marmot-basin": 147.0,
 }
 
 PLAN_TURN_SCALE = {
@@ -1995,7 +1997,10 @@ def generate_overlay(slug):
         # Aspen Mountain's 140° clockwise plan is in PLAN_TURN_DEG and
         # refit to the 48 pad (baked into usa/co.json). It uses that
         # frame, not the point-for-point solved matcher (124/144 lines).
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin"):
+        # Marmot Basin's plan is the published downhill-at-bottom
+        # sheet turned 45° clockwise and refit to the 48 pad, baked
+        # into alberta.json (20261118mb45). Use the solved frame.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
