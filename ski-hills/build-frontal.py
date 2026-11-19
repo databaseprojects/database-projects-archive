@@ -1556,8 +1556,9 @@ CAMERAS = {
     # job 20261118ww35cw: facing 178.5 -> 143.5
     # job 20261118ww30cw: facing 143.5 -> 113.5
     # job 20261118ww12ccw: facing 113.5 -> 125.5
+    # job 20261118ww10z5: facing 125.5 -> 135.5
     "whitewater-ski-resort": {
-        "facing": 125.5,
+        "facing": 135.5,
     },
     # Castle only. Elevation 18 looks down a little more steeply than the
     # usual 15, the same bump as Panorama, so the ski lines clear the

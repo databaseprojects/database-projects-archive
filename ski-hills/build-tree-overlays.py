@@ -818,7 +818,7 @@ PLAN_TURN_DEG = {
     # scaled 0.95 about the frame centre.
     "powder-mountain-ski-resort": 173.5,
     # job 20261118ww135: -43.5 -> -178.5 (published plan 135° CCW)
-    "whitewater-ski-resort": -125.5,
+    "whitewater-ski-resort": -135.5,
     # job 20261118pg180: -10.7 -> 169.3 (published plan 180° CW from -10.7)
     "purgatory-resort": 169.3,
 }
@@ -838,6 +838,11 @@ PLAN_TURN_SCALE = {
     # (20261118pdz5), same method as Arapahoe abz6 / Okemo okp.
     # Unmap undoes this scale first.
     "powder-mountain-ski-resort": 0.95,
+    # Whitewater Ski Resort: after the 10° counter-clockwise turn to
+    # -135.5 is refit to the 48/904 pad, the plan is scaled 0.95 about
+    # the frame centre (20261118ww10z5), same method as Powder Mountain
+    # pdz5. Unmap undoes this scale first.
+    "whitewater-ski-resort": 0.95,
 }
 
 
