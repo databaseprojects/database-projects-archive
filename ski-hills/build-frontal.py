@@ -1237,8 +1237,9 @@ CAMERAS = {
     # the banner. Bird's-eye framing is unchanged.
     # job 20261118sp45: facing 116.9 -> 161.9
     # job 20261118sp35: facing 161.9 -> 196.9
+    # job 20261118sp20: facing 196.9 -> 216.9
     "stevens-pass": {
-        "facing": 196.9,
+        "facing": 216.9,
     },
     # Alpental only. The automatic render faced 71.1 (the 251.1 guess,
     # flipped by orient()). 251.1 is 180° further and turns that bird's-eye
