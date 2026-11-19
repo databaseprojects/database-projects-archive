@@ -817,6 +817,8 @@ PLAN_TURN_DEG = {
     # job 20261118pdz5: plan angle unchanged at 173.5°, then
     # scaled 0.95 about the frame centre.
     "powder-mountain-ski-resort": 173.5,
+    # job 20261118ww135: -43.5 -> -178.5 (published plan 135° CCW)
+    "whitewater-ski-resort": -178.5,
 }
 
 PLAN_TURN_SCALE = {
@@ -2017,7 +2019,10 @@ def generate_overlay(slug):
         # Powder Mountain's plan is the published 48/904 sheet scaled
         # 0.95 about the frame centre (20261118pdz5). Use the solved
         # frame so tree unmap follows the baked pixels and zoom.
-        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin", "powder-mountain-ski-resort"):
+        # Whitewater's plan is the published sheet turned 135°
+        # counter-clockwise and refit to the 48 pad, baked into
+        # hills.json (20261118ww135). Use the solved frame.
+        if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin", "powder-mountain-ski-resort", "whitewater-ski-resort"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)

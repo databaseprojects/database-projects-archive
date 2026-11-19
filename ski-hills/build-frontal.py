@@ -1543,8 +1543,9 @@ CAMERAS = {
     # bottom-left corners) no longer matched the turned sheet and cut the
     # top-left ridges, so they were removed. A bottom-left-only pass (below)
     # hides back slopes stacked behind the near foreground ridge.
+    # job 20261118ww135: facing 43.5 -> 178.5
     "whitewater-ski-resort": {
-        "facing": 43.5,
+        "facing": 178.5,
     },
     # Castle only. Elevation 18 looks down a little more steeply than the
     # usual 15, the same bump as Panorama, so the ski lines clear the
