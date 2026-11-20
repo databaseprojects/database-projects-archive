@@ -17,9 +17,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261120grp",
+      file: "hills.json?v=20261120grz",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261120grp",
+      index: R2_BASE + "contours/index.json?v=20261120grz",
       label: "British Columbia"
     },
     ab: {
@@ -969,7 +969,7 @@
     "whitewater-ski-resort": "20261118wwrc",
     "purgatory-resort": "20261118pg180",
     "bridger-bowl": "20261118bbr",
-    "grouse-mountain": "20261120grb"
+    "grouse-mountain": "20261120grz"
   };
 
   function assetV(slug) {
