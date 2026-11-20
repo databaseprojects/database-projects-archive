@@ -830,6 +830,8 @@ PLAN_TURN_DEG = {
     "whitewater-ski-resort": -135.5,
     # job 20261118pg180: -10.7 -> 169.3 (published plan 180° CW from -10.7)
     "purgatory-resort": 169.3,
+    # job 20261120mw10: -46.7 -> -56.7 (published plan 10° CCW; -46.7 was the unlisted published frame)
+    "mount-washington-alpine-resort": -56.7,
 }
 
 PLAN_TURN_SCALE = {
