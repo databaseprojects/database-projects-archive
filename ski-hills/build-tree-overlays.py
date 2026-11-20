@@ -469,6 +469,15 @@ TREE_BANDS = (
 # that face stays dense. Skyline clipping does not depend on it, and it
 # is not an opt-out of the clip.
 TREE_STEP_DIV = {"kicking-horse-resort": 3}
+# Opt-in sub-cell smoothing for a bird's-eye wash: (ground step divisor,
+# canvas blur sigma in canvas px, simplify tolerance in sheet px). At a
+# close zoom a 10 m cell is several sheet px wide and the flat-filled
+# mesh quads leave a cell-sized stair along every forest edge. A finer
+# step puts the bilinear 0.5 edge between cells and the wider blur rounds
+# what is left. Hills not listed keep sigma 1.6 and 1.2 px.
+# Grouse Mountain, job 20261120grb (about 5.5 px per 10 m cell).
+# Density (band) canvas gets the same blur for listed hills only.
+TREE_SMOOTH = {"grouse-mountain": (4, 6.0, 0.65)}
 
 
 # Same window the visibility grid uses. A corner outside it is hidden.
@@ -1612,7 +1621,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     step_y = max(step_y, min(2.0, (24.0 / py_per_m) if py_per_m > 0 else 2.0))
     # Per hill, a finer ground step. The skyline is clipped per edge, so
     # this only changes mesh density. It is not a substitute for the clip.
-    div = TREE_STEP_DIV.get(slug, 1)
+    div = TREE_SMOOTH[slug][0] if slug in TREE_SMOOTH else TREE_STEP_DIV.get(slug, 1)
     step_x /= div
     step_y /= div
     xs = np.arange(full_gx0, full_gx1 + step_x, step_x, dtype=np.float64)
@@ -1802,7 +1811,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
                 draw_c.polygon(quad, fill=fill_c)
 
     raw_arr = np.array(canvas, dtype=np.float32) / 255.0
-    smooth_arr = gaussian_filter(raw_arr, sigma=1.6)
+    smooth_arr = gaussian_filter(raw_arr, sigma=TREE_SMOOTH[slug][1] if slug in TREE_SMOOTH else 1.6)
     tree_mask = (smooth_arr >= 0.50).astype(np.uint8)
     # One sheet pixel. Clipping removes the dropped-quad castle wall; this
     # only knocks the corners off a 10 m clearing that is still boxy.
@@ -1836,6 +1845,10 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
 
     scale_to_1000 = 1.0 / S
     conc_u8 = np.array(conc_canvas, dtype=np.float32) / 255.0
+    if slug in TREE_SMOOTH:
+        # Same blur on density, so band edges inside the forest are not
+        # left on the mesh grid.
+        conc_u8 = gaussian_filter(conc_u8, sigma=TREE_SMOOTH[slug][1])
     # The corridor already cleared tree_mask, so every band loses the same runs and lifts.
     labels = band_labels(tree_mask, conc_u8)
     # 1.2 px, just past the 1 px close, so a leftover mesh step becomes a
@@ -1843,7 +1856,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
     bands = band_paths(
         labels,
         [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED],
-        simplify_tol=1.2,
+        simplify_tol=TREE_SMOOTH[slug][2] if slug in TREE_SMOOTH else 1.2,
         slug=slug,
     )
     wash_el = frontal_wash_markup(bands)
