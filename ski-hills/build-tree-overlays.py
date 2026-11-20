@@ -1031,6 +1031,108 @@ def ski_apache_plan_frame(hill, geom_data):
 
     return to_px, unmap
 
+# Plans whose stored lines are in a different order than the geom. The tree
+# wash uses the order-free solved frame below. Grouse Mountain, 20261120gro.
+PLAN_MATCHED_FRAME = {"grouse-mountain"}
+
+
+def matched_plan_frame(hill, geom_data, tol=1.0):
+    """Solved plan frame without relying on line order.
+
+    Returns (to_px, unmap, info) with the same unmap contract as
+    ski_apache_plan_frame: stored plan pixels -> the north-up frame
+    generate_plan_tree_wash samples (all geom run points, 48/904 pad).
+    """
+    stored = []
+    for run in hill.get("runs") or []:
+        text = run["p"] if isinstance(run, dict) else run
+        pts = [tuple(float(v) for v in pair.split(",", 1)) for pair in str(text).split() if "," in pair]
+        if len(pts) >= 2:
+            stored.append(np.asarray(pts, dtype=np.float64))
+    geom_lines = [line for feat in geom_data.get("runs") or [] for line in feat.get("lines") or [] if line]
+    lats = [p[1] for line in geom_lines for p in line]
+    mid = sum(lats) / len(lats)
+    cos = math.cos(mid * math.pi / 180.0)
+    geo = [np.asarray([(p[0] * 111320.0 * cos, -p[1] * 110540.0) for p in line], dtype=np.float64) for line in geom_lines]
+    by_len = {}
+    for j, g in enumerate(geo):
+        by_len.setdefault(len(g), []).append(j)
+
+    def similarity(src, dst):
+        sc, dc = src.mean(0), dst.mean(0)
+        A, B = src - sc, dst - dc
+        u, sv, vt = np.linalg.svd(A.T @ B)
+        R = (u @ vt).T
+        if np.linalg.det(R) < 0:
+            vt[-1] *= -1
+            R = (u @ vt).T
+        k = sv.sum() / max((A ** 2).sum(), 1e-12)
+        return k, R, dc - k * (R @ sc)
+
+    def matches(k, R, t):
+        pairs = []
+        used = set()
+        for i, sp in enumerate(stored):
+            best = None
+            for j in by_len.get(len(sp), []):
+                if j in used:
+                    continue
+                e = np.abs((k * (R @ geo[j].T)).T + t - sp).max()
+                if e <= tol and (best is None or e < best[0]):
+                    best = (e, j)
+            if best:
+                used.add(best[1])
+                pairs.append((i, best[1]))
+        return pairs
+
+    best_pairs = []
+    for i, sp in enumerate(stored):
+        if len(sp) < 6:
+            continue
+        for j in by_len.get(len(sp), []):
+            k, R, t = similarity(geo[j], sp)
+            if np.abs((k * (R @ geo[j].T)).T + t - sp).max() > tol:
+                continue
+            pairs = matches(k, R, t)
+            if len(pairs) > len(best_pairs):
+                best_pairs = pairs
+    if len(best_pairs) < 8 or len(best_pairs) < int(0.8 * len(stored)):
+        raise RuntimeError("matched plan frame: only %d/%d stored lines matched" % (len(best_pairs), len(stored)))
+    S = np.vstack([geo[j] for _i, j in best_pairs])
+    D = np.vstack([stored[i] for i, _j in best_pairs])
+    sc, dc = S.mean(axis=0), D.mean(axis=0)
+    M, _, _, _ = np.linalg.lstsq(S - sc, D - dc, rcond=None)
+    err = np.linalg.norm((S - sc) @ M + dc - D, axis=1)
+    if float(np.median(err)) > 0.5:
+        raise RuntimeError("matched plan frame did not fit (median %.2f px)" % float(np.median(err)))
+    xs = [p[0] * 111320.0 * cos for line in geom_lines for p in line]
+    ys = [p[1] * 110540.0 for line in geom_lines for p in line]
+    minx, maxy = min(xs), max(ys)
+    span = max(max(xs) - minx, maxy - min(ys), 1.0)
+    Minv = np.linalg.inv(M)
+
+    def to_px(lon, lat):
+        v = np.array([lon * 111320.0 * cos - sc[0], -lat * 110540.0 - sc[1]])
+        q = v @ M + dc
+        return float(q[0]), float(q[1])
+
+    def unmap(px, py):
+        dpx = px - dc[0]
+        dpy = py - dc[1]
+        x = dpx * Minv[0, 0] + dpy * Minv[1, 0] + sc[0]
+        y_south = dpx * Minv[0, 1] + dpy * Minv[1, 1] + sc[1]
+        return (
+            PLAN_ART_PAD + (x - minx) / span * PLAN_ART_SIZE,
+            PLAN_ART_PAD + (maxy + y_south) / span * PLAN_ART_SIZE,
+        )
+
+    info = {"matched": len(best_pairs), "stored": len(stored), "geom": len(geo),
+            "err_median": round(float(np.median(err)), 3), "err_max": round(float(err.max()), 3),
+            "angle": round(math.degrees(math.atan2(M[0, 1], M[0, 0])), 3),
+            "px_per_m": round(float(math.sqrt(abs(np.linalg.det(M)))), 5)}
+    return to_px, unmap, info
+
+
 def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unmap=None):
     """Generate Plan-view treeWash path d in unshifted Plan-view coordinates.
 
@@ -2044,6 +2146,9 @@ def generate_overlay(slug):
         # hills.json (20261118ww135). Use the solved frame.
         if slug in ("ski-apache", "snowbird", "vail", "beaver-creek", "loveland-basin-ski-area", "arapahoe-basin", "marmot-basin", "powder-mountain-ski-resort", "whitewater-ski-resort"):
             _to_px, unmap = ski_apache_plan_frame(hill, geom_raw)
+        elif slug in PLAN_MATCHED_FRAME:
+            _to_px, unmap, _info = matched_plan_frame(hill, geom_raw)
+            print("matched plan frame", slug, _info, flush=True)
         else:
             unmap = plan_pixel_unmap(slug, geom_raw)
         tree_wash_d, _, _, bands = generate_plan_tree_wash(
