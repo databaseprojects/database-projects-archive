@@ -17,9 +17,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261118ww10z5",
+      file: "hills.json?v=20261120grp",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261118ww10z5",
+      index: R2_BASE + "contours/index.json?v=20261120grp",
       label: "British Columbia"
     },
     ab: {
@@ -968,7 +968,8 @@
     "powder-mountain-ski-resort": "20261118pdz5",
     "whitewater-ski-resort": "20261118wwrc",
     "purgatory-resort": "20261118pg180",
-    "bridger-bowl": "20261118bbr"
+    "bridger-bowl": "20261118bbr",
+    "grouse-mountain": "20261120grp"
   };
 
   function assetV(slug) {
@@ -1431,7 +1432,8 @@
       hill.slug === "stevens-pass" ||
       hill.slug === "whitewater-ski-resort" ||
       hill.slug === "purgatory-resort" ||
-      hill.slug === "bridger-bowl"
+      hill.slug === "bridger-bowl" ||
+      hill.slug === "grouse-mountain"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4566,7 +4568,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261118ww10z5").then(function (res) {
+  fetch("hill-index.json?v=20261120grp").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
