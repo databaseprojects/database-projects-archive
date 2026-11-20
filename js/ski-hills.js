@@ -969,7 +969,7 @@
     "whitewater-ski-resort": "20261118wwrc",
     "purgatory-resort": "20261118pg180",
     "bridger-bowl": "20261118bbr",
-    "grouse-mountain": "20261120grp"
+    "grouse-mountain": "20261120grb"
   };
 
   function assetV(slug) {
