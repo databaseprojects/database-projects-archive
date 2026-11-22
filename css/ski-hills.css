@@ -1029,12 +1029,21 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   z-index: 6;
   margin: 0 0 6px;
   padding: 0.1em 0.42em;
-  border: 1px solid #000;
-  background: #fff;
-  color: #000;
+  border: none;
+  background: none;
+  box-shadow: none;
+  color: #fff;
   font-size: 11px;
   line-height: 1.25;
   transform-origin: center center;
+}
+
+.sh-print-row > .sh-shop-link:hover {
+  border: none;
+  background: none;
+  box-shadow: none;
+  color: #fff;
+  text-decoration: underline;
 }
 
 .sh-side-btn {
