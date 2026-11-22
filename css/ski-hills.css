@@ -1022,9 +1022,16 @@ html.sh-lb-open .sh-hill .sh-hill-name {
   gap: 0.85rem;
 }
 
-.sh-stack-btn .sh-shop-link {
-  align-self: center;
+.sh-print-row > .sh-shop-link {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  z-index: 6;
+  margin: 0 0 6px;
   padding: 0.1em 0.42em;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
   font-size: 11px;
   line-height: 1.25;
   transform-origin: center center;
@@ -1111,6 +1118,7 @@ html.sh-lb-open .sh-hill .sh-hill-name {
 }
 
 .sh-print-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

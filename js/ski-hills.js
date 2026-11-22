@@ -4531,24 +4531,16 @@
     row.className = "sh-print-row";
     row.appendChild(stage);
     if (printsOn()) row.appendChild(mountCartAdd(hill));
+    var shopLink = mountShopLink(hill);
+    if (shopLink) row.appendChild(shopLink);
     var view = document.createElement("div");
     view.className = "sh-view";
     view.appendChild(row);
-    var shopLink = mountShopLink(hill);
-    var controls = null;
     if (hill && hill.stacked) {
-      controls = mountStackButton(hill);
+      var controls = mountStackButton(hill);
       lb._syncSide = controls._sync;
-    } else if (shopLink) {
-      controls = document.createElement("div");
-      controls.className = "sh-stack-btn";
+      view.appendChild(controls);
     }
-    if (controls && shopLink) {
-      var stack = controls.querySelector(".sh-stack");
-      if (stack) controls.insertBefore(shopLink, stack.nextSibling);
-      else controls.appendChild(shopLink);
-    }
-    if (controls) view.appendChild(controls);
     lb.appendChild(view);
     bindDrag(lb, stage);
     if (printsOn()) renderCart();
