@@ -960,7 +960,7 @@
     "telluride-ski-area": "20261116tel",
     "loveland-basin-ski-area": "20261117lvz6",
     "stowe-mountain-resort": "20261116sto",
-    "revelstoke-mountain-resort": "20261116rev",
+    "revelstoke-mountain-resort": "20261122rvs",
     "fernie-alpine-resort": "20261116fer",
     "sugarloaf": "20261116sgl",
     "aspen-mountain": "20261117as152",
