@@ -17,6 +17,22 @@
   text-transform: uppercase;
 }
 
+.sh-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.sh-shop-all,
+.sh-shop-link {
+  margin: 0;
+  text-decoration: none;
+  pointer-events: auto;
+  flex: 0 0 auto;
+}
+
 .sh-zoom {
   display: inline-flex;
   align-items: center;
