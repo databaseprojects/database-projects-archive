@@ -918,7 +918,7 @@
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261118abz6",
     "silver-mountain-resort": "20261116fh",
-    "vail": "20261122vrc",
+    "vail": "20261122rc16",
     "sun-peaks-resort": "20261116spc",
     "silverton-mountain": "20261116b1",
     "taos-ski-valley": "20261116t65",
@@ -936,7 +936,7 @@
     "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
-    "snowbird": "20261117sb45r",
+    "snowbird": "20261122rc16",
     "stevens-pass": "20261118sp20",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
@@ -944,14 +944,14 @@
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
-    "steamboat-ski-resort": "20261118stg",
+    "steamboat-ski-resort": "20261122rc16",
     "palisades-tahoe-olympic-valley": "20261116pal",
     "killington-resort": "20261116kil",
     "keystone": "20261116ky12",
     "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
-    "big-sky-resort": "20261122bsrc",
-    "winter-park-resort": "20261116wpz",
+    "big-sky-resort": "20261122rc16",
+    "winter-park-resort": "20261122rc16",
     "deer-valley-resort": "20261120dvrc",
     "jackson-hole-mountain-resort": "20261116jh",
     "copper-mountain": "20261116cu45",
@@ -973,7 +973,8 @@
     "purgatory-resort": "20261118pg180",
     "bridger-bowl": "20261118bbr",
     "grouse-mountain": "20261120gro",
-    "mount-washington-alpine-resort": "20261120mw10"
+    "mount-washington-alpine-resort": "20261120mw10",
+    "alta-ski-area": "20261122rc16"
   };
 
   function assetV(slug) {
