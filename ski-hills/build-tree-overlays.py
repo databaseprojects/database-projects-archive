@@ -477,7 +477,11 @@ TREE_STEP_DIV = {"kicking-horse-resort": 3}
 # what is left. Hills not listed keep sigma 1.6 and 1.2 px.
 # Grouse Mountain, job 20261120grb (about 5.5 px per 10 m cell).
 # Density (band) canvas gets the same blur for listed hills only.
-TREE_SMOOTH = {"grouse-mountain": (4, 6.0, 0.65)}
+# revelstoke-mountain-resort, job 20261122rvs: failed the tree stair check, same smoothing as Grouse.
+TREE_SMOOTH = {
+    "grouse-mountain": (4, 6.0, 0.65),
+    "revelstoke-mountain-resort": (4, 6.0, 0.65),
+}
 
 
 # Same window the visibility grid uses. A corner outside it is hidden.
