@@ -1,6 +1,9 @@
 /* Ski Hills. Drawings are local. The map loads only after Map is opened. */
 (function () {
   var R2_BASE = "https://ski-hills.databaseprojects.workers.dev/";
+  var SHOP_PRODUCT_URLS = {
+    "whistler-blackcomb": "https://i0rg0r-v3.myshopify.com/products/whistler-blackcomb"
+  };
   var grid = document.getElementById("sh-grid");
   var count = document.querySelector(".sh-count");
   var tags = document.querySelector(".sh-tags");
@@ -1963,7 +1966,7 @@
       big.style.transform = "none";
     });
     lb.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-stack-btn, .sh-labels-toggle, .sh-tree-switch, .sh-cart-add, .sh-cart-btn, .sh-cart-panel")) return;
+      if (e.target.closest && e.target.closest(".sh-stage, .sh-edge, .sh-stack, .sh-stack-btn, .sh-labels-toggle, .sh-tree-switch, .sh-cart-add, .sh-cart-btn, .sh-cart-panel, .sh-shop-link")) return;
       closeLb();
     });
   }
@@ -3134,6 +3137,21 @@
     if (!track) return;
     track.style.transition = "transform 400ms ease-out";
     track.style.transform = on ? "translateX(-50%)" : "translateX(0)";
+  }
+
+  function mountShopLink(hill) {
+    var url = hill && hill.slug && SHOP_PRODUCT_URLS[hill.slug];
+    if (!url) return null;
+    var a = document.createElement("a");
+    a.className = "sh-tag sh-shop-link";
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "Buy a print";
+    a.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+    return a;
   }
 
   function mountCartAdd(hill) {
@@ -4513,6 +4531,8 @@
     row.className = "sh-print-row";
     row.appendChild(stage);
     if (printsOn()) row.appendChild(mountCartAdd(hill));
+    var shopLink = mountShopLink(hill);
+    if (shopLink) row.appendChild(shopLink);
     var view = document.createElement("div");
     view.className = "sh-view";
     view.appendChild(row);
