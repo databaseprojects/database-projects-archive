@@ -1,7 +1,7 @@
 """Shared ski-hill layout constants.
 
-Print white margin: **4 mm** on a 10×10 in trim (254 mm). The 8×8 sheet
-is no longer a store size. 4 mm / 254 mm = 1.5748% (rounded). The website
+Print white margin: **8 mm** on a 10×10 in trim (254 mm). The 8×8 sheet
+is no longer a store size. 8 mm / 254 mm = 3.1496% (rounded). The website
 frame uses this same share as padding on ``.sh-print``. The page shows
 that margin only: no bleed and no trim lines.
 
@@ -23,13 +23,13 @@ CSS print margin keeps the white rim on every view.
 from __future__ import annotations
 
 # --- Print white margin (shared by every hill view) ---------------------------
-# 4 mm on a 10×10 trim. One rounded share: CSS --sh-print-border and
+# 8 mm on a 10×10 trim. One rounded share: CSS --sh-print-border and
 # SH_LAYOUT.PRINT_MARGIN_PCT must use PRINT_MARGIN_PCT and nothing else.
-PRINT_MARGIN_MM = 4.0
+PRINT_MARGIN_MM = 8.0
 PRINT_TRIM_MM = 254.0  # 10 in × 25.4. 8×8 dropped.
 MM_PER_IN = 25.4
 
-# 4 / 254 * 100 = 1.5748031496… → 1.5748
+# 8 / 254 * 100 = 3.1496062992… → 3.1496
 PRINT_MARGIN_PCT = round(PRINT_MARGIN_MM / PRINT_TRIM_MM * 100.0, 4)
 PRINT_MARGIN_FRAC = PRINT_MARGIN_PCT / 100.0
 PRINT_MARGIN_SVG = PRINT_MARGIN_FRAC * 1000.0  # same fraction on a 1000-unit frame
@@ -57,9 +57,9 @@ def css_print_border() -> str:
 
 def assert_print_margin_contract() -> None:
     """Sanity checks so a bad edit fails loudly in rebuilds."""
-    assert PRINT_MARGIN_MM == 4.0
+    assert PRINT_MARGIN_MM == 8.0
     assert PRINT_TRIM_MM == 254.0
-    assert PRINT_MARGIN_PCT == 1.5748
-    assert abs(PRINT_MARGIN_PCT - round(4.0 / 254.0 * 100.0, 4)) < 1e-9
+    assert PRINT_MARGIN_PCT == 3.1496
+    assert abs(PRINT_MARGIN_PCT - round(8.0 / 254.0 * 100.0, 4)) < 1e-9
     assert abs(PRINT_MARGIN_MM - (WEBSITE_BORDER_IN * MM_PER_IN)) < 1e-9
     assert abs(PLAN_ART_SIZE - 904.0) < 1e-9
