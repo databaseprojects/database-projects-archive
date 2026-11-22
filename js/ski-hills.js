@@ -236,14 +236,14 @@
   var catalogPromise = {};
   var SQUARE = 1000;
 
-  // Shared with ski-hills/layout_spec.py. On-screen frame is 4 mm on a
-  // 10×10 in trim (4 mm / 254 mm = 1.5748%). No bleed and no trim lines.
+  // Shared with ski-hills/layout_spec.py. On-screen frame is 8 mm on a
+  // 10×10 in trim (8 mm / 254 mm = 3.1496%). No bleed and no trim lines.
   // Applied as CSS padding on .sh-print — artwork fills the 0..1000 viewBox;
   // redraws must not inset by this in coordinates. PLAN_ART_PAD and
   // FIT_ART_PAD are fit pads, not this margin, so trees still meet the frame edge.
   var SH_LAYOUT = {
-    PRINT_MARGIN_MM: 4,
-    PRINT_MARGIN_PCT: 1.5748,
+    PRINT_MARGIN_MM: 8,
+    PRINT_MARGIN_PCT: 3.1496,
     FRAME: 1000,
     PLAN_ART_PAD: 48,
     FIT_ART_PAD: 40
