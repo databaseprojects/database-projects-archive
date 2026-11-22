@@ -918,7 +918,7 @@
     "skigebiet-diedamskopf": "20261116fh",
     "arapahoe-basin": "20261118abz6",
     "silver-mountain-resort": "20261116fh",
-    "vail": "20261117vp90",
+    "vail": "20261122vrc",
     "sun-peaks-resort": "20261116spc",
     "silverton-mountain": "20261116b1",
     "taos-ski-valley": "20261116t65",
