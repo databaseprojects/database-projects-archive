@@ -950,7 +950,7 @@
     "keystone": "20261116ky12",
     "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
-    "big-sky-resort": "20261117bsp146",
+    "big-sky-resort": "20261122bsrc",
     "winter-park-resort": "20261116wpz",
     "deer-valley-resort": "20261120dvrc",
     "jackson-hole-mountain-resort": "20261116jh",
