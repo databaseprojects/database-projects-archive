@@ -1708,8 +1708,8 @@
   var BANNER_VALUE_SIZE = Math.round((BANNER_PT / 0.575) * 100) / 100;
   // Small uppercase headings above each value
   // (NAME, REGION, COUNTRY, GPS, RUNS, TYPE, DROP, BASE).
-  // 6.5 pt on the same sheet → 11.3 units.
-  var HEADING_PT = 6.5;
+  // 7 pt on the same sheet → 12.17 units.
+  var HEADING_PT = 7;
   var FIELD_LABEL_SIZE = Math.round((HEADING_PT / 0.575) * 100) / 100;
 
   function fieldLabel(str, x, y) {
