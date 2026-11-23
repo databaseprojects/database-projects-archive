@@ -1479,6 +1479,8 @@ CAMERAS = {
     # Mont Tremblant only. Automatic bird's-eye facing was 139.03. 319.03 is
     # 180° further (139.03+180), which turns that drawing 180° (Nov 5).
     # Plan view is unchanged except for a separate 10% zoom-out of bounds.
+    # job 20261123mt180: facing 319.03 -> 139.03
+    # job 20261123mt180: facing 139.03 -> 319.03
     "mont-tremblant-resort-station-mont-tremblant": {
         "facing": 319.03,
         "elevation": 15.0,
