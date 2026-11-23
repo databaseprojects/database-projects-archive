@@ -837,7 +837,7 @@ PLAN_TURN_DEG = {
     # job 20261120mw10: -46.7 -> -56.7 (published plan 10° CCW; -46.7 was the unlisted published frame)
     "mount-washington-alpine-resort": -56.7,
     # job 20261123cy20: 30.0 -> 10.0 (published plan 20° CCW; 30.0 was the unlisted published frame)
-    "cypress-mountain": 10.0,
+    "cypress-mountain": 0.0,
 }
 
 PLAN_TURN_SCALE = {
