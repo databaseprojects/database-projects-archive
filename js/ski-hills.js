@@ -147,7 +147,7 @@
     ny: "20261105g50",
     or: "20261105g50",
     pa: "20261105g50",
-    vt: "20261122kfill",
+    vt: "20261123kp10",
     wa: "20261118sp45",
     wi: "20261110wcp",
     wv: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261123cu30",
+      index: R2_BASE + "contours/usa-index.json?v=20261123kp10",
       label: US_STATE_NAMES[id]
     };
   });
@@ -946,7 +946,7 @@
     "mammoth-mountain": "20261116pct",
     "steamboat-ski-resort": "20261122rst6",
     "palisades-tahoe-olympic-valley": "20261116pal",
-    "killington-resort": "20261122kfill",
+    "killington-resort": "20261123kp10",
     "keystone": "20261116ky12",
     "beaver-creek": "20261116bvz",
     "banff-sunshine-village": "20261116sun",
@@ -4605,7 +4605,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123cu30").then(function (res) {
+  fetch("hill-index.json?v=20261123kp10").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
