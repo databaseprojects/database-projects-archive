@@ -1338,10 +1338,11 @@ CAMERAS = {
     # job 20261116abs: facing 148.3 -> 178.3
     "arapahoe-basin": {"facing": 178.3},  # (328.3)
     # Winter Park. frame_scale 0.855 is the earlier 0.95 times 0.9.
-    # Facing is locked (job 20261123wp20ccw). Ridge settings, elevation 15°,
-    # frame_scale 0.855 and DEM_PAD 1.8 stay. Plan fit is the run box
-    # in hill-index, [48.1, 48.0, 834.9, 951.9]. The long lift to the bottom stays clipped
-    # (20261116wpz).
+    # Facing is locked at 217.3 (job 20261123wp20ccw). Ridge settings,
+    # elevation 15°, frame_scale 0.855 and DEM_PAD 1.8 stay. Plan is
+    # scaled 0.90 about the frame centre (job 20261123wpz10). Plan fit is the
+    # run box in hill-index, [93.3, 93.2, 801.4, 906.7]. The long lift to the bottom stays
+    # clipped (20261116wpz).
     # job 20261116wpz: frame_scale 0.95 -> 0.855
     # job 20261123wp10ccw: facing None -> 207.3
     # job 20261123wp20ccw: facing 207.3 -> 217.3
