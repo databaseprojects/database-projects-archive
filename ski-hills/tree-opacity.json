@@ -21,5 +21,8 @@
     "big-white-ski-resort": 1.2,
     "heavenly-mountain-resort": 1.2,
     "silver-star-mountain-resort": 1.15
+  },
+  "be_multipliers": {
+    "cypress-mountain": 0.8
   }
 }

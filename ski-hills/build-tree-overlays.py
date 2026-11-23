@@ -614,11 +614,11 @@ def load_band_opacity(path=None):
     }
 
 
-def load_opacity_multipliers(path=None):
-    """Per-slug factors from tree-opacity.json multipliers."""
+def load_opacity_multipliers(path=None, key="multipliers"):
+    """Per-slug factors from tree-opacity.json (multipliers or be_multipliers)."""
     src = Path(path) if path else Path(__file__).resolve().parent / "tree-opacity.json"
     raw = json.loads(src.read_text())
-    extra = raw.get("multipliers") or {}
+    extra = raw.get(key) or {}
     return {str(slug): float(factor) for slug, factor in extra.items()}
 
 
@@ -634,23 +634,26 @@ def fmt_band_opacity(value):
 # Same table as css/ski-hills.css and js/ski-hills.js TREE_STEP.
 BAND_OPACITY_BY_COUNT = load_band_opacity()
 OPACITY_MULTIPLIERS = load_opacity_multipliers()
+BE_OPACITY_MULTIPLIERS = load_opacity_multipliers(key="be_multipliers")
 
 
-def opacities_for(slug, count):
+def opacities_for(slug, count, view="plan"):
     ops = BAND_OPACITY_BY_COUNT.get(count, ())
     factor = OPACITY_MULTIPLIERS.get(slug, 1.0)
+    if view == "be":
+        factor *= BE_OPACITY_MULTIPLIERS.get(slug, 1.0)
     if factor == 1.0:
         return ops
     return tuple(round(op * factor, 3) for op in ops)
 
 
-def band_paths(labels, affine, simplify_tol=0.65, slug=""):
+def band_paths(labels, affine, simplify_tol=0.65, slug="", view="plan"):
     found = []
     for i, (_lo, _hi, name) in enumerate(TREE_BANDS, start=1):
         d = paths_from_mask((labels == i).astype(np.uint8), affine, simplify_tol)
         if d:
             found.append((name, d))
-    ops = opacities_for(slug, len(found))
+    ops = opacities_for(slug, len(found), view=view)
     return [{"opacity": op, "name": name, "d": d} for op, (name, d) in zip(ops, found)]
 
 
@@ -864,6 +867,11 @@ PLAN_TURN_SCALE = {
     # the frame centre (20261118ww10z5), same method as Powder Mountain
     # pdz5. Unmap undoes this scale first.
     "whitewater-ski-resort": 0.95,
+    # Cypress Mountain: the published north-up plan (PLAN_TURN_DEG 0.0),
+    # already refit to the 48/904 pad, is scaled 0.95 about the frame
+    # centre (20261123cyt80), same method as Whitewater ww10z5.
+    # Unmap undoes this scale first.
+    "cypress-mountain": 0.95,
 }
 
 
@@ -1972,6 +1980,7 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
         [scale_to_1000, 0.0, 0.0, scale_to_1000, -BLEED, -BLEED],
         simplify_tol=TREE_SMOOTH[slug][2] if slug in TREE_SMOOTH else 1.2,
         slug=slug,
+        view="be",
     )
     wash_el = frontal_wash_markup(bands)
 
