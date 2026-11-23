@@ -844,7 +844,7 @@ PLAN_TURN_DEG = {
     # job 20261123pc7ccw: 144.91 -> 137.91 (published plan 7° CCW; 144.91 was the unlisted published frame)
     "park-city-mountain-resort": 137.91,
     # job 20261123wp10ccw: 162.7 -> 152.7 (published plan 10° CCW; 162.7 was the unlisted published frame, 360° minus the 197.3° automatic facing; coordinates refit into the official 48/904 PLAN_TURN frame so plan trees line up)
-    "winter-park-resort": 152.7,
+    "winter-park-resort": 142.7,
 }
 
 PLAN_TURN_SCALE = {
