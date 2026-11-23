@@ -936,7 +936,7 @@
     "sasquatch-mountain-resort": "20261116sq",
     "sierra-at-tahoe-ski-resort": "20261116b1",
     "nipika": "20261116sky",
-    "snowbird": "20261122rst6",
+    "snowbird": "20261123sb10f",
     "stevens-pass": "20261118sp20",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
