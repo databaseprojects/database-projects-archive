@@ -483,6 +483,9 @@ TREE_SMOOTH = {
     "revelstoke-mountain-resort": (4, 6.0, 0.65),
     # Mont Tremblant, job 20261123mt180: smooth skyline-cut, same as Grouse.
     "mont-tremblant-resort-station-mont-tremblant": (4, 6.0, 0.65),
+    # Arapahoe Basin, job 20261123ab10z: smooth skyline-cut, same as Grouse.
+    "arapahoe-basin": (4, 6.0, 0.65),
+
 }
 
 
@@ -2160,7 +2163,8 @@ def generate_overlay(slug):
         # (20261117lvz6). The turn lives in usa/co.json. Use the solved frame.
         # Arapahoe Basin's plan is the published sheet turned 30°
         # counter-clockwise and recentred, baked into usa/co.json,
-        # then scaled 0.94 about the frame centre (20261118abz6).
+        # then scaled 0.94 about the frame centre (20261118abz6)
+        # and a further 0.90 (effective 0.846, job 20261123ab10z).
         # Aspen Mountain's 140° clockwise plan is in PLAN_TURN_DEG and
         # refit to the 48 pad (baked into usa/co.json). It uses that
         # frame, not the point-for-point solved matcher (124/144 lines).
