@@ -156,7 +156,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261120dv139",
+    ut: "20261123pc7ccw",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261122kfill",
+      index: R2_BASE + "contours/usa-index.json?v=20261123pc7ccw",
       label: US_STATE_NAMES[id]
     };
   });
@@ -940,7 +940,7 @@
     "stevens-pass": "20261118sp20",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
-    "park-city-mountain-resort": "20261116pct",
+    "park-city-mountain-resort": "20261123pc7ccw",
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
@@ -1441,7 +1441,8 @@
       hill.slug === "bridger-bowl" ||
       hill.slug === "grouse-mountain" ||
       hill.slug === "mount-washington-alpine-resort" ||
-      hill.slug === "cypress-mountain"
+      hill.slug === "cypress-mountain" ||
+      hill.slug === "park-city-mountain-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4593,7 +4594,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123cy10").then(function (res) {
+  fetch("hill-index.json?v=20261123pc7ccw").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
