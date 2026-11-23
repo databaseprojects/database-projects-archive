@@ -1679,7 +1679,8 @@ CAMERAS = {
         "lift_width": 1.7,
     },
     # job 20261116cu45: facing 197.3 -> 242.3
-    "copper-mountain": {"facing": 242.3},
+    # job 20261123cu10: facing 242.3 -> 232.3, elevation 15.0 -> 25.0
+    "copper-mountain": {"facing": 232.3, "elevation": 25.0},
     # Telluride. Automatic facing was 160.08 (orient kept the fall line).
     # 150.08 is 10° less, which turns the bird's-eye 10° clockwise.
     # frame_scale stays 1.0. US sheet, rebuilt with --edge-margin 70.
