@@ -1338,11 +1338,12 @@ CAMERAS = {
     # job 20261116abs: facing 148.3 -> 178.3
     "arapahoe-basin": {"facing": 178.3},  # (328.3)
     # Winter Park. frame_scale 0.855 is the earlier 0.95 times 0.9.
-    # The automatic camera and ridge settings stay. Plan fit is the
-    # run box in hill-index, [48.0, 48.0, 527.2, 692.3] (scale 1.4279,
-    # was 1.0177). The long lift to the bottom is clipped.
+    # The automatic camera is now locked (job 20261123wp10ccw). Ridge settings
+    # stay. Plan fit is the run box in hill-index, [48.0, 48.0, 764.1, 952.0].
+    # The long lift to the bottom stays clipped (20261116wpz).
     # job 20261116wpz: frame_scale 0.95 -> 0.855
-    "winter-park-resort": {"frame_scale": 0.855},
+    # job 20261123wp10ccw: facing None -> 207.3
+    "winter-park-resort": {"frame_scale": 0.855, "facing": 207.3},
     # Sunlight. frame_scale stays 0.95 and the automatic camera stays.
     # Runs that pass behind a ridge stay on the line at 10% opacity.
     # ZBUF_TOL stops the foreground and summit contours that draw through
