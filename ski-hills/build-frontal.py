@@ -1393,8 +1393,10 @@ CAMERAS = {
     # job 20261117sb45: facing 219.6 -> 174.6
     # job 20261117sb15: facing 174.6 -> 189.6
     # job 20261117sb45r: facing 189.6 -> 174.6
+    # job 20261123sb10f: elevation 15.0 -> 5.0 (10° flatter, more side-on; facing stays 174.6, frame_scale stays 0.931 / 1.10)
     "snowbird": {
         "facing": 174.6,
+        "elevation": 5.0,
         "frame_scale": 0.931 / 1.10,
     },
     # Park City. Automatic facing is 215.1. Locked so a later input
@@ -1478,8 +1480,9 @@ CAMERAS = {
     # 180° further (139.03+180), which turns that drawing 180° (Nov 5).
     # Plan view is unchanged except for a separate 10% zoom-out of bounds.
     # job 20261123mt180: facing 319.03 -> 139.03
+    # job 20261123mt180: facing 139.03 -> 319.03
     "mont-tremblant-resort-station-mont-tremblant": {
-        "facing": 139.03,
+        "facing": 319.03,
         "elevation": 15.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
