@@ -975,7 +975,7 @@
     "grouse-mountain": "20261120gro",
     "mount-washington-alpine-resort": "20261120mw10",
     "alta-ski-area": "20261122rst6",
-    "cypress-mountain": "20261123cycw25"
+    "cypress-mountain": "20261123cye25b"
   };
 
   function assetV(slug) {
