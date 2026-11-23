@@ -481,6 +481,8 @@ TREE_STEP_DIV = {"kicking-horse-resort": 3}
 TREE_SMOOTH = {
     "grouse-mountain": (4, 6.0, 0.65),
     "revelstoke-mountain-resort": (4, 6.0, 0.65),
+    # Mont Tremblant, job 20261123mt180: smooth skyline-cut, same as Grouse.
+    "mont-tremblant-resort-station-mont-tremblant": (4, 6.0, 0.65),
 }
 
 
