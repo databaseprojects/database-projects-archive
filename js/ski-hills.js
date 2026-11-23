@@ -156,7 +156,7 @@
     az: "20261105g50",
     nv: "20261105g50",
     sd: "20261105g50",
-    ut: "20261123pc15",
+    ut: "20261123pc15r",
     ct: "20261105g50",
     ri: "20261105g50",
     va: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261123pc15",
+      index: R2_BASE + "contours/usa-index.json?v=20261123pc15r",
       label: US_STATE_NAMES[id]
     };
   });
@@ -940,7 +940,7 @@
     "stevens-pass": "20261118sp20",
     "mad-river-glen": "20261116b1",
     "brighton-resort": "20261116sky",
-    "park-city-mountain-resort": "20261123pc15",
+    "park-city-mountain-resort": "20261123pc15r",
     "breckenridge": "20261116brk",
     "lake-louise-ski-area": "20261116ll30",
     "mammoth-mountain": "20261116pct",
@@ -4602,7 +4602,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123pc15").then(function (res) {
+  fetch("hill-index.json?v=20261123pc15r").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
