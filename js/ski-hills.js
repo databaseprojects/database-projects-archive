@@ -954,7 +954,7 @@
     "winter-park-resort": "20261123wpz10",
     "deer-valley-resort": "20261120dvrc",
     "jackson-hole-mountain-resort": "20261116jh",
-    "copper-mountain": "20261116cu45",
+    "copper-mountain": "20261123cu10",
     "heavenly-mountain-resort": "20261116hvy",
     "aspen-snowmass": "20261116asp",
     "telluride-ski-area": "20261116tel",
