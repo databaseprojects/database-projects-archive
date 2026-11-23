@@ -134,7 +134,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261123ab10z",
+    co: "20261123cu30",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261123ab10z",
+      index: R2_BASE + "contours/usa-index.json?v=20261123cu30",
       label: US_STATE_NAMES[id]
     };
   });
@@ -954,7 +954,7 @@
     "winter-park-resort": "20261123wpz10",
     "deer-valley-resort": "20261120dvrc",
     "jackson-hole-mountain-resort": "20261116jh",
-    "copper-mountain": "20261123cu10",
+    "copper-mountain": "20261123cu30",
     "heavenly-mountain-resort": "20261116hvy",
     "aspen-snowmass": "20261116asp",
     "telluride-ski-area": "20261116tel",
@@ -4605,7 +4605,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123ab10z").then(function (res) {
+  fetch("hill-index.json?v=20261123cu30").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
