@@ -134,7 +134,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261105g50",
-    co: "20261123wpz10",
+    co: "20261123ab10z",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261123pc15r",
+      index: R2_BASE + "contours/usa-index.json?v=20261123ab10z",
       label: US_STATE_NAMES[id]
     };
   });
@@ -916,7 +916,7 @@
     "mt-baldy": "20261116fh",
     "courmayeur": "20261116fh",
     "skigebiet-diedamskopf": "20261116fh",
-    "arapahoe-basin": "20261118abz6",
+    "arapahoe-basin": "20261123ab10z",
     "silver-mountain-resort": "20261116fh",
     "vail": "20261122rst6",
     "sun-peaks-resort": "20261123sp25",
@@ -4605,7 +4605,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123pc15r").then(function (res) {
+  fetch("hill-index.json?v=20261123ab10z").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
