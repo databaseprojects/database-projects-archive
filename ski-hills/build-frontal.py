@@ -1402,8 +1402,9 @@ CAMERAS = {
     # 1.0. run_width and lift_width are the published 2.2 / 1.7; without
     # an explicit camera width the 1400-contour cutoff would thin them.
     # job 20261123pc7ccw: facing 215.1 -> 222.1
+    # job 20261123pc15: facing 222.1 -> 237.1
     "park-city-mountain-resort": {
-        "facing": 222.1,
+        "facing": 237.1,
         "run_width": 2.2,
         "lift_width": 1.7,
     },
