@@ -868,10 +868,10 @@ PLAN_TURN_SCALE = {
     # pdz5. Unmap undoes this scale first.
     "whitewater-ski-resort": 0.95,
     # Cypress Mountain: the published north-up plan (PLAN_TURN_DEG 0.0),
-    # already refit to the 48/904 pad, is scaled 0.95 about the frame
-    # centre (20261123cyt80), same method as Whitewater ww10z5.
-    # Unmap undoes this scale first.
-    "cypress-mountain": 0.95,
+    # already refit to the 48/904 pad, is scaled 0.89 about the frame
+    # centre (20261123cyz89; was 0.95 in 20261123cyt80), same method as
+    # Whitewater ww10z5. Unmap undoes this scale first.
+    "cypress-mountain": 0.89,
     # Winter Park Resort: after the 10° counter-clockwise turn to 142.7
     # (20261123wp20ccw) is refit to the 48/904 pad, the plan is scaled
     # 0.90 about the frame centre (20261123wpz10), same method as
