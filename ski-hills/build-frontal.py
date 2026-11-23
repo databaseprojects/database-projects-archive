@@ -1505,9 +1505,10 @@ CAMERAS = {
     # 264.55 is 110° clockwise from 14.55 (Nov 16); the plan view is turned
     # 110° clockwise to match (14.55° → 264.55° CCW from north-up).
     # job 20261123spe15: elevation 15.0 -> 30.0 (15° steeper, more top-down; facing stays 264.55, frame_scale stays 1.0)
+    # job 20261123sp10: elevation 30.0 -> 10.0 (10° total, flatter than the old 15; facing stays 264.55, frame_scale stays 1.0)
     "sun-peaks-resort": {
         "facing": 264.55,
-        "elevation": 30.0,
+        "elevation": 10.0,
         "run_width": 1.96,
         "lift_width": 1.51,
         "ridge_fade": 0.10,
