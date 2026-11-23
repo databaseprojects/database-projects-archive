@@ -872,6 +872,12 @@ PLAN_TURN_SCALE = {
     # centre (20261123cyz89; was 0.95 in 20261123cyt80), same method as
     # Whitewater ww10z5. Unmap undoes this scale first.
     "cypress-mountain": 0.89,
+    # Winter Park Resort: after the 10° counter-clockwise turn to 142.7
+    # (20261123wp20ccw) is refit to the 48/904 pad, the plan is scaled
+    # 0.90 about the frame centre (20261123wpz10), same method as
+    # Whitewater ww10z5 / Cypress cyt80 but 10% out. Unmap undoes this
+    # scale first.
+    "winter-park-resort": 0.90,
 }
 
 
