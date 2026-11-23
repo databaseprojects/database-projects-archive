@@ -878,10 +878,11 @@ CAMERAS = {
     # frame_scale 1/1.06 pulls the bird's-eye back 6% around the centre.
     # Facing stays locked at 330.0. Plan view is unchanged.
     # job 20261123cycw25: facing 330.0 -> 305.0
+    # job 20261123cye25b: elevation 15.0 -> 25.0 (10° steeper, more top-down; facing stays 305.0, frame_scale stays 0.943)
     "cypress-mountain": {
         # 315: another 40 degrees clockwise from 355 (was 45, then 355). Plan turned to match.
         "facing": 305.0,
-        "elevation": 15.0,
+        "elevation": 25.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         "frame_scale": 0.943,
