@@ -20,9 +20,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261123cyt80",
+      file: "hills.json?v=20261123cyz89",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261123cyt80",
+      index: R2_BASE + "contours/index.json?v=20261123cyz89",
       label: "British Columbia"
     },
     ab: {
@@ -975,7 +975,7 @@
     "grouse-mountain": "20261120gro",
     "mount-washington-alpine-resort": "20261120mw10",
     "alta-ski-area": "20261122rst6",
-    "cypress-mountain": "20261123cyt80"
+    "cypress-mountain": "20261123cyz89"
   };
 
   function assetV(slug) {
@@ -4602,7 +4602,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123cyt80").then(function (res) {
+  fetch("hill-index.json?v=20261123cyz89").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
