@@ -20,9 +20,9 @@
   var catalogs = {
     bc: {
 
-      file: "hills.json?v=20261123cy10",
+      file: "hills.json?v=20261123cyt80",
       names: "names.json?v=20261105cmt",
-      index: R2_BASE + "contours/index.json?v=20261123cy10",
+      index: R2_BASE + "contours/index.json?v=20261123cyt80",
       label: "British Columbia"
     },
     ab: {
@@ -975,7 +975,7 @@
     "grouse-mountain": "20261120gro",
     "mount-washington-alpine-resort": "20261120mw10",
     "alta-ski-area": "20261122rst6",
-    "cypress-mountain": "20261123cye25b"
+    "cypress-mountain": "20261123cyt80"
   };
 
   function assetV(slug) {
@@ -1019,6 +1019,9 @@
     "heavenly-mountain-resort": 1.2,
     "silver-star-mountain-resort": 1.15
   };
+  var TREE_STEP_BE_MULTIPLIER = {
+    "cypress-mountain": 0.8
+  };
   // tree-opacity:end
 
 
@@ -1041,10 +1044,13 @@
     return "";
   }
 
-  function treeStepOpacity(count, index, fallback, slug) {
+  function treeStepOpacity(count, index, fallback, slug, view) {
     var row = TREE_STEP[count];
     var value = row && row[index] != null ? row[index] : fallback;
     var m = (slug && TREE_STEP_MULTIPLIER && TREE_STEP_MULTIPLIER[slug]) || 1;
+    if (view === "be" && slug && TREE_STEP_BE_MULTIPLIER && TREE_STEP_BE_MULTIPLIER[slug]) {
+      m *= TREE_STEP_BE_MULTIPLIER[slug];
+    }
     if (m !== 1 && value != null && value !== "") {
       var n = parseFloat(value);
       if (!isNaN(n)) return formatTreeOpacity(n * m);
@@ -1053,14 +1059,16 @@
   }
 
   function applyFrontalTreeMultiplier(root, slug) {
-    if (!root || !slug || !TREE_STEP_MULTIPLIER || TREE_STEP_MULTIPLIER[slug] == null) return;
+    var hasAll = TREE_STEP_MULTIPLIER && TREE_STEP_MULTIPLIER[slug] != null;
+    var hasBe = TREE_STEP_BE_MULTIPLIER && TREE_STEP_BE_MULTIPLIER[slug] != null;
+    if (!root || !slug || (!hasAll && !hasBe)) return;
     var bands = root.querySelectorAll ? root.querySelectorAll(".sh-frontal-tree-band") : [];
     var count = bands.length;
     for (var i = 0; i < count; i++) {
       var wash = bands[i].querySelector(".sh-frontal-tree-wash") || bands[i].querySelector("path");
       if (!wash) continue;
       var fallback = wash.getAttribute("fill-opacity");
-      wash.style.fillOpacity = treeStepOpacity(count, i, fallback, slug);
+      wash.style.fillOpacity = treeStepOpacity(count, i, fallback, slug, "be");
     }
   }
 
@@ -4594,7 +4602,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123wp10ccw").then(function (res) {
+  fetch("hill-index.json?v=20261123cyt80").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {

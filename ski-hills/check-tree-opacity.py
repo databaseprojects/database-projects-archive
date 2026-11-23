@@ -2,7 +2,8 @@
 """Keep tree-band opacities on one table: ski-hills/tree-opacity.json.
 
 The table's optional "multipliers" object is a per-slug factor applied to the
-standard row for that band count. A changed file for such a slug also passes
+standard row for that band count. Optional "be_multipliers" apply only to
+bird's-eye (frontal) washes, on top of any slug-wide factor. A changed file for such a slug also passes
 when its bake is the merge-base bake times the factor, or the merge-base bake
 unchanged (already applied). CSS stays on the standard rows; the page applies
 the factor in js/ski-hills.js.
@@ -91,7 +92,7 @@ def load_table(path=TABLE_PATH):
             multipliers[slug] = number
     table = {}
     for key, values in raw.items():
-        if key == "multipliers":
+        if key in ("multipliers", "be_multipliers"):
             continue
         try:
             count = int(key)
@@ -110,7 +111,21 @@ def load_table(path=TABLE_PATH):
         table[count] = tuple(steps)
     if not table:
         fail(f"{path} must list at least one band-count row")
-    return dict(sorted(table.items())), dict(sorted(multipliers.items()))
+    be_multipliers = {}
+    if "be_multipliers" in raw:
+        extra = raw["be_multipliers"]
+        if not isinstance(extra, dict):
+            fail(f"{path} be_multipliers must be an object of slug to factor")
+        for slug, factor in extra.items():
+            if not isinstance(slug, str) or not slug or "/" in slug or slug.endswith((".svg", ".json")):
+                fail(f"{path} be_multipliers key {slug!r} is not a slug")
+            if isinstance(factor, bool) or not isinstance(factor, (int, float)):
+                fail(f"{path} be_multiplier for {slug} is not a number")
+            number = float(factor)
+            if not 0.0 < number <= 10.0:
+                fail(f"{path} be_multiplier for {slug} is outside 0..10")
+            be_multipliers[slug] = number
+    return dict(sorted(table.items())), dict(sorted(multipliers.items())), dict(sorted(be_multipliers.items()))
 
 
 def fmt_opacity(value):
@@ -196,7 +211,7 @@ def css_region(table):
     ))
 
 
-def js_region(table, multipliers=None):
+def js_region(table, multipliers=None, be_multipliers=None):
     lines = [JS_START, "  var TREE_STEP = {"]
     counts = list(table)
     for position, count in enumerate(counts):
@@ -209,6 +224,12 @@ def js_region(table, multipliers=None):
     for position, (slug, factor) in enumerate(items):
         comma = "," if position < len(items) - 1 else ""
         # Keep a plain number (1.2, not 1.20) so the block is stable.
+        lines.append(f'    "{slug}": {factor:g}{comma}')
+    lines.append("  };")
+    lines.append("  var TREE_STEP_BE_MULTIPLIER = {")
+    be_items = list((be_multipliers or {}).items())
+    for position, (slug, factor) in enumerate(be_items):
+        comma = "," if position < len(be_items) - 1 else ""
         lines.append(f'    "{slug}": {factor:g}{comma}')
     lines.append("  };")
     lines.append(JS_END)
@@ -246,9 +267,9 @@ def write_css(table):
         print(f"unchanged {CSS_PATH.relative_to(REPO)}")
 
 
-def write_js(table, multipliers=None):
+def write_js(table, multipliers=None, be_multipliers=None):
     text = JS_PATH.read_text()
-    region = js_region(table, multipliers)
+    region = js_region(table, multipliers, be_multipliers)
     if JS_START in text:
         current = extract_region(text, JS_START, JS_END)
         if current is None:
@@ -266,7 +287,7 @@ def write_js(table, multipliers=None):
         print(f"unchanged {JS_PATH.relative_to(REPO)}")
 
 
-def check_generated(table, multipliers=None):
+def check_generated(table, multipliers=None, be_multipliers=None):
     errors = []
     css = extract_region(CSS_PATH.read_text(), CSS_START, CSS_END)
     if css is None:
@@ -276,7 +297,7 @@ def check_generated(table, multipliers=None):
     js = extract_region(JS_PATH.read_text(), JS_START, JS_END)
     if js is None:
         errors.append("js/ski-hills.js is missing the tree-opacity TREE_STEP block")
-    elif js != js_region(table, multipliers):
+    elif js != js_region(table, multipliers, be_multipliers):
         errors.append("js/ski-hills.js TREE_STEP does not match ski-hills/tree-opacity.json")
     return errors
 
@@ -376,10 +397,18 @@ def baked_steps_from_bytes(path, data):
     return json_steps(data)
 
 
-def allowed_steps(found, path, table, multipliers, base_found):
+def factor_for(path, multipliers, be_multipliers):
+    """Slug-wide factor, times the bird's-eye-only factor for frontal sheets."""
+    factor = multipliers.get(slug_of(path), 1.0)
+    if path.suffix == ".svg" and "frontal" in path.parts:
+        factor *= (be_multipliers or {}).get(slug_of(path), 1.0)
+    return factor
+
+
+def allowed_steps(found, path, table, multipliers, base_found, be_multipliers=None):
     """Accept the canonical row, or a per-slug multiplier applied to it or to the base bake."""
     row = table.get(len(found))
-    factor = multipliers.get(slug_of(path), 1.0)
+    factor = factor_for(path, multipliers, be_multipliers)
     options = []
     if row is not None:
         options.append(scale_steps(row, factor) if factor != 1.0 else tuple(row))
@@ -464,10 +493,10 @@ def default_base():
     return "origin/main"
 
 
-def describe(found, path, table, multipliers, base_found):
+def describe(found, path, table, multipliers, base_found, be_multipliers=None):
     baked = "/".join("?" if value is None else fmt_opacity(value) for value in found)
     row = table.get(len(found))
-    factor = multipliers.get(slug_of(path), 1.0)
+    factor = factor_for(path, multipliers, be_multipliers)
     if row is None:
         return f"baked {baked}; no table row for {len(found)} bands"
     wanted = scale_steps(row, factor) if factor != 1.0 else row
@@ -479,7 +508,7 @@ def describe(found, path, table, multipliers, base_found):
     return detail
 
 
-def scan(table, multipliers, changed, base_ref):
+def scan(table, multipliers, changed, base_ref, be_multipliers=None):
     warnings = []
     errors = []
     checked = 0
@@ -490,12 +519,12 @@ def scan(table, multipliers, changed, base_ref):
             continue
         checked += 1
         rel = path.relative_to(REPO).as_posix()
-        raw_base = git_file_bytes(rel, base_ref) if rel in changed or slug_of(path) in multipliers else None
+        raw_base = git_file_bytes(rel, base_ref) if rel in changed or slug_of(path) in multipliers or slug_of(path) in (be_multipliers or {}) else None
         base_found = baked_steps_from_bytes(path, raw_base) if raw_base is not None else None
-        if allowed_steps(found, path, table, multipliers, base_found):
+        if allowed_steps(found, path, table, multipliers, base_found, be_multipliers):
             matching += 1
             continue
-        detail = describe(found, path, table, multipliers, base_found)
+        detail = describe(found, path, table, multipliers, base_found, be_multipliers)
         if rel in changed:
             errors.append((rel, detail))
         else:
@@ -516,15 +545,15 @@ def main():
         help="Git ref used as the merge base when deciding which tree files this change touches.",
     )
     args = parser.parse_args()
-    table, multipliers = load_table()
+    table, multipliers, be_multipliers = load_table()
     if args.write:
         write_css(table)
-        write_js(table, multipliers)
+        write_js(table, multipliers, be_multipliers)
 
-    problems = check_generated(table, multipliers) + check_builder()
+    problems = check_generated(table, multipliers, be_multipliers) + check_builder()
     base = args.base or default_base()
     changed = git_changed(base)
-    checked, matching, warnings, errors = scan(table, multipliers, changed, base)
+    checked, matching, warnings, errors = scan(table, multipliers, changed, base, be_multipliers)
 
     print(f"base: {base}")
     print(f"tree files with bands: {checked}")
