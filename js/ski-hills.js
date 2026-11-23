@@ -975,7 +975,8 @@
     "grouse-mountain": "20261120gro",
     "mount-washington-alpine-resort": "20261120mw10",
     "alta-ski-area": "20261122rst6",
-    "cypress-mountain": "20261123cyz89"
+    "cypress-mountain": "20261123cyz89",
+    "mont-tremblant-resort-station-mont-tremblant": "20261123mt180"
   };
 
   function assetV(slug) {
@@ -1020,7 +1021,8 @@
     "silver-star-mountain-resort": 1.15
   };
   var TREE_STEP_BE_MULTIPLIER = {
-    "cypress-mountain": 0.8
+    "cypress-mountain": 0.8,
+    "mont-tremblant-resort-station-mont-tremblant": 0.9
   };
   // tree-opacity:end
 
@@ -1450,7 +1452,8 @@
       hill.slug === "grouse-mountain" ||
       hill.slug === "mount-washington-alpine-resort" ||
       hill.slug === "cypress-mountain" ||
-      hill.slug === "park-city-mountain-resort"
+      hill.slug === "park-city-mountain-resort" ||
+      hill.slug === "mont-tremblant-resort-station-mont-tremblant"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
