@@ -949,7 +949,7 @@
     "killington-resort": "20261123kp10",
     "keystone": "20261116ky12",
     "beaver-creek": "20261116bvz",
-    "banff-sunshine-village": "20261116sun",
+    "banff-sunshine-village": "20261124bnf10",
     "big-sky-resort": "20261122rst6",
     "winter-park-resort": "20261123wpz10",
     "deer-valley-resort": "20261120dvrc",
