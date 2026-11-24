@@ -907,6 +907,7 @@ CAMERAS = {
     # job 20261124bnf10: elevation 15.0 -> 5.0 (10° flatter, more side-on; facing stays 146.9; ridge_fade, run_width, lift_width and ridge-clip tables stay as published)
     # job 20261124bnf25: elevation 5.0 -> 25.0 (20° steeper, more top-down; facing stays 146.9; ridge_fade, run_width, lift_width and ridge-clip tables stay as published)
     # job 20261124bnf20: elevation 25.0 -> 20.0 (5° flatter than the 25° sheet, pitch 70; facing stays 146.9; no frame_scale, auto-fit stays; ridge_fade, run_width, lift_width and ridge-clip tables stay as published)
+    # job 20261124bnfz10: frame_scale 1.0 -> 0.9
     "banff-sunshine-village": {
         "facing": 146.9,
         "elevation": 20.0,
@@ -917,6 +918,7 @@ CAMERAS = {
         # Run and lift strokes are 22% under the defaults (2.2 and 1.7).
         "run_width": 1.716,
         "lift_width": 1.33,
+        "frame_scale": 0.9,
     },
     # Mt Norquay only. Automatic facing was 68.6. 248.6 was 180° further,
     # which turns the bird's-eye drawing upside down. 238.6 is 10° less
