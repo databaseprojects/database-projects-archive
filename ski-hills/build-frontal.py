@@ -904,9 +904,10 @@ CAMERAS = {
     # Bourgeau base (north-west, lowest) and looks uphill to the summits
     # (lifts climb toward ~130). 146.9 is 15° further clockwise, which
     # turns that drawing 15° counter-clockwise on screen. Edit this number.
+    # job 20261124bnf10: elevation 15.0 -> 5.0 (10° flatter, more side-on; facing stays 146.9; ridge_fade, run_width, lift_width and ridge-clip tables stay as published)
     "banff-sunshine-village": {
         "facing": 146.9,
-        "elevation": 15.0,
+        "elevation": 5.0,
         "depth_scale": DEPTH_SCALE,
         "sun": {"elevation": SUN_ELEVATION, "intensity": SUN_INTENSITY, "ambient": SUN_AMBIENT},
         # Runs that pass behind a ridge stay on the line at 10% opacity.
