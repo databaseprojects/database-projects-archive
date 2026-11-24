@@ -57,6 +57,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from lean_paths import compact_points
 from build_paths import BUILD_INPUTS, locate_input
+from plan_lifts import lifts_from_plan
 
 
 def _input(name):
@@ -4561,14 +4562,21 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
                 named_runs.append((raw_name.strip(), pieces))
     lift_parts = []
     lift_pieces = []
-    for lift in lifts:
+    plan_slug = slug
+    for suffix in ("-front", "-back"):
+        if plan_slug.endswith(suffix):
+            plan_slug = plan_slug[: -len(suffix)]
+            break
+    draw_lifts, lift_note = lifts_from_plan(plan_slug, runs, lifts)
+    print("lifts_source", plan_slug, lift_note, flush=True)
+    for lift in draw_lifts:
         lift_parts.extend(
             stroke(
                 lift["lines"],
                 "#111",
                 lift_stroke,
                 z_add=LIFT_CLEAR,
-                dash="6 4",
+                dash="4 3",
                 css_class="sh-frontal-lift" + (" sh-bowl" if in_back_bowl(slug, lift, True) else ""),
                 occlude=True,
                 chunks_out=lift_pieces if run_labels else None,
