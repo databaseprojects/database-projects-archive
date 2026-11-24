@@ -401,9 +401,9 @@
 }
 
 .sh-lb[data-sh-hill="banff-sunshine-village"] {
-  /* 1.716/2.2 and 1.33/1.7 */
+  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Lifts follow the
+     plan stroke (--sh-run 1.3166px). Job 20261124ls. */
   --sh-be-run: 1.0269px;
-  --sh-be-lift: 1.0300px;
 }
 
 .sh-lb[data-sh-hill="big-white-ski-resort"] {
