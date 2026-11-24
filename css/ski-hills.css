@@ -401,24 +401,24 @@
 }
 
 .sh-lb[data-sh-hill="banff-sunshine-village"] {
-  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Lifts follow the
-     plan stroke (--sh-run 1.3166px). Job 20261124ls. */
+  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Bird's-eye lifts
+     use the same run width. Job 20261124ls. */
   --sh-be-run: 1.0269px;
 }
 
 .sh-lb[data-sh-hill="big-white-ski-resort"] {
-  /* 1.36/2.2 run width. Lifts use the shared plan stroke. */
+  /* 1.36/2.2 run width. Bird's-eye lifts use the same width. */
   --sh-be-run: 0.8139px;
 }
 
 .sh-lb[data-sh-hill="sun-peaks-resort"] {
-  /* 1.96/2.2 run width. Lifts use the shared plan stroke. */
+  /* 1.96/2.2 run width. Bird's-eye lifts use the same width. */
   --sh-be-run: 1.1730px;
 }
 
 .sh-lb[data-sh-hill="red-mountain-resort"],
 .sh-lb[data-sh-hill="panorama-mountain-resort"] {
-  /* 1.84/2.2 run width. Lifts use the shared plan stroke. */
+  /* 1.84/2.2 run width. Bird's-eye lifts use the same width. */
   --sh-be-run: 1.1012px;
 }
 
@@ -458,7 +458,14 @@
 }
 
 .sh-lb polyline.sh-lift {
-  stroke-width: var(--sh-run, 1.3166px);
+  /* Lift width matches this view's run width. Dash/gap are path
+     dasharray values (2.2× and 1.65× width), same convention as the
+     print composer — not the ink length after round caps. */
+  --sh-lift-w: var(--sh-plan-run, var(--sh-run, 1.3166px));
+  stroke-width: var(--sh-lift-w);
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w));
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
 }
 
 .sh-hill[id="whistler-blackcomb"] polyline.sh-run {
@@ -472,7 +479,11 @@
 }
 
 .sh-frame-art polyline.sh-lift {
-  stroke-width: calc(var(--sh-run, 1.3166px) * var(--sh-frame-scale, 1));
+  --sh-lift-w: calc(var(--sh-plan-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1));
+  stroke-width: var(--sh-lift-w);
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w));
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
 }
 
 .sh-hill polyline.sh-contour:not(.sh-contour-shade),
@@ -499,21 +510,24 @@
   stroke-linecap: round;
 }
 
-/* Bird's-eye lines use the plan view widths unless the hill sets
-   --sh-be-run / --sh-be-lift. The sheets bake wider strokes in viewBox
-   units, so override them with screen widths: runs and lifts at --sh-run
-   (1.3166px, Whistler 1.0269px) when those variables are absent, contours
-   at 0.5pt. Lift dashes use the plan's 4 3 pattern; !important wins over
-   the baked stroke-dasharray. The frame scales the dash the same way it
-   scales stroke-width. */
+/* Bird's-eye lines use this view's run width unless the hill sets
+   --sh-be-run. The sheets bake wider strokes in viewBox units, so
+   override them with screen widths: runs and lifts at --sh-be-run, or
+   --sh-run (1.3166px, Whistler 1.0269px) when that is absent, contours
+   at 0.5pt. Lift dashes are 2.2× / 1.65× the lift width (path
+   dasharray, same as the print composer); !important wins over the
+   baked stroke-dasharray. The frame scales dash with stroke-width. */
 .sh-lb .sh-frontal-run {
   stroke-width: var(--sh-be-run, var(--sh-run, 1.3166px)) !important;
   vector-effect: non-scaling-stroke !important;
 }
 
 .sh-lb .sh-frontal-lift {
-  stroke-width: var(--sh-be-lift, var(--sh-run, 1.3166px)) !important;
-  stroke-dasharray: 4 3 !important;
+  --sh-lift-w: var(--sh-be-run, var(--sh-run, 1.3166px));
+  stroke-width: var(--sh-lift-w) !important;
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w)) !important;
+  stroke-dashoffset: 0 !important;
+  stroke-linecap: round !important;
   vector-effect: non-scaling-stroke !important;
 }
 
@@ -522,8 +536,11 @@
 }
 
 .sh-lb .sh-frame-art .sh-frontal-lift {
-  stroke-width: calc(var(--sh-be-lift, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1)) !important;
-  stroke-dasharray: calc(4px * var(--sh-frame-scale, 1)) calc(3px * var(--sh-frame-scale, 1)) !important;
+  --sh-lift-w: calc(var(--sh-be-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1));
+  stroke-width: var(--sh-lift-w) !important;
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w)) !important;
+  stroke-dashoffset: 0 !important;
+  stroke-linecap: round !important;
 }
 
 /* Bird's-eye contours match the plan view contours: black at 0.08
@@ -639,9 +656,17 @@ g[mask^="url(#sh-contour-fade-"] {
 .sh-frontal-run[stroke="#1a4f9c"],
 .sh-frontal-run[style*="stroke:#1a4f9c"] { stroke: #1d58ad !important; }
 
-.sh-hill .sh-lift,
+.sh-hill .sh-lift {
+  --sh-lift-w: var(--sh-stroke, 0.3px);
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w));
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+}
+
 .sh-lb .sh-lift {
-  stroke-dasharray: 4 3;
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w, var(--sh-run, 1.3166px))) calc(1.65 * var(--sh-lift-w, var(--sh-run, 1.3166px)));
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
 }
 
 .sh-lb {
