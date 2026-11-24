@@ -407,22 +407,19 @@
 }
 
 .sh-lb[data-sh-hill="big-white-ski-resort"] {
-  /* 1.36/2.2 and 1.05/1.7 */
+  /* 1.36/2.2 run width. Lifts use the shared plan stroke. */
   --sh-be-run: 0.8139px;
-  --sh-be-lift: 0.8132px;
 }
 
 .sh-lb[data-sh-hill="sun-peaks-resort"] {
-  /* 1.96/2.2 and 1.51/1.7 */
+  /* 1.96/2.2 run width. Lifts use the shared plan stroke. */
   --sh-be-run: 1.1730px;
-  --sh-be-lift: 1.1695px;
 }
 
 .sh-lb[data-sh-hill="red-mountain-resort"],
 .sh-lb[data-sh-hill="panorama-mountain-resort"] {
-  /* 1.84/2.2 and 1.42/1.7 */
+  /* 1.84/2.2 run width. Lifts use the shared plan stroke. */
   --sh-be-run: 1.1012px;
-  --sh-be-lift: 1.0997px;
 }
 
 /* Lightbox runs only. Lifts stay on --sh-run. Plan reads --sh-plan-run;
@@ -506,7 +503,9 @@
    --sh-be-run / --sh-be-lift. The sheets bake wider strokes in viewBox
    units, so override them with screen widths: runs and lifts at --sh-run
    (1.3166px, Whistler 1.0269px) when those variables are absent, contours
-   at 0.5pt. */
+   at 0.5pt. Lift dashes use the plan's 4 3 pattern; !important wins over
+   the baked stroke-dasharray. The frame scales the dash the same way it
+   scales stroke-width. */
 .sh-lb .sh-frontal-run {
   stroke-width: var(--sh-be-run, var(--sh-run, 1.3166px)) !important;
   vector-effect: non-scaling-stroke !important;
@@ -514,6 +513,7 @@
 
 .sh-lb .sh-frontal-lift {
   stroke-width: var(--sh-be-lift, var(--sh-run, 1.3166px)) !important;
+  stroke-dasharray: 4 3 !important;
   vector-effect: non-scaling-stroke !important;
 }
 
@@ -523,6 +523,7 @@
 
 .sh-lb .sh-frame-art .sh-frontal-lift {
   stroke-width: calc(var(--sh-be-lift, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1)) !important;
+  stroke-dasharray: calc(4px * var(--sh-frame-scale, 1)) calc(3px * var(--sh-frame-scale, 1)) !important;
 }
 
 /* Bird's-eye contours match the plan view contours: black at 0.08
