@@ -976,7 +976,8 @@
     "mount-washington-alpine-resort": "20261120mw10",
     "alta-ski-area": "20261122rst6",
     "cypress-mountain": "20261123cyz89",
-    "mont-tremblant-resort-station-mont-tremblant": "20261123mt180"
+    "mont-tremblant-resort-station-mont-tremblant": "20261123mt180",
+    "silver-star-mountain-resort": "20261124ss"
   };
 
   function assetV(slug) {
