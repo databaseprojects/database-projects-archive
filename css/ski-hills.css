@@ -379,6 +379,11 @@
 
 .sh-lb {
   --sh-run: 1.3166px;
+  /* Lift width is independent of run width. 1.0446px equals 0.348 mm on
+     the 10x10 print at every hill and view: the map-fit factor is the
+     same across 8 mm-margin composes (1.3166px = 0.4386 mm). Optional
+     --sh-plan-lift / --sh-be-lift override one view; neither is set. */
+  --sh-lift: 1.0446px;
 }
 
 /* Whistler only. 1.0269 is 22% under the 1.3166px run stroke. Framed copies
@@ -387,43 +392,43 @@
   --sh-run: 1.0269px;
 }
 
-/* These hills bake a thinner run_width and lift_width than the 2.2 / 1.7
-   defaults. The screen stroke is 1.3166px times that ratio. Silver Star's
-   plan uses that same 1.0269px run stroke. Sunshine and the other hills
-   keep the 1.3166px plan. */
+/* These hills bake a thinner run width than the 2.2 / 1.7 defaults.
+   The screen run stroke is 1.3166px times that ratio. Lift width is
+   independent (--sh-lift) and is not taken from these run variables.
+   Silver Star's plan uses that same 1.0269px run stroke. Sunshine and
+   the other hills keep the 1.3166px plan. */
 /* Silver Star plan matches its bird's-eye runs: 1.0269px is 22% under
-   1.3166px. Bird's-eye lifts stay on the baked 1.33/1.7 width. */
+   1.3166px. Job 20261124ss. */
 .sh-lb[data-sh-hill="silver-star-mountain-resort"] {
   --sh-run: 1.0269px;
-  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Lifts follow the
-     plan stroke (--sh-run 1.0269px). Job 20261124ss. */
+  /* Runs stay at the baked 1.716/2.2 bird's-eye width. */
   --sh-be-run: 1.0269px;
 }
 
 .sh-lb[data-sh-hill="banff-sunshine-village"] {
-  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Bird's-eye lifts
-     use the same run width. Job 20261124ls. */
+  /* Runs stay at the baked 1.716/2.2 bird's-eye width. Job 20261124ls. */
   --sh-be-run: 1.0269px;
 }
 
 .sh-lb[data-sh-hill="big-white-ski-resort"] {
-  /* 1.36/2.2 run width. Bird's-eye lifts use the same width. */
+  /* 1.36/2.2 bird's-eye run width. */
   --sh-be-run: 0.8139px;
 }
 
 .sh-lb[data-sh-hill="sun-peaks-resort"] {
-  /* 1.96/2.2 run width. Bird's-eye lifts use the same width. */
+  /* 1.96/2.2 bird's-eye run width. */
   --sh-be-run: 1.1730px;
 }
 
 .sh-lb[data-sh-hill="red-mountain-resort"],
 .sh-lb[data-sh-hill="panorama-mountain-resort"] {
-  /* 1.84/2.2 run width. Bird's-eye lifts use the same width. */
+  /* 1.84/2.2 bird's-eye run width. */
   --sh-be-run: 1.1012px;
 }
 
-/* Lightbox runs only. Lifts stay on --sh-run. Plan reads --sh-plan-run;
-   bird's-eye runs read --sh-be-run. Cards and Whistler are untouched. */
+/* Lightbox runs only. Lifts use --sh-lift, not these run variables.
+   Plan runs read --sh-plan-run; bird's-eye runs read --sh-be-run.
+   Cards and Whistler are untouched. */
 .sh-lb[data-sh-hill="park-city-mountain-resort"] {
   /* Plan 0.8pt, bird's-eye 0.6pt. */
   --sh-plan-run: 1.0667px;
@@ -458,10 +463,11 @@
 }
 
 .sh-lb polyline.sh-lift {
-  /* Lift width matches this view's run width. Dash/gap are path
-     dasharray values (2.2× and 1.65× width), same convention as the
-     print composer — not the ink length after round caps. */
-  --sh-lift-w: var(--sh-plan-run, var(--sh-run, 1.3166px));
+  /* Lift width is --sh-lift (0.348 mm on the 10x10), not this view's
+     run width. Dash/gap are path dasharray values (2.2× and 1.65×
+     width), same convention as the print composer — not the ink
+     length after round caps. */
+  --sh-lift-w: var(--sh-plan-lift, var(--sh-lift, 1.0446px));
   stroke-width: var(--sh-lift-w);
   stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w));
   stroke-dashoffset: 0;
@@ -479,7 +485,7 @@
 }
 
 .sh-frame-art polyline.sh-lift {
-  --sh-lift-w: calc(var(--sh-plan-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1));
+  --sh-lift-w: calc(var(--sh-plan-lift, var(--sh-lift, 1.0446px)) * var(--sh-frame-scale, 1));
   stroke-width: var(--sh-lift-w);
   stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w));
   stroke-dashoffset: 0;
@@ -510,20 +516,21 @@
   stroke-linecap: round;
 }
 
-/* Bird's-eye lines use this view's run width unless the hill sets
-   --sh-be-run. The sheets bake wider strokes in viewBox units, so
-   override them with screen widths: runs and lifts at --sh-be-run, or
-   --sh-run (1.3166px, Whistler 1.0269px) when that is absent, contours
-   at 0.5pt. Lift dashes are 2.2× / 1.65× the lift width (path
-   dasharray, same as the print composer); !important wins over the
-   baked stroke-dasharray. The frame scales dash with stroke-width. */
+/* Bird's-eye runs use this view's run width unless the hill sets
+   --sh-be-run, falling back to --sh-run (1.3166px, Whistler 1.0269px).
+   Lifts use --sh-lift (1.0446px, 0.348 mm on the 10x10), independent
+   of the run width. The sheets bake wider strokes in viewBox units, so
+   override them with screen widths. Contours stay at 0.5pt. Lift dashes
+   are 2.2× / 1.65× the lift width (path dasharray, same as the print
+   composer); !important wins over the baked stroke-dasharray. The
+   frame scales dash with stroke-width. */
 .sh-lb .sh-frontal-run {
   stroke-width: var(--sh-be-run, var(--sh-run, 1.3166px)) !important;
   vector-effect: non-scaling-stroke !important;
 }
 
 .sh-lb .sh-frontal-lift {
-  --sh-lift-w: var(--sh-be-run, var(--sh-run, 1.3166px));
+  --sh-lift-w: var(--sh-be-lift, var(--sh-lift, 1.0446px));
   stroke-width: var(--sh-lift-w) !important;
   stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w)) !important;
   stroke-dashoffset: 0 !important;
@@ -536,7 +543,7 @@
 }
 
 .sh-lb .sh-frame-art .sh-frontal-lift {
-  --sh-lift-w: calc(var(--sh-be-run, var(--sh-run, 1.3166px)) * var(--sh-frame-scale, 1));
+  --sh-lift-w: calc(var(--sh-be-lift, var(--sh-lift, 1.0446px)) * var(--sh-frame-scale, 1));
   stroke-width: var(--sh-lift-w) !important;
   stroke-dasharray: calc(2.2 * var(--sh-lift-w)) calc(1.65 * var(--sh-lift-w)) !important;
   stroke-dashoffset: 0 !important;
@@ -664,7 +671,7 @@ g[mask^="url(#sh-contour-fade-"] {
 }
 
 .sh-lb .sh-lift {
-  stroke-dasharray: calc(2.2 * var(--sh-lift-w, var(--sh-run, 1.3166px))) calc(1.65 * var(--sh-lift-w, var(--sh-run, 1.3166px)));
+  stroke-dasharray: calc(2.2 * var(--sh-lift-w, var(--sh-lift, 1.0446px))) calc(1.65 * var(--sh-lift-w, var(--sh-lift, 1.0446px)));
   stroke-dashoffset: 0;
   stroke-linecap: round;
 }
