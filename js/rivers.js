@@ -243,6 +243,8 @@
   }
 
   var MAX_NATIVE = 2;
+  // Longest side of a painted layer. Past this, browsers clamp one axis.
+  var MAX_LAYER = 4096;
   var api = {
     groupNum: groupNum,
     coordText: coordText,
@@ -392,26 +394,21 @@
     box.setAttribute("aria-label", river.name || "River");
     box._slug = river.slug;
     var stage = el("div", "rv-stage");
-    var img = document.createElement("img");
+    // Stage-sized canvas. A native-size img plus CSS scale() is clamped on the
+    // long axis once the layer passes the texture limit, and the GPU scale blurs.
+    var canvas = document.createElement("canvas");
+    canvas.className = "rv-art";
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", river.name || "River");
+    var hit = el("div", "rv-hit");
+    hit.setAttribute("aria-hidden", "true");
+    var overlay = null;
+    var img = new Image();
+    img.crossOrigin = "anonymous";
     img.alt = river.name || "";
-    img.draggable = false;
-    img.width = W;
-    img.height = H;
-    img.style.width = W + "px";
-    img.style.height = H + "px";
     img.src = assetSrc(river.mid);
-    var overlay = document.createElement("img");
-    overlay.className = "rv-contour";
-    overlay.alt = "";
-    overlay.setAttribute("aria-hidden", "true");
-    overlay.draggable = false;
-    overlay.hidden = true;
-    overlay.width = W;
-    overlay.height = H;
-    overlay.style.width = W + "px";
-    overlay.style.height = H + "px";
-    stage.appendChild(img);
-    stage.appendChild(overlay);
+    stage.appendChild(canvas);
+    stage.appendChild(hit);
     var hasContours = !!(river.contours && river.contours.file);
     var capWrap = el("div", "rv-lb-cap");
     capWrap.appendChild(captionEl(manifest, river));
@@ -422,6 +419,7 @@
     lb = box;
 
     var large = new Image();
+    large.crossOrigin = "anonymous";
     large.src = assetSrc(river.large);
 
     function fit() {
@@ -437,10 +435,76 @@
       return true;
     }
 
+    function paintArt() {
+      var sw = stage.clientWidth;
+      var sh = stage.clientHeight;
+      var natW = img.naturalWidth;
+      var natH = img.naturalHeight;
+      if (!(sw > 0) || !(sh > 0) || !(view.s > 0)) return;
+      var dpr = window.devicePixelRatio || 1;
+      var cw = Math.round(sw * dpr);
+      var ch = Math.round(sh * dpr);
+      // Keep both axes under the texture cap together so neither is clamped alone.
+      var fit = Math.min(1, MAX_LAYER / cw, MAX_LAYER / ch);
+      cw = Math.max(1, Math.round(cw * fit));
+      ch = Math.max(1, Math.round(ch * fit));
+      if (canvas.width !== cw || canvas.height !== ch) {
+        canvas.width = cw;
+        canvas.height = ch;
+      }
+      var ctx = canvas.getContext("2d");
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      var left = Math.max(view.x, 0);
+      var top = Math.max(view.y, 0);
+      var right = Math.min(view.x + W * view.s, sw);
+      var bottom = Math.min(view.y + H * view.s, sh);
+      hit.style.left = left + "px";
+      hit.style.top = top + "px";
+      hit.style.width = Math.max(0, right - left) + "px";
+      hit.style.height = Math.max(0, bottom - top) + "px";
+      if (!(natW > 0) || !(natH > 0) || !(W > 0) || !(H > 0)) return;
+      var dx = view.x * dpr * fit;
+      var dy = view.y * dpr * fit;
+      var dw = W * view.s * dpr * fit;
+      var dh = H * view.s * dpr * fit;
+      if (!(dw > 0) || !(dh > 0)) return;
+      var x0 = Math.max(dx, 0);
+      var y0 = Math.max(dy, 0);
+      var x1 = Math.min(dx + dw, cw);
+      var y1 = Math.min(dy + dh, ch);
+      if (!(x1 > x0) || !(y1 > y0)) return;
+      var sx = (x0 - dx) / dw * natW;
+      var sy = (y0 - dy) / dh * natH;
+      var sww = (x1 - x0) / dw * natW;
+      var shh = (y1 - y0) / dh * natH;
+      ctx.drawImage(img, sx, sy, sww, shh, x0, y0, x1 - x0, y1 - y0);
+    }
+
+    function paintContours() {
+      if (!overlay || !overlay._vb || !(view.s > 0) || !(W > 0) || !(H > 0)) return;
+      var sw = stage.clientWidth;
+      var sh = stage.clientHeight;
+      if (!(sw > 0) || !(sh > 0)) return;
+      var vb = overlay._vb;
+      var ix0 = (0 - view.x) / view.s;
+      var iy0 = (0 - view.y) / view.s;
+      var ix1 = (sw - view.x) / view.s;
+      var iy1 = (sh - view.y) / view.s;
+      var x = vb[0] + (ix0 / W) * vb[2];
+      var y = vb[1] + (iy0 / H) * vb[3];
+      var w = ((ix1 - ix0) / W) * vb[2];
+      var h = ((iy1 - iy0) / H) * vb[3];
+      overlay.setAttribute("viewBox", x + " " + y + " " + w + " " + h);
+      // The viewBox is the same window as the stage, so this does not stretch.
+      overlay.setAttribute("preserveAspectRatio", "none");
+    }
+
     function apply() {
-      var transform = "translate(" + view.x.toFixed(2) + "px, " + view.y.toFixed(2) + "px) scale(" + view.s + ")";
-      img.style.transform = transform;
-      overlay.style.transform = transform;
+      paintArt();
+      paintContours();
     }
 
     function contourPromise(item) {
@@ -449,11 +513,10 @@
       if (contourPending[slug]) return contourPending[slug];
       contourPending[slug] = fetch(assetSrc(item.contours.file)).then(function (res) {
         if (!res.ok) throw new Error("contours");
-        return res.arrayBuffer();
-      }).then(function (buf) {
-        var url = URL.createObjectURL(new Blob([buf], { type: "image/svg+xml" }));
-        contourReady[slug] = url;
-        return url;
+        return res.text();
+      }).then(function (text) {
+        contourReady[slug] = text;
+        return text;
       }).catch(function (err) {
         delete contourPending[slug];
         throw err;
@@ -461,27 +524,37 @@
       return contourPending[slug];
     }
 
-    function showOverlay(url) {
-      if (overlay.getAttribute("src") !== url) overlay.src = url;
-      overlay.hidden = false;
+    function showOverlay(text) {
+      if (!text || overlay) {
+        apply();
+        return;
+      }
+      var doc = new DOMParser().parseFromString(text, "image/svg+xml");
+      var svg = doc.documentElement;
+      if (!svg || String(svg.nodeName).toLowerCase() !== "svg") return;
+      var parts = String(svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(Number);
+      if (parts.length !== 4 || parts.some(function (n) { return !isFinite(n); })) return;
+      var node = document.importNode(svg, true);
+      node.classList.add("rv-contour");
+      node.setAttribute("aria-hidden", "true");
+      node.removeAttribute("width");
+      node.removeAttribute("height");
+      node._vb = parts;
+      overlay = node;
+      stage.insertBefore(node, hit);
       apply();
     }
 
     function syncContours() {
-      if (!hasContours) {
-        overlay.hidden = true;
-        return;
-      }
+      if (!hasContours) return;
       if (contourReady[river.slug]) {
         showOverlay(contourReady[river.slug]);
         return;
       }
-      contourPromise(river).then(function (url) {
+      contourPromise(river).then(function (text) {
         if (lb !== box || box._closing) return;
-        showOverlay(url);
-      }).catch(function () {
-        if (lb === box) overlay.hidden = true;
-      });
+        showOverlay(text);
+      }).catch(function () {});
     }
 
     function needsLarge() {
@@ -494,6 +567,7 @@
       if (want === showing) return;
       showing = want;
       img.src = assetSrc(want === "large" ? river.large : river.mid);
+      if (img.complete && img.naturalWidth) apply();
     }
 
     function clampPan() {
@@ -514,6 +588,7 @@
         if (natural) midW = natural;
       }
       if (!box._fitted && fit()) box._fitted = true;
+      else apply();
       swap();
     });
 
