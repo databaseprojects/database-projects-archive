@@ -243,8 +243,6 @@
   }
 
   var MAX_NATIVE = 2;
-  // Longest side of a painted layer. Past this, browsers clamp one axis.
-  var MAX_LAYER = 4096;
   var api = {
     groupNum: groupNum,
     coordText: coordText,
@@ -394,12 +392,6 @@
     box.setAttribute("aria-label", river.name || "River");
     box._slug = river.slug;
     var stage = el("div", "rv-stage");
-    // Stage-sized canvas. A native-size img plus CSS scale() is clamped on the
-    // long axis once the layer passes the texture limit, and the GPU scale blurs.
-    var canvas = document.createElement("canvas");
-    canvas.className = "rv-art";
-    canvas.setAttribute("role", "img");
-    canvas.setAttribute("aria-label", river.name || "River");
     var hit = el("div", "rv-hit");
     hit.setAttribute("aria-hidden", "true");
     var overlay = null;
@@ -407,7 +399,6 @@
     img.crossOrigin = "anonymous";
     img.alt = river.name || "";
     img.src = assetSrc(river.mid);
-    stage.appendChild(canvas);
     stage.appendChild(hit);
     var hasContours = !!(river.contours && river.contours.file);
     var capWrap = el("div", "rv-lb-cap");
@@ -435,6 +426,78 @@
       return true;
     }
 
+    function layerCap() {
+      if (layerCap.px) return layerCap.px;
+      var max = 8192;
+      try {
+        var probe = document.createElement("canvas");
+        var gl = probe.getContext("webgl");
+        if (gl) max = gl.getParameter(gl.MAX_TEXTURE_SIZE) || max;
+      } catch (err) {}
+      if (!(max >= 2048)) max = 4096;
+      layerCap.px = Math.max(2048, max - 128);
+      return layerCap.px;
+    }
+
+    function blit(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh, crisp) {
+      ctx.imageSmoothingEnabled = !crisp;
+      if (!crisp) ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    // Halve until the bitmap is within 2x of the destination, then one last draw.
+    // A single jump from the full file onto a small screen drops the thin branches.
+    function drawMapped(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) {
+      if (!(sw > 0) || !(sh > 0) || !(dw > 0) || !(dh > 0)) return;
+      var down = Math.max(sw / dw, sh / dh);
+      if (down <= 1) {
+        blit(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh, true);
+        return;
+      }
+      if (down <= 2.05) {
+        blit(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh, false);
+        return;
+      }
+      var cap = layerCap();
+      var cur = image;
+      var csx = sx;
+      var csy = sy;
+      var csw = sw;
+      var csh = sh;
+      var guard = 0;
+      var slot = 0;
+      while (Math.max(csw / dw, csh / dh) > 2.05 && guard < 6) {
+        var nextW = Math.max(1, Math.round(csw / 2));
+        var nextH = Math.max(1, Math.round(csh / 2));
+        var fit = Math.min(1, cap / nextW, cap / nextH);
+        nextW = Math.max(1, Math.round(nextW * fit));
+        nextH = Math.max(1, Math.round(nextH * fit));
+        if (nextW < dw || nextH < dh) break;
+        if (nextW >= csw && nextH >= csh) break;
+        var scratch = slot ? box._scratchB : box._scratchA;
+        if (!scratch) {
+          scratch = document.createElement("canvas");
+          if (slot) box._scratchB = scratch;
+          else box._scratchA = scratch;
+        }
+        slot = 1 - slot;
+        if (scratch.width !== nextW || scratch.height !== nextH) {
+          scratch.width = nextW;
+          scratch.height = nextH;
+        }
+        var g = scratch.getContext("2d");
+        g.setTransform(1, 0, 0, 1, 0, 0);
+        blit(g, cur, csx, csy, csw, csh, 0, 0, nextW, nextH, false);
+        cur = scratch;
+        csx = 0;
+        csy = 0;
+        csw = nextW;
+        csh = nextH;
+        guard += 1;
+      }
+      blit(ctx, cur, csx, csy, csw, csh, dx, dy, dw, dh, false);
+    }
+
     function paintArt() {
       var sw = stage.clientWidth;
       var sh = stage.clientHeight;
@@ -442,21 +505,73 @@
       var natH = img.naturalHeight;
       if (!(sw > 0) || !(sh > 0) || !(view.s > 0)) return;
       var dpr = window.devicePixelRatio || 1;
-      var cw = Math.round(sw * dpr);
-      var ch = Math.round(sh * dpr);
-      // Keep both axes under the texture cap together so neither is clamped alone.
-      var fit = Math.min(1, MAX_LAYER / cw, MAX_LAYER / ch);
-      cw = Math.max(1, Math.round(cw * fit));
-      ch = Math.max(1, Math.round(ch * fit));
-      if (canvas.width !== cw || canvas.height !== ch) {
-        canvas.width = cw;
-        canvas.height = ch;
+      var cap = layerCap();
+      var totalW = Math.max(1, Math.round(sw * dpr));
+      var totalH = Math.max(1, Math.round(sh * dpr));
+      var tiles = box._tiles || (box._tiles = []);
+      var anchor = stage.querySelector(".rv-contour") || hit;
+      var n = 0;
+      var yDev = 0;
+      while (yDev < totalH) {
+        var bh = Math.min(cap, totalH - yDev);
+        var xDev = 0;
+        while (xDev < totalW) {
+          var bw = Math.min(cap, totalW - xDev);
+          var tile = tiles[n];
+          if (!tile) {
+            tile = document.createElement("canvas");
+            tile.className = "rv-art";
+            tiles[n] = tile;
+          }
+          if (!tile.parentNode) stage.insertBefore(tile, anchor);
+          if (n === 0) {
+            tile.setAttribute("role", "img");
+            tile.setAttribute("aria-label", river.name || "River");
+          } else {
+            tile.removeAttribute("role");
+            tile.setAttribute("aria-hidden", "true");
+          }
+          var cssW = bw / dpr;
+          var cssH = bh / dpr;
+          tile.style.left = (xDev / dpr) + "px";
+          tile.style.top = (yDev / dpr) + "px";
+          tile.style.width = cssW + "px";
+          tile.style.height = cssH + "px";
+          if (tile.width !== bw) tile.width = bw;
+          if (tile.height !== bh) tile.height = bh;
+          var ctx = tile.getContext("2d");
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.clearRect(0, 0, bw, bh);
+          if (natW > 0 && natH > 0 && W > 0 && H > 0) {
+            var tileX = xDev / dpr;
+            var tileY = yDev / dpr;
+            var imgW = W * view.s;
+            var imgH = H * view.s;
+            var ix0 = Math.max(tileX, view.x);
+            var iy0 = Math.max(tileY, view.y);
+            var ix1 = Math.min(tileX + cssW, view.x + imgW);
+            var iy1 = Math.min(tileY + cssH, view.y + imgH);
+            if (ix1 > ix0 && iy1 > iy0 && imgW > 0 && imgH > 0) {
+              var sx = (ix0 - view.x) / imgW * natW;
+              var sy = (iy0 - view.y) / imgH * natH;
+              var sww = (ix1 - ix0) / imgW * natW;
+              var shh = (iy1 - iy0) / imgH * natH;
+              var dx = (ix0 - tileX) * dpr;
+              var dy = (iy0 - tileY) * dpr;
+              var dw = (ix1 - ix0) * dpr;
+              var dh = (iy1 - iy0) * dpr;
+              drawMapped(ctx, img, sx, sy, sww, shh, dx, dy, dw, dh);
+            }
+          }
+          n += 1;
+          xDev += bw;
+        }
+        yDev += bh;
       }
-      var ctx = canvas.getContext("2d");
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, cw, ch);
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      while (tiles.length > n) {
+        var extra = tiles.pop();
+        if (extra.parentNode) extra.parentNode.removeChild(extra);
+      }
       var left = Math.max(view.x, 0);
       var top = Math.max(view.y, 0);
       var right = Math.min(view.x + W * view.s, sw);
@@ -465,22 +580,7 @@
       hit.style.top = top + "px";
       hit.style.width = Math.max(0, right - left) + "px";
       hit.style.height = Math.max(0, bottom - top) + "px";
-      if (!(natW > 0) || !(natH > 0) || !(W > 0) || !(H > 0)) return;
-      var dx = view.x * dpr * fit;
-      var dy = view.y * dpr * fit;
-      var dw = W * view.s * dpr * fit;
-      var dh = H * view.s * dpr * fit;
-      if (!(dw > 0) || !(dh > 0)) return;
-      var x0 = Math.max(dx, 0);
-      var y0 = Math.max(dy, 0);
-      var x1 = Math.min(dx + dw, cw);
-      var y1 = Math.min(dy + dh, ch);
-      if (!(x1 > x0) || !(y1 > y0)) return;
-      var sx = (x0 - dx) / dw * natW;
-      var sy = (y0 - dy) / dh * natH;
-      var sww = (x1 - x0) / dw * natW;
-      var shh = (y1 - y0) / dh * natH;
-      ctx.drawImage(img, sx, sy, sww, shh, x0, y0, x1 - x0, y1 - y0);
+      stage.setAttribute("data-rv-src", showing + " " + (img.naturalWidth || 0) + "x" + (img.naturalHeight || 0));
     }
 
     function paintContours() {
@@ -559,7 +659,9 @@
 
     function needsLarge() {
       if (!(midW > 0)) return false;
-      return W * view.s > midW * 1.02;
+      var dpr = window.devicePixelRatio || 1;
+      // Compare device pixels on screen with the mid file, not CSS pixels.
+      return W * view.s * dpr > midW * 1.02;
     }
 
     function swap() {
