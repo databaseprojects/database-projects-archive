@@ -469,23 +469,24 @@
   touch-action: none;
 }
 
-.rv-stage img {
+.rv-stage .rv-art,
+.rv-stage .rv-contour {
   position: absolute;
   left: 0;
   top: 0;
-  max-width: none;
-  transform-origin: 0 0;
-  cursor: grab;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.rv-contour {
+  display: block;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  cursor: inherit;
+  user-select: none;
 }
 
-.rv-lb.rv-drag .rv-stage img {
+.rv-stage .rv-hit {
+  position: absolute;
+  cursor: grab;
+}
+
+.rv-lb.rv-drag .rv-hit {
   cursor: grabbing;
 }
 
