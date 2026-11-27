@@ -134,7 +134,7 @@
   var US_FILE_VERSION = {
 
     ca: "20261126nsz10",
-    co: "20261127ahl22",
+    co: "20261127asmpad",
     id: "20261105g50",
     ma: "20261105g50",
     md: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261127ahl22",
+      index: R2_BASE + "contours/usa-index.json?v=20261127asmpad",
       label: US_STATE_NAMES[id]
     };
   });
@@ -963,7 +963,7 @@
     "revelstoke-mountain-resort": "20261122rvs",
     "fernie-alpine-resort": "20261116fer",
     "sugarloaf": "20261116sgl",
-    "aspen-mountain": "20261117as152",
+    "aspen-mountain": "20261127asmpad",
     "okemo-mountain": "20261118okp",
     "marmot-basin": "20261118mb45",
     "whitefish-mountain-resort": "20261118wfr",
@@ -4612,7 +4612,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261127ahl22").then(function (res) {
+  fetch("hill-index.json?v=20261127asmpad").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
