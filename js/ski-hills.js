@@ -979,7 +979,7 @@
     "mont-tremblant-resort-station-mont-tremblant": "20261123mt180",
     "silver-star-mountain-resort": "20261124ss",
     "northstar-at-tahoe-resort": "20261126nsz10",
-    "bromont-montagne-d-experience": "20261127bro36"
+    "bromont-montagne-d-experience": "20261127brobe"
   };
 
   function assetV(slug) {
