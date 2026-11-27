@@ -1716,6 +1716,9 @@ CAMERAS = {
         "elevation": 20.0,
         "frame_scale": 0.88,
     },
+    # job 20261127ahl22: facing None -> 225.9
+    # job 20261127ahl22: facing 225.9 -> 225.9
+    "aspen-highlands": {"facing": 225.9},
 }
 
 
