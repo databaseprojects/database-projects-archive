@@ -133,7 +133,7 @@
   };
   var US_FILE_VERSION = {
 
-    ca: "20261105g50",
+    ca: "20261126ns15",
     co: "20261123cu45",
     id: "20261105g50",
     ma: "20261105g50",
@@ -173,7 +173,7 @@
   US_STATES.forEach(function (id) {
     catalogs["us-" + id] = {
       file: "usa/" + id + ".json?v=" + (US_FILE_VERSION[id] || "20261105g50"),
-      index: R2_BASE + "contours/usa-index.json?v=20261123cu45",
+      index: R2_BASE + "contours/usa-index.json?v=20261126ns15",
       label: US_STATE_NAMES[id]
     };
   });
@@ -977,7 +977,8 @@
     "alta-ski-area": "20261122rst6",
     "cypress-mountain": "20261123cyz89",
     "mont-tremblant-resort-station-mont-tremblant": "20261123mt180",
-    "silver-star-mountain-resort": "20261124ss"
+    "silver-star-mountain-resort": "20261124ss",
+    "northstar-at-tahoe-resort": "20261126ns15"
   };
 
   function assetV(slug) {
@@ -1454,7 +1455,8 @@
       hill.slug === "mount-washington-alpine-resort" ||
       hill.slug === "cypress-mountain" ||
       hill.slug === "park-city-mountain-resort" ||
-      hill.slug === "mont-tremblant-resort-station-mont-tremblant"
+      hill.slug === "mont-tremblant-resort-station-mont-tremblant" ||
+      hill.slug === "northstar-at-tahoe-resort"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4606,7 +4608,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261123cu45").then(function (res) {
+  fetch("hill-index.json?v=20261126ns15").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
