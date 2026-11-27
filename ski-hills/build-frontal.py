@@ -1720,6 +1720,8 @@ CAMERAS = {
     # job 20261127ahl22: facing 225.9 -> 225.9
     # job 20261127ahl10cw: facing 225.9 -> 215.9
     "aspen-highlands": {"facing": 215.9},
+    # job 20261127asmpad: facing None -> 199.21
+    "aspen-mountain": {"facing": 199.21},
 }
 
 
@@ -2030,6 +2032,8 @@ DEM_PAD = {
     "ski-apache": 1.8,
     # job 20261116lov
     "loveland-basin-ski-area": 2.6,
+    # job 20261127asmpad
+    "aspen-mountain": 1.8,
 }
 
 
