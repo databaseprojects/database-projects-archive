@@ -32,9 +32,9 @@
       label: "Alberta"
     },
     qc: {
-      file: "quebec.json?v=20261105cmt",
+      file: "quebec.json?v=20261127bro36",
       names: "quebec-names.json?v=20261105cmt",
-      index: R2_BASE + "contours/quebec-index.json?v=20261105cmt",
+      index: R2_BASE + "contours/quebec-index.json?v=20261127bro36",
       label: "Quebec"
     },
     on: {
@@ -978,7 +978,8 @@
     "cypress-mountain": "20261123cyz89",
     "mont-tremblant-resort-station-mont-tremblant": "20261123mt180",
     "silver-star-mountain-resort": "20261124ss",
-    "northstar-at-tahoe-resort": "20261126nsz10"
+    "northstar-at-tahoe-resort": "20261126nsz10",
+    "bromont-montagne-d-experience": "20261127bro36"
   };
 
   function assetV(slug) {
@@ -1456,7 +1457,8 @@
       hill.slug === "cypress-mountain" ||
       hill.slug === "park-city-mountain-resort" ||
       hill.slug === "mont-tremblant-resort-station-mont-tremblant" ||
-      hill.slug === "northstar-at-tahoe-resort"
+      hill.slug === "northstar-at-tahoe-resort" ||
+      hill.slug === "bromont-montagne-d-experience"
     ) ? washV : ASSET_V;
     fetch(url.replace(".svg?v=" + washV, ".wash.svg?v=" + washFileV)).then(function (res) {
       if (!res.ok) throw new Error("wash");
@@ -4608,7 +4610,7 @@
   onIdle(function () { ensureBoundaries().catch(function () {}); });
 
 
-  fetch("hill-index.json?v=20261126nsz10").then(function (res) {
+  fetch("hill-index.json?v=20261127bro36").then(function (res) {
     if (!res.ok) throw new Error("index");
     return res.json();
   }).then(function (index) {
