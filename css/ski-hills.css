@@ -454,6 +454,12 @@
   --sh-be-run: 1.0667px;
 }
 
+.sh-lb[data-sh-hill="breckenridge"] {
+  /* Bird's-eye runs 15% under the default 1.3166px. Plan stays
+     1.3166px. Lifts stay on --sh-lift. Job 20261126br15. */
+  --sh-be-run: 1.1191px;
+}
+
 .sh-lb polyline {
   stroke-width: 1.3166;
 }
