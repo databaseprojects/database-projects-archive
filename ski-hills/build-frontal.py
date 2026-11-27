@@ -1710,9 +1710,11 @@ CAMERAS = {
     "deer-valley-resort": {"facing": 227.8, "post_scale": 1.0273},
     # job 20261127brobe: elevation 15.0 -> 25.0 (10° steeper, more top-down; facing stays 193.0, auto-fit framing)
     # job 20261127brobe2: elevation 25.0 -> 20.0 (5° flatter); facing 193.0 -> 178.0 (15° clockwise); auto-fit framing
+    # job 20261127broz12: frame_scale 1.0 -> 0.88 (zoom out 12%; was auto-fit default 1.0; facing stays 178.0, elevation stays 20.0)
     "bromont-montagne-d-experience": {
         "facing": 178.0,
         "elevation": 20.0,
+        "frame_scale": 0.88,
     },
 }
 
