@@ -1,0 +1,27 @@
+# Fail a pull request when a ski-hills build script or its output still
+# carries a stale tree green (#315b38 or #3a6b42). Builds emit #336641.
+
+name: Tree green
+
+on:
+  pull_request:
+    paths:
+      - "ski-hills/**/*.py"
+      - "ski-hills/frontal/**"
+      - "ski-hills/contours/**"
+      - "ski-hills/previews/**"
+      - ".github/workflows/tree-green.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout pull request head
+        uses: actions/checkout@v4
+
+      - name: Check tree green
+        run: python3 ski-hills/check-tree-green.py

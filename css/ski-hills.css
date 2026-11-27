@@ -1563,8 +1563,8 @@ html.sh-prints-off .sh-cart-panel {
 }
 
 
-/* Tree-cover green #336641. Overlay SVGs still bake #3a6b42 or #315b38; this wins
-   over the fill attribute on every band. */
+/* Tree-cover green #336641. Builds now emit #336641. This still wins
+   over the fill attribute on every band of older published files. */
 .sh-frontal-tree-wash,
 .sh-plan-tree-wash,
 .sh-plan-tree-wash path,
