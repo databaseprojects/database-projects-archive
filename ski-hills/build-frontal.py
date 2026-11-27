@@ -1698,7 +1698,9 @@ CAMERAS = {
     "telluride-ski-area": {"facing": 150.08},
     # job 20261116lov: facing 252.34 -> 272.34 (20° counter-clockwise)
     # job 20261117lv30: facing 272.34 -> 242.34
-    "loveland-basin-ski-area": {"facing": 242.34},
+    # job 20261126lv10: facing 242.34 -> 232.34
+    # job 20261126lv10: facing 232.34 -> 222.34
+    "loveland-basin-ski-area": {"facing": 222.34},
     # job 20261117ok180: facing 95.79 -> 275.79 (180°)
     # job 20261117ok30: facing 275.79 -> 305.79
     "okemo-mountain": {"facing": 305.79},

@@ -958,7 +958,7 @@
     "heavenly-mountain-resort": "20261116hvy",
     "aspen-snowmass": "20261116asp",
     "telluride-ski-area": "20261116tel",
-    "loveland-basin-ski-area": "20261117lvz6",
+    "loveland-basin-ski-area": "20261126lv10",
     "stowe-mountain-resort": "20261116sto",
     "revelstoke-mountain-resort": "20261122rvs",
     "fernie-alpine-resort": "20261116fer",
