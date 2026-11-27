@@ -980,7 +980,7 @@
     "silver-star-mountain-resort": "20261124ss",
     "northstar-at-tahoe-resort": "20261126nsz10",
     "bromont-montagne-d-experience": "20261127broz12",
-    "aspen-highlands": "20261127ahl22"
+    "aspen-highlands": "20261127ahl10cw"
   };
 
   function assetV(slug) {
