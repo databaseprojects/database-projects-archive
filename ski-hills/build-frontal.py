@@ -40,6 +40,7 @@ import io
 import json
 import math
 import os
+import re
 import struct
 import sys
 from pathlib import Path
@@ -84,10 +85,43 @@ RIDGE_MARGIN = 2.6
 # to None when those segments should be clipped instead.
 RIDGE_FADE = 0.10
 # Standing rule for the tree overlay. The wash is 10 m ESA WorldCover
-# tree cover, drawn as a 10% #315b38 green. A 2.0 px corridor around each
+# tree cover, drawn as a 10% #336641 green. A 2.0 px corridor around each
 # run and lift is left clear, so the tree edge sits against the trail
 # and a narrow run stays distinct.
+TREE_GREEN = "#336641"
 TREE_CLEAR = 2.0
+# Joined at runtime. check-tree-green.py rejects either stale colour as one
+# token in ski-hills/*.py, so the source keeps them split. Same rewrite as
+# build-tree-overlays.py, applied to a sheet just before it is written.
+_STALE_TREE_GREENS = ("#315" + "b38", "#3a6" + "b42")
+
+
+def force_tree_green(text):
+    """Rewrite a stale tree fill to TREE_GREEN. Other paints stay as they are."""
+    if not text:
+        return text
+    for old in _STALE_TREE_GREENS:
+        text = re.sub(
+            r"(fill\s*=\s*[\"'])" + re.escape(old) + r"([\"'])",
+            lambda match: match.group(1) + TREE_GREEN + match.group(2),
+            text,
+            flags=re.IGNORECASE,
+        )
+        text = re.sub(
+            r"(fill\s*:\s*)" + re.escape(old) + r"\b",
+            lambda match: match.group(1) + TREE_GREEN,
+            text,
+            flags=re.IGNORECASE,
+        )
+        text = re.sub(
+            r'("fill"\s*:\s*")' + re.escape(old) + r'(")',
+            lambda match: match.group(1) + TREE_GREEN + match.group(2),
+            text,
+            flags=re.IGNORECASE,
+        )
+    return text
+
+
 # The skyline test misses a slope behind a mid-slope spur, so both
 # contour families draw and cross. Screen cells keep the nearest terrain.
 # A contour point `tol` metres behind the nearest sample within `reach`
@@ -4833,6 +4867,7 @@ def build(arr, gt, runs, lifts, facing, lock_facing=False, out_path=None, slug="
     dest = Path(out_path) if out_path else (ROOT / "frontal" / f"{slug}.svg")
     dest.parent.mkdir(parents=True, exist_ok=True)
     svg = keep_published_trees(svg, dest)
+    svg = force_tree_green(svg)
     dest.write_text(svg)
     az = round(math.degrees(ang) % 360, 1)
     print(

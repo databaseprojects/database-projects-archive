@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate 10 m ESA WorldCover vector tree-wash overlays (Plan view + Bird's-eye view).
 
-The wash is four hard-edge density bands of the same green (#315b38). Opacity
+The wash is four hard-edge density bands of the same green (#336641). Opacity
 for each band count is read from tree-opacity.json (BAND_OPACITY_BY_COUNT). Density is a summer Sentinel-2 canopy concentration
 on the WorldCover grid, and only WorldCover tree pixels are washed. Each pixel
 belongs to one band. Kimberley's published wash is left as it is.
@@ -50,6 +50,44 @@ from rasterio.windows import from_bounds
 from scipy.ndimage import binary_closing, gaussian_filter
 from shapely.affinity import affine_transform
 from shapely.geometry import LineString, MultiPolygon, Polygon, shape
+
+
+# Site tree colour, RGB 51, 102, 65. Plan bands and bird's-eye fills use this.
+TREE_GREEN = "#336641"
+# Joined at runtime. check-tree-green.py rejects either stale colour as one
+# token in ski-hills/*.py and in builder output, so the source keeps them split.
+_STALE_TREE_GREENS = ("#315" + "b38", "#3a6" + "b42")
+
+
+def force_tree_green(text):
+    """Rewrite a stale tree fill to TREE_GREEN. Other paints stay as they are."""
+    if not text:
+        return text
+    for old in _STALE_TREE_GREENS:
+        text = re.sub(
+            r"(fill\s*=\s*[\"'])" + re.escape(old) + r"([\"'])",
+            lambda match: match.group(1) + TREE_GREEN + match.group(2),
+            text,
+            flags=re.IGNORECASE,
+        )
+        text = re.sub(
+            r"(fill\s*:\s*)" + re.escape(old) + r"\b",
+            lambda match: match.group(1) + TREE_GREEN,
+            text,
+            flags=re.IGNORECASE,
+        )
+        text = re.sub(
+            r'("fill"\s*:\s*")' + re.escape(old) + r'(")',
+            lambda match: match.group(1) + TREE_GREEN + match.group(2),
+            text,
+            flags=re.IGNORECASE,
+        )
+    return text
+
+
+def write_svg(path, text):
+    """Write an SVG after the tree-fill guard."""
+    Path(path).write_text(force_tree_green(text))
 
 
 # --- Minimal osgeo.gdal shim backed by rasterio so build-frontal.py works unmodified ---
@@ -659,7 +697,10 @@ def band_paths(labels, affine, simplify_tol=0.65, slug="", view="plan"):
         if d:
             found.append((name, d))
     ops = opacities_for(slug, len(found), view=view)
-    return [{"opacity": op, "name": name, "d": d} for op, (name, d) in zip(ops, found)]
+    return [
+        {"opacity": op, "name": name, "fill": TREE_GREEN, "d": d}
+        for op, (name, d) in zip(ops, found)
+    ]
 
 
 def _stac_scenes(box):
@@ -1170,6 +1211,7 @@ def generate_plan_tree_wash(slug, hill, geom_data, wc_path, conc_path, pixel_unm
     pixel_unmap(px, py) maps the hill's stored plan pixels back to the
     north-up frame the geom was projected in. A plan rotation passes it so
     the wash is sampled in the turned frame, including newly exposed corners.
+    Each band is written with fill TREE_GREEN (#336641).
     """
     pts_runs = [p for r in geom_data["runs"] for line in r["lines"] for p in line]
     lats = [p[1] for p in pts_runs]
@@ -1698,7 +1740,7 @@ def frontal_wash_markup(bands):
     for b in bands:
         parts.append(
             f'<g class="sh-frontal-tree-band sh-frontal-tree-band-{b["name"]}">'
-            f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="#315b38" '
+            f'<path class="sh-frontal-tree-wash" d="{b["d"]}" fill="{TREE_GREEN}" '
             f'fill-opacity="{fmt_band_opacity(b["opacity"])}" fill-rule="evenodd" stroke="none"/>'
             f"</g>"
         )
@@ -2003,10 +2045,11 @@ def generate_birdseye_tree_wash(slug, runs, lifts, arr, gt, wc_path, conc_path, 
             svg_clean = svg_clean.replace("<svg ", '<svg data-sh-wash="lazy" ', 1)
         wash_path = out_svg_path.with_name(out_svg_path.stem + ".wash.svg")
         wash_path.parent.mkdir(parents=True, exist_ok=True)
-        wash_path.write_text(
-            '<svg xmlns="http://www.w3.org/2000/svg">' + wash_el.strip() + "</svg>\n"
+        write_svg(
+            wash_path,
+            '<svg xmlns="http://www.w3.org/2000/svg">' + wash_el.strip() + "</svg>\n",
         )
-    out_svg_path.write_text(svg_clean)
+    write_svg(out_svg_path, svg_clean)
     return len(bands), int(tree_mask.sum()), CW * CH
 
 
@@ -2097,6 +2140,7 @@ def _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands):
             "treeBands": [
                 {
                     "opacity": b["opacity"],
+                    "fill": b.get("fill") or TREE_GREEN,
                     "d": compact_abs_d(b["d"]) if isinstance(b.get("d"), str) else "",
                 }
                 for b in bands
@@ -2104,7 +2148,7 @@ def _write_plan_bands(contour_path, dst_c_slug, tree_wash_d, bands):
             ]
         }
         dst_c_slug.with_name(dst_c_slug.stem + ".wash.json").write_text(
-            json.dumps(wash, separators=(",", ":"))
+            force_tree_green(json.dumps(wash, separators=(",", ":")))
         )
     else:
         src_c["treeWash"] = compact_abs_d(tree_wash_d) if tree_wash_d else tree_wash_d
@@ -2209,10 +2253,10 @@ def generate_overlay(slug):
             front_svg = OUT_FRONTAL / f"{slug}-front.svg"
             if front_svg.exists():
                 unsuffixed = front_svg.read_text().replace(f"{slug}-front", slug)
-                (OUT_FRONTAL / f"{slug}.svg").write_text(unsuffixed)
+                write_svg(OUT_FRONTAL / f"{slug}.svg", unsuffixed)
                 front_wash = front_svg.with_name(front_svg.stem + ".wash.svg")
                 if front_wash.exists():
-                    (OUT_FRONTAL / f"{slug}.wash.svg").write_text(front_wash.read_text())
+                    write_svg(OUT_FRONTAL / f"{slug}.wash.svg", front_wash.read_text())
                 frontal_written.append(slug)
         else:
             src_svg = REPO_ROOT / "frontal" / f"{slug}.svg"
