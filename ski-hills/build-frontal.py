@@ -1718,7 +1718,8 @@ CAMERAS = {
     },
     # job 20261127ahl22: facing None -> 225.9
     # job 20261127ahl22: facing 225.9 -> 225.9
-    "aspen-highlands": {"facing": 225.9},
+    # job 20261127ahl10cw: facing 225.9 -> 215.9
+    "aspen-highlands": {"facing": 215.9},
 }
 
 
